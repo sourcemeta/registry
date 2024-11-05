@@ -1,0 +1,22 @@
+{
+  "url": "http://localhost:8000",
+  "port": 8000,
+  "collections": {
+    "example/schemas": {
+      "base": "https://example.com/schemas",
+      "path": "./schemas/example/folder"
+    },
+    "example/v2.0": {
+      "base": "https://example.com/schemas",
+      "path": "./schemas/example/v2.0"
+    },
+    "example/bundling": {
+      "base": "https://example.com/bundling",
+      "path": "./schemas/example/bundling"
+    },
+    "doc": {
+      "base": "https://example.com/doc",
+      "path": "./schemas/doc"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+name: Sourcemeta Registry CI
+
+on:
+  pull_request:
+
+concurrency:
+  group: registry-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Dependencies
+      - run: pipx install clang-format==19.1.0
+      - uses: intelligence-ai/jsonschema@v4.1.6
+      - name: Install Hurl
+        run: |
+          curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/${{ env.HURL_VERSION }}/hurl_${{ env.HURL_VERSION }}_amd64.deb
+          sudo apt install ./hurl_${{ env.HURL_VERSION }}_amd64.deb
+          rm hurl_${{ env.HURL_VERSION }}_amd64.deb
+        env:
+          HURL_VERSION: 5.0.1
+
+      # Linting
+      - run: make configure PRESET=Release INDEX=OFF SERVER=OFF
+      - run: make lint PRESET=Release
+
+      # Testing
+      - run: docker build --tag registry . --progress plain
+      - run: docker compose build
+      - run: docker compose up --detach --wait
+      - run: make test PRESET=Release
+      - run: docker compose down

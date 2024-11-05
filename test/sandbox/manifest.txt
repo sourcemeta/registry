@@ -1,0 +1,11 @@
+./configuration.json
+./schemas
+./schemas/doc
+./schemas/doc/string-1.json
+./schemas/example
+./schemas/example/bundling
+./schemas/example/bundling/single.json
+./schemas/example/schemas
+./schemas/example/schemas/string.json
+./schemas/example/v2.0
+./schemas/example/v2.0/schema.json

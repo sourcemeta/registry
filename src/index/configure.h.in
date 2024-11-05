@@ -1,0 +1,11 @@
+#ifndef SOURCEMETA_REGISTRY_INDEX_CONFIGURE_H_
+#define SOURCEMETA_REGISTRY_INDEX_CONFIGURE_H_
+
+#include <string_view> // std::string_view
+
+namespace sourcemeta::registry {
+constexpr std::string_view PROJECT_VERSION{"@PROJECT_VERSION@"};
+constexpr std::string_view SCHEMA_CONFIGURATION{R"EOF(@SCHEMA_CONFIGURATION@)EOF"};
+}
+
+#endif

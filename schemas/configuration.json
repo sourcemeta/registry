@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "url",
+    "port",
+    "collections"
+  ],
+  "properties": {
+    "collections": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "base",
+          "path"
+        ],
+        "properties": {
+          "base": {
+            "type": "string",
+            "format": "url"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "port": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "url": {
+      "type": "string",
+      "format": "url"
+    }
+  },
+  "additionalProperties": false
+}

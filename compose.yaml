@@ -1,0 +1,6 @@
+services:
+  sandbox:
+    build:
+      context: test/sandbox
+    ports:
+      - 8000:8000

@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 3.16)
+project(registry VERSION 0.0.1 LANGUAGES CXX)
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+include(vendor/noa/cmake/noa.cmake)
+
+# Options
+option(REGISTRY_DEVELOPMENT "Build the Registry in development mode" OFF)
+option(REGISTRY_SERVER "Build the Registry server" ON)
+option(REGISTRY_INDEX "Build the Registry index tool" ON)
+
+find_package(JSONToolkit REQUIRED)
+find_package(Blaze REQUIRED)
+find_package(Hydra REQUIRED)
+
+# Always optimize the current architecture
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=native")
+
+if(REGISTRY_INDEX)
+  add_subdirectory(src/index)
+endif()
+
+if(REGISTRY_SERVER)
+  add_subdirectory(src/server)
+endif()
+
+if(REGISTRY_DEVELOPMENT)
+  noa_target_clang_format(SOURCES src/*.h src/*.cc)
+endif()
