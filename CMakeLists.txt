@@ -24,6 +24,6 @@ if(REGISTRY_SERVER)
   add_subdirectory(src/server)
 endif()
 
-if(REGISTRY_DEVELOPMENT)
+if(PROJECT_IS_TOP_LEVEL AND REGISTRY_DEVELOPMENT)
   noa_target_clang_format(SOURCES src/*.h src/*.cc)
 endif()
