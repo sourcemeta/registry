@@ -1,5 +1,6 @@
 brew "cmake"
 brew "hurl"
 brew "jq"
+cask "docker"
 tap "sourcemeta/apps"
 cask "sourcemeta/apps/jsonschema"
