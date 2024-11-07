@@ -42,6 +42,10 @@ lint:
 
 .PHONY: test
 test: 
+	./test/cli/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
+
+.PHONY: test-e2e
+test-e2e: 
 	$(HURL) --test \
 		--variable base=$(shell jq --raw-output '.url' < $(SANDBOX)/configuration.json) \
 		test/e2e/*.hurl
