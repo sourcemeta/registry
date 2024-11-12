@@ -43,6 +43,7 @@ lint:
 .PHONY: test
 test: 
 	./test/cli/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/index/invalid-configuration.sh $(PREFIX)/bin/sourcemeta-registry-index
 
 .PHONY: test-e2e
