@@ -1,0 +1,9 @@
+{
+  "target": "urn:sourcemeta:registry/configuration.json",
+  "tests": [
+    {
+      "valid": false,
+      "data": {}
+    }
+  ]
+}

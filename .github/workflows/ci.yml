@@ -29,6 +29,7 @@ jobs:
       - run: make lint PRESET=Release
 
       # Testing
+      - run: make test-schemas PRESET=Release
       - run: docker build --tag registry . --progress plain
       - run: docker compose build
       - run: docker compose up --detach --wait

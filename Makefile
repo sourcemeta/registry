@@ -13,7 +13,7 @@ PREFIX ?= $(OUTPUT)/dist
 SANDBOX ?= ./test/sandbox
 
 .PHONY: all
-all: configure compile test
+all: configure compile test-schemas test 
 
 .PHONY: configure
 configure: 
@@ -45,6 +45,10 @@ test:
 	./test/cli/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/index/invalid-configuration.sh $(PREFIX)/bin/sourcemeta-registry-index
+
+.PHONY: test-schemas
+test-schemas: 
+	$(JSONSCHEMA) test test/schemas --resolve schemas
 
 .PHONY: test-e2e
 test-e2e: 
