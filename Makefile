@@ -50,11 +50,10 @@ test:
 test-schemas: 
 	$(JSONSCHEMA) test test/schemas --resolve schemas
 
-.PHONY: test-e2e
-test-e2e: 
+test-e2e-%: 
 	$(HURL) --test \
 		--variable base=$(shell jq --raw-output '.url' < $(SANDBOX)/configuration.json) \
-		test/e2e/*.hurl
+		test/e2e/$(subst test-e2e-,,$@)/*.hurl
 
 .PHONY: sandbox
 sandbox: compile
