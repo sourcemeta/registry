@@ -52,6 +52,6 @@ RUN sourcemeta-registry-index /app/configuration.json /app/index \
     && rm -rf /app/schemas /app/configuration.json
 
 # Run the registry against your indexed directory
-ENTRYPOINT [ "/usr/bin/sourcemeta-registry-serve" ]
+ENTRYPOINT [ "/usr/bin/sourcemeta-registry-server" ]
 CMD [ "/app/index" ]
 ```
