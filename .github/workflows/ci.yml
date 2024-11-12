@@ -9,6 +9,14 @@ concurrency:
 
 jobs:
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        edition:
+          - name: community
+            suffix: ce
+          - name: enterprise
+            suffix: ee
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,9 +38,9 @@ jobs:
 
       # Testing
       - run: make test-schemas PRESET=Release
-      - run: docker build --tag registry . --file Dockerfile.ce --progress plain
+      - run: docker build --tag registry . --file Dockerfile.${{ matrix.edition.suffix }} --progress plain
       - run: docker compose build
       - run: docker compose up --detach --wait
       - run: make test-e2e-common PRESET=Release
-      - run: make test-e2e-ce PRESET=Release
+      - run: make test-e2e-${{ matrix.edition.suffix }} PRESET=Release
       - run: docker compose down

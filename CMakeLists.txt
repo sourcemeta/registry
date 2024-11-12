@@ -7,6 +7,7 @@ include(vendor/noa/cmake/noa.cmake)
 option(REGISTRY_DEVELOPMENT "Build the Registry in development mode" OFF)
 option(REGISTRY_SERVER "Build the Registry server" ON)
 option(REGISTRY_INDEX "Build the Registry index tool" ON)
+option(REGISTRY_ENTERPRISE "Build the Registry Enterprise edition (requires a license)" OFF)
 
 find_package(JSONToolkit REQUIRED)
 find_package(Blaze REQUIRED)
