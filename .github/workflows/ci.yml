@@ -30,7 +30,7 @@ jobs:
 
       # Testing
       - run: make test-schemas PRESET=Release
-      - run: docker build --tag registry . --progress plain
+      - run: docker build --tag registry . --file Dockerfile.ce --progress plain
       - run: docker compose build
       - run: docker compose up --detach --wait
       - run: make test-e2e PRESET=Release
