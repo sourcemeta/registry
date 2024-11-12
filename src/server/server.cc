@@ -197,6 +197,7 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
 auto main(int argc, char *argv[]) noexcept -> int {
   try {
     if (argc < 2) {
+      // TODO: Mark whether its Community or Enterprise
       std::cerr << "Sourcemeta Registry v"
                 << sourcemeta::registry::PROJECT_VERSION << "\n";
       std::cerr << "Usage: " << argv[0] << " <path/to/output/directory>\n";
