@@ -13,7 +13,7 @@ PREFIX ?= $(OUTPUT)/dist
 SANDBOX ?= ./test/sandbox
 
 .PHONY: all
-all: configure compile
+all: configure compile test
 
 .PHONY: configure
 configure: 
