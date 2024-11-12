@@ -26,18 +26,34 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Community Edition
       - uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        id: meta
+        id: meta-ce
         with:
-          images: ghcr.io/${{ github.repository_owner }}/registry
+          images: ghcr.io/${{ github.repository_owner }}/registry-ce
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         id: push
         with:
           context: .
           file: Dockerfile.ce
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-ce.outputs.tags }}
+          labels: ${{ steps.meta-ce.outputs.labels }}
+
+      # Enterprise Edition
+      - uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        id: meta-ee
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/registry-ee
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        id: push
+        with:
+          context: .
+          file: Dockerfile.ee
+          push: true
+          tags: ${{ steps.meta-ee.outputs.tags }}
+          labels: ${{ steps.meta-ee.outputs.labels }}
 
       - run: gh config set prompt disabled
         if: github.ref_type == 'tag'
