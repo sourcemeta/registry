@@ -119,13 +119,13 @@ static auto index_main(const std::string_view &program,
                                                 configuration,
                                                 std::ref(validation_output))};
   if (!result) {
-    std::cerr << "Invalid configuration\n";
+    std::cerr << "error: Invalid configuration\n";
     for (const auto &entry : validation_output) {
-      std::cerr << "  " << entry.message << "\n";
-      std::cerr << "    at instance location \"";
+      std::cerr << entry.message << "\n";
+      std::cerr << "  at instance location \"";
       sourcemeta::jsontoolkit::stringify(entry.instance_location, std::cerr);
       std::cerr << "\"\n";
-      std::cerr << "    at evaluate path \"";
+      std::cerr << "  at evaluate path \"";
       sourcemeta::jsontoolkit::stringify(entry.evaluate_path, std::cerr);
       std::cerr << "\"\n";
     }
