@@ -33,7 +33,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_owner }}/registry-ce
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        id: push
+        id: push-ce
         with:
           context: .
           file: Dockerfile.ce
@@ -47,7 +47,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_owner }}/registry-ee
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        id: push
+        id: push-ee
         with:
           context: .
           file: Dockerfile.ee
