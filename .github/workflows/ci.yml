@@ -33,5 +33,6 @@ jobs:
       - run: docker build --tag registry . --file Dockerfile.ce --progress plain
       - run: docker compose build
       - run: docker compose up --detach --wait
-      - run: make test-e2e PRESET=Release
+      - run: make test-e2e-common PRESET=Release
+      - run: make test-e2e-ce PRESET=Release
       - run: docker compose down
