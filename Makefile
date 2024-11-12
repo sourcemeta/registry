@@ -64,7 +64,7 @@ sandbox: compile
 
 .PHONY: docker
 docker:
-	$(DOCKER) build --tag registry . --progress plain
+	$(DOCKER) build --tag registry . --file Dockerfile.ce --progress plain
 	$(DOCKER) compose up --build
 
 .PHONY: clean

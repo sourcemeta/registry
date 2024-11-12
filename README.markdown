@@ -35,13 +35,13 @@ into a certain relative path.
 Deployment
 ----------
 
-We release a small `registry` Docker base image to [GitHub
-Packages](https://github.com/sourcemeta/registry/pkgs/container/registry) that
-you are expected to extend for your own deployment as follows. Replace any `{{
-}}` variable with the values of your choosing:
+We release a small `registry-ce` Docker base image to [GitHub
+Packages](https://github.com/sourcemeta/registry/pkgs/container/registry-ce)
+that you are expected to extend for your own deployment as follows. Replace any
+`{{ }}` variable with the values of your choosing:
 
 ```docker
-FROM ghcr.io/sourcemeta/registry:{{ version }}
+FROM ghcr.io/sourcemeta/registry-ce:{{ version }}
 
 # Copy your configuration file (see previous section) and schema files
 COPY {{ path/to/configuration.json }} /app/configuration.json

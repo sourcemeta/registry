@@ -34,7 +34,7 @@ jobs:
         id: push
         with:
           context: .
-          file: Dockerfile
+          file: Dockerfile.ce
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
