@@ -31,6 +31,17 @@ static auto resolver(std::string_view identifier)
       SERVER_BASE_URL, *(__global_data) / "schemas", identifier);
 }
 
+static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
+                       const sourcemeta::hydra::http::ServerRequest &request,
+                       sourcemeta::hydra::http::ServerResponse &response)
+    -> void {
+  static const auto SERVER_BASE_URL{configuration().at("url").to_string()};
+  return sourcemeta::registry::on_request(
+      sourcemeta::registry::request_path_to_schema_uri(SERVER_BASE_URL,
+                                                       request.path()),
+      resolver, logger, request, response);
+}
+
 static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
                          const sourcemeta::hydra::http::ServerRequest &request,
                          sourcemeta::hydra::http::ServerResponse &response)
@@ -43,16 +54,9 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
                                             response);
 }
 
-static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
-                       const sourcemeta::hydra::http::ServerRequest &request,
-                       sourcemeta::hydra::http::ServerResponse &response)
-    -> void {
-  static const auto SERVER_BASE_URL{configuration().at("url").to_string()};
-  return sourcemeta::registry::on_request(
-      sourcemeta::registry::request_path_to_schema_uri(SERVER_BASE_URL,
-                                                       request.path()),
-      resolver, logger, request, response);
-}
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+#include "enterprise_server.h"
+#endif
 
 // We try to keep this function as straight to point as possible
 // with minimal input validation (outside debug builds). The intention
@@ -77,10 +81,14 @@ auto main(int argc, char *argv[]) noexcept -> int {
     __global_data = std::make_unique<std::filesystem::path>(argv[1]);
 
     sourcemeta::hydra::http::Server server;
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+    sourcemeta::registry::enterprise::attach(server);
+#else
     server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);
     server.otherwise(on_otherwise);
     server.error(sourcemeta::registry::on_error);
+#endif
 
     assert(configuration().defines("port"));
     assert(configuration().at("port").is_integer());
