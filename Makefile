@@ -44,9 +44,12 @@ lint:
 
 .PHONY: test
 test: 
-	./test/cli/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/index/invalid-configuration.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/common/index/invalid-configuration.sh $(PREFIX)/bin/sourcemeta-registry-index
+ifeq ($(ENTERPRISE), ON)
+else
+	./test/cli/ce/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/ce/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
+endif
 
 .PHONY: test-schemas
 test-schemas: 
