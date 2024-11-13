@@ -11,8 +11,9 @@
 
 static auto
 explorer_start(const sourcemeta::hydra::http::ServerRequest &request,
-               const std::string &server_base_url, const std::string &title,
-               const std::string &description) -> std::ostringstream {
+               const std::string &server_base_url, const std::string &site_name,
+               const std::string &title, const std::string &description)
+    -> std::ostringstream {
   std::ostringstream html;
   html << "<!DOCTYPE html>";
   html << "<html lang=\"en\">";
@@ -49,9 +50,9 @@ explorer_start(const sourcemeta::hydra::http::ServerRequest &request,
   html << "<nav class=\"navbar navbar-expand border-bottom bg-body p-3\">";
   html << "<div class=\"container-fluid\">";
   html << "<a class=\"navbar-brand\" href=\"" << server_base_url << "\">";
-  html << "<img src=\"/icon.svg\" alt=\"" << title
+  html << "<img src=\"/icon.svg\" alt=\"" << site_name
        << "\" height=\"30\" width=\"30\" class=\"me-2\">";
-  html << "<span class=\"align-middle fw-bold\">" << title << "</span>";
+  html << "<span class=\"align-middle fw-bold\">" << site_name << "</span>";
   html << "<span class=\"align-middle fw-lighter\"> Schemas</span>";
   html << "</a>";
   html << "</div>";
@@ -141,24 +142,38 @@ static auto file_manager(std::ostringstream &html,
 
 namespace sourcemeta::registry::enterprise {
 
-auto explore_index(const std::string &title, const std::string &description,
+auto explore_index(const std::string &site_name, const std::string &title,
+                   const std::string &description,
                    const std::string &server_base_url,
                    const std::filesystem::path &schema_base_directory,
                    const sourcemeta::hydra::http::ServerRequest &request,
                    sourcemeta::hydra::http::ServerResponse &response) -> void {
   std::ostringstream html{
-      explorer_start(request, server_base_url, title, description)};
+      explorer_start(request, server_base_url, site_name, title, description)};
   file_manager(html, sourcemeta::registry::path_join(schema_base_directory,
                                                      request.path()));
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
 
-auto explore_not_found(const std::string &server_base_url,
+auto explore_directory(const std::string &site_name,
+                       const std::filesystem::path &directory,
+                       const std::string &server_base_url,
+                       const sourcemeta::hydra::http::ServerRequest &request,
+                       sourcemeta::hydra::http::ServerResponse &response)
+    -> void {
+  std::ostringstream html{explorer_start(request, server_base_url, site_name,
+                                         request.path(), request.path())};
+  file_manager(html, directory);
+  explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
+}
+
+auto explore_not_found(const std::string &site_name,
+                       const std::string &server_base_url,
                        const sourcemeta::hydra::http::ServerRequest &request,
                        sourcemeta::hydra::http::ServerResponse &response)
     -> void {
   std::ostringstream html{
-      explorer_start(request, server_base_url, "Not Found",
+      explorer_start(request, server_base_url, site_name, "Not Found",
                      "What you are looking for is not here")};
   html << "Not Found";
   explorer_end(html, response, sourcemeta::hydra::http::Status::NOT_FOUND);
