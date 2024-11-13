@@ -8,6 +8,11 @@ target_link_libraries(schema_registry_index PRIVATE sourcemeta::jsontoolkit::jso
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::evaluator)
 
+if(REGISTRY_ENTERPRISE)
+  target_compile_definitions(schema_registry_index 
+    PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
+endif()
+
 file(READ "${PROJECT_SOURCE_DIR}/schemas/configuration.json" SCHEMA_CONFIGURATION)
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(schema_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

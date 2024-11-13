@@ -197,10 +197,16 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
 auto main(int argc, char *argv[]) noexcept -> int {
   try {
     if (argc < 2) {
-      // TODO: Mark whether its Community or Enterprise
       std::cerr << "Sourcemeta Registry v"
-                << sourcemeta::registry::PROJECT_VERSION << "\n";
-      std::cerr << "Usage: " << argv[0] << " <path/to/output/directory>\n";
+                << sourcemeta::registry::PROJECT_VERSION;
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+      std::cout << " Enterprise ";
+#else
+      std::cout << " Community ";
+#endif
+      std::cout << "Edition\n";
+      std::cout << "Usage: " << argv[0]
+                << " <configuration.json> <path/to/output/directory>\n";
       return EXIT_FAILURE;
     }
 

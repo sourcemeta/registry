@@ -91,9 +91,14 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
 static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
   if (arguments.size() < 2) {
-    // TODO: Mark whether its Community or Enterprise
     std::cout << "Sourcemeta Registry v"
-              << sourcemeta::registry::PROJECT_VERSION << "\n";
+              << sourcemeta::registry::PROJECT_VERSION;
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+    std::cout << " Enterprise ";
+#else
+    std::cout << " Community ";
+#endif
+    std::cout << "Edition\n";
     std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
               << " <configuration.json> <path/to/output/directory>\n";
     return EXIT_FAILURE;
