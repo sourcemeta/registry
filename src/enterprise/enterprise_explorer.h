@@ -31,6 +31,17 @@ explorer_start(const sourcemeta::hydra::http::ServerRequest &request,
        << "\">";
   html << "<link rel=\"stylesheet\" href=\"/style.min.css\">";
 
+  // Application icons
+  // TODO: Allow changing these by supporing an object in the
+  // configuration manifest to select static files to override
+  html << "<link rel=\"icon\" href=\"/favicon.ico\" sizes=\"any\">";
+  html << "<link rel=\"icon\" href=\"/icon.svg\" type=\"image/svg+xml\">";
+  html << "<link rel=\"shortcut icon\" type=\"image/png\" "
+          "href=\"/apple-touch-icon.png\">";
+  html << "<link rel=\"apple-touch-icon\" sizes=\"180x180\" "
+          "href=\"/apple-touch-icon.png\">";
+  html << "<link rel=\"manifest\" href=\"/manifest.webmanifest\">";
+
   html << "</head>";
   html << "<body class=\"h-100\">";
   return html;

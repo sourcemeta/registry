@@ -22,6 +22,15 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
     ${BOOTSTRAP_SCSS_FILES})
 include(GNUInstallDirs)
 install(FILES
+  # Icons
+  "${ENTERPRISE_SOURCE_DIR}/assets/favicon.ico"
+  "${ENTERPRISE_SOURCE_DIR}/assets/icon_192x192.png"
+  "${ENTERPRISE_SOURCE_DIR}/assets/icon_512x512.png"
+  "${ENTERPRISE_SOURCE_DIR}/assets/icon.svg"
+  "${ENTERPRISE_SOURCE_DIR}/assets/apple-touch-icon.png"
+  "${ENTERPRISE_SOURCE_DIR}/assets/manifest.webmanifest"
+
+  # Styles
   "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff2"
