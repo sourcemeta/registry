@@ -1,4 +1,5 @@
 target_compile_definitions(schema_registry_server PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
+
 cmake_path(GET CMAKE_CURRENT_LIST_FILE PARENT_PATH ENTERPRISE_SOURCE_DIR)
 target_sources(schema_registry_server PRIVATE 
   "${ENTERPRISE_SOURCE_DIR}/enterprise_server.h"
@@ -6,6 +7,9 @@ target_sources(schema_registry_server PRIVATE
   "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
 target_include_directories(schema_registry_server PRIVATE "${ENTERPRISE_SOURCE_DIR}")
 
+# Static assets
+target_compile_definitions(schema_registry_server 
+  PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE_STATIC="${REGISTRY_PREFIX}/share/sourcemeta/registry")
 include(BootstrapFiles)
 find_program(SASSC_BIN NAMES sassc REQUIRED)
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
@@ -16,7 +20,6 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
     "${ENTERPRISE_SOURCE_DIR}/style.scss"
     "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/bootstrap-icons.scss"
     ${BOOTSTRAP_SCSS_FILES})
-
 include(GNUInstallDirs)
 install(FILES
   "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
