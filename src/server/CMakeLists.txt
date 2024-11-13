@@ -9,6 +9,11 @@ target_link_libraries(schema_registry_server PRIVATE sourcemeta::hydra::http)
 target_link_libraries(schema_registry_server PRIVATE sourcemeta::hydra::httpserver)
 target_link_libraries(schema_registry_server PRIVATE sourcemeta::hydra::crypto)
 
+if(REGISTRY_ENTERPRISE)
+  target_compile_definitions(schema_registry_server 
+    PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
+endif()
+
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(schema_registry_server PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 

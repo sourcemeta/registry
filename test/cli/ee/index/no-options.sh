@@ -7,26 +7,13 @@ TMP="$(mktemp -d)"
 clean() { rm -rf "$TMP"; }
 trap clean EXIT
 
-cat << EOF > "$TMP/configuration.json"
-{
-  "url": "http://localhost:8000",
-  "port": 8000,
-  "collections": {
-    "example/schemas": {
-      "base": "https://example.com/schemas",
-      "path": "./schemas/example/folder"
-    }
-  }
-}
-EOF
-
-"$1" "$TMP/configuration.json" > "$TMP/output.txt" && CODE="$?" || CODE="$?"
+"$1" > "$TMP/output.txt" && CODE="$?" || CODE="$?"
 test "$CODE" = "1" || exit 1
 
 VERSION="$(grep '^project' < CMakeLists.txt | head -n 1 | cut -d ' ' -f 3)"
 
 cat << EOF > "$TMP/expected.txt"
-Sourcemeta Registry v$VERSION Community Edition
+Sourcemeta Registry v$VERSION Enterprise Edition
 Usage: sourcemeta-registry-index <configuration.json> <path/to/output/directory>
 EOF
 

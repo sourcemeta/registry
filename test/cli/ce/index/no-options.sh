@@ -13,7 +13,7 @@ test "$CODE" = "1" || exit 1
 VERSION="$(grep '^project' < CMakeLists.txt | head -n 1 | cut -d ' ' -f 3)"
 
 cat << EOF > "$TMP/expected.txt"
-Sourcemeta Registry v$VERSION
+Sourcemeta Registry v$VERSION Community Edition
 Usage: sourcemeta-registry-index <configuration.json> <path/to/output/directory>
 EOF
 
