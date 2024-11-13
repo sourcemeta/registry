@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500px" height="500px" viewBox="0 0 500 500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon" transform="translate(0.500000, 0.500000)">
+            <rect id="Rectangle" stroke="#000000" fill="#212529" fill-rule="nonzero" x="0" y="0" width="499" height="499" rx="19"></rect>
+            <g id="Combined-Shape" transform="translate(96.630931, 205.353955)">
+                <g id="path-1-link" transform="translate(-0.130931, 0.146045)" fill="#000000" fill-rule="nonzero">
+                    <polygon id="path-1" points="259.258893 0 291.097621 19.9051055 292 21.350307 33.4456709 183 -3.35823903e-14 162.090004"></polygon>
+                </g>
+                <g id="path-1-link" transform="translate(-0.130931, 0.146045)" fill="#FFFFFF">
+                    <polygon id="path-1" points="259.258893 0 291.097621 19.9051055 292 21.350307 33.4456709 183 -3.35823903e-14 162.090004"></polygon>
+                </g>
+            </g>
+            <g id="Combined-Shape-Copy-5" transform="translate(257.768990, 343.875559) scale(-1, 1) translate(-257.768990, -343.875559) translate(111.970237, 252.551820)">
+                <g id="path-3-link" transform="translate(0.067744, -0.051820)" fill="#000000" fill-rule="nonzero">
+                    <polygon id="path-3" points="259.258893 0 291.097621 19.9051055 292 21.350307 33.4456709 183 -3.35823903e-14 162.090004"></polygon>
+                </g>
+                <g id="path-3-link" transform="translate(0.067744, -0.051820)" fill="#FFFFFF">
+                    <polygon id="path-3" points="259.258893 0 291.097621 19.9051055 292 21.350307 33.4456709 183 -3.35823903e-14 162.090004"></polygon>
+                </g>
+            </g>
+            <g id="Combined-Shape-Copy-4" transform="translate(257.599668, 202.680786) scale(-1, 1) translate(-257.599668, -202.680786) translate(111.632772, 111.397164)">
+                <g id="path-5-link" transform="translate(0.066564, 0.102836)" fill="#000000" fill-rule="nonzero">
+                    <polygon id="path-5" points="33.4059639 0 292 161.934106 291.69703 162.416714 258.826883 183 0 20.9191857"></polygon>
+                </g>
+                <g id="path-5-link" transform="translate(0.066564, 0.102836)" fill="#FFFFFF">
+                    <polygon id="path-5" points="33.4059639 0 292 161.934106 291.69703 162.416714 258.826883 183 0 20.9191857"></polygon>
+                </g>
+            </g>
+            <g id="Combined-Shape" transform="translate(96.294646, 64.199299)">
+                <g id="path-7-link" transform="translate(0.205354, -0.699299)" fill="#000000" fill-rule="nonzero">
+                    <polygon id="path-7" points="33.4059639 0 292 161.934106 291.69703 162.416714 258.826883 183 0 20.9191857"></polygon>
+                </g>
+                <g id="path-7-link" transform="translate(0.205354, -0.699299)" fill="#FFFFFF">
+                    <polygon id="path-7" points="33.4059639 0 292 161.934106 291.69703 162.416714 258.826883 183 0 20.9191857"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
