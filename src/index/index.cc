@@ -19,6 +19,10 @@
 #include <string_view> // std::string_view
 #include <vector>      // std::vector
 
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+#include "enterprise_index.h"
+#endif
+
 static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
                   const std::filesystem::path &base,
                   const std::filesystem::path &output) -> int {
@@ -148,7 +152,17 @@ static auto index_main(const std::string_view &program,
   sourcemeta::jsontoolkit::prettify(configuration_copy, stream);
   stream << "\n";
 
-  return index(configuration, configuration_path.parent_path(), output);
+  const auto code{
+      index(configuration, configuration_path.parent_path(), output)};
+
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+  if (code == EXIT_SUCCESS) {
+    return sourcemeta::registry::enterprise::attach(
+        configuration, configuration_path.parent_path(), output);
+  }
+#endif
+
+  return code;
 }
 
 auto main(int argc, char *argv[]) noexcept -> int {
