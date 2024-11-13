@@ -9,8 +9,7 @@ target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::evaluator)
 
 if(REGISTRY_ENTERPRISE)
-  target_compile_definitions(schema_registry_index 
-    PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
+  include(../enterprise/index.cmake)
 endif()
 
 file(READ "${PROJECT_SOURCE_DIR}/schemas/configuration.json" SCHEMA_CONFIGURATION)

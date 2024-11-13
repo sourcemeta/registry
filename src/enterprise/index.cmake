@@ -1,0 +1,1 @@
+target_compile_definitions(schema_registry_index PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
