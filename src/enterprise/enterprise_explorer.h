@@ -45,12 +45,26 @@ explorer_start(const sourcemeta::hydra::http::ServerRequest &request,
 
   html << "</head>";
   html << "<body class=\"h-100\">";
+
+  html << "<nav class=\"navbar navbar-expand border-bottom bg-body p-3\">";
+  html << "<div class=\"container-fluid\">";
+  html << "<a class=\"navbar-brand\" href=\"" << server_base_url << "\">";
+  html << "<img src=\"/icon.svg\" alt=\"" << title
+       << "\" height=\"30\" width=\"30\" class=\"me-2\">";
+  html << "<span class=\"align-middle fw-bold\">" << title << "</span>";
+  html << "<span class=\"align-middle fw-lighter\"> Schemas</span>";
+  html << "</a>";
+  html << "</div>";
+  html << "</nav>";
+
+  html << "<div class=\"container-fluid p-4\">";
   return html;
 }
 
 static auto explorer_end(std::ostringstream &html,
                          sourcemeta::hydra::http::ServerResponse &response,
                          const sourcemeta::hydra::http::Status code) -> void {
+  html << "</div>";
   html << "</body>";
   html << "</html>";
 
@@ -71,7 +85,7 @@ static auto file_manager(std::ostringstream &html,
 
   html << "<thead>";
   html << "<tr>";
-  html << "<th scope=\"col\">Kind</th>";
+  html << "<th scope=\"col\" style=\"width: 1%\">Kind</th>";
   html << "<th scope=\"col\">Name</th>";
   html << "<th scope=\"col\">Title</th>";
   html << "<th scope=\"col\">Description</th>";
@@ -89,11 +103,19 @@ static auto file_manager(std::ostringstream &html,
 
     assert(entry.defines("type"));
     assert(entry.at("type").is_string());
-    html << "<td>" << entry.at("type").to_string() << "</td>";
+    html << "<td>";
+    if (entry.at("type").to_string() == "directory") {
+      html << "<i class=\"bi bi-folder-fill\"></i>";
+    } else {
+      html << "<i class=\"bi bi-braces\"></i>";
+    }
+    html << "</td>";
 
     assert(entry.defines("name"));
     assert(entry.at("name").is_string());
-    html << "<td>" << entry.at("name").to_string() << "</td>";
+    html << "<td class=\"font-monospace text-nowrap\">";
+    html << entry.at("name").to_string();
+    html << "</td>";
 
     assert(entry.defines("title"));
     if (entry.at("title").is_string()) {
@@ -126,10 +148,8 @@ auto explore_index(const std::string &title, const std::string &description,
                    sourcemeta::hydra::http::ServerResponse &response) -> void {
   std::ostringstream html{
       explorer_start(request, server_base_url, title, description)};
-  html << "<div class=\"container\">";
   file_manager(html, sourcemeta::registry::path_join(schema_base_directory,
                                                      request.path()));
-  html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
 
@@ -140,9 +160,7 @@ auto explore_not_found(const std::string &server_base_url,
   std::ostringstream html{
       explorer_start(request, server_base_url, "Not Found",
                      "What you are looking for is not here")};
-  html << "<div class=\"container\">";
   html << "Not Found";
-  html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::NOT_FOUND);
 }
 
