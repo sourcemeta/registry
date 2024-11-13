@@ -3,3 +3,5 @@ noa https://github.com/sourcemeta/noa caad2e1ceedf9fd1a18686a6a6d1e2b9757ead75
 jsontoolkit https://github.com/sourcemeta/jsontoolkit c6d056cc608bf98705ad7700c8c891e1cf6865a0
 blaze https://github.com/sourcemeta/blaze 970e8aef78f0140551dde12e0784b30595580f49
 hydra https://github.com/sourcemeta/hydra 295508f6d264c250a748ec7f80713de3b0897c11
+bootstrap https://github.com/twbs/bootstrap v5.3.3
+bootstrap-icons https://github.com/twbs/icons v1.11.3
