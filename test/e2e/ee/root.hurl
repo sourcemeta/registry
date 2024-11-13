@@ -1,10 +1,3 @@
 GET {{base}}
-HTTP 404
-Content-Type: application/json
-[Captures]
-current_request_id: header "X-Request-id"
-[Asserts]  
-jsonpath "$.code" == 404
-jsonpath "$.error" == "not-found"
-jsonpath "$.message" == "There is no schema at this URL"
-jsonpath "$.request" == "{{current_request_id}}"
+HTTP 200
+Content-Type: text/html
