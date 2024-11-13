@@ -149,6 +149,21 @@ static auto index_main(const std::string_view &program,
   // Save the configuration file too
   auto configuration_copy = configuration;
   configuration_copy.erase("collections");
+
+  // TODO: Perform these with a Blaze helper function that applies schema
+  // "default"s to an instance
+
+  if (!configuration_copy.defines("title")) {
+    configuration_copy.assign("title",
+                              sourcemeta::jsontoolkit::JSON{"Sourcemeta"});
+  }
+
+  if (!configuration_copy.defines("description")) {
+    configuration_copy.assign("description",
+                              sourcemeta::jsontoolkit::JSON{
+                                  "The next-generation JSON Schema Registry"});
+  }
+
   std::ofstream stream{output / "configuration.json"};
   sourcemeta::jsontoolkit::prettify(configuration_copy, stream);
   stream << "\n";

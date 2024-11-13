@@ -119,15 +119,14 @@ static auto file_manager(std::ostringstream &html,
 
 namespace sourcemeta::registry::enterprise {
 
-auto explore_index(const std::string &server_base_url,
+auto explore_index(const std::string &title, const std::string &description,
+                   const std::string &server_base_url,
                    const std::filesystem::path &schema_base_directory,
                    const sourcemeta::hydra::http::ServerRequest &request,
                    sourcemeta::hydra::http::ServerResponse &response) -> void {
   std::ostringstream html{
-      explorer_start(request, server_base_url, "Sourcemeta Schemas",
-                     "The Sourcemeta JSON Schema registry")};
+      explorer_start(request, server_base_url, title, description)};
   html << "<div class=\"container\">";
-  html << "<h1>Sourcemeta Schemas</h1>";
   file_manager(html, sourcemeta::registry::path_join(schema_base_directory,
                                                      request.path()));
   html << "</div>";
