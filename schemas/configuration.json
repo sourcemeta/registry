@@ -8,6 +8,12 @@
     "collections"
   ],
   "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
     "collections": {
       "type": "object",
       "additionalProperties": {

@@ -14,8 +14,12 @@ auto on_index(const sourcemeta::hydra::http::ServerLogger &,
               const sourcemeta::hydra::http::ServerRequest &request,
               sourcemeta::hydra::http::ServerResponse &response) -> void {
   static const auto SERVER_BASE_URL{configuration().at("url").to_string()};
+  static const auto SERVER_TITLE{configuration().at("title").to_string()};
+  static const auto SERVER_DESCRIPTION{
+      configuration().at("description").to_string()};
   static const auto SCHEMAS_BASE_DIRECTORY{*(__global_data) / "schemas"};
-  explore_index(SERVER_BASE_URL, SCHEMAS_BASE_DIRECTORY, request, response);
+  explore_index(SERVER_TITLE, SERVER_DESCRIPTION, SERVER_BASE_URL,
+                SCHEMAS_BASE_DIRECTORY, request, response);
 }
 
 auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
