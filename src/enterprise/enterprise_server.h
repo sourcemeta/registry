@@ -11,9 +11,10 @@
 namespace sourcemeta::registry::enterprise {
 
 auto on_index(const sourcemeta::hydra::http::ServerLogger &,
-              const sourcemeta::hydra::http::ServerRequest &,
+              const sourcemeta::hydra::http::ServerRequest &request,
               sourcemeta::hydra::http::ServerResponse &response) -> void {
-  explore_index(response);
+  static const auto SERVER_BASE_URL{configuration().at("url").to_string()};
+  explore_index(SERVER_BASE_URL, request, response);
 }
 
 auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
@@ -35,7 +36,8 @@ auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
     return;
   }
 
-  explore_not_found(response);
+  static const auto SERVER_BASE_URL{configuration().at("url").to_string()};
+  explore_not_found(SERVER_BASE_URL, request, response);
 }
 
 auto attach(sourcemeta::hydra::http::Server &server) -> void {
