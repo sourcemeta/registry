@@ -1,0 +1,17 @@
+./configuration.json
+./schemas
+./schemas/.meta.json
+./schemas/doc
+./schemas/doc/.meta.json
+./schemas/doc/string-1.json
+./schemas/example
+./schemas/example/.meta.json
+./schemas/example/bundling
+./schemas/example/bundling/.meta.json
+./schemas/example/bundling/single.json
+./schemas/example/schemas
+./schemas/example/schemas/.meta.json
+./schemas/example/schemas/string.json
+./schemas/example/v2.0
+./schemas/example/v2.0/.meta.json
+./schemas/example/v2.0/schema.json
