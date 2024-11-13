@@ -78,7 +78,8 @@ auto main(int argc, char *argv[]) noexcept -> int {
       return EXIT_FAILURE;
     }
 
-    __global_data = std::make_unique<std::filesystem::path>(argv[1]);
+    __global_data = std::make_unique<std::filesystem::path>(
+        std::filesystem::canonical(argv[1]));
 
     sourcemeta::hydra::http::Server server;
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE

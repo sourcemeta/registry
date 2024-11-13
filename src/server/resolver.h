@@ -13,17 +13,17 @@
 #include <string>      // std::string
 #include <string_view> // std::string_view
 
-static auto path_join(const std::filesystem::path &base,
-                      const std::filesystem::path &path)
-    -> std::filesystem::path {
+namespace sourcemeta::registry {
+
+// TODO: Turn this into a "safe" path join that prevents going out of the base
+auto path_join(const std::filesystem::path &base,
+               const std::filesystem::path &path) -> std::filesystem::path {
   if (path.is_absolute()) {
     return (base / path.string().substr(1)).lexically_normal();
   }
 
   return (base / path).lexically_normal();
 }
-
-namespace sourcemeta::registry {
 
 auto request_path_to_schema_uri(const std::string &server_base_url,
                                 const std::string &request_path)
