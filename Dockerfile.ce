@@ -24,7 +24,7 @@ RUN cmake --build /build --config Release --parallel 2
 RUN cmake --install ./build --prefix /usr --verbose \
   --config Release --component sourcemeta_registry
 
-RUN make -C /source test PREFIX=/usr
+RUN make -C /source test PREFIX=/usr ENTERPRISE=OFF
 
 FROM debian:bookworm-slim
 RUN apt-get --yes update && apt-get install --yes --no-install-recommends \
