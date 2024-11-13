@@ -63,7 +63,10 @@ auto resolver(const sourcemeta::jsontoolkit::URI &server_base_url,
   // TODO: Prevent a malicious client from requesting a JSON file outside
   // the schema directory by using relative paths
   const auto schema_path{path_join(schema_base_directory, uri.path().value())};
-  if (!std::filesystem::exists(schema_path)) {
+  if (!std::filesystem::exists(schema_path) ||
+      // Dot files are not permitted to be schemas, as we use them
+      // for internal purposes
+      schema_path.stem().string().starts_with('.')) {
     return std::nullopt;
   }
 

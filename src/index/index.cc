@@ -50,7 +50,8 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
     std::cerr << "Base URI: " << collection_base_uri.recompose() << "\n";
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection_path}) {
-      if (!entry.is_regular_file() || entry.path().extension() != ".json") {
+      if (!entry.is_regular_file() || entry.path().extension() != ".json" ||
+          entry.path().stem().string().starts_with(".")) {
         continue;
       }
 

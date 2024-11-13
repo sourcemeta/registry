@@ -1,0 +1,7 @@
+services:
+  sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile.ee
+    ports:
+      - 8000:8000

@@ -73,8 +73,13 @@ sandbox: compile
 
 .PHONY: docker
 docker:
+ifeq ($(ENTERPRISE), ON)
+	$(DOCKER) build --tag registry . --file Dockerfile.ee --progress plain
+	$(DOCKER) compose --file test/sandbox/compose-ee.yaml up --build
+else
 	$(DOCKER) build --tag registry . --file Dockerfile.ce --progress plain
-	$(DOCKER) compose --file test/sandbox/compose.yaml up --build
+	$(DOCKER) compose --file test/sandbox/compose-ce.yaml up --build
+endif
 
 .PHONY: clean
 clean: 

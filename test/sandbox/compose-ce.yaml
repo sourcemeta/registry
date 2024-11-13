@@ -2,5 +2,6 @@ services:
   sandbox:
     build:
       context: .
+      dockerfile: Dockerfile.ce
     ports:
       - 8000:8000
