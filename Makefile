@@ -7,11 +7,17 @@ DOCKER ?= docker
 # Options
 INDEX ?= ON
 SERVER ?= ON
-ENTERPRISE ?= ON
+EDITION ?= ee
 PRESET ?= Debug
 OUTPUT ?= ./build
 PREFIX ?= $(OUTPUT)/dist
 SANDBOX ?= ./test/sandbox
+
+ifeq ($(EDITION), ee)
+ENTERPRISE := ON
+else
+ENTERPRISE := OFF
+endif
 
 .PHONY: all
 all: configure compile test-schemas test 
@@ -60,26 +66,22 @@ endif
 test-schemas: 
 	$(JSONSCHEMA) test test/schemas --resolve schemas
 
-test-e2e-%: 
+.PHONY: test-e2e
+test-e2e: 
 	$(HURL) --test \
 		--variable base=$(shell jq --raw-output '.url' < $(SANDBOX)/configuration.json) \
-		test/e2e/$(subst test-e2e-,,$@)/*.hurl
+		test/e2e/common/*.hurl test/e2e/$(EDITION)/*.hurl
 
 .PHONY: sandbox
 sandbox: compile
 	$(PREFIX)/bin/sourcemeta-registry-index $(SANDBOX)/configuration.json $(OUTPUT)/sandbox
-	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox $(SANDBOX)/manifest.txt
+	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox $(SANDBOX)/manifest-$(EDITION).txt
 	$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/sandbox
 
 .PHONY: docker
 docker:
-ifeq ($(ENTERPRISE), ON)
-	$(DOCKER) build --tag registry . --file Dockerfile.ee --progress plain
-	$(DOCKER) compose --file test/sandbox/compose-ee.yaml up --build
-else
-	$(DOCKER) build --tag registry . --file Dockerfile.ce --progress plain
-	$(DOCKER) compose --file test/sandbox/compose-ce.yaml up --build
-endif
+	$(DOCKER) build --tag registry-$(EDITION) . --file Dockerfile.$(EDITION) --progress plain
+	$(DOCKER) compose --file test/sandbox/compose-$(EDITION).yaml up --build
 
 .PHONY: clean
 clean: 
