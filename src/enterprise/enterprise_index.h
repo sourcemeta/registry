@@ -32,7 +32,8 @@ auto generate_toc(const std::filesystem::path &directory) -> void {
       entry_json.assign("title", sourcemeta::jsontoolkit::JSON{nullptr});
       entry_json.assign("description", sourcemeta::jsontoolkit::JSON{nullptr});
       entries.push_back(std::move(entry_json));
-    } else if (entry.path().extension() == ".json") {
+    } else if (entry.path().extension() == ".json" &&
+               !entry.path().stem().string().starts_with(".")) {
       const auto schema{sourcemeta::jsontoolkit::from_file(entry.path())};
       entry_json.assign("type", sourcemeta::jsontoolkit::JSON{"schema"});
       if (schema.is_object() && schema.defines("title") &&

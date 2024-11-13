@@ -6,6 +6,7 @@
 
 #include "enterprise_explorer.h"
 
+#include <cassert> // assert
 #include <sstream> // std::ostringstream
 
 static auto
@@ -60,16 +61,75 @@ static auto explorer_end(std::ostringstream &html,
   response.end(html.str());
 }
 
+static auto file_manager(std::ostringstream &html,
+                         const std::filesystem::path &directory) -> void {
+  const auto meta_path{directory / ".meta.json"};
+  assert(std::filesystem::exists(meta_path));
+  const auto meta{sourcemeta::jsontoolkit::from_file(meta_path)};
+  html << "<table class=\"table table-bordered border-light-subtle "
+          "table-light\">";
+
+  html << "<thead>";
+  html << "<tr>";
+  html << "<th scope=\"col\">Kind</th>";
+  html << "<th scope=\"col\">Name</th>";
+  html << "<th scope=\"col\">Title</th>";
+  html << "<th scope=\"col\">Description</th>";
+  html << "</tr>";
+  html << "</thead>";
+  html << "<tbody>";
+
+  assert(meta.is_object());
+  assert(meta.defines("entries"));
+  assert(meta.at("entries").is_array());
+
+  for (const auto &entry : meta.at("entries").as_array()) {
+    assert(entry.is_object());
+    html << "<tr>";
+
+    assert(entry.defines("type"));
+    assert(entry.at("type").is_string());
+    html << "<td>" << entry.at("type").to_string() << "</td>";
+
+    assert(entry.defines("name"));
+    assert(entry.at("name").is_string());
+    html << "<td>" << entry.at("name").to_string() << "</td>";
+
+    assert(entry.defines("title"));
+    if (entry.at("title").is_string()) {
+      html << "<td>" << entry.at("title").to_string() << "</td>";
+    } else {
+      html << "<td>-</td>";
+    }
+
+    assert(entry.defines("description"));
+    if (entry.at("description").is_string()) {
+      html << "<td>" << entry.at("description").to_string() << "</td>";
+    } else {
+      html << "<td>-</td>";
+    }
+
+    html << "</tr>";
+  }
+
+  html << "</tbody>";
+
+  html << "</table>";
+}
+
 namespace sourcemeta::registry::enterprise {
 
 auto explore_index(const std::string &server_base_url,
+                   const std::filesystem::path &schema_base_directory,
                    const sourcemeta::hydra::http::ServerRequest &request,
                    sourcemeta::hydra::http::ServerResponse &response) -> void {
   std::ostringstream html{
       explorer_start(request, server_base_url, "Sourcemeta Schemas",
                      "The Sourcemeta JSON Schema registry")};
   html << "<div class=\"container\">";
-  html << "Sourcemeta Schemas";
+  html << "<h1>Sourcemeta Schemas</h1>";
+  file_manager(html, sourcemeta::registry::path_join(schema_base_directory,
+                                                     request.path()));
   html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
