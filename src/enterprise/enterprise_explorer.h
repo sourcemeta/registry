@@ -47,8 +47,8 @@ explorer_start(const sourcemeta::hydra::http::ServerRequest &request,
   html << "</head>";
   html << "<body class=\"h-100\">";
 
-  html << "<nav class=\"navbar navbar-expand border-bottom bg-body p-3\">";
-  html << "<div class=\"container-fluid\">";
+  html << "<nav class=\"navbar navbar-expand border-bottom bg-body\">";
+  html << "<div class=\"container-fluid px-4 py-2\">";
   html << "<a class=\"navbar-brand\" href=\"" << server_base_url << "\">";
   html << "<img src=\"/icon.svg\" alt=\"" << site_name
        << "\" height=\"30\" width=\"30\" class=\"me-2\">";
