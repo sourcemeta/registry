@@ -27,4 +27,5 @@ endif()
 
 if(PROJECT_IS_TOP_LEVEL AND REGISTRY_DEVELOPMENT)
   noa_target_clang_format(SOURCES src/*.h src/*.cc)
+  noa_target_shellcheck(SOURCES test/*.sh)
 endif()
