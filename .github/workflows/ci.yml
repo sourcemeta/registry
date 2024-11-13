@@ -33,14 +33,13 @@ jobs:
           HURL_VERSION: 5.0.1
 
       # Linting
-      - run: make configure PRESET=Release INDEX=OFF SERVER=OFF
-      - run: make lint PRESET=Release
+      - run: make configure PRESET=Release INDEX=OFF SERVER=OFF EDITION=${{ matrix.edition.suffix }}
+      - run: make lint PRESET=Release EDITION=${{ matrix.edition.suffix }}
 
       # Testing
-      - run: make test-schemas PRESET=Release
+      - run: make test-schemas PRESET=Release EDITION=${{ matrix.edition.suffix }}
       - run: docker build --tag registry-${{ matrix.edition.suffix }} . --file Dockerfile.${{ matrix.edition.suffix }} --progress plain
       - run: docker compose --file test/sandbox/compose-${{ matrix.edition.suffix }}.yaml build
       - run: docker compose --file test/sandbox/compose-${{ matrix.edition.suffix }}.yaml up --detach --wait
-      - run: make test-e2e-common PRESET=Release
-      - run: make test-e2e-${{ matrix.edition.suffix }} PRESET=Release
+      - run: make test-e2e PRESET=Release EDITION=${{ matrix.edition.suffix }}
       - run: docker compose --file test/sandbox/compose-${{ matrix.edition.suffix }}.yaml down
