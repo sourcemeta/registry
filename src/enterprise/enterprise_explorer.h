@@ -42,6 +42,13 @@ auto explore_index(sourcemeta::hydra::http::ServerResponse &response) -> void {
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
 
+auto explore_not_found(sourcemeta::hydra::http::ServerResponse &response)
+    -> void {
+  std::ostringstream html{explorer_start("Not Found")};
+  html << "Not Found";
+  explorer_end(html, response, sourcemeta::hydra::http::Status::NOT_FOUND);
+}
+
 } // namespace sourcemeta::registry::enterprise
 
 #endif
