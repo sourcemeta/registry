@@ -10,8 +10,7 @@ target_link_libraries(schema_registry_server PRIVATE sourcemeta::hydra::httpserv
 target_link_libraries(schema_registry_server PRIVATE sourcemeta::hydra::crypto)
 
 if(REGISTRY_ENTERPRISE)
-  target_compile_definitions(schema_registry_server 
-    PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
+  include(../enterprise/server.cmake)
 endif()
 
 configure_file(configure.h.in configure.h @ONLY)
