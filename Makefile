@@ -73,7 +73,7 @@ sandbox: compile
 .PHONY: docker
 docker:
 	$(DOCKER) build --tag registry . --file Dockerfile.ce --progress plain
-	$(DOCKER) compose up --build
+	$(DOCKER) compose --file test/sandbox/compose.yaml up --build
 
 .PHONY: clean
 clean: 
