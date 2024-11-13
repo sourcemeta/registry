@@ -1,4 +1,5 @@
 brew "cmake"
+cask "shellcheck"
 brew "hurl"
 brew "jq"
 cask "docker"
