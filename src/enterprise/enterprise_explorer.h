@@ -16,6 +16,7 @@ static auto explorer_start(const std::string &title) -> std::ostringstream {
   html << "<title>";
   html << title;
   html << "</title>";
+  html << "<link rel=\"stylesheet\" href=\"/style.min.css\">";
   html << "</head>";
   html << "<body>";
   return html;
@@ -38,14 +39,18 @@ namespace sourcemeta::registry::enterprise {
 
 auto explore_index(sourcemeta::hydra::http::ServerResponse &response) -> void {
   std::ostringstream html{explorer_start("Sourcemeta Schemas")};
+  html << "<div class=\"container\">";
   html << "Sourcemeta Schemas";
+  html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
 
 auto explore_not_found(sourcemeta::hydra::http::ServerResponse &response)
     -> void {
   std::ostringstream html{explorer_start("Not Found")};
+  html << "<div class=\"container\">";
   html << "Not Found";
+  html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::NOT_FOUND);
 }
 
