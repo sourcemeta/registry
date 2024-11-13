@@ -27,8 +27,6 @@ RUN cmake --install ./build --prefix /usr --verbose \
 RUN make -C /source test PREFIX=/usr ENTERPRISE=OFF
 
 FROM debian:bookworm-slim
-RUN apt-get --yes update && apt-get install --yes --no-install-recommends \
-  ca-certificates && apt-get clean && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /usr/bin/sourcemeta-registry-index \
   /usr/bin/sourcemeta-registry-index
 COPY --from=builder /usr/bin/sourcemeta-registry-server \
