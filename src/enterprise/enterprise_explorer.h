@@ -115,22 +115,34 @@ static auto file_manager(std::ostringstream &html,
     assert(entry.defines("name"));
     assert(entry.at("name").is_string());
     html << "<td class=\"font-monospace text-nowrap\">";
+    assert(entry.defines("url"));
+    assert(entry.at("url").is_string());
+    html << "<a href=\"" << entry.at("url").to_string() << "\">";
     html << entry.at("name").to_string();
+    html << "</a>";
     html << "</td>";
 
     assert(entry.defines("title"));
+    html << "<td>";
+    html << "<small>";
     if (entry.at("title").is_string()) {
-      html << "<td>" << entry.at("title").to_string() << "</td>";
+      html << entry.at("title").to_string();
     } else {
-      html << "<td>-</td>";
+      html << "-";
     }
+    html << "</small>";
+    html << "</td>";
 
     assert(entry.defines("description"));
+    html << "<td>";
+    html << "<small>";
     if (entry.at("description").is_string()) {
-      html << "<td>" << entry.at("description").to_string() << "</td>";
+      html << entry.at("description").to_string();
     } else {
-      html << "<td>-</td>";
+      html << "-";
     }
+    html << "</small>";
+    html << "</td>";
 
     html << "</tr>";
   }

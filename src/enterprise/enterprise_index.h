@@ -19,18 +19,24 @@ static auto trim(const std::string &input) -> std::string {
 
 namespace sourcemeta::registry::enterprise {
 
-auto generate_toc(const std::filesystem::path &directory) -> void {
+auto generate_toc(const std::filesystem::path &base,
+                  const std::filesystem::path &directory) -> void {
+  assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::jsontoolkit::JSON::make_array()};
 
   for (const auto &entry : std::filesystem::directory_iterator{directory}) {
     auto entry_json{sourcemeta::jsontoolkit::JSON::make_object()};
     entry_json.assign("name",
-                      sourcemeta::jsontoolkit::JSON{entry.path().stem()});
+                      sourcemeta::jsontoolkit::JSON{entry.path().filename()});
     if (entry.is_directory()) {
       entry_json.assign("type", sourcemeta::jsontoolkit::JSON{"directory"});
       // TODO: Read these from "pages" in the configuration
       entry_json.assign("title", sourcemeta::jsontoolkit::JSON{nullptr});
       entry_json.assign("description", sourcemeta::jsontoolkit::JSON{nullptr});
+      entry_json.assign(
+          "url", sourcemeta::jsontoolkit::JSON{
+                     entry.path().string().substr(base.string().size())});
+
       entries.push_back(std::move(entry_json));
     } else if (entry.path().extension() == ".json" &&
                !entry.path().stem().string().starts_with(".")) {
@@ -57,6 +63,10 @@ auto generate_toc(const std::filesystem::path &directory) -> void {
         entry_json.assign("description",
                           sourcemeta::jsontoolkit::JSON{nullptr});
       }
+
+      entry_json.assign(
+          "url", sourcemeta::jsontoolkit::JSON{
+                     entry.path().string().substr(base.string().size())});
 
       entries.push_back(std::move(entry_json));
     }
@@ -87,7 +97,8 @@ auto attach(const sourcemeta::jsontoolkit::JSON &,
             const std::filesystem::path &, const std::filesystem::path &output)
     -> int {
   std::cerr << "-- Indexing directory: " << output.string() << "\n";
-  generate_toc(output / "schemas");
+  const auto base{std::filesystem::canonical(output / "schemas")};
+  generate_toc(base, base);
 
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{output / "schemas"}) {
@@ -96,7 +107,7 @@ auto attach(const sourcemeta::jsontoolkit::JSON &,
     }
 
     std::cerr << "-- Processing: " << entry.path().string() << "\n";
-    generate_toc(entry.path());
+    generate_toc(base, std::filesystem::canonical(entry.path()));
   }
 
   return EXIT_SUCCESS;
