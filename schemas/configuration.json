@@ -24,6 +24,12 @@
           "path"
         ],
         "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
           "base": {
             "type": "string",
             "format": "url"
