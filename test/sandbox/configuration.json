@@ -19,6 +19,8 @@
       "path": "./schemas/example/bundling"
     },
     "doc": {
+      "title": "A sample schema folder",
+      "description": "For testing purposes",
       "base": "https://example.com/doc",
       "path": "./schemas/doc"
     }

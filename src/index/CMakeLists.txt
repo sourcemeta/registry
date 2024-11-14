@@ -1,4 +1,5 @@
-add_executable(schema_registry_index index.cc configure.h.in)
+add_executable(schema_registry_index index.cc configure.h.in 
+  "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 
 noa_add_default_options(PRIVATE schema_registry_index)
 set_target_properties(schema_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
