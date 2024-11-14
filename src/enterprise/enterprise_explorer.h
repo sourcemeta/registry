@@ -58,14 +58,12 @@ explorer_start(const sourcemeta::hydra::http::ServerRequest &request,
   html << "</div>";
   html << "</nav>";
 
-  html << "<div class=\"container-fluid p-4\">";
   return html;
 }
 
 static auto explorer_end(std::ostringstream &html,
                          sourcemeta::hydra::http::ServerResponse &response,
                          const sourcemeta::hydra::http::Status code) -> void {
-  html << "</div>";
   html << "</body>";
   html << "</html>";
 
@@ -162,8 +160,17 @@ auto explore_index(const std::string &site_name, const std::string &title,
                    sourcemeta::hydra::http::ServerResponse &response) -> void {
   std::ostringstream html{
       explorer_start(request, server_base_url, site_name, title, description)};
+  html << "<div class=\"container-fluid px-4 py-2 bg-light bg-gradient "
+          "border-bottom\">";
+  html << "<p class=\"mb-0 text-secondary fw-light\">";
+  html << description << "\n";
+  html << "</p>";
+  html << "</div>";
+
+  html << "<div class=\"container-fluid p-4\">";
   file_manager(html, sourcemeta::registry::path_join(schema_base_directory,
                                                      request.path()));
+  html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
 
@@ -175,7 +182,9 @@ auto explore_directory(const std::string &site_name,
     -> void {
   std::ostringstream html{explorer_start(request, server_base_url, site_name,
                                          request.path(), request.path())};
+  html << "<div class=\"container-fluid p-4\">";
   file_manager(html, directory);
+  html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
 
@@ -187,7 +196,9 @@ auto explore_not_found(const std::string &site_name,
   std::ostringstream html{
       explorer_start(request, server_base_url, site_name, "Not Found",
                      "What you are looking for is not here")};
+  html << "<div class=\"container-fluid p-4\">";
   html << "Not Found";
+  html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::NOT_FOUND);
 }
 
