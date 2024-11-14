@@ -7,7 +7,9 @@
 
 #include "configure.h"
 
+#include <algorithm>   // std::transform
 #include <cassert>     // assert
+#include <cctype>      // std::tolower
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>   // std::exception
 #include <filesystem>  // std::filesystem
@@ -76,8 +78,20 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
         return EXIT_FAILURE;
       }
 
+      auto schema_directory{name};
+      std::transform(schema_directory.begin(), schema_directory.end(),
+                     schema_directory.begin(), [](const auto character) {
+                       return std::tolower(character);
+                     });
+
+      auto schema_basename{identifier_uri.recompose()};
+      std::transform(schema_basename.begin(), schema_basename.end(),
+                     schema_basename.begin(), [](const auto character) {
+                       return std::tolower(character);
+                     });
+
       const auto schema_output{std::filesystem::weakly_canonical(
-          output / "schemas" / name / identifier_uri.recompose())};
+          output / "schemas" / schema_directory / schema_basename)};
       std::cerr << "Schema output: " << schema_output.string() << "\n";
 
       // Note we copy as-is and we rebase IDs at runtime to correctly

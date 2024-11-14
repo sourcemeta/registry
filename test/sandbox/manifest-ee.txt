@@ -14,6 +14,7 @@
 ./schemas/example/extension/with.schema.json
 ./schemas/example/schemas
 ./schemas/example/schemas/.meta.json
+./schemas/example/schemas/camelcase.json
 ./schemas/example/schemas/string.json
 ./schemas/example/v2.0
 ./schemas/example/v2.0/.meta.json
