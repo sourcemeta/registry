@@ -9,6 +9,9 @@
 ./schemas/example/bundling
 ./schemas/example/bundling/.meta.json
 ./schemas/example/bundling/single.json
+./schemas/example/extension
+./schemas/example/extension/.meta.json
+./schemas/example/extension/with.schema.json
 ./schemas/example/schemas
 ./schemas/example/schemas/.meta.json
 ./schemas/example/schemas/string.json
