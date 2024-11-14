@@ -84,6 +84,21 @@ auto generate_toc(const std::filesystem::path &base,
   auto result{sourcemeta::jsontoolkit::JSON::make_object()};
   result.assign("entries", std::move(entries));
 
+  // Precompute the breadcrumb
+  result.assign("breadcrumb", sourcemeta::jsontoolkit::JSON::make_array());
+  const std::filesystem::path relative_path{directory.string().substr(
+      std::min(base.string().size() + 1, directory.string().size()))};
+  auto current_breadcrumb{sourcemeta::jsontoolkit::JSON::make_array()};
+  std::filesystem::path current_path{"/"};
+  for (const auto &part : relative_path) {
+    current_breadcrumb.push_back(sourcemeta::jsontoolkit::JSON{part});
+    current_path = current_path / part;
+    auto breadcrumb_entry{sourcemeta::jsontoolkit::JSON::make_object()};
+    breadcrumb_entry.assign("items", current_breadcrumb);
+    breadcrumb_entry.assign("url", sourcemeta::jsontoolkit::JSON{current_path});
+    result.at("breadcrumb").push_back(std::move(breadcrumb_entry));
+  }
+
   const auto meta_path{directory / ".meta.json"};
   std::cerr << "Saving into: " << meta_path.string() << "\n";
   std::ofstream stream{meta_path};
