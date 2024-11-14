@@ -4,6 +4,14 @@
     {
       "valid": false,
       "data": {}
+    },
+    {
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "collections": {}
+      }
     }
   ]
 }

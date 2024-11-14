@@ -16,6 +16,7 @@
     },
     "collections": {
       "type": "object",
+      "minProperties": 1,
       "additionalProperties": {
         "type": "object",
         "required": [
