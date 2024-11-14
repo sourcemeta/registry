@@ -5,6 +5,8 @@
 ./schemas/example
 ./schemas/example/bundling
 ./schemas/example/bundling/single.json
+./schemas/example/extension
+./schemas/example/extension/with.schema.json
 ./schemas/example/schemas
 ./schemas/example/schemas/string.json
 ./schemas/example/v2.0

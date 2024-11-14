@@ -24,3 +24,14 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
   "$id": "{{base}}/example/v2.0/schema.json",
   "type": "integer"
 }
+
+# .schema.json extension
+GET {{base}}/example/extension/with.schema.json
+HTTP 200
+Content-Type: application/schema+json
+Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/extension/with.schema.json",
+  "type": "string"
+}
