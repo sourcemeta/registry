@@ -1,7 +1,13 @@
 {
   "url": "http://localhost:8000",
   "port": 8000,
-  "collections": {
+  "pages": {
+    "doc": {
+      "title": "A sample schema folder",
+      "description": "For testing purposes"
+    }
+  },
+  "schemas": {
     "example/extension": {
       "base": "https://example.com/extension",
       "path": "./schemas/example/extension"
@@ -10,7 +16,7 @@
       "base": "https://example.com/schemas",
       "path": "./schemas/example/folder"
     },
-    "EXAMPLE/v2.0": {
+    "example/v2.0": {
       "base": "https://example.com/schemas",
       "path": "./schemas/example/v2.0"
     },
@@ -19,8 +25,6 @@
       "path": "./schemas/example/bundling"
     },
     "doc": {
-      "title": "A sample schema folder",
-      "description": "For testing purposes",
       "base": "https://example.com/doc",
       "path": "./schemas/doc"
     }

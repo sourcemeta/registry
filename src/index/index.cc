@@ -31,11 +31,10 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
   assert(std::filesystem::exists(base));
   assert(std::filesystem::exists(output));
   assert(configuration.is_object());
-  assert(configuration.defines("collections"));
-  assert(configuration.at("collections").is_object());
+  assert(configuration.defines("schemas"));
+  assert(configuration.at("schemas").is_object());
 
-  for (const auto &[name, options] :
-       configuration.at("collections").as_object()) {
+  for (const auto &[name, options] : configuration.at("schemas").as_object()) {
     assert(options.is_object());
     assert(options.defines("path"));
     assert(options.at("path").is_string());
@@ -162,7 +161,7 @@ static auto index_main(const std::string_view &program,
 
   // Save the configuration file too
   auto configuration_copy = configuration;
-  configuration_copy.erase("collections");
+  configuration_copy.erase("schemas");
 
   // TODO: Perform these with a Blaze helper function that applies schema
   // "default"s to an instance

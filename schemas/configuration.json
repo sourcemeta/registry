@@ -5,37 +5,42 @@
   "required": [
     "url",
     "port",
-    "collections"
+    "schemas"
   ],
   "properties": {
     "title": {
-      "type": "string"
+      "$ref": "#/definitions/text"
     },
     "description": {
-      "type": "string"
+      "$ref": "#/definitions/text"
     },
-    "collections": {
+    "pages": {
       "type": "object",
       "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/definitions/entry-path"
+      },
       "additionalProperties": {
         "type": "object",
-        "required": [
-          "base",
-          "path"
-        ],
+        "minProperties": 1,
         "properties": {
           "title": {
-            "type": "string"
+            "$ref": "#/definitions/text"
           },
           "description": {
-            "type": "string"
+            "$ref": "#/definitions/text"
           },
-          "base": {
+          "email": {
             "type": "string",
-            "format": "url"
+            "pattern": "^[a-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,}$",
+            "format": "email"
           },
-          "path": {
-            "type": "string"
+          "github": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "website": {
+            "$ref": "#/definitions/http-url"
           }
         },
         "additionalProperties": false
@@ -45,10 +50,53 @@
       "type": "integer",
       "minimum": 0
     },
+    "schemas": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/definitions/entry-path"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "base",
+          "path"
+        ],
+        "properties": {
+          "base": {
+            "type": "string",
+            "pattern": "^\\S.*\\S$",
+            "format": "uri",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^\\S.*\\S$",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "url": {
-      "type": "string",
-      "format": "url"
+      "$ref": "#/definitions/http-url"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "entry-path": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-/]*$"
+    },
+    "http-url": {
+      "type": "string",
+      "pattern": "^https?:\\/\\/[a-z0-9-.:/]+$",
+      "format": "url"
+    },
+    "text": {
+      "type": "string",
+      "pattern": "^\\S.*\\S$",
+      "minLength": 1
+    }
+  }
 }

@@ -18,7 +18,7 @@ example:
 {
   "url": "http://localhost:8000",
   "port": 8000,
-  "collections": {
+  "schemas": {
     "example/schemas": {
       "base": "https://example.com/schemas",
       "path": "./schemas/example/folder"
@@ -29,8 +29,8 @@ example:
 
 The `url` property defines the base URL of the instance and will be used for
 reidentifying schemas at runtime, so make sure its correct. The `port` property
-is optional. The `collections` property mounts a given directory of schemas
-into a certain relative path.
+is optional. The `schemas` property mounts a given directory of schemas into a
+certain relative path.
 
 Deployment
 ----------

@@ -26,8 +26,8 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
   auto entries{sourcemeta::jsontoolkit::JSON::make_array()};
 
   assert(configuration.is_object());
-  assert(configuration.defines("collections"));
-  assert(configuration.at("collections").is_object());
+  assert(configuration.defines("schemas"));
+  assert(configuration.at("schemas").is_object());
 
   for (const auto &entry : std::filesystem::directory_iterator{directory}) {
     auto entry_json{sourcemeta::jsontoolkit::JSON::make_object()};
@@ -44,37 +44,33 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
                      entry.path().string().substr(base.string().size())});
 
       const auto collection_entry_name{entry_relative_path.substr(1)};
-      if (configuration.at("collections").defines(collection_entry_name) &&
-          configuration.at("collections")
-              .at(collection_entry_name)
-              .is_object() &&
-          configuration.at("collections")
+      if (configuration.at("schemas").defines(collection_entry_name) &&
+          configuration.at("schemas").at(collection_entry_name).is_object() &&
+          configuration.at("schemas")
               .at(collection_entry_name)
               .defines("title") &&
-          configuration.at("collections")
+          configuration.at("schemas")
               .at(collection_entry_name)
               .at("title")
               .is_string()) {
         entry_json.assign("title", sourcemeta::jsontoolkit::JSON{
-                                       configuration.at("collections")
+                                       configuration.at("schemas")
                                            .at(collection_entry_name)
                                            .at("title")
                                            .to_string()});
       }
 
-      if (configuration.at("collections").defines(collection_entry_name) &&
-          configuration.at("collections")
-              .at(collection_entry_name)
-              .is_object() &&
-          configuration.at("collections")
+      if (configuration.at("schemas").defines(collection_entry_name) &&
+          configuration.at("schemas").at(collection_entry_name).is_object() &&
+          configuration.at("schemas")
               .at(collection_entry_name)
               .defines("description") &&
-          configuration.at("collections")
+          configuration.at("schemas")
               .at(collection_entry_name)
               .at("description")
               .is_string()) {
         entry_json.assign("description", sourcemeta::jsontoolkit::JSON{
-                                             configuration.at("collections")
+                                             configuration.at("schemas")
                                                  .at(collection_entry_name)
                                                  .at("description")
                                                  .to_string()});
