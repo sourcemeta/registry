@@ -79,6 +79,49 @@ static auto file_manager(std::ostringstream &html,
   const auto meta_path{directory / ".meta.json"};
   assert(std::filesystem::exists(meta_path));
   const auto meta{sourcemeta::jsontoolkit::from_file(meta_path)};
+
+  assert(meta.defines("breadcrumb"));
+  assert(meta.at("breadcrumb").is_array());
+  if (!meta.at("breadcrumb").empty()) {
+    html << "<nav class=\"container-fluid px-4 py-2 bg-light bg-gradient "
+            "border-bottom font-monospace\" aria-label=\"breadcrumb\">";
+    html << "<ol class=\"breadcrumb mb-0\">";
+    html << "<li class=\"breadcrumb-item\">";
+    html << "<a href=\"/\">";
+    html << "<i class=\"bi bi-arrow-left\"></i>";
+    html << "</a>";
+    html << "</li>";
+
+    const auto &breadcrumb{meta.at("breadcrumb").as_array()};
+    for (auto iterator = breadcrumb.cbegin(); iterator != breadcrumb.cend();
+         iterator++) {
+      assert(iterator->is_object());
+      assert(iterator->defines("name"));
+      assert(iterator->at("name").is_string());
+      assert(iterator->defines("url"));
+      assert(iterator->at("url").is_string());
+      if (std::next(iterator) == breadcrumb.cend()) {
+        html << "<li class=\"breadcrumb-item active\" aria-current=\"page\">";
+        html << iterator->at("name").to_string();
+        html << "</li>";
+      } else {
+        html << "<li class=\"breadcrumb-item\">";
+        html << "<a href=\"" << iterator->at("url").to_string() << "\">";
+        html << iterator->at("name").to_string();
+        html << "</a>";
+        html << "</li>";
+      }
+    }
+
+    html << "</ol>";
+    html << "</nav>";
+  }
+
+  // html << "<p class=\"mb-0 text-secondary fw-light\">";
+  // html << "XXXXX" << "\n";
+  // html << "</p>";
+
+  html << "<div class=\"container-fluid p-4\">";
   html << "<table class=\"table table-bordered border-light-subtle "
           "table-light\">";
 
@@ -148,6 +191,7 @@ static auto file_manager(std::ostringstream &html,
   html << "</tbody>";
 
   html << "</table>";
+  html << "</div>";
 }
 
 namespace sourcemeta::registry::enterprise {
@@ -160,17 +204,8 @@ auto explore_index(const std::string &site_name, const std::string &title,
                    sourcemeta::hydra::http::ServerResponse &response) -> void {
   std::ostringstream html{
       explorer_start(request, server_base_url, site_name, title, description)};
-  html << "<div class=\"container-fluid px-4 py-2 bg-light bg-gradient "
-          "border-bottom\">";
-  html << "<p class=\"mb-0 text-secondary fw-light\">";
-  html << description << "\n";
-  html << "</p>";
-  html << "</div>";
-
-  html << "<div class=\"container-fluid p-4\">";
   file_manager(html, sourcemeta::registry::path_join(schema_base_directory,
                                                      request.path()));
-  html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
 
@@ -182,9 +217,7 @@ auto explore_directory(const std::string &site_name,
     -> void {
   std::ostringstream html{explorer_start(request, server_base_url, site_name,
                                          request.path(), request.path())};
-  html << "<div class=\"container-fluid p-4\">";
   file_manager(html, directory);
-  html << "</div>";
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
 
