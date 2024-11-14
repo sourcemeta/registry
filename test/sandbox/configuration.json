@@ -10,7 +10,7 @@
       "base": "https://example.com/schemas",
       "path": "./schemas/example/folder"
     },
-    "example/v2.0": {
+    "EXAMPLE/v2.0": {
       "base": "https://example.com/schemas",
       "path": "./schemas/example/v2.0"
     },
