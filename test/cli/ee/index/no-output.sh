@@ -11,7 +11,7 @@ cat << EOF > "$TMP/configuration.json"
 {
   "url": "http://localhost:8000",
   "port": 8000,
-  "collections": {
+  "schemas": {
     "example/schemas": {
       "base": "https://example.com/schemas",
       "path": "./schemas/example/folder"
