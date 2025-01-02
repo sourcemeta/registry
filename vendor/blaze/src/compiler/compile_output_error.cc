@@ -9,30 +9,24 @@
 
 namespace sourcemeta::blaze {
 
-ErrorTraceOutput::ErrorTraceOutput(
-    const sourcemeta::jsontoolkit::JSON &instance,
-    const sourcemeta::jsontoolkit::WeakPointer &base)
+ErrorOutput::ErrorOutput(const sourcemeta::jsontoolkit::JSON &instance,
+                         const sourcemeta::jsontoolkit::WeakPointer &base)
     : instance_{instance}, base_{base} {}
 
-auto ErrorTraceOutput::begin() const -> const_iterator {
+auto ErrorOutput::begin() const -> const_iterator {
   return this->output.begin();
 }
 
-auto ErrorTraceOutput::end() const -> const_iterator {
-  return this->output.end();
-}
+auto ErrorOutput::end() const -> const_iterator { return this->output.end(); }
 
-auto ErrorTraceOutput::cbegin() const -> const_iterator {
+auto ErrorOutput::cbegin() const -> const_iterator {
   return this->output.cbegin();
 }
 
-auto ErrorTraceOutput::cend() const -> const_iterator {
-  return this->output.cend();
-}
+auto ErrorOutput::cend() const -> const_iterator { return this->output.cend(); }
 
-auto ErrorTraceOutput::operator()(
-    const EvaluationType type, const bool result,
-    const Template::value_type &step,
+auto ErrorOutput::operator()(
+    const EvaluationType type, const bool result, const Instruction &step,
     const sourcemeta::jsontoolkit::WeakPointer &evaluate_path,
     const sourcemeta::jsontoolkit::WeakPointer &instance_location,
     const sourcemeta::jsontoolkit::JSON &annotation) -> void {

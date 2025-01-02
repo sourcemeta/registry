@@ -9,8 +9,11 @@
 #include <sourcemeta/jsontoolkit/jsonschema_anchor.h>
 #include <sourcemeta/jsontoolkit/jsonschema_bundle.h>
 #include <sourcemeta/jsontoolkit/jsonschema_error.h>
+#include <sourcemeta/jsontoolkit/jsonschema_frame.h>
+#include <sourcemeta/jsontoolkit/jsonschema_keywords.h>
 #include <sourcemeta/jsontoolkit/jsonschema_reference.h>
 #include <sourcemeta/jsontoolkit/jsonschema_resolver.h>
+#include <sourcemeta/jsontoolkit/jsonschema_unevaluated.h>
 #include <sourcemeta/jsontoolkit/jsonschema_walker.h>
 
 #include <map>      // std::map

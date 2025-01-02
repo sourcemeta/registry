@@ -23,7 +23,7 @@ cat << EOF > "$TMP/expected.txt"
 -- Using configuration: $(realpath "$TMP")/configuration.json
 -- Writing output to: $(realpath "$TMP")/output
 error: Invalid configuration
-The object value was expected to define properties "url", "port", and "schemas" but did not define the property "url"
+The value was expected to be an object that defines properties "port", "schemas", and "url"
   at instance location ""
   at evaluate path "/required"
 EOF
