@@ -34,19 +34,19 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
   assert(configuration.defines("schemas"));
   assert(configuration.at("schemas").is_object());
 
-  for (const auto &[name, options] : configuration.at("schemas").as_object()) {
-    assert(options.is_object());
-    assert(options.defines("path"));
-    assert(options.at("path").is_string());
-    const auto collection_path{
-        std::filesystem::canonical(base / options.at("path").to_string())};
-    assert(options.defines("base"));
-    assert(options.at("base").is_string());
+  for (const auto &schema_entry : configuration.at("schemas").as_object()) {
+    assert(schema_entry.second.is_object());
+    assert(schema_entry.second.defines("path"));
+    assert(schema_entry.second.at("path").is_string());
+    const auto collection_path{std::filesystem::canonical(
+        base / schema_entry.second.at("path").to_string())};
+    assert(schema_entry.second.defines("base"));
+    assert(schema_entry.second.at("base").is_string());
     const auto collection_base_uri{
-        sourcemeta::jsontoolkit::URI{options.at("base").to_string()}
+        sourcemeta::jsontoolkit::URI{schema_entry.second.at("base").to_string()}
             .canonicalize()};
 
-    std::cerr << "-- Processing collection: " << name << "\n";
+    std::cerr << "-- Processing collection: " << schema_entry.first << "\n";
     std::cerr << "Base directory: " << collection_path.string() << "\n";
     std::cerr << "Base URI: " << collection_base_uri.recompose() << "\n";
     for (const auto &entry :
@@ -77,7 +77,7 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
         return EXIT_FAILURE;
       }
 
-      auto schema_directory{name};
+      auto schema_directory{schema_entry.first};
       std::transform(schema_directory.begin(), schema_directory.end(),
                      schema_directory.begin(), [](const auto character) {
                        return std::tolower(character);
@@ -138,10 +138,11 @@ static auto index_main(const std::string_view &program,
 
   const auto configuration{
       sourcemeta::jsontoolkit::from_file(configuration_path)};
-  sourcemeta::blaze::ErrorTraceOutput validation_output{configuration};
-  const auto result{sourcemeta::blaze::evaluate(compiled_configuration_schema,
-                                                configuration,
-                                                std::ref(validation_output))};
+  sourcemeta::blaze::ErrorOutput validation_output{configuration};
+  sourcemeta::blaze::Evaluator evaluator;
+  const auto result{evaluator.validate(compiled_configuration_schema,
+                                       configuration,
+                                       std::ref(validation_output))};
   if (!result) {
     std::cerr << "error: Invalid configuration\n";
     for (const auto &entry : validation_output) {

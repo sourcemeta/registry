@@ -85,8 +85,7 @@
   "additionalProperties": false,
   "definitions": {
     "entry-path": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-/]*$"
+      "pattern": "^[a-z0-9][a-z0-9-/.]*$"
     },
     "http-url": {
       "type": "string",
