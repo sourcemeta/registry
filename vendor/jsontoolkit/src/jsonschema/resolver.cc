@@ -82,7 +82,7 @@ FlatFileSchemaResolver::FlatFileSchemaResolver(const SchemaResolver &resolver)
 auto FlatFileSchemaResolver::add(
     const std::filesystem::path &path,
     const std::optional<std::string> &default_dialect,
-    const std::optional<std::string> &default_id) -> void {
+    const std::optional<std::string> &default_id) -> const std::string & {
   const auto canonical{std::filesystem::canonical(path)};
   const auto schema{sourcemeta::jsontoolkit::from_file(canonical)};
   assert(sourcemeta::jsontoolkit::is_schema(schema));
@@ -95,14 +95,25 @@ auto FlatFileSchemaResolver::add(
     throw SchemaError(error.str());
   }
 
-  const auto result{this->schemas.emplace(
-      identifier.value(), Entry{canonical, default_dialect, default_id})};
+  const auto result{this->schemas.emplace(identifier.value(),
+                                          Entry{canonical, default_dialect})};
   if (!result.second && result.first->second.path != canonical) {
     std::ostringstream error;
     error << "Cannot register the same identifier twice: "
           << identifier.value();
     throw SchemaError(error.str());
   }
+
+  return result.first->first;
+}
+
+auto FlatFileSchemaResolver::reidentify(const std::string &schema,
+                                        const std::string &new_identifier)
+    -> void {
+  const auto result{this->schemas.find(schema)};
+  assert(result != this->schemas.cend());
+  this->schemas.insert_or_assign(new_identifier, std::move(result->second));
+  this->schemas.erase(result);
 }
 
 auto FlatFileSchemaResolver::operator()(std::string_view identifier) const
@@ -117,15 +128,8 @@ auto FlatFileSchemaResolver::operator()(std::string_view identifier) const
       schema.assign("$schema", JSON{result->second.default_dialect.value()});
     }
 
-    const auto schema_identifier{sourcemeta::jsontoolkit::identify(
-        schema, *this, IdentificationStrategy::Strict,
-        result->second.default_dialect)};
-    if (!schema_identifier.has_value() &&
-        result->second.default_id.has_value()) {
-      sourcemeta::jsontoolkit::reidentify(
-          schema, result->second.default_id.value(), *this,
-          result->second.default_dialect);
-    }
+    sourcemeta::jsontoolkit::reidentify(schema, result->first, *this,
+                                        result->second.default_dialect);
 
     return schema;
   }

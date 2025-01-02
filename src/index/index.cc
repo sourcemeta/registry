@@ -30,18 +30,17 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
                   const std::filesystem::path &output) -> int {
   assert(std::filesystem::exists(base));
   assert(std::filesystem::exists(output));
-  assert(configuration.is_object());
-  assert(configuration.defines("schemas"));
-  assert(configuration.at("schemas").is_object());
 
+  const auto server_url{
+      sourcemeta::jsontoolkit::URI{configuration.at("url").to_string()}
+          .canonicalize()};
+
+  // Popular flat file resolver
+  sourcemeta::jsontoolkit::FlatFileSchemaResolver resolver{
+      sourcemeta::jsontoolkit::official_resolver};
   for (const auto &schema_entry : configuration.at("schemas").as_object()) {
-    assert(schema_entry.second.is_object());
-    assert(schema_entry.second.defines("path"));
-    assert(schema_entry.second.at("path").is_string());
     const auto collection_path{std::filesystem::canonical(
         base / schema_entry.second.at("path").to_string())};
-    assert(schema_entry.second.defines("base"));
-    assert(schema_entry.second.at("base").is_string());
     const auto collection_base_uri{
         sourcemeta::jsontoolkit::URI{schema_entry.second.at("base").to_string()}
             .canonicalize()};
@@ -49,6 +48,7 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
     std::cerr << "-- Processing collection: " << schema_entry.first << "\n";
     std::cerr << "Base directory: " << collection_path.string() << "\n";
     std::cerr << "Base URI: " << collection_base_uri.recompose() << "\n";
+
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection_path}) {
       if (!entry.is_regular_file() || entry.path().extension() != ".json" ||
@@ -57,19 +57,10 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
       }
 
       std::cerr << "Found schema: " << entry.path().string() << "\n";
-
-      const auto schema{sourcemeta::jsontoolkit::from_file(entry.path())};
-      const auto identifier{sourcemeta::jsontoolkit::identify(
-          schema, sourcemeta::jsontoolkit::official_resolver,
-          sourcemeta::jsontoolkit::IdentificationStrategy::Loose)};
-      if (!identifier.has_value()) {
-        std::cout << "Could not determine schema identifier\n";
-        return EXIT_FAILURE;
-      }
-
+      const auto &current_identifier{resolver.add(entry.path())};
       auto identifier_uri{
-          sourcemeta::jsontoolkit::URI{identifier.value()}.canonicalize()};
-      std::cerr << "Schema identifier: " << identifier_uri.recompose() << "\n";
+          sourcemeta::jsontoolkit::URI{current_identifier}.canonicalize()};
+      std::cerr << "Current identifier: " << identifier_uri.recompose() << "\n";
       identifier_uri.relative_to(collection_base_uri);
       if (identifier_uri.is_absolute()) {
         std::cout << "Cannot resolve the schema identifier against the "
@@ -77,30 +68,47 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
         return EXIT_FAILURE;
       }
 
-      auto schema_directory{schema_entry.first};
-      std::transform(schema_directory.begin(), schema_directory.end(),
-                     schema_directory.begin(), [](const auto character) {
-                       return std::tolower(character);
-                     });
+      std::ostringstream new_identifier;
+      new_identifier << server_url.recompose();
+      new_identifier << '/';
+      new_identifier << schema_entry.first;
+      new_identifier << '/';
+      for (const auto character : identifier_uri.recompose()) {
+        new_identifier << static_cast<char>(std::tolower(character));
+      }
 
-      auto schema_basename{identifier_uri.recompose()};
-      std::transform(schema_basename.begin(), schema_basename.end(),
-                     schema_basename.begin(), [](const auto character) {
-                       return std::tolower(character);
-                     });
+      // We want to guarantee identifiers end with a JSON extension,
+      // as we want to use the non-extension URI to potentially metadata
+      // about schemas, etc
+      if (!new_identifier.str().ends_with(".json")) {
+        new_identifier << ".json";
+      }
 
-      const auto schema_output{std::filesystem::weakly_canonical(
-          output / "schemas" / schema_directory / schema_basename)};
-      std::cerr << "Schema output: " << schema_output.string() << "\n";
-
-      // Note we copy as-is and we rebase IDs at runtime to correctly
-      // handle meta-schemas that can only be resolved at runtime
-      std::filesystem::create_directories(schema_output.parent_path());
-      std::ofstream stream{schema_output};
-      sourcemeta::jsontoolkit::prettify(
-          schema, stream, sourcemeta::jsontoolkit::schema_format_compare);
-      stream << "\n";
+      std::cerr << "Rebased identifier: " << new_identifier.str() << "\n";
+      resolver.reidentify(current_identifier, new_identifier.str());
     }
+  }
+
+  for (const auto &schema : resolver) {
+    std::cerr << "-- Processing schema: " << schema.first << "\n";
+    sourcemeta::jsontoolkit::URI schema_uri{schema.first};
+    schema_uri.relative_to(server_url);
+    assert(schema_uri.is_relative());
+    const auto schema_output{std::filesystem::weakly_canonical(
+        output / "schemas" / schema_uri.recompose())};
+    std::cerr << "Schema output: " << schema_output.string() << "\n";
+    std::filesystem::create_directories(schema_output.parent_path());
+    std::ofstream stream{schema_output};
+    const auto result{resolver(schema.first)};
+    if (!result.has_value()) {
+      std::cout << "Cannot resolve the schema with identifier " << schema.first
+                << "\n";
+      return EXIT_FAILURE;
+    }
+
+    sourcemeta::jsontoolkit::prettify(
+        result.value(), stream, sourcemeta::jsontoolkit::schema_format_compare);
+    stream << "\n";
   }
 
   return EXIT_SUCCESS;
