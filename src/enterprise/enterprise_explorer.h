@@ -125,17 +125,13 @@ static auto file_manager(std::ostringstream &html,
     html << "</nav>";
   }
 
-  // html << "<p class=\"mb-0 text-secondary fw-light\">";
-  // html << "XXXXX" << "\n";
-  // html << "</p>";
-
   html << "<div class=\"container-fluid p-4\">";
   html << "<table class=\"table table-bordered border-light-subtle "
           "table-light\">";
 
   html << "<thead>";
   html << "<tr>";
-  html << "<th scope=\"col\" style=\"width: 1%\">Kind</th>";
+  html << "<th scope=\"col\" style=\"width: 50px\"></th>";
   html << "<th scope=\"col\">Name</th>";
   html << "<th scope=\"col\">Title</th>";
   html << "<th scope=\"col\">Description</th>";
