@@ -63,6 +63,7 @@ ifeq ($(ENTERPRISE), ON)
 	./test/cli/ee/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/ee/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/ee/index/directory-index.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/ee/index/search-index.sh $(PREFIX)/bin/sourcemeta-registry-index
 else
 	./test/cli/ce/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/ce/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
