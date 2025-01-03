@@ -151,7 +151,13 @@ static auto file_manager(std::ostringstream &html,
     assert(entry.at("type").is_string());
     html << "<td>";
     if (entry.at("type").to_string() == "directory") {
-      html << "<i class=\"bi bi-folder-fill\"></i>";
+      if (entry.defines("github")) {
+        html << "<img src=\"https://github.com/";
+        html << entry.at("github").to_string();
+        html << ".png?size=80\" width=\"40\" height=\"40\">";
+      } else {
+        html << "<i class=\"bi bi-folder-fill\"></i>";
+      }
     } else {
       html << "<i class=\"bi bi-braces\"></i>";
     }
