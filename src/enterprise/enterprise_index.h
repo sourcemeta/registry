@@ -32,32 +32,19 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
     const auto entry_relative_path{
         entry.path().string().substr(base.string().size())};
     if (entry.is_directory()) {
+      const auto collection_entry_name{entry_relative_path.substr(1)};
+      if (configuration.defines("pages") &&
+          configuration.at("pages").defines(collection_entry_name)) {
+        for (const auto &page_entry :
+             configuration.at("pages").at(collection_entry_name).as_object()) {
+          entry_json.assign(page_entry.first, page_entry.second);
+        }
+      }
+
       entry_json.assign("type", sourcemeta::jsontoolkit::JSON{"directory"});
       entry_json.assign(
           "url", sourcemeta::jsontoolkit::JSON{
                      entry.path().string().substr(base.string().size())});
-
-      const auto collection_entry_name{entry_relative_path.substr(1)};
-      if (configuration.defines("pages") &&
-          configuration.at("pages").defines(collection_entry_name)) {
-        const auto &page_entry{
-            configuration.at("pages").at(collection_entry_name)};
-        if (page_entry.defines("title")) {
-          entry_json.assign("title", sourcemeta::jsontoolkit::JSON{
-                                         configuration.at("pages")
-                                             .at(collection_entry_name)
-                                             .at("title")
-                                             .to_string()});
-        }
-
-        if (page_entry.defines("description")) {
-          entry_json.assign("description", sourcemeta::jsontoolkit::JSON{
-                                               configuration.at("pages")
-                                                   .at(collection_entry_name)
-                                                   .at("description")
-                                                   .to_string()});
-        }
-      }
 
       entries.push_back(std::move(entry_json));
     } else if (entry.path().extension() == ".json" &&
