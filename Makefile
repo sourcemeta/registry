@@ -3,6 +3,7 @@ CMAKE ?= cmake
 HURL ?= hurl
 JSONSCHEMA ?= jsonschema
 DOCKER ?= docker
+SHELLCHECK ?= shellcheck
 
 # Options
 INDEX ?= ON
@@ -50,6 +51,7 @@ lint:
 	$(JSONSCHEMA) lint --verbose schemas/*.json
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target clang_format
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target shellcheck
+	$(SHELLCHECK) test/cli/*/*/*.sh test/sandbox/*.sh
 
 .PHONY: test
 test: 
