@@ -25,10 +25,6 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::jsontoolkit::JSON::make_array()};
 
-  assert(configuration.is_object());
-  assert(configuration.defines("schemas"));
-  assert(configuration.at("schemas").is_object());
-
   for (const auto &entry : std::filesystem::directory_iterator{directory}) {
     auto entry_json{sourcemeta::jsontoolkit::JSON::make_object()};
     entry_json.assign("name",
@@ -128,9 +124,12 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
     result.at("breadcrumb").push_back(std::move(breadcrumb_entry));
   }
 
-  const auto meta_path{directory / ".meta.json"};
-  std::cerr << "Saving into: " << meta_path.string() << "\n";
-  std::ofstream stream{meta_path};
+  const auto index_path{base.parent_path() / "generated" /
+                        std::filesystem::relative(directory, base) /
+                        "index.json"};
+  std::cerr << "Saving into: " << index_path.string() << "\n";
+  std::filesystem::create_directories(index_path.parent_path());
+  std::ofstream stream{index_path};
   assert(!stream.fail());
   sourcemeta::jsontoolkit::prettify(result, stream);
   stream << "\n";
