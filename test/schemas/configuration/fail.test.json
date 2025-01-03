@@ -569,6 +569,21 @@
           }
         }
       }
+    },
+    {
+      "description": "empty analytics",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "analytics": {},
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
     }
   ]
 }
