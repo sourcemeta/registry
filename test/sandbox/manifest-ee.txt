@@ -26,3 +26,4 @@
 ./schemas/example/schemas/string.json
 ./schemas/example/v2.0
 ./schemas/example/v2.0/schema.json
+./search.json

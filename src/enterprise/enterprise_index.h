@@ -21,7 +21,8 @@ namespace sourcemeta::registry::enterprise {
 
 auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
                   const std::filesystem::path &base,
-                  const std::filesystem::path &directory) -> void {
+                  const std::filesystem::path &directory,
+                  sourcemeta::jsontoolkit::JSON &search_index) -> void {
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::jsontoolkit::JSON::make_array()};
 
@@ -66,6 +67,18 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
 
       entry_json.assign("url",
                         sourcemeta::jsontoolkit::JSON{entry_relative_path});
+
+      // Collect schemas high-level metadata for searching purposes
+      auto search_entry{sourcemeta::jsontoolkit::JSON::make_object()};
+      search_entry.assign("url", entry_json.at("url"));
+      search_entry.assign("title", entry_json.defines("title")
+                                       ? entry_json.at("title")
+                                       : sourcemeta::jsontoolkit::JSON{""});
+      search_entry.assign("description",
+                          entry_json.defines("description")
+                              ? entry_json.at("description")
+                              : sourcemeta::jsontoolkit::JSON{""});
+      search_index.push_back(std::move(search_entry));
 
       entries.push_back(std::move(entry_json));
     }
@@ -126,7 +139,8 @@ auto attach(const sourcemeta::jsontoolkit::JSON &configuration,
     -> int {
   std::cerr << "-- Indexing directory: " << output.string() << "\n";
   const auto base{std::filesystem::canonical(output / "schemas")};
-  generate_toc(configuration, base, base);
+  auto search_index{sourcemeta::jsontoolkit::JSON::make_array()};
+  generate_toc(configuration, base, base, search_index);
 
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{output / "schemas"}) {
@@ -135,8 +149,15 @@ auto attach(const sourcemeta::jsontoolkit::JSON &configuration,
     }
 
     std::cerr << "-- Processing: " << entry.path().string() << "\n";
-    generate_toc(configuration, base, std::filesystem::canonical(entry.path()));
+    generate_toc(configuration, base, std::filesystem::canonical(entry.path()),
+                 search_index);
   }
+
+  std::ofstream stream{output / "search.json"};
+  assert(!stream.fail());
+  sourcemeta::jsontoolkit::prettify(search_index, stream);
+  stream << "\n";
+  stream.close();
 
   return EXIT_SUCCESS;
 }
