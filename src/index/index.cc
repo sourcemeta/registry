@@ -7,7 +7,6 @@
 
 #include "configure.h"
 
-#include <algorithm>   // std::transform
 #include <cassert>     // assert
 #include <cctype>      // std::tolower
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
@@ -17,6 +16,7 @@
 #include <functional>  // std::ref
 #include <iostream>    // std::cerr, std::cout
 #include <span>        // std::span
+#include <sstream>     // std::ostringstream
 #include <string>      // std::string
 #include <string_view> // std::string_view
 #include <vector>      // std::vector
@@ -24,6 +24,35 @@
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
 #include "enterprise_index.h"
 #endif
+
+template <typename T>
+static auto write_lower_except_trailing(T &stream, const std::string &input,
+                                        const char trailing) -> void {
+  for (auto iterator = input.cbegin(); iterator != input.cend(); ++iterator) {
+    if (std::next(iterator) == input.cend() && *iterator == trailing) {
+      continue;
+    }
+
+    stream << static_cast<char>(std::tolower(*iterator));
+  }
+}
+
+static auto url_join(const std::string &first, const std::string &second,
+                     const std::string &third, const std::string &extension)
+    -> std::string {
+  std::ostringstream result;
+  write_lower_except_trailing(result, first, '/');
+  result << '/';
+  write_lower_except_trailing(result, second, '/');
+  result << '/';
+  write_lower_except_trailing(result, third, '.');
+  if (!result.str().ends_with(extension)) {
+    result << '.';
+    result << extension;
+  }
+
+  return result.str();
+}
 
 static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
                   const std::filesystem::path &base,
@@ -68,24 +97,15 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
         return EXIT_FAILURE;
       }
 
-      std::ostringstream new_identifier;
-      new_identifier << server_url.recompose();
-      new_identifier << '/';
-      new_identifier << schema_entry.first;
-      new_identifier << '/';
-      for (const auto character : identifier_uri.recompose()) {
-        new_identifier << static_cast<char>(std::tolower(character));
-      }
-
-      // We want to guarantee identifiers end with a JSON extension,
-      // as we want to use the non-extension URI to potentially metadata
-      // about schemas, etc
-      if (!new_identifier.str().ends_with(".json")) {
-        new_identifier << ".json";
-      }
-
-      std::cerr << "Rebased identifier: " << new_identifier.str() << "\n";
-      resolver.reidentify(current_identifier, new_identifier.str());
+      const auto new_identifier{
+          url_join(server_url.recompose(), schema_entry.first,
+                   identifier_uri.recompose(),
+                   // We want to guarantee identifiers end with a JSON
+                   // extension, as we want to use the non-extension URI to
+                   // potentially metadata about schemas, etc
+                   "json")};
+      std::cerr << "Rebased identifier: " << new_identifier << "\n";
+      resolver.reidentify(current_identifier, new_identifier);
     }
   }
 
