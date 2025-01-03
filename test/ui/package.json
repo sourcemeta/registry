@@ -1,0 +1,9 @@
+{
+  "name": "@sourcemeta/registry",
+  "private": true,
+  "version": "0.0.0",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.5"
+  }
+}
