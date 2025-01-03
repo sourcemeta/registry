@@ -70,14 +70,7 @@ auto resolver(const sourcemeta::jsontoolkit::URI &server_base_url,
     return std::nullopt;
   }
 
-  auto schema{sourcemeta::jsontoolkit::from_file(schema_path)};
-  sourcemeta::jsontoolkit::reidentify(
-      schema, std::string{identifier},
-      [&server_base_url, &schema_base_directory](const auto &subidentifier) {
-        return resolver(server_base_url, schema_base_directory, subidentifier);
-      });
-
-  return schema;
+  return sourcemeta::jsontoolkit::from_file(schema_path);
 }
 
 } // namespace sourcemeta::registry
