@@ -87,7 +87,7 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
   std::sort(entries.as_array().begin(), entries.as_array().end(),
             [](const auto &left, const auto &right) {
               if (left.at("type") == right.at("type")) {
-                return left.at("name") < right.at("name");
+                return left.at("name") > right.at("name");
               }
 
               return left.at("type") < right.at("type");
