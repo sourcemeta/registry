@@ -63,16 +63,16 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
 // is for the server to start running and bind to the port as quickly
 // as possible, so we can take better advantage of scale-to-zero.
 auto main(int argc, char *argv[]) noexcept -> int {
+  std::cerr << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+  std::cout << " Enterprise ";
+#else
+  std::cout << " Community ";
+#endif
+  std::cout << "Edition\n";
+
   try {
     if (argc < 2) {
-      std::cerr << "Sourcemeta Registry v"
-                << sourcemeta::registry::PROJECT_VERSION;
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
-      std::cout << " Enterprise ";
-#else
-      std::cout << " Community ";
-#endif
-      std::cout << "Edition\n";
       std::cout << "Usage: " << argv[0]
                 << " <configuration.json> <path/to/output/directory>\n";
       return EXIT_FAILURE;
