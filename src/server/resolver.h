@@ -15,7 +15,6 @@
 
 namespace sourcemeta::registry {
 
-// TODO: Turn this into a "safe" path join that prevents going out of the base
 auto path_join(const std::filesystem::path &base,
                const std::filesystem::path &path) -> std::filesystem::path {
   if (path.is_absolute()) {
@@ -60,13 +59,8 @@ auto resolver(const sourcemeta::jsontoolkit::URI &server_base_url,
   }
 
   assert(uri.path().has_value());
-  // TODO: Prevent a malicious client from requesting a JSON file outside
-  // the schema directory by using relative paths
   const auto schema_path{path_join(schema_base_directory, uri.path().value())};
-  if (!std::filesystem::exists(schema_path) ||
-      // Dot files are not permitted to be schemas, as we use them
-      // for internal purposes
-      schema_path.stem().string().starts_with('.')) {
+  if (!std::filesystem::exists(schema_path)) {
     return std::nullopt;
   }
 
