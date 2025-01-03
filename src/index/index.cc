@@ -191,6 +191,7 @@ static auto index_main(const std::string_view &program,
   // Save the configuration file too
   auto configuration_copy = configuration;
   configuration_copy.erase("schemas");
+  configuration_copy.erase("pages");
 
   // TODO: Perform these with a Blaze helper function that applies schema
   // "default"s to an instance
