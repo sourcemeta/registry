@@ -76,7 +76,7 @@ static auto explorer_end(std::ostringstream &html,
 
 static auto file_manager(std::ostringstream &html,
                          const std::filesystem::path &directory) -> void {
-  const auto meta_path{directory / ".meta.json"};
+  const auto meta_path{directory / "index.json"};
   assert(std::filesystem::exists(meta_path));
   const auto meta{sourcemeta::jsontoolkit::from_file(meta_path)};
 
