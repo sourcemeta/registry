@@ -37,8 +37,6 @@ cat << 'EOF' > "$TMP/index-top-level.json"
     {
       "name": "example",
       "type": "directory",
-      "title": null,
-      "description": null,
       "url": "/example"
     }
   ],
@@ -52,8 +50,6 @@ cat << 'EOF' > "$TMP/index-example.json"
     {
       "name": "schemas",
       "type": "directory",
-      "title": null,
-      "description": null,
       "url": "/example/schemas"
     }
   ],
@@ -72,8 +68,6 @@ cat << 'EOF' > "$TMP/index-schemas.json"
     {
       "name": "test.json",
       "type": "schema",
-      "title": null,
-      "description": null,
       "url": "/example/schemas/test.json"
     }
   ],

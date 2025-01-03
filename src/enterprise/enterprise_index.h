@@ -33,43 +33,30 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
         entry.path().string().substr(base.string().size())};
     if (entry.is_directory()) {
       entry_json.assign("type", sourcemeta::jsontoolkit::JSON{"directory"});
-      entry_json.assign("title", sourcemeta::jsontoolkit::JSON{nullptr});
-      entry_json.assign("description", sourcemeta::jsontoolkit::JSON{nullptr});
       entry_json.assign(
           "url", sourcemeta::jsontoolkit::JSON{
                      entry.path().string().substr(base.string().size())});
 
       const auto collection_entry_name{entry_relative_path.substr(1)};
-      if (configuration.at("schemas").defines(collection_entry_name) &&
-          configuration.at("schemas").at(collection_entry_name).is_object() &&
-          configuration.at("schemas")
-              .at(collection_entry_name)
-              .defines("title") &&
-          configuration.at("schemas")
-              .at(collection_entry_name)
-              .at("title")
-              .is_string()) {
-        entry_json.assign("title", sourcemeta::jsontoolkit::JSON{
-                                       configuration.at("schemas")
-                                           .at(collection_entry_name)
-                                           .at("title")
-                                           .to_string()});
-      }
+      if (configuration.defines("pages") &&
+          configuration.at("pages").defines(collection_entry_name)) {
+        const auto &page_entry{
+            configuration.at("pages").at(collection_entry_name)};
+        if (page_entry.defines("title")) {
+          entry_json.assign("title", sourcemeta::jsontoolkit::JSON{
+                                         configuration.at("pages")
+                                             .at(collection_entry_name)
+                                             .at("title")
+                                             .to_string()});
+        }
 
-      if (configuration.at("schemas").defines(collection_entry_name) &&
-          configuration.at("schemas").at(collection_entry_name).is_object() &&
-          configuration.at("schemas")
-              .at(collection_entry_name)
-              .defines("description") &&
-          configuration.at("schemas")
-              .at(collection_entry_name)
-              .at("description")
-              .is_string()) {
-        entry_json.assign("description", sourcemeta::jsontoolkit::JSON{
-                                             configuration.at("schemas")
-                                                 .at(collection_entry_name)
-                                                 .at("description")
-                                                 .to_string()});
+        if (page_entry.defines("description")) {
+          entry_json.assign("description", sourcemeta::jsontoolkit::JSON{
+                                               configuration.at("pages")
+                                                   .at(collection_entry_name)
+                                                   .at("description")
+                                                   .to_string()});
+        }
       }
 
       entries.push_back(std::move(entry_json));
@@ -77,8 +64,6 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
                !entry.path().stem().string().starts_with(".")) {
       const auto schema{sourcemeta::jsontoolkit::from_file(entry.path())};
       entry_json.assign("type", sourcemeta::jsontoolkit::JSON{"schema"});
-      entry_json.assign("title", sourcemeta::jsontoolkit::JSON{nullptr});
-      entry_json.assign("description", sourcemeta::jsontoolkit::JSON{nullptr});
       if (schema.is_object() && schema.defines("title") &&
           schema.at("title").is_string()) {
         entry_json.assign("title", sourcemeta::jsontoolkit::JSON{
@@ -109,6 +94,19 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
             });
 
   auto result{sourcemeta::jsontoolkit::JSON::make_object()};
+  const auto page_entry_name{
+      std::filesystem::relative(directory, base).string()};
+
+  // Precompute page metadata
+  if (configuration.defines("pages") &&
+      configuration.at("pages").defines(page_entry_name)) {
+    for (const auto &entry :
+         configuration.at("pages").at(page_entry_name).as_object()) {
+      result.assign(entry.first, entry.second);
+    }
+  }
+
+  // Store entries
   result.assign("entries", std::move(entries));
 
   // Precompute the breadcrumb
