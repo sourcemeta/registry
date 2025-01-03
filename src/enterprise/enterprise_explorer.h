@@ -171,10 +171,9 @@ static auto file_manager(std::ostringstream &html,
     html << "</a>";
     html << "</td>";
 
-    assert(entry.defines("title"));
     html << "<td>";
     html << "<small>";
-    if (entry.at("title").is_string()) {
+    if (entry.defines("title")) {
       html << entry.at("title").to_string();
     } else {
       html << "-";
@@ -182,10 +181,9 @@ static auto file_manager(std::ostringstream &html,
     html << "</small>";
     html << "</td>";
 
-    assert(entry.defines("description"));
     html << "<td>";
     html << "<small>";
-    if (entry.at("description").is_string()) {
+    if (entry.defines("description")) {
       html << entry.at("description").to_string();
     } else {
       html << "-";
