@@ -44,6 +44,14 @@ explorer_start(const sourcemeta::hydra::http::ServerRequest &request,
           "href=\"/apple-touch-icon.png\">";
   html << "<link rel=\"manifest\" href=\"/manifest.webmanifest\">";
 
+  if (configuration().defines("analytics")) {
+    if (configuration().at("analytics").defines("plausible")) {
+      html << "<script defer data-domain=\"";
+      html << configuration().at("analytics").at("plausible").to_string();
+      html << "\" src=\"https://plausible.io/js/script.js\"></script>";
+    }
+  }
+
   html << "</head>";
   html << "<body class=\"h-100\">";
 
