@@ -9,6 +9,7 @@
 ./schemas/example/extension/with.schema.json
 ./schemas/example/schemas
 ./schemas/example/schemas/camelcase.json
+./schemas/example/schemas/no-id-draft7-ref.json
 ./schemas/example/schemas/no-id.json
 ./schemas/example/schemas/no-schema-nor-id.json
 ./schemas/example/schemas/no-schema.json
