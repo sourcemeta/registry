@@ -1,5 +1,6 @@
 ./configuration.json
 ./generated
+./generated/404.html
 ./generated/doc
 ./generated/doc/index.json
 ./generated/example

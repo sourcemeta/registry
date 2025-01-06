@@ -3,6 +3,8 @@
 
 #include <sourcemeta/jsontoolkit/json.h>
 
+#include "enterprise_html.h"
+
 #include <algorithm>  // std::sort
 #include <cassert>    // assert
 #include <cstdlib>    // EXIT_SUCCESS
@@ -11,6 +13,7 @@
 #include <iostream>   // std::cerr
 #include <utility>    // std::move
 
+// TODO: Elevate to JSON Toolkit as a JSON string method
 static auto trim(const std::string &input) -> std::string {
   auto copy = input;
   copy.erase(copy.find_last_not_of(' ') + 1);
@@ -238,6 +241,19 @@ auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
   sourcemeta::jsontoolkit::prettify(search_index, stream);
   stream << "\n";
   stream.close();
+
+  // Not found page
+  std::ofstream stream_not_found{output / "generated" / "404.html"};
+  assert(!stream_not_found.fail());
+  sourcemeta::registry::enterprise::html_start(
+      stream_not_found, configuration, "Not Found",
+      "What you are looking for is not here", std::nullopt);
+  stream_not_found << "<div class=\"container-fluid p-4\">";
+  stream_not_found << "Not Found";
+  stream_not_found << "</div>";
+  sourcemeta::registry::enterprise::html_end(stream_not_found);
+  stream_not_found << "\n";
+  stream_not_found.close();
 
   return EXIT_SUCCESS;
 }

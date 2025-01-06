@@ -47,20 +47,6 @@ auto explore_directory(const std::filesystem::path &directory,
   explorer_end(html, response, sourcemeta::hydra::http::Status::OK);
 }
 
-auto explore_not_found(const sourcemeta::hydra::http::ServerRequest &request,
-                       sourcemeta::hydra::http::ServerResponse &response)
-    -> void {
-  std::ostringstream html;
-  sourcemeta::registry::enterprise::html_start(
-      html, configuration(), "Not Found",
-      "What you are looking for is not here", request.path());
-  html << "<div class=\"container-fluid p-4\">";
-  html << "Not Found";
-  html << "</div>";
-  sourcemeta::registry::enterprise::html_end(html);
-  explorer_end(html, response, sourcemeta::hydra::http::Status::NOT_FOUND);
-}
-
 } // namespace sourcemeta::registry::enterprise
 
 #endif
