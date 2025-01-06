@@ -23,6 +23,15 @@ HTTP 200
   "type": "string"
 }
 
+# Applied default dialect
+GET {{base}}/example/schemas/no-schema.json
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/schemas/no-schema.json",
+  "type": "string"
+}
+
 # Folder with period
 GET {{base}}/example/v2.0/schema.json
 HTTP 200

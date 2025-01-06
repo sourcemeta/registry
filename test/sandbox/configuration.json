@@ -14,7 +14,8 @@
     },
     "example/schemas": {
       "base": "https://example.com/schemas",
-      "path": "./schemas/example/folder"
+      "path": "./schemas/example/folder",
+      "defaultDialect": "http://json-schema.org/draft-07/schema#"
     },
     "example/v2.0": {
       "base": "https://example.com/schemas",
