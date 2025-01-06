@@ -24,6 +24,7 @@
 ./schemas/example/schemas
 ./schemas/example/schemas/camelcase.json
 ./schemas/example/schemas/no-id.json
+./schemas/example/schemas/no-schema-nor-id.json
 ./schemas/example/schemas/no-schema.json
 ./schemas/example/schemas/string.json
 ./schemas/example/v2.0
