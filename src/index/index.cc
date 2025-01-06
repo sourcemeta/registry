@@ -54,19 +54,15 @@ static auto url_join(const std::string &first, const std::string &second,
   return result.str();
 }
 
-static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
+static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
+                  const sourcemeta::jsontoolkit::URI &server_url,
+                  const sourcemeta::jsontoolkit::JSON &configuration,
                   const std::filesystem::path &base,
                   const std::filesystem::path &output) -> int {
   assert(std::filesystem::exists(base));
   assert(std::filesystem::exists(output));
 
-  const auto server_url{
-      sourcemeta::jsontoolkit::URI{configuration.at("url").to_string()}
-          .canonicalize()};
-
-  // Popular flat file resolver
-  sourcemeta::jsontoolkit::FlatFileSchemaResolver resolver{
-      sourcemeta::jsontoolkit::official_resolver};
+  // Populate flat file resolver
   for (const auto &schema_entry : configuration.at("schemas").as_object()) {
     const auto collection_path{std::filesystem::canonical(
         base / schema_entry.second.at("path").to_string())};
@@ -102,10 +98,12 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
       const auto relative_path{
           std::filesystem::relative(entry.path(), collection_path).string()};
       assert(!relative_path.starts_with('/'));
-      assert(!collection_base_uri_string.ends_with('/'));
       std::ostringstream default_identifier;
       default_identifier << collection_base_uri_string;
-      default_identifier << '/';
+      if (!collection_base_uri_string.ends_with('/')) {
+        default_identifier << '/';
+      }
+
       default_identifier << relative_path;
 
       const auto &current_identifier{resolver.add(entry.path(), default_dialect,
@@ -234,13 +232,19 @@ static auto index_main(const std::string_view &program,
   sourcemeta::jsontoolkit::prettify(configuration_copy, stream);
   stream << "\n";
 
-  const auto code{
-      index(configuration, configuration_path.parent_path(), output)};
+  sourcemeta::jsontoolkit::FlatFileSchemaResolver resolver{
+      sourcemeta::jsontoolkit::official_resolver};
+  const auto server_url{
+      sourcemeta::jsontoolkit::URI{configuration.at("url").to_string()}
+          .canonicalize()};
+  const auto code{index(resolver, server_url, configuration,
+                        configuration_path.parent_path(), output)};
 
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
   if (code == EXIT_SUCCESS) {
     return sourcemeta::registry::enterprise::attach(
-        configuration, configuration_path.parent_path(), output);
+        resolver, server_url, configuration, configuration_path.parent_path(),
+        output);
   }
 #endif
 

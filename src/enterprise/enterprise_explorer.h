@@ -149,7 +149,7 @@ static auto file_manager(std::ostringstream &html,
 
     assert(entry.defines("type"));
     assert(entry.at("type").is_string());
-    html << "<td>";
+    html << "<td class=\"text-nowrap\">";
     if (entry.at("type").to_string() == "directory") {
       if (entry.defines("github")) {
         html << "<img src=\"https://github.com/";
@@ -159,7 +159,33 @@ static auto file_manager(std::ostringstream &html,
         html << "<i class=\"bi bi-folder-fill\"></i>";
       }
     } else {
-      html << "<i class=\"bi bi-braces\"></i>";
+      const auto &base_dialect{entry.at("baseDialect").to_string()};
+      html << "<a "
+              "href=\"https://www.learnjsonschema.com/";
+      html << base_dialect;
+      html << "\">";
+      html << "<span class=\"align-middle badge ";
+
+      // Highlight the latest version in a different manner
+      if (base_dialect == "2020-12") {
+        html << "text-bg-primary";
+      } else {
+        html << "text-bg-danger";
+      }
+
+      html << "\">";
+
+      for (auto iterator = base_dialect.cbegin();
+           iterator != base_dialect.cend(); ++iterator) {
+        if (iterator == base_dialect.cbegin()) {
+          html << static_cast<char>(std::toupper(*iterator));
+        } else {
+          html << *iterator;
+        }
+      }
+
+      html << "</span>";
+      html << "</a>";
     }
     html << "</td>";
 

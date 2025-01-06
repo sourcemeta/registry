@@ -4,6 +4,7 @@
 #include <sourcemeta/jsontoolkit/json.h>
 
 #include <algorithm>  // std::sort
+#include <cassert>    // assert
 #include <cstdlib>    // EXIT_SUCCESS
 #include <filesystem> // std::filesystem
 #include <fstream>    // std::ofstream
@@ -17,12 +18,63 @@ static auto trim(const std::string &input) -> std::string {
   return copy;
 }
 
+static auto base_dialect_id(const std::string &base_dialect) -> std::string {
+  if (base_dialect == "https://json-schema.org/draft/2020-12/schema" ||
+      base_dialect == "https://json-schema.org/draft/2020-12/hyper-schema") {
+    return "2020-12";
+  }
+
+  if (base_dialect == "https://json-schema.org/draft/2019-09/schema" ||
+      base_dialect == "https://json-schema.org/draft/2019-09/hyper-schema") {
+    return "2019-09";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-07/schema#" ||
+      base_dialect == "http://json-schema.org/draft-07/hyper-schema#") {
+    return "draft7";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-06/schema#" ||
+      base_dialect == "http://json-schema.org/draft-06/hyper-schema#") {
+    return "draft6";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-04/schema#" ||
+      base_dialect == "http://json-schema.org/draft-04/hyper-schema#") {
+    return "draft4";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-03/schema#" ||
+      base_dialect == "http://json-schema.org/draft-03/hyper-schema#") {
+    return "draft3";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-02/hyper-schema#") {
+    return "draft2";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-01/hyper-schema#") {
+    return "draft1";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-00/hyper-schema#") {
+    return "draft0";
+  }
+
+  // We should never get here
+  assert(false);
+  return "Unknown";
+}
+
 namespace sourcemeta::registry::enterprise {
 
-auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
-                  const std::filesystem::path &base,
-                  const std::filesystem::path &directory,
-                  sourcemeta::jsontoolkit::JSON &search_index) -> void {
+auto generate_toc(
+    const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
+    const sourcemeta::jsontoolkit::URI &server_url,
+    const sourcemeta::jsontoolkit::JSON &configuration,
+    const std::filesystem::path &base, const std::filesystem::path &directory,
+    sourcemeta::jsontoolkit::JSON &search_index) -> void {
+  const auto server_url_string{server_url.recompose()};
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::jsontoolkit::JSON::make_array()};
 
@@ -64,6 +116,32 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
                           sourcemeta::jsontoolkit::JSON{
                               trim(schema.at("description").to_string())});
       }
+
+      // Calculate base dialect
+      std::ostringstream absolute_schema_url;
+      absolute_schema_url << server_url_string;
+
+      // TODO: We should have better utilities to avoid these
+      // URL concatenation edge cases
+
+      if (!server_url_string.ends_with('/')) {
+        absolute_schema_url << '/';
+      }
+
+      if (entry_relative_path.starts_with('/')) {
+        absolute_schema_url << entry_relative_path.substr(1);
+      } else {
+        absolute_schema_url << entry_relative_path;
+      }
+
+      const auto resolved_schema{resolver(absolute_schema_url.str())};
+      assert(resolved_schema.has_value());
+      const auto base_dialect{
+          sourcemeta::jsontoolkit::base_dialect(schema, resolver)};
+      assert(base_dialect.has_value());
+      entry_json.assign(
+          "baseDialect",
+          sourcemeta::jsontoolkit::JSON{base_dialect_id(base_dialect.value())});
 
       entry_json.assign("url",
                         sourcemeta::jsontoolkit::JSON{entry_relative_path});
@@ -134,13 +212,15 @@ auto generate_toc(const sourcemeta::jsontoolkit::JSON &configuration,
   stream.close();
 }
 
-auto attach(const sourcemeta::jsontoolkit::JSON &configuration,
+auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
+            const sourcemeta::jsontoolkit::URI &server_url,
+            const sourcemeta::jsontoolkit::JSON &configuration,
             const std::filesystem::path &, const std::filesystem::path &output)
     -> int {
   std::cerr << "-- Indexing directory: " << output.string() << "\n";
   const auto base{std::filesystem::canonical(output / "schemas")};
   auto search_index{sourcemeta::jsontoolkit::JSON::make_array()};
-  generate_toc(configuration, base, base, search_index);
+  generate_toc(resolver, server_url, configuration, base, base, search_index);
 
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{output / "schemas"}) {
@@ -149,8 +229,8 @@ auto attach(const sourcemeta::jsontoolkit::JSON &configuration,
     }
 
     std::cerr << "-- Processing: " << entry.path().string() << "\n";
-    generate_toc(configuration, base, std::filesystem::canonical(entry.path()),
-                 search_index);
+    generate_toc(resolver, server_url, configuration, base,
+                 std::filesystem::canonical(entry.path()), search_index);
   }
 
   std::ofstream stream{output / "search.json"};
