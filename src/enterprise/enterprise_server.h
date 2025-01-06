@@ -3,8 +3,6 @@
 
 #include <sourcemeta/hydra/httpserver.h>
 
-#include "enterprise_explorer.h"
-
 #include <filesystem> // std::filesystem
 #include <sstream>    // std::ostringstream
 
@@ -37,16 +35,16 @@ auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
   }
 
   // Explorer
-  static const auto GENERATED_BASE_DIRECTORY{*(__global_data) / "generated"};
   const auto directory_path{sourcemeta::registry::path_join(
-      GENERATED_BASE_DIRECTORY, request.path())};
+      *(__global_data) / "generated", request.path())};
   if (std::filesystem::is_directory(directory_path)) {
-    explore_directory(directory_path, request, response);
+    sourcemeta::hydra::http::serve_file(directory_path / "index.html", request,
+                                        response);
     return;
   }
 
   sourcemeta::hydra::http::serve_file(
-      GENERATED_BASE_DIRECTORY / "404.html", request, response,
+      *(__global_data) / "generated" / "404.html", request, response,
       sourcemeta::hydra::http::Status::NOT_FOUND);
 }
 

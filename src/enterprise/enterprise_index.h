@@ -213,6 +213,33 @@ auto generate_toc(
   sourcemeta::jsontoolkit::prettify(result, stream);
   stream << "\n";
   stream.close();
+
+  if (directory == base) {
+    std::cerr << "Generating HTML index page\n";
+    std::ofstream html{index_path.parent_path() / "index.html"};
+    assert(!html.fail());
+    sourcemeta::registry::enterprise::html_start(
+        html, configuration, configuration.at("title").to_string(),
+        configuration.at("description").to_string(), "");
+    sourcemeta::registry::enterprise::html_file_manager(
+        html, index_path.parent_path());
+    sourcemeta::registry::enterprise::html_end(html);
+    html << "\n";
+    html.close();
+  } else {
+    std::cerr << "Generating HTML directory page\n";
+    const auto page_relative_path{std::string{'/'} + relative_path.string()};
+    std::ofstream html{index_path.parent_path() / "index.html"};
+    assert(!html.fail());
+    sourcemeta::registry::enterprise::html_start(
+        html, configuration, page_relative_path, page_relative_path,
+        page_relative_path);
+    sourcemeta::registry::enterprise::html_file_manager(
+        html, index_path.parent_path());
+    sourcemeta::registry::enterprise::html_end(html);
+    html << "\n";
+    html.close();
+  }
 }
 
 auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
@@ -241,18 +268,6 @@ auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
   sourcemeta::jsontoolkit::prettify(search_index, stream);
   stream << "\n";
   stream.close();
-
-  // Index page
-  std::ofstream stream_index{output / "generated" / "index.html"};
-  assert(!stream_index.fail());
-  sourcemeta::registry::enterprise::html_start(
-      stream_index, configuration, configuration.at("title").to_string(),
-      configuration.at("description").to_string(), "");
-  sourcemeta::registry::enterprise::html_file_manager(stream_index,
-                                                      output / "generated");
-  sourcemeta::registry::enterprise::html_end(stream_index);
-  stream_index << "\n";
-  stream_index.close();
 
   // Not found page
   std::ofstream stream_not_found{output / "generated" / "404.html"};
