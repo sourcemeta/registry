@@ -79,6 +79,14 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
     std::cerr << "Base directory: " << collection_path.string() << "\n";
     std::cerr << "Base URI: " << collection_base_uri_string << "\n";
 
+    const std::optional<std::string> default_dialect{
+        schema_entry.second.defines("defaultDialect")
+            ? schema_entry.second.at("defaultDialect").to_string()
+            : static_cast<std::optional<std::string>>(std::nullopt)};
+    if (default_dialect.has_value()) {
+      std::cerr << "Default dialect: " << default_dialect.value() << "\n";
+    }
+
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection_path}) {
       if (!entry.is_regular_file() || entry.path().extension() != ".json" ||
@@ -100,8 +108,8 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
       default_identifier << '/';
       default_identifier << relative_path;
 
-      const auto &current_identifier{
-          resolver.add(entry.path(), std::nullopt, default_identifier.str())};
+      const auto &current_identifier{resolver.add(entry.path(), default_dialect,
+                                                  default_identifier.str())};
       auto identifier_uri{
           sourcemeta::jsontoolkit::URI{current_identifier}.canonicalize()};
       std::cerr << "Current identifier: " << identifier_uri.recompose() << "\n";

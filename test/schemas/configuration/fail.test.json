@@ -584,6 +584,21 @@
           }
         }
       }
+    },
+    {
+      "description": "non-string default dialect",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas",
+            "defaultDialect": true
+          }
+        }
+      }
     }
   ]
 }

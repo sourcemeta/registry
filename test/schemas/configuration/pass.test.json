@@ -107,6 +107,21 @@
           }
         }
       }
+    },
+    {
+      "description": "with default dialect",
+      "valid": true,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas",
+            "defaultDialect": "http://json-schema.org/draft-07/schema#"
+          }
+        }
+      }
     }
   ]
 }
