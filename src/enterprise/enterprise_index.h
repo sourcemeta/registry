@@ -242,6 +242,18 @@ auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
   stream << "\n";
   stream.close();
 
+  // Index page
+  std::ofstream stream_index{output / "generated" / "index.html"};
+  assert(!stream_index.fail());
+  sourcemeta::registry::enterprise::html_start(
+      stream_index, configuration, configuration.at("title").to_string(),
+      configuration.at("description").to_string(), "");
+  sourcemeta::registry::enterprise::html_file_manager(stream_index,
+                                                      output / "generated");
+  sourcemeta::registry::enterprise::html_end(stream_index);
+  stream_index << "\n";
+  stream_index.close();
+
   // Not found page
   std::ofstream stream_not_found{output / "generated" / "404.html"};
   assert(!stream_not_found.fail());

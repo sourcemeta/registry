@@ -13,6 +13,7 @@
 ./generated/example/schemas/index.json
 ./generated/example/v2.0
 ./generated/example/v2.0/index.json
+./generated/index.html
 ./generated/index.json
 ./schemas
 ./schemas/doc
