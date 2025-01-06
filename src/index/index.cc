@@ -243,8 +243,8 @@ static auto index_main(const std::string_view &program,
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
   if (code == EXIT_SUCCESS) {
     return sourcemeta::registry::enterprise::attach(
-        resolver, server_url, configuration, configuration_path.parent_path(),
-        output);
+        resolver, server_url, configuration_copy,
+        configuration_path.parent_path(), output);
   }
 #endif
 

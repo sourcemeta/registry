@@ -15,6 +15,7 @@ auto mime_type(const std::filesystem::path &file_path) -> std::string {
       {".webp", "image/webp"},
       {".ico", "image/vnd.microsoft.icon"},
       {".svg", "image/svg+xml"},
+      {".html", "text/html"},
       {".webmanifest", "application/manifest+json"},
       {".json", "application/json"},
       {".woff", "font/woff"},

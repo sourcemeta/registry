@@ -49,7 +49,9 @@ auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
     return;
   }
 
-  explore_not_found(request, response);
+  sourcemeta::hydra::http::serve_file(
+      GENERATED_BASE_DIRECTORY / "404.html", request, response,
+      sourcemeta::hydra::http::Status::NOT_FOUND);
 }
 
 auto attach(sourcemeta::hydra::http::Server &server) -> void {

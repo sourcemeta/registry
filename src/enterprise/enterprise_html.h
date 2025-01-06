@@ -5,13 +5,12 @@
 
 #include <filesystem> // std::filesystem
 #include <optional>   // std::optional
-#include <sstream>    // std::ostringstream
 #include <string>     // std::string
 
 namespace sourcemeta::registry::enterprise {
 
-auto html_start(std::ostringstream &html,
-                const sourcemeta::jsontoolkit::JSON &configuration,
+template <typename T>
+auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
                 const std::string &title, const std::string &description,
                 const std::optional<std::string> &path) -> void {
   const auto &base_url{configuration.at("url").to_string()};
@@ -72,13 +71,14 @@ auto html_start(std::ostringstream &html,
   html << "</nav>";
 }
 
-auto html_end(std::ostringstream &html) -> void {
+template <typename T> auto html_end(T &html) -> void {
   html << "</body>";
   html << "</html>";
 }
 
-auto html_file_manager(std::ostringstream &html,
-                       const std::filesystem::path &directory) -> void {
+template <typename T>
+auto html_file_manager(T &html, const std::filesystem::path &directory)
+    -> void {
   const auto meta_path{directory / "index.json"};
   assert(std::filesystem::exists(meta_path));
   const auto meta{sourcemeta::jsontoolkit::from_file(meta_path)};
