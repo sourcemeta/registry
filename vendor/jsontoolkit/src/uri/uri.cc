@@ -514,6 +514,12 @@ auto URI::relative_to(const URI &base) -> URI & {
   }
 
   uriFreeUriMembersMmA(&result, nullptr);
+
+  // TODO: Why do we even need to do this?
+  if (copy.data.starts_with('/')) {
+    copy.data.erase(0, 1);
+  }
+
   copy.parse();
 
   // `uriparser` has this weird thing where it will only look at scheme and
