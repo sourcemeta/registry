@@ -13,12 +13,8 @@ namespace sourcemeta::registry::enterprise {
 auto on_index(const sourcemeta::hydra::http::ServerLogger &,
               const sourcemeta::hydra::http::ServerRequest &request,
               sourcemeta::hydra::http::ServerResponse &response) -> void {
-  static const auto SERVER_TITLE{configuration().at("title").to_string()};
-  static const auto SERVER_DESCRIPTION{
-      configuration().at("description").to_string()};
-  static const auto GENERATED_BASE_DIRECTORY{*(__global_data) / "generated"};
-  explore_index(SERVER_TITLE, SERVER_DESCRIPTION, GENERATED_BASE_DIRECTORY,
-                request, response);
+  sourcemeta::hydra::http::serve_file(
+      *(__global_data) / "generated" / "index.html", request, response);
 }
 
 auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
