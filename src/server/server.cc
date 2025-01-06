@@ -52,6 +52,15 @@ static auto json_error(const sourcemeta::hydra::http::ServerLogger &logger,
   response.end(std::move(object));
 }
 
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+auto on_index(const sourcemeta::hydra::http::ServerLogger &,
+              const sourcemeta::hydra::http::ServerRequest &request,
+              sourcemeta::hydra::http::ServerResponse &response) -> void {
+  sourcemeta::hydra::http::serve_file(
+      *(__global_data) / "generated" / "index.html", request, response);
+}
+#endif
+
 static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
                        const sourcemeta::hydra::http::ServerRequest &request,
                        sourcemeta::hydra::http::ServerResponse &response)
@@ -174,6 +183,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     sourcemeta::hydra::http::Server server;
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
     sourcemeta::registry::enterprise::attach(server);
+    server.route(sourcemeta::hydra::http::Method::GET, "/", on_index);
 #else
     server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);
