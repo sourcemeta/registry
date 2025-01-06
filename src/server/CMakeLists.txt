@@ -1,4 +1,4 @@
-add_executable(schema_registry_server server.cc error.h resolver.h configure.h.in)
+add_executable(schema_registry_server server.cc resolver.h configure.h.in)
 
 noa_add_default_options(PRIVATE schema_registry_server)
 set_target_properties(schema_registry_server PROPERTIES OUTPUT_NAME sourcemeta-registry-server)
