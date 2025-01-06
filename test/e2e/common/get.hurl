@@ -41,6 +41,19 @@ HTTP 200
   "type": "string"
 }
 
+# Adding `$id` when there is a top-level `$ref`
+GET {{base}}/example/schemas/no-id-draft7-ref.json
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/schemas/no-id-draft7-ref.json",
+  "allOf": [
+    {
+      "$ref": "string.json"
+    }
+  ]
+}
+
 # Folder with period
 GET {{base}}/example/v2.0/schema.json
 HTTP 200
