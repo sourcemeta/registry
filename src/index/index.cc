@@ -209,24 +209,26 @@ static auto index_main(const std::string_view &program,
 
   std::filesystem::create_directories(output);
 
-  // Save the configuration file too
-  auto configuration_copy = configuration;
-  configuration_copy.erase("schemas");
-  configuration_copy.erase("pages");
+  auto configuration_with_defaults = configuration;
 
   // TODO: Perform these with a Blaze helper function that applies schema
   // "default"s to an instance
 
-  if (!configuration_copy.defines("title")) {
-    configuration_copy.assign("title",
-                              sourcemeta::jsontoolkit::JSON{"Sourcemeta"});
+  if (!configuration_with_defaults.defines("title")) {
+    configuration_with_defaults.assign(
+        "title", sourcemeta::jsontoolkit::JSON{"Sourcemeta"});
   }
 
-  if (!configuration_copy.defines("description")) {
-    configuration_copy.assign("description",
-                              sourcemeta::jsontoolkit::JSON{
-                                  "The next-generation JSON Schema Registry"});
+  if (!configuration_with_defaults.defines("description")) {
+    configuration_with_defaults.assign(
+        "description", sourcemeta::jsontoolkit::JSON{
+                           "The next-generation JSON Schema Registry"});
   }
+
+  // Save the configuration file too
+  auto configuration_copy = configuration_with_defaults;
+  configuration_copy.erase("schemas");
+  configuration_copy.erase("pages");
 
   std::ofstream stream{output / "configuration.json"};
   sourcemeta::jsontoolkit::prettify(configuration_copy, stream);
@@ -237,13 +239,13 @@ static auto index_main(const std::string_view &program,
   const auto server_url{
       sourcemeta::jsontoolkit::URI{configuration.at("url").to_string()}
           .canonicalize()};
-  const auto code{index(resolver, server_url, configuration,
+  const auto code{index(resolver, server_url, configuration_with_defaults,
                         configuration_path.parent_path(), output)};
 
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
   if (code == EXIT_SUCCESS) {
     return sourcemeta::registry::enterprise::attach(
-        resolver, server_url, configuration_copy,
+        resolver, server_url, configuration_with_defaults,
         configuration_path.parent_path(), output);
   }
 #endif
