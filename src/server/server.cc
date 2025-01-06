@@ -108,10 +108,9 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
                          const sourcemeta::hydra::http::ServerRequest &request,
                          sourcemeta::hydra::http::ServerResponse &response)
     -> void {
-  static const auto SERVER_BASE_URL{configuration().at("url").to_string()};
   const auto maybe_schema{
       resolver(sourcemeta::registry::request_path_to_schema_uri(
-          SERVER_BASE_URL, request.path()))};
+          configuration().at("url").to_string(), request.path()))};
 
   if (maybe_schema.has_value()) {
     json_error(logger, request, response,
