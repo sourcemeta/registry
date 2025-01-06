@@ -13,13 +13,12 @@ namespace sourcemeta::registry::enterprise {
 auto on_index(const sourcemeta::hydra::http::ServerLogger &,
               const sourcemeta::hydra::http::ServerRequest &request,
               sourcemeta::hydra::http::ServerResponse &response) -> void {
-  static const auto SERVER_BASE_URL{configuration().at("url").to_string()};
   static const auto SERVER_TITLE{configuration().at("title").to_string()};
   static const auto SERVER_DESCRIPTION{
       configuration().at("description").to_string()};
   static const auto GENERATED_BASE_DIRECTORY{*(__global_data) / "generated"};
-  explore_index(SERVER_TITLE, SERVER_TITLE, SERVER_DESCRIPTION, SERVER_BASE_URL,
-                GENERATED_BASE_DIRECTORY, request, response);
+  explore_index(SERVER_TITLE, SERVER_DESCRIPTION, GENERATED_BASE_DIRECTORY,
+                request, response);
 }
 
 auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
@@ -41,21 +40,16 @@ auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
     return;
   }
 
-  static const auto SERVER_TITLE{configuration().at("title").to_string()};
-
   // Explorer
   static const auto GENERATED_BASE_DIRECTORY{*(__global_data) / "generated"};
   const auto directory_path{sourcemeta::registry::path_join(
       GENERATED_BASE_DIRECTORY, request.path())};
   if (std::filesystem::is_directory(directory_path)) {
-    static const auto SERVER_BASE_URL{configuration().at("url").to_string()};
-    explore_directory(SERVER_TITLE, directory_path, SERVER_BASE_URL, request,
-                      response);
+    explore_directory(directory_path, request, response);
     return;
   }
 
-  static const auto SERVER_BASE_URL{configuration().at("url").to_string()};
-  explore_not_found(SERVER_TITLE, SERVER_BASE_URL, request, response);
+  explore_not_found(request, response);
 }
 
 auto attach(sourcemeta::hydra::http::Server &server) -> void {
