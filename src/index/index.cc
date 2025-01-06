@@ -73,10 +73,11 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
     const auto collection_base_uri{
         sourcemeta::jsontoolkit::URI{schema_entry.second.at("base").to_string()}
             .canonicalize()};
+    const auto collection_base_uri_string{collection_base_uri.recompose()};
 
     std::cerr << "-- Processing collection: " << schema_entry.first << "\n";
     std::cerr << "Base directory: " << collection_path.string() << "\n";
-    std::cerr << "Base URI: " << collection_base_uri.recompose() << "\n";
+    std::cerr << "Base URI: " << collection_base_uri_string << "\n";
 
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection_path}) {
@@ -86,7 +87,21 @@ static auto index(const sourcemeta::jsontoolkit::JSON &configuration,
       }
 
       std::cerr << "Found schema: " << entry.path().string() << "\n";
-      const auto &current_identifier{resolver.add(entry.path())};
+
+      // Calculate a default identifier for the schema through their file system
+      // location, to accomodate for schema collections that purely rely on
+      // paths and never set `$id`.
+      const auto relative_path{
+          std::filesystem::relative(entry.path(), collection_path).string()};
+      assert(!relative_path.starts_with('/'));
+      assert(!collection_base_uri_string.ends_with('/'));
+      std::ostringstream default_identifier;
+      default_identifier << collection_base_uri_string;
+      default_identifier << '/';
+      default_identifier << relative_path;
+
+      const auto &current_identifier{
+          resolver.add(entry.path(), std::nullopt, default_identifier.str())};
       auto identifier_uri{
           sourcemeta::jsontoolkit::URI{current_identifier}.canonicalize()};
       std::cerr << "Current identifier: " << identifier_uri.recompose() << "\n";

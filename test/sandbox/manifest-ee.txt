@@ -23,6 +23,7 @@
 ./schemas/example/extension/with.schema.json
 ./schemas/example/schemas
 ./schemas/example/schemas/camelcase.json
+./schemas/example/schemas/no-id.json
 ./schemas/example/schemas/string.json
 ./schemas/example/v2.0
 ./schemas/example/v2.0/schema.json

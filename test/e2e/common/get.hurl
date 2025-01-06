@@ -14,6 +14,15 @@ HTTP 200
   "type": "string"
 }
 
+# Identifier derived from file path
+GET {{base}}/example/schemas/no-id.json
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/schemas/no-id.json",
+  "type": "string"
+}
+
 # Folder with period
 GET {{base}}/example/v2.0/schema.json
 HTTP 200
