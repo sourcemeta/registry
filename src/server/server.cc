@@ -1,24 +1,24 @@
+#include <sourcemeta/hydra/crypto.h>
+#include <sourcemeta/hydra/http.h>
 #include <sourcemeta/hydra/httpserver.h>
 
 #include <sourcemeta/jsontoolkit/json.h>
 #include <sourcemeta/jsontoolkit/jsonschema.h>
 #include <sourcemeta/jsontoolkit/uri.h>
 
-#include <sourcemeta/hydra/crypto.h>
-#include <sourcemeta/hydra/http.h>
-#include <sourcemeta/hydra/httpserver.h>
-
 #include "configure.h"
-#include "error.h"
 #include "resolver.h"
 
 #include <cassert>    // assert
-#include <cstdint>    // std::uint32_t
+#include <cstdint>    // std::uint32_t, std::int64_t
+#include <exception>  // std::exception_ptr, std::rethrow_exception
 #include <filesystem> // std::filesystem
 #include <iostream>   // std::cerr, std::cout
 #include <memory>     // std::unique_ptr
+#include <optional>   // std::optional
 #include <sstream>    // std::ostringstream
 #include <string>     // std::string
+#include <utility>    // std::move
 
 static inline std::unique_ptr<const std::filesystem::path> __global_data;
 static auto configuration() -> const sourcemeta::jsontoolkit::JSON & {
@@ -36,6 +36,22 @@ static auto resolver(std::string_view identifier)
       SERVER_BASE_URL, *(__global_data) / "schemas", identifier);
 }
 
+static auto json_error(const sourcemeta::hydra::http::ServerLogger &logger,
+                       const sourcemeta::hydra::http::ServerRequest &,
+                       sourcemeta::hydra::http::ServerResponse &response,
+                       const sourcemeta::hydra::http::Status code,
+                       std::string &&id, std::string &&message) -> void {
+  auto object{sourcemeta::jsontoolkit::JSON::make_object()};
+  object.assign("request", sourcemeta::jsontoolkit::JSON{logger.id()});
+  object.assign("error", sourcemeta::jsontoolkit::JSON{std::move(id)});
+  object.assign("message", sourcemeta::jsontoolkit::JSON{std::move(message)});
+  object.assign("code",
+                sourcemeta::jsontoolkit::JSON{static_cast<std::int64_t>(code)});
+  response.status(code);
+  response.header("Content-Type", "application/json");
+  response.end(std::move(object));
+}
+
 static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
                        const sourcemeta::hydra::http::ServerRequest &request,
                        sourcemeta::hydra::http::ServerResponse &response)
@@ -44,9 +60,9 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
       configuration().at("url").to_string(), request.path())};
   const auto maybe_schema{resolver(schema_identifier)};
   if (!maybe_schema.has_value()) {
-    sourcemeta::registry::json_error(
-        logger, request, response, sourcemeta::hydra::http::Status::NOT_FOUND,
-        "not-found", "There is no schema at this URL");
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
+               "There is no schema at this URL");
     return;
   }
 
@@ -96,8 +112,37 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
   const auto maybe_schema{
       resolver(sourcemeta::registry::request_path_to_schema_uri(
           SERVER_BASE_URL, request.path()))};
-  return sourcemeta::registry::on_otherwise(maybe_schema, logger, request,
-                                            response);
+
+  if (maybe_schema.has_value()) {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
+               "method-not-allowed",
+               "This HTTP method is invalid for this URL");
+  } else {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
+               "There is no schema at this URL");
+  }
+}
+
+static auto on_error(std::exception_ptr exception_ptr,
+                     const sourcemeta::hydra::http::ServerLogger &logger,
+                     const sourcemeta::hydra::http::ServerRequest &request,
+                     sourcemeta::hydra::http::ServerResponse &response) noexcept
+    -> void {
+  try {
+    std::rethrow_exception(exception_ptr);
+  } catch (const sourcemeta::jsontoolkit::SchemaResolutionError &error) {
+    std::ostringstream message;
+    message << error.what() << ": " << error.id();
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::BAD_REQUEST,
+               "schema-resolution-error", message.str());
+  } catch (const std::exception &error) {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
+               "uncaught-error", error.what());
+  }
 }
 
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
@@ -133,9 +178,9 @@ auto main(int argc, char *argv[]) noexcept -> int {
 #else
     server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);
-    server.otherwise(on_otherwise);
-    server.error(sourcemeta::registry::on_error);
 #endif
+    server.otherwise(on_otherwise);
+    server.error(on_error);
 
     assert(configuration().defines("port"));
     assert(configuration().at("port").is_integer());
