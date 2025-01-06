@@ -68,6 +68,7 @@ cat << 'EOF' > "$TMP/index-schemas.json"
     {
       "name": "test.json",
       "type": "schema",
+      "baseDialect": "draft7",
       "url": "/example/schemas/test.json"
     }
   ],
