@@ -8,6 +8,7 @@
 
 #include "configure.h"
 
+#include <algorithm>   // std::search
 #include <cassert>     // assert
 #include <cctype>      // std::tolower
 #include <cstdint>     // std::uint32_t, std::int64_t
@@ -17,7 +18,7 @@
 #include <memory>      // std::unique_ptr
 #include <optional>    // std::optional, std::nullopt
 #include <sstream>     // std::ostringstream
-#include <string>      // std::string
+#include <string>      // std::string, std::getline
 #include <string_view> // std::string_view
 #include <utility>     // std::move
 
@@ -106,6 +107,52 @@ auto on_index(const sourcemeta::hydra::http::ServerLogger &,
   sourcemeta::hydra::http::serve_file(
       *(__global_data) / "generated" / "index.html", request, response);
 }
+
+auto on_search(const sourcemeta::hydra::http::ServerLogger &logger,
+               const sourcemeta::hydra::http::ServerRequest &request,
+               sourcemeta::hydra::http::ServerResponse &response) -> void {
+  const auto query{request.query("q")};
+  if (!query.has_value()) {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::BAD_REQUEST, "missing-query",
+               "You must provide a query parameter to search for");
+    return;
+  }
+
+  auto result{sourcemeta::jsontoolkit::JSON::make_array()};
+  auto stream = sourcemeta::jsontoolkit::read_file(
+      *(__global_data) / "generated" / "search.jsonl");
+  stream.exceptions(std::ifstream::badbit);
+  // TODO: Extend the JSON Toolkit JSONL iterators to be able
+  // to access the stringified contents of the current entry
+  // BEFORE parsing it as JSON, letting the client decide
+  // whether to parse or not.
+  std::string line;
+  const auto &query_value{query.value()};
+  while (std::getline(stream, line)) {
+    if (std::search(line.cbegin(), line.cend(), query_value.cbegin(),
+                    query_value.cend(), [](const auto left, const auto right) {
+                      return std::tolower(left) == std::tolower(right);
+                    }) == line.cend()) {
+      continue;
+    }
+
+    auto entry{sourcemeta::jsontoolkit::JSON::make_object()};
+    auto line_json{sourcemeta::jsontoolkit::parse(line)};
+    entry.assign("url", std::move(line_json.at(0)));
+    entry.assign("title", std::move(line_json.at(1)));
+    entry.assign("description", std::move(line_json.at(2)));
+    result.push_back(std::move(entry));
+
+    constexpr auto MAXIMUM_SEARCH_COUNT{10};
+    if (result.array_size() >= MAXIMUM_SEARCH_COUNT) {
+      break;
+    }
+  }
+
+  response.status(sourcemeta::hydra::http::Status::OK);
+  response.end(std::move(result));
+}
 #endif
 
 static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
@@ -189,6 +236,16 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
                          const sourcemeta::hydra::http::ServerRequest &request,
                          sourcemeta::hydra::http::ServerResponse &response)
     -> void {
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+  if (request.path() == "/search") {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
+               "method-not-allowed",
+               "This HTTP method is invalid for this URL");
+    return;
+  }
+#endif
+
   const auto maybe_schema{resolver(request_path_to_schema_uri(
       configuration().at("url").to_string(), request.path()))};
 
@@ -250,6 +307,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     sourcemeta::hydra::http::Server server;
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
     server.route(sourcemeta::hydra::http::Method::GET, "/", on_index);
+    server.route(sourcemeta::hydra::http::Method::GET, "/search", on_search);
 #endif
     server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);
