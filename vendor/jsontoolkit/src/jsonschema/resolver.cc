@@ -95,8 +95,9 @@ auto FlatFileSchemaResolver::add(
     throw SchemaError(error.str());
   }
 
-  const auto result{this->schemas.emplace(identifier.value(),
-                                          Entry{canonical, default_dialect})};
+  const auto result{this->schemas.emplace(
+      identifier.value(),
+      Entry{canonical, default_dialect, identifier.value()})};
   if (!result.second && result.first->second.path != canonical) {
     std::ostringstream error;
     error << "Cannot register the same identifier twice: "
@@ -128,6 +129,14 @@ auto FlatFileSchemaResolver::operator()(std::string_view identifier) const
       schema.assign("$schema", JSON{result->second.default_dialect.value()});
     }
 
+    sourcemeta::jsontoolkit::reidentify(schema,
+                                        result->second.original_identifier,
+                                        *this, result->second.default_dialect);
+    // Because we allow re-identification, we can get into issues unless we
+    // always try to relativize references
+    sourcemeta::jsontoolkit::relativize(schema, default_schema_walker, *this,
+                                        result->second.default_dialect,
+                                        result->second.original_identifier);
     sourcemeta::jsontoolkit::reidentify(schema, result->first, *this,
                                         result->second.default_dialect);
 

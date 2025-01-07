@@ -54,6 +54,15 @@ HTTP 200
   ]
 }
 
+# With absolute references
+GET {{base}}/example/schemas/absolute-refs.json
+HTTP 200
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "{{base}}/example/schemas/absolute-refs.json",
+  "$ref": "string.json"
+}
+
 # Folder with period
 GET {{base}}/example/v2.0/schema.json
 HTTP 200
