@@ -76,7 +76,7 @@ auto generate_toc(
     const sourcemeta::jsontoolkit::URI &server_url,
     const sourcemeta::jsontoolkit::JSON &configuration,
     const std::filesystem::path &base, const std::filesystem::path &directory,
-    sourcemeta::jsontoolkit::JSON &search_index) -> void {
+    std::vector<sourcemeta::jsontoolkit::JSON> &search_index) -> void {
   const auto server_url_string{server_url.recompose()};
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::jsontoolkit::JSON::make_array()};
@@ -150,15 +150,14 @@ auto generate_toc(
                         sourcemeta::jsontoolkit::JSON{entry_relative_path});
 
       // Collect schemas high-level metadata for searching purposes
-      auto search_entry{sourcemeta::jsontoolkit::JSON::make_object()};
-      search_entry.assign("url", entry_json.at("url"));
-      search_entry.assign("title", entry_json.defines("title")
-                                       ? entry_json.at("title")
-                                       : sourcemeta::jsontoolkit::JSON{""});
-      search_entry.assign("description",
-                          entry_json.defines("description")
-                              ? entry_json.at("description")
-                              : sourcemeta::jsontoolkit::JSON{""});
+      auto search_entry{sourcemeta::jsontoolkit::JSON::make_array()};
+      search_entry.push_back(entry_json.at("url"));
+      search_entry.push_back(entry_json.defines("title")
+                                 ? entry_json.at("title")
+                                 : sourcemeta::jsontoolkit::JSON{""});
+      search_entry.push_back(entry_json.defines("description")
+                                 ? entry_json.at("description")
+                                 : sourcemeta::jsontoolkit::JSON{""});
       search_index.push_back(std::move(search_entry));
 
       entries.push_back(std::move(entry_json));
@@ -247,7 +246,7 @@ auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
     -> int {
   std::cerr << "-- Indexing directory: " << output.string() << "\n";
   const auto base{std::filesystem::canonical(output / "schemas")};
-  auto search_index{sourcemeta::jsontoolkit::JSON::make_array()};
+  std::vector<sourcemeta::jsontoolkit::JSON> search_index;
   generate_toc(resolver, server_url, configuration, base, base, search_index);
 
   for (const auto &entry :
@@ -261,10 +260,17 @@ auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
                  std::filesystem::canonical(entry.path()), search_index);
   }
 
-  std::ofstream stream{output / "search.json"};
+  std::ofstream stream{output / "generated" / "search.jsonl"};
   assert(!stream.fail());
-  sourcemeta::jsontoolkit::prettify(search_index, stream);
-  stream << "\n";
+  // Make newer versions of schemas appear first
+  std::sort(search_index.begin(), search_index.end(),
+            [](const auto &left, const auto &right) {
+              return left.at(0) > right.at(0);
+            });
+  for (const auto &entry : search_index) {
+    sourcemeta::jsontoolkit::stringify(entry, stream);
+    stream << "\n";
+  }
   stream.close();
 
   // Not found page
