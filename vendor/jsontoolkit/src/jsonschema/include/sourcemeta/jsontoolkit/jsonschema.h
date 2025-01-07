@@ -322,6 +322,42 @@ SOURCEMETA_JSONTOOLKIT_JSONSCHEMA_EXPORT
 auto schema_format_compare(const JSON::String &left, const JSON::String &right)
     -> bool;
 
+/// @ingroup jsonschema
+///
+/// Try to turn every possible absolute reference in a schema into a relative
+/// one. For example:
+///
+/// ```cpp
+/// #include <sourcemeta/jsontoolkit/json.h>
+/// #include <sourcemeta/jsontoolkit/jsonschema.h>
+/// #include <cassert>
+///
+/// sourcemeta::jsontoolkit::JSON document =
+///   sourcemeta::jsontoolkit::parse(R"JSON({
+///   "$id": "https://www.example.com/schema",
+///   "$schema": "https://json-schema.org/draft/2020-12/schema",
+///   "$ref": "https://www.example.com/another",
+/// })JSON");
+///
+/// sourcemeta::jsontoolkit::relativize(schema,
+///   sourcemeta::jsontoolkit::default_dialect,
+///   sourcemeta::jsontoolkit::official_resolver);
+///
+/// const sourcemeta::jsontoolkit::JSON expected =
+///   sourcemeta::jsontoolkit::parse(R"JSON({
+///   "$id": "https://www.example.com/schema",
+///   "$schema": "https://json-schema.org/draft/2020-12/schema",
+///   "$ref": "another",
+/// })JSON");
+///
+/// assert(document == expected);
+/// ```
+SOURCEMETA_JSONTOOLKIT_JSONSCHEMA_EXPORT
+auto relativize(
+    JSON &schema, const SchemaWalker &walker, const SchemaResolver &resolver,
+    const std::optional<std::string> &default_dialect = std::nullopt,
+    const std::optional<std::string> &default_id = std::nullopt) -> void;
+
 } // namespace sourcemeta::jsontoolkit
 
 #endif
