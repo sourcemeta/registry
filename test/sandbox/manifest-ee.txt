@@ -21,6 +21,7 @@
 ./generated/example/v2.0/index.json
 ./generated/index.html
 ./generated/index.json
+./generated/search.jsonl
 ./schemas
 ./schemas/doc
 ./schemas/doc/string-1.json
@@ -39,4 +40,3 @@
 ./schemas/example/schemas/string.json
 ./schemas/example/v2.0
 ./schemas/example/v2.0/schema.json
-./search.json

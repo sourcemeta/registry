@@ -41,18 +41,8 @@ EOF
 "$1" "$TMP/configuration.json" "$TMP/output"
 
 cat << 'EOF' > "$TMP/expected.json"
-[
-  {
-    "url": "/example/schemas/no-title.json",
-    "title": "",
-    "description": ""
-  },
-  {
-    "url": "/example/schemas/test.json",
-    "title": "My title",
-    "description": "My description"
-  }
-]
+["/example/schemas/test.json","My title","My description"]
+["/example/schemas/no-title.json","",""]
 EOF
 
-diff "$TMP/output/search.json" "$TMP/expected.json"
+diff "$TMP/output/generated/search.jsonl" "$TMP/expected.json"
