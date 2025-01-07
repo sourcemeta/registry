@@ -7,18 +7,19 @@
 #include <sourcemeta/jsontoolkit/uri.h>
 
 #include "configure.h"
-#include "resolver.h"
 
-#include <cassert>    // assert
-#include <cstdint>    // std::uint32_t, std::int64_t
-#include <exception>  // std::exception_ptr, std::rethrow_exception
-#include <filesystem> // std::filesystem
-#include <iostream>   // std::cerr, std::cout
-#include <memory>     // std::unique_ptr
-#include <optional>   // std::optional
-#include <sstream>    // std::ostringstream
-#include <string>     // std::string
-#include <utility>    // std::move
+#include <cassert>     // assert
+#include <cctype>      // std::tolower
+#include <cstdint>     // std::uint32_t, std::int64_t
+#include <exception>   // std::exception_ptr, std::rethrow_exception
+#include <filesystem>  // std::filesystem
+#include <iostream>    // std::cerr, std::cout
+#include <memory>      // std::unique_ptr
+#include <optional>    // std::optional, std::nullopt
+#include <sstream>     // std::ostringstream
+#include <string>      // std::string
+#include <string_view> // std::string_view
+#include <utility>     // std::move
 
 static inline std::unique_ptr<const std::filesystem::path> __global_data;
 static auto configuration() -> const sourcemeta::jsontoolkit::JSON & {
@@ -27,13 +28,59 @@ static auto configuration() -> const sourcemeta::jsontoolkit::JSON & {
   return document;
 }
 
+static auto path_join(const std::filesystem::path &base,
+                      const std::filesystem::path &path)
+    -> std::filesystem::path {
+  if (path.is_absolute()) {
+    return (base / path.string().substr(1)).lexically_normal();
+  }
+
+  return (base / path).lexically_normal();
+}
+
+static auto request_path_to_schema_uri(const std::string &server_base_url,
+                                       const std::string &request_path)
+    -> std::string {
+  assert(request_path.starts_with('/'));
+  assert(!server_base_url.ends_with('/'));
+  std::ostringstream schema_identifier;
+  schema_identifier << server_base_url;
+  // TODO: Can we avoid this copy?
+  auto path_copy{request_path};
+  path_copy.erase(path_copy.find_last_not_of('/') + 1);
+  for (const auto character : path_copy) {
+    schema_identifier << static_cast<char>(std::tolower(character));
+  }
+
+  if (request_path != "/" && !schema_identifier.str().ends_with(".json")) {
+    schema_identifier << ".json";
+  }
+
+  return schema_identifier.str();
+}
+
 static auto resolver(std::string_view identifier)
     -> std::optional<sourcemeta::jsontoolkit::JSON> {
   static const auto SERVER_BASE_URL{
       sourcemeta::jsontoolkit::URI{configuration().at("url").to_string()}
           .canonicalize()};
-  return sourcemeta::registry::resolver(
-      SERVER_BASE_URL, *(__global_data) / "schemas", identifier);
+  sourcemeta::jsontoolkit::URI uri{std::string{identifier}};
+  uri.canonicalize().relative_to(SERVER_BASE_URL);
+
+  // If so, this URI doesn't belong to us
+  // TODO: Have a more efficient way of checking that a URI is blank
+  if (uri.is_absolute() || uri.recompose().empty()) {
+    return sourcemeta::jsontoolkit::official_resolver(identifier);
+  }
+
+  assert(uri.path().has_value());
+  const auto schema_path{
+      path_join(*(__global_data) / "schemas", uri.path().value())};
+  if (!std::filesystem::exists(schema_path)) {
+    return std::nullopt;
+  }
+
+  return sourcemeta::jsontoolkit::from_file(schema_path);
 }
 
 static auto json_error(const sourcemeta::hydra::http::ServerLogger &logger,
@@ -65,8 +112,33 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
                        const sourcemeta::hydra::http::ServerRequest &request,
                        sourcemeta::hydra::http::ServerResponse &response)
     -> void {
-  const auto schema_identifier{sourcemeta::registry::request_path_to_schema_uri(
-      configuration().at("url").to_string(), request.path())};
+  const auto &request_path{request.path()};
+
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+  if (!request_path.ends_with(".json")) {
+    const auto asset_path{SOURCEMETA_REGISTRY_ENTERPRISE_STATIC + request_path};
+    if (std::filesystem::exists(asset_path)) {
+      sourcemeta::hydra::http::serve_file(asset_path, request, response);
+      return;
+    }
+
+    const auto directory_path{
+        path_join(*(__global_data) / "generated", request.path())};
+    if (std::filesystem::is_directory(directory_path)) {
+      sourcemeta::hydra::http::serve_file(directory_path / "index.html",
+                                          request, response);
+    } else {
+      sourcemeta::hydra::http::serve_file(
+          *(__global_data) / "generated" / "404.html", request, response,
+          sourcemeta::hydra::http::Status::NOT_FOUND);
+    }
+
+    return;
+  }
+#endif
+
+  const auto schema_identifier{request_path_to_schema_uri(
+      configuration().at("url").to_string(), request_path)};
   const auto maybe_schema{resolver(schema_identifier)};
   if (!maybe_schema.has_value()) {
     json_error(logger, request, response,
@@ -117,9 +189,8 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
                          const sourcemeta::hydra::http::ServerRequest &request,
                          sourcemeta::hydra::http::ServerResponse &response)
     -> void {
-  const auto maybe_schema{
-      resolver(sourcemeta::registry::request_path_to_schema_uri(
-          configuration().at("url").to_string(), request.path()))};
+  const auto maybe_schema{resolver(request_path_to_schema_uri(
+      configuration().at("url").to_string(), request.path()))};
 
   if (maybe_schema.has_value()) {
     json_error(logger, request, response,
@@ -153,10 +224,6 @@ static auto on_error(std::exception_ptr exception_ptr,
   }
 }
 
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
-#include "enterprise_server.h"
-#endif
-
 // We try to keep this function as straight to point as possible
 // with minimal input validation (outside debug builds). The intention
 // is for the server to start running and bind to the port as quickly
@@ -182,12 +249,10 @@ auto main(int argc, char *argv[]) noexcept -> int {
 
     sourcemeta::hydra::http::Server server;
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
-    sourcemeta::registry::enterprise::attach(server);
     server.route(sourcemeta::hydra::http::Method::GET, "/", on_index);
-#else
+#endif
     server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);
-#endif
     server.otherwise(on_otherwise);
     server.error(on_error);
 
