@@ -148,7 +148,7 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
       html << "<div>";
 
       if (meta.defines("github")) {
-        html << "<small class=\"me-3\">";
+        html << "<small class=\"me-3 d-block mb-2 mb-md-0 d-md-inline-block\">";
         html << "<i class=\"bi bi-github text-secondary me-1\"></i>";
         html << "<a href=\"https://github.com/";
         html << meta.at("github").to_string();
@@ -159,7 +159,7 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
       }
 
       if (meta.defines("website")) {
-        html << "<small class=\"me-3\">";
+        html << "<small class=\"me-3 d-block mb-2 mb-md-0 d-md-inline-block\">";
         html << "<i class=\"bi bi-link-45deg text-secondary me-1\"></i>";
         html << "<a href=\"";
         html << meta.at("website").to_string();
@@ -170,7 +170,7 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
       }
 
       if (meta.defines("email")) {
-        html << "<small class=\"me-3\">";
+        html << "<small class=\"me-3 d-block mb-2 mb-md-0 d-md-inline-block\">";
         html << "<i class=\"bi bi-envelope text-secondary me-1\"></i>";
         html << "<a href=\"mailto:";
         html << meta.at("email").to_string();
