@@ -1,6 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://example.com/bundling/single.json",
+  "title": "Bundling",
+  "description": "A bundling example",
   "properties": {
     "foo": {
       "$ref": "http://localhost:8000/example/v2.0/schema.json"
