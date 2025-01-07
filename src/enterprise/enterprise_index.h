@@ -174,7 +174,7 @@ auto generate_toc(
               return left.at("type") < right.at("type");
             });
 
-  auto result{sourcemeta::jsontoolkit::JSON::make_object()};
+  auto meta{sourcemeta::jsontoolkit::JSON::make_object()};
   const auto page_entry_name{
       std::filesystem::relative(directory, base).string()};
 
@@ -183,24 +183,24 @@ auto generate_toc(
       configuration.at("pages").defines(page_entry_name)) {
     for (const auto &entry :
          configuration.at("pages").at(page_entry_name).as_object()) {
-      result.assign(entry.first, entry.second);
+      meta.assign(entry.first, entry.second);
     }
   }
 
   // Store entries
-  result.assign("entries", std::move(entries));
+  meta.assign("entries", std::move(entries));
 
   // Precompute the breadcrumb
   const std::filesystem::path relative_path{directory.string().substr(
       std::min(base.string().size() + 1, directory.string().size()))};
-  result.assign("breadcrumb", sourcemeta::jsontoolkit::JSON::make_array());
+  meta.assign("breadcrumb", sourcemeta::jsontoolkit::JSON::make_array());
   std::filesystem::path current_path{"/"};
   for (const auto &part : relative_path) {
     current_path = current_path / part;
     auto breadcrumb_entry{sourcemeta::jsontoolkit::JSON::make_object()};
     breadcrumb_entry.assign("name", sourcemeta::jsontoolkit::JSON{part});
     breadcrumb_entry.assign("url", sourcemeta::jsontoolkit::JSON{current_path});
-    result.at("breadcrumb").push_back(std::move(breadcrumb_entry));
+    meta.at("breadcrumb").push_back(std::move(breadcrumb_entry));
   }
 
   const auto index_path{base.parent_path() / "generated" /
@@ -210,7 +210,7 @@ auto generate_toc(
   std::filesystem::create_directories(index_path.parent_path());
   std::ofstream stream{index_path};
   assert(!stream.fail());
-  sourcemeta::jsontoolkit::prettify(result, stream);
+  sourcemeta::jsontoolkit::prettify(meta, stream);
   stream << "\n";
   stream.close();
 
@@ -221,8 +221,7 @@ auto generate_toc(
     sourcemeta::registry::enterprise::html_start(
         html, configuration, configuration.at("title").to_string(),
         configuration.at("description").to_string(), "");
-    sourcemeta::registry::enterprise::html_file_manager(
-        html, index_path.parent_path());
+    sourcemeta::registry::enterprise::html_file_manager(html, meta);
     sourcemeta::registry::enterprise::html_end(html);
     html << "\n";
     html.close();
@@ -234,8 +233,7 @@ auto generate_toc(
     sourcemeta::registry::enterprise::html_start(
         html, configuration, page_relative_path, page_relative_path,
         page_relative_path);
-    sourcemeta::registry::enterprise::html_file_manager(
-        html, index_path.parent_path());
+    sourcemeta::registry::enterprise::html_file_manager(html, meta);
     sourcemeta::registry::enterprise::html_end(html);
     html << "\n";
     html.close();

@@ -77,12 +77,8 @@ template <typename T> auto html_end(T &html) -> void {
 }
 
 template <typename T>
-auto html_file_manager(T &html, const std::filesystem::path &directory)
+auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
     -> void {
-  const auto meta_path{directory / "index.json"};
-  assert(std::filesystem::exists(meta_path));
-  const auto meta{sourcemeta::jsontoolkit::from_file(meta_path)};
-
   assert(meta.defines("breadcrumb"));
   assert(meta.at("breadcrumb").is_array());
   if (!meta.at("breadcrumb").empty()) {
@@ -123,6 +119,77 @@ auto html_file_manager(T &html, const std::filesystem::path &directory)
   html << "<div class=\"container-fluid p-4\">";
   html << "<table class=\"table table-bordered border-light-subtle "
           "table-light\">";
+
+  if (!meta.at("breadcrumb").empty() && meta.defines("title")) {
+    html << "<div class=\"mb-4 d-flex\">";
+
+    if (meta.defines("github")) {
+      html << "<div class=\"me-4\">";
+      html << "<img src=\"https://github.com/";
+      html << meta.at("github").to_string();
+      html << ".png?size=200\" class=\"img-thumbnail\" width=\"100\" "
+              "height=\"100\">";
+      html << "</div>";
+    }
+
+    html << "<div>";
+    html << "<h2 class=\"fw-bold h4\">";
+    html << meta.at("title").to_string();
+    html << "</h2>";
+
+    if (meta.defines("description")) {
+      html << "<p class=\"text-secondary\">";
+      html << meta.at("description").to_string();
+      html << "</p>";
+    }
+
+    if (meta.defines("email") || meta.defines("github") ||
+        meta.defines("website")) {
+      html << "<div>";
+
+      if (meta.defines("github")) {
+        html << "<small class=\"me-3\">";
+        html << "<i class=\"bi bi-github text-secondary me-1\"></i>";
+        html << "<a href=\"https://github.com/";
+        html << meta.at("github").to_string();
+        html << "\" class=\"text-secondary\">";
+        html << meta.at("github").to_string();
+        html << "</a>";
+        html << "</small>";
+      }
+
+      if (meta.defines("website")) {
+        html << "<small class=\"me-3\">";
+        html << "<i class=\"bi bi-link-45deg text-secondary me-1\"></i>";
+        html << "<a href=\"";
+        html << meta.at("website").to_string();
+        html << "\" class=\"text-secondary\">";
+        html << meta.at("website").to_string();
+        html << "</a>";
+        html << "</small>";
+      }
+
+      if (meta.defines("email")) {
+        html << "<small class=\"me-3\">";
+        html << "<i class=\"bi bi-envelope text-secondary me-1\"></i>";
+        html << "<a href=\"mailto:";
+        html << meta.at("email").to_string();
+        html << "\" class=\"text-secondary\">";
+        html << meta.at("email").to_string();
+        html << "</a>";
+        html << "</small>";
+      }
+
+      html << "</div>";
+    }
+
+    html << "</div>";
+    html << "</div>";
+  }
+
+  // "email": "hello@sourcemeta.com",
+  // "github": "sourcemeta",
+  // "website": "https://www.sourcemeta.com",
 
   html << "<thead>";
   html << "<tr>";

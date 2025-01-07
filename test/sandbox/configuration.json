@@ -2,6 +2,13 @@
   "url": "http://localhost:8000",
   "port": 8000,
   "pages": {
+    "example": {
+      "title": "Sourcemeta",
+      "description": "My description",
+      "email": "hello@sourcemeta.com",
+      "github": "sourcemeta",
+      "website": "https://www.sourcemeta.com"
+    },
     "doc": {
       "title": "A sample schema folder",
       "description": "For testing purposes"
