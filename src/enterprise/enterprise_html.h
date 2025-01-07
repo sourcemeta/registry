@@ -198,10 +198,6 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
     html << "</div>";
   }
 
-  // "email": "hello@sourcemeta.com",
-  // "github": "sourcemeta",
-  // "website": "https://www.sourcemeta.com",
-
   html << "<thead>";
   html << "<tr>";
   html << "<th scope=\"col\" style=\"width: 50px\"></th>";
