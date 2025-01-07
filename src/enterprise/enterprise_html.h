@@ -60,13 +60,24 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
   const auto &site_name{configuration.at("title").to_string()};
 
   html << "<nav class=\"navbar navbar-expand border-bottom bg-body\">";
-  html << "<div class=\"container-fluid px-4 py-2\">";
+  html << "<div class=\"container-fluid px-4 py-1 align-items-center "
+          "flex-column flex-sm-row\">";
   html << "<a class=\"navbar-brand\" href=\"" << base_url << "\">";
   html << "<img src=\"/icon.svg\" alt=\"" << site_name
        << "\" height=\"30\" width=\"30\" class=\"me-2\">";
   html << "<span class=\"align-middle fw-bold\">" << site_name << "</span>";
   html << "<span class=\"align-middle fw-lighter\"> Schemas</span>";
   html << "</a>";
+
+  html << "<div class=\"input-group mt-3 mt-sm-0\">";
+  html << "<span class=\"input-group-text\">";
+  html << "<i class=\"bi bi-search\"></i>";
+  html << "</span>";
+  html << "<input class=\"form-control\" type=\"search\" id=\"search\" "
+          "placeholder=\"Search\" aria-label=\"Search\" autocomplete=\"off\" "
+          "disabled>";
+  html << "</div>";
+
   html << "</div>";
   html << "</nav>";
 }
