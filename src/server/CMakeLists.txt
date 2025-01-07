@@ -35,6 +35,7 @@ if(REGISTRY_ENTERPRISE)
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.svg"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/apple-touch-icon.png"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/manifest.webmanifest"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
 
     # Styles
     "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
