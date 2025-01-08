@@ -122,6 +122,43 @@
           }
         }
       }
+    },
+    {
+      "description": "action without icon",
+      "valid": true,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "action": {
+          "title": "Call to Action",
+          "url": "https://www.sourcemeta.com"
+        },
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
+    },
+    {
+      "description": "action with valid icon",
+      "valid": true,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "action": {
+          "title": "Call to Action",
+          "url": "https://www.sourcemeta.com",
+          "icon": "github"
+        },
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
     }
   ]
 }

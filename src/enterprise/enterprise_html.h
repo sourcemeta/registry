@@ -84,6 +84,20 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
           "shadow-sm\" id=\"search-result\"></ul>";
   html << "</div>";
 
+  if (configuration.defines("action")) {
+    html << "<a class=\"ms-3 btn btn-dark\" role=\"button\" href=\"";
+    html << configuration.at("action").at("url").to_string();
+    html << "\">";
+    if (configuration.at("action").defines("icon")) {
+      html << "<i class=\"me-2 bi bi-";
+      html << configuration.at("action").at("icon").to_string();
+      html << "\"></i>";
+    }
+
+    html << configuration.at("action").at("title").to_string();
+    html << "</a>";
+  }
+
   html << "</div>";
   html << "</nav>";
 }

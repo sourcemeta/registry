@@ -599,6 +599,89 @@
           }
         }
       }
+    },
+    {
+      "description": "empty action",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "action": {},
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
+    },
+    {
+      "description": "non-object action",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "action": [],
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
+    },
+    {
+      "description": "action only title",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "action": {
+          "title": "Call to Action"
+        },
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
+    },
+    {
+      "description": "action only url",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "action": {
+          "url": "https://www.sourcemeta.com"
+        },
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
+    },
+    {
+      "description": "action with invalid icon",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "action": {
+          "title": "Call to Action",
+          "url": "https://www.sourcemeta.com",
+          "icon": "xxx"
+        },
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
     }
   ]
 }
