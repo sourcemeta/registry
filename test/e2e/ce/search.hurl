@@ -1,4 +1,4 @@
-GET {{base}}/search?q=foo
+GET {{base}}/api/search?q=foo
 HTTP 404
 Content-Type: application/json
 [Captures]

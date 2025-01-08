@@ -237,7 +237,7 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
                          sourcemeta::hydra::http::ServerResponse &response)
     -> void {
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
-  if (request.path() == "/search") {
+  if (request.path().starts_with("/api/")) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
                "method-not-allowed",
@@ -307,7 +307,8 @@ auto main(int argc, char *argv[]) noexcept -> int {
     sourcemeta::hydra::http::Server server;
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
     server.route(sourcemeta::hydra::http::Method::GET, "/", on_index);
-    server.route(sourcemeta::hydra::http::Method::GET, "/search", on_search);
+    server.route(sourcemeta::hydra::http::Method::GET, "/api/search",
+                 on_search);
 #endif
     server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);

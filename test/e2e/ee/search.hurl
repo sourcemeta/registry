@@ -1,4 +1,4 @@
-GET {{base}}/search
+GET {{base}}/api/search
 HTTP 400
 Content-Type: application/json
 [Captures]
@@ -9,7 +9,7 @@ jsonpath "$.error" == "missing-query"
 jsonpath "$.message" == "You must provide a query parameter to search for"
 jsonpath "$.request" == "{{current_request_id}}"
 
-GET {{base}}/search?q=
+GET {{base}}/api/search?q=
 HTTP 400
 Content-Type: application/json
 [Captures]
@@ -20,7 +20,7 @@ jsonpath "$.error" == "missing-query"
 jsonpath "$.message" == "You must provide a query parameter to search for"
 jsonpath "$.request" == "{{current_request_id}}"
 
-POST {{base}}/search?q=foo
+POST {{base}}/api/search?q=foo
 HTTP 405
 Content-Type: application/json
 [Captures]
@@ -32,12 +32,12 @@ jsonpath "$.message" == "This HTTP method is invalid for this URL"
 jsonpath "$.request" == "{{current_request_id}}"
 
 # A string we know won't give any results
-GET {{base}}/search?q=xxxxxxxxxxxx
+GET {{base}}/api/search?q=xxxxxxxxxxxx
 HTTP 200
 []
 
 # Results with title/description
-GET {{base}}/search?q=bundling
+GET {{base}}/api/search?q=bundling
 HTTP 200
 [
   {
@@ -48,7 +48,7 @@ HTTP 200
 ]
 
 # Test casing
-GET {{base}}/search?q=bUNdLing
+GET {{base}}/api/search?q=bUNdLing
 HTTP 200
 [
   {
@@ -59,7 +59,7 @@ HTTP 200
 ]
 
 # Results without title/description
-GET {{base}}/search?q=camel
+GET {{base}}/api/search?q=camel
 HTTP 200
 [
   {
@@ -70,7 +70,7 @@ HTTP 200
 ]
 
 # No matter what, we impose a limit on the results
-GET {{base}}/search?q=e
+GET {{base}}/api/search?q=e
 HTTP 200
 [Asserts]
 jsonpath "$" count <= 10
