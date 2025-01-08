@@ -70,13 +70,16 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
   html << "<span class=\"align-middle fw-lighter\"> Schemas</span>";
   html << "</a>";
 
-  html << "<div class=\"input-group mt-3 mt-sm-0\">";
+  html << "<div class=\"mt-3 mt-sm-0 flex-grow-1 position-relative\">";
+  html << "<div class=\"input-group\">";
   html << "<span class=\"input-group-text\">";
   html << "<i class=\"bi bi-search\"></i>";
   html << "</span>";
   html << "<input class=\"form-control\" type=\"search\" id=\"search\" "
-          "placeholder=\"Search\" aria-label=\"Search\" autocomplete=\"off\" "
-          "disabled>";
+          "placeholder=\"Search\" aria-label=\"Search\" autocomplete=\"off\">";
+  html << "</div>";
+  html << "<ul class=\"d-none list-group position-absolute w-100 mt-1 "
+          "shadow-sm\" id=\"search-result\"></ul>";
   html << "</div>";
 
   html << "</div>";
