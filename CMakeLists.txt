@@ -19,6 +19,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=native")
 
 if(REGISTRY_INDEX)
+  add_subdirectory(src/html)
   add_subdirectory(src/index)
 endif()
 
