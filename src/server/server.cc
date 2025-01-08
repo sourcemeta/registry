@@ -155,6 +155,24 @@ auto on_search(const sourcemeta::hydra::http::ServerLogger &logger,
 }
 #endif
 
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+static auto on_static(const sourcemeta::hydra::http::ServerLogger &logger,
+                      const sourcemeta::hydra::http::ServerRequest &request,
+                      sourcemeta::hydra::http::ServerResponse &response)
+    -> void {
+  const auto asset_path{SOURCEMETA_REGISTRY_ENTERPRISE_STATIC +
+                        request.path().substr(7)};
+  if (!std::filesystem::exists(asset_path)) {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
+               "There is no schema at this URL");
+    return;
+  }
+
+  sourcemeta::hydra::http::serve_file(asset_path, request, response);
+}
+#endif
+
 static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
                        const sourcemeta::hydra::http::ServerRequest &request,
                        sourcemeta::hydra::http::ServerResponse &response)
@@ -163,12 +181,6 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
 
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
   if (!request_path.ends_with(".json")) {
-    const auto asset_path{SOURCEMETA_REGISTRY_ENTERPRISE_STATIC + request_path};
-    if (std::filesystem::exists(asset_path)) {
-      sourcemeta::hydra::http::serve_file(asset_path, request, response);
-      return;
-    }
-
     const auto directory_path{
         path_join(*(__global_data) / "generated", request.path())};
     if (std::filesystem::is_directory(directory_path)) {
@@ -309,6 +321,8 @@ auto main(int argc, char *argv[]) noexcept -> int {
     server.route(sourcemeta::hydra::http::Method::GET, "/", on_index);
     server.route(sourcemeta::hydra::http::Method::GET, "/api/search",
                  on_search);
+    server.route(sourcemeta::hydra::http::Method::GET, "/static/*", on_static);
+    server.route(sourcemeta::hydra::http::Method::HEAD, "/static/*", on_static);
 #endif
     server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);

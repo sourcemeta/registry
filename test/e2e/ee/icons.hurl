@@ -1,70 +1,70 @@
-HEAD {{base}}/apple-touch-icon.png
+HEAD {{base}}/static/apple-touch-icon.png
 HTTP 200
 Content-Type: image/png
 [Asserts]
 bytes count == 0
 
-HEAD {{base}}/favicon.ico
+HEAD {{base}}/static/favicon.ico
 HTTP 200
 Content-Type: image/vnd.microsoft.icon
 [Asserts]
 bytes count == 0
 
-HEAD {{base}}/icon.svg
+HEAD {{base}}/static/icon.svg
 HTTP 200
 Content-Type: image/svg+xml
 [Asserts]
 bytes count == 0
 
-HEAD {{base}}/icon_192x192.png
+HEAD {{base}}/static/icon_192x192.png
 HTTP 200
 Content-Type: image/png
 [Asserts]
 bytes count == 0
 
-HEAD {{base}}/icon_512x512.png
+HEAD {{base}}/static/icon_512x512.png
 HTTP 200
 Content-Type: image/png
 [Asserts]
 bytes count == 0
 
-HEAD {{base}}/manifest.webmanifest
+HEAD {{base}}/static/manifest.webmanifest
 HTTP 200
 Content-Type: application/manifest+json
 [Asserts]
 bytes count == 0
 
-GET {{base}}/apple-touch-icon.png
+GET {{base}}/static/apple-touch-icon.png
 HTTP 200
 Content-Type: image/png
 [Asserts]
 bytes count > 0
 
-GET {{base}}/favicon.ico
+GET {{base}}/static/favicon.ico
 HTTP 200
 Content-Type: image/vnd.microsoft.icon
 [Asserts]
 bytes count > 0
 
-GET {{base}}/icon.svg
+GET {{base}}/static/icon.svg
 HTTP 200
 Content-Type: image/svg+xml
 [Asserts]
 bytes count > 0
 
-GET {{base}}/icon_192x192.png
+GET {{base}}/static/icon_192x192.png
 HTTP 200
 Content-Type: image/png
 [Asserts]
 bytes count > 0
 
-GET {{base}}/icon_512x512.png
+GET {{base}}/static/icon_512x512.png
 HTTP 200
 Content-Type: image/png
 [Asserts]
 bytes count > 0
 
-GET {{base}}/manifest.webmanifest
+GET {{base}}/static/manifest.webmanifest
 HTTP 200
 Content-Type: application/manifest+json
 [Asserts]

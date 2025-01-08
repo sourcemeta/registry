@@ -33,18 +33,19 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
     html << "<link rel=\"canonical\" href=\"" << base_url << path.value()
          << "\">";
   }
-  html << "<link rel=\"stylesheet\" href=\"/style.min.css\">";
+  html << "<link rel=\"stylesheet\" href=\"/static/style.min.css\">";
 
   // Application icons
   // TODO: Allow changing these by supporing an object in the
   // configuration manifest to select static files to override
-  html << "<link rel=\"icon\" href=\"/favicon.ico\" sizes=\"any\">";
-  html << "<link rel=\"icon\" href=\"/icon.svg\" type=\"image/svg+xml\">";
+  html << "<link rel=\"icon\" href=\"/static/favicon.ico\" sizes=\"any\">";
+  html
+      << "<link rel=\"icon\" href=\"/static/icon.svg\" type=\"image/svg+xml\">";
   html << "<link rel=\"shortcut icon\" type=\"image/png\" "
-          "href=\"/apple-touch-icon.png\">";
+          "href=\"/static/apple-touch-icon.png\">";
   html << "<link rel=\"apple-touch-icon\" sizes=\"180x180\" "
-          "href=\"/apple-touch-icon.png\">";
-  html << "<link rel=\"manifest\" href=\"/manifest.webmanifest\">";
+          "href=\"/static/apple-touch-icon.png\">";
+  html << "<link rel=\"manifest\" href=\"/static/manifest.webmanifest\">";
 
   if (configuration.defines("analytics")) {
     if (configuration.at("analytics").defines("plausible")) {
@@ -63,7 +64,7 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
   html << "<div class=\"container-fluid px-4 py-1 align-items-center "
           "flex-column flex-sm-row\">";
   html << "<a class=\"navbar-brand\" href=\"" << base_url << "\">";
-  html << "<img src=\"/icon.svg\" alt=\"" << site_name
+  html << "<img src=\"/static/icon.svg\" alt=\"" << site_name
        << "\" height=\"30\" width=\"30\" class=\"me-2\">";
   html << "<span class=\"align-middle fw-bold\">" << site_name << "</span>";
   html << "<span class=\"align-middle fw-lighter\"> Schemas</span>";
