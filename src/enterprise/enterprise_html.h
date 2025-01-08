@@ -80,7 +80,7 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
   html << "<input class=\"form-control\" type=\"search\" id=\"search\" "
           "placeholder=\"Search\" aria-label=\"Search\" autocomplete=\"off\">";
   html << "</div>";
-  html << "<ul class=\"d-none list-group position-absolute w-100 mt-1 "
+  html << "<ul class=\"d-none list-group position-absolute w-100 mt-2 "
           "shadow-sm\" id=\"search-result\"></ul>";
   html << "</div>";
 
