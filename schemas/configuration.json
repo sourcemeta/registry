@@ -14,6 +14,28 @@
     "description": {
       "$ref": "#/definitions/text"
     },
+    "action": {
+      "type": "object",
+      "required": [
+        "title",
+        "url"
+      ],
+      "properties": {
+        "title": {
+          "$ref": "#/definitions/text"
+        },
+        "icon": {
+          "enum": [
+            "github",
+            "link"
+          ]
+        },
+        "url": {
+          "$ref": "#/definitions/http-url"
+        }
+      },
+      "additionalProperties": false
+    },
     "analytics": {
       "type": "object",
       "minProperties": 1,

@@ -183,7 +183,8 @@ static auto index_main(const std::string_view &program,
   const auto compiled_configuration_schema{sourcemeta::blaze::compile(
       configuration_schema, sourcemeta::jsontoolkit::default_schema_walker,
       sourcemeta::jsontoolkit::official_resolver,
-      sourcemeta::blaze::default_schema_compiler)};
+      sourcemeta::blaze::default_schema_compiler,
+      sourcemeta::blaze::Mode::Exhaustive)};
 
   const auto configuration{
       sourcemeta::jsontoolkit::from_file(configuration_path)};
