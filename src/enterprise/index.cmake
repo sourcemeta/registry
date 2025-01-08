@@ -5,3 +5,5 @@ target_sources(schema_registry_index PRIVATE
   "${ENTERPRISE_SOURCE_DIR}/enterprise_index.h"
   "${ENTERPRISE_SOURCE_DIR}/enterprise_html.h")
 target_include_directories(schema_registry_index PRIVATE "${ENTERPRISE_SOURCE_DIR}")
+
+target_link_libraries(schema_registry_index PRIVATE sourcemeta::registry::html)

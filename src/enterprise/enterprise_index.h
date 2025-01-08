@@ -217,11 +217,13 @@ auto generate_toc(
     std::cerr << "Generating HTML index page\n";
     std::ofstream html{index_path.parent_path() / "index.html"};
     assert(!html.fail());
+    sourcemeta::registry::html::SafeOutput output_html{html};
     sourcemeta::registry::enterprise::html_start(
-        html, configuration, configuration.at("title").to_string() + " Schemas",
+        output_html, configuration,
+        configuration.at("title").to_string() + " Schemas",
         configuration.at("description").to_string(), "");
     sourcemeta::registry::enterprise::html_file_manager(html, meta);
-    sourcemeta::registry::enterprise::html_end(html);
+    sourcemeta::registry::enterprise::html_end(output_html);
     html << "\n";
     html.close();
   } else {
@@ -229,8 +231,9 @@ auto generate_toc(
     const auto page_relative_path{std::string{'/'} + relative_path.string()};
     std::ofstream html{index_path.parent_path() / "index.html"};
     assert(!html.fail());
+    sourcemeta::registry::html::SafeOutput output_html{html};
     sourcemeta::registry::enterprise::html_start(
-        html, configuration,
+        output_html, configuration,
         meta.defines("title") ? meta.at("title").to_string()
                               : page_relative_path,
         meta.defines("description")
@@ -238,7 +241,7 @@ auto generate_toc(
             : ("Schemas located at " + page_relative_path),
         page_relative_path);
     sourcemeta::registry::enterprise::html_file_manager(html, meta);
-    sourcemeta::registry::enterprise::html_end(html);
+    sourcemeta::registry::enterprise::html_end(output_html);
     html << "\n";
     html.close();
   }
@@ -281,21 +284,23 @@ auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
   // Not found page
   std::ofstream stream_not_found{output / "generated" / "404.html"};
   assert(!stream_not_found.fail());
+  sourcemeta::registry::html::SafeOutput output_html{stream_not_found};
   sourcemeta::registry::enterprise::html_start(
-      stream_not_found, configuration, "Not Found",
+      output_html, configuration, "Not Found",
       "What you are looking for is not here", std::nullopt);
-  stream_not_found << "<div class=\"container-fluid p-4\">";
-  stream_not_found << "<h2 class=\"fw-bold\">";
-  stream_not_found << "Oops! What you are looking for is not here";
-  stream_not_found << "</h2>";
-  stream_not_found << "<p class=\"lead\">";
-  stream_not_found << "Are you sure the link you got is correct?";
-  stream_not_found << "</p>";
-  stream_not_found << "<a href=\"/\">";
-  stream_not_found << "Get back to the home page";
-  stream_not_found << "</a>";
-  stream_not_found << "</div>";
-  sourcemeta::registry::enterprise::html_end(stream_not_found);
+  output_html.open("div", {{"class", "container-fluid p-4"}})
+      .open("h2", {{"class", "fw-bold"}})
+      .text("Oops! What you are looking for is not here")
+      .close("h2")
+      .open("p", {{"class", "lead"}})
+      .text("Are you sure the link you got is correct?")
+      .close("p")
+      .open("a", {{"href", "/"}})
+      .text("Get back to the home page")
+      .close("a")
+      .close("div")
+      .close("div");
+  sourcemeta::registry::enterprise::html_end(output_html);
   stream_not_found << "\n";
   stream_not_found.close();
 

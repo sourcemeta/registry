@@ -2,146 +2,188 @@
 #define SOURCEMETA_REGISTRY_ENTERPRISE_HTML_H_
 
 #include <sourcemeta/jsontoolkit/json.h>
+#include <sourcemeta/registry/html.h>
 
-#include <filesystem> // std::filesystem
-#include <optional>   // std::optional
-#include <string>     // std::string
+#include <optional> // std::optional
+#include <string>   // std::string
 
 #include "configure.h"
 
 namespace sourcemeta::registry::enterprise {
 
 template <typename T>
-auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
+auto html_navigation(T &output,
+                     const sourcemeta::jsontoolkit::JSON &configuration)
+    -> void {
+  output.open("nav", {{"class", "navbar navbar-expand border-bottom bg-body"}});
+  output.open("div", {{"class", "container-fluid px-4 py-1 align-items-center "
+                                "flex-column flex-sm-row"}});
+
+  output.open("a", {{"class", "navbar-brand"},
+                    {"href", configuration.at("url").to_string()}});
+  sourcemeta::registry::html::partials::image(
+      output, "/static/icon.svg", 30, configuration.at("title").to_string(),
+      "me-2");
+  output.open("span", {{"class", "align-middle fw-bold"}})
+      .text(configuration.at("title").to_string())
+      .close("span")
+      .open("span", {{"class", "align-middle fw-lighter"}})
+      .text(" Schemas")
+      .close("span");
+  output.close("a");
+
+  output.open("div", {{"class", "mt-3 mt-sm-0 flex-grow-1 position-relative"}})
+      .open("div", {{"class", "input-group"}})
+      .open("span", {{"class", "input-group-text"}})
+      .open("i", {{"class", "bi bi-search"}})
+      .close("i")
+      .close("span")
+      .open("input", {{"class", "form-control"},
+                      {"type", "search"},
+                      {"id", "search"},
+                      {"placeholder", "Search"},
+                      {"aria-label", "Search"},
+                      {"autocomplete", "off"}})
+      .close("div")
+      .open("ul", {{"class",
+                    "d-none list-group position-absolute w-100 mt-2 shadow-sm"},
+                   {"id", "search-result"}})
+      .close("ul")
+      .close("div");
+
+  if (configuration.defines("action")) {
+    output.open("a",
+                {{"class", "ms-3 btn btn-dark"},
+                 {"role", "button"},
+                 {"href", configuration.at("action").at("url").to_string()}});
+
+    if (configuration.at("action").defines("icon")) {
+      output
+          .open("i", {{"class",
+                       "me-2 bi bi-" +
+                           configuration.at("action").at("icon").to_string()}})
+          .close("i");
+    }
+
+    output.text(configuration.at("action").at("title").to_string());
+    output.close("a");
+  }
+
+  output.close("div");
+  output.close("nav");
+}
+
+template <typename T> auto html_footer(T &output) -> void {
+  output.open("footer",
+              {{"class", "border-top text-secondary py-3 d-flex "
+                         "align-items-center justify-content-between"}});
+  output.open("small")
+      .open("a", {{"href", "https://github.com/sourcemeta/registry"},
+                  {"class", "text-secondary"},
+                  {"target", "_blank"}})
+      .text("Registry")
+      .close("a")
+      .text(" v")
+      .text(sourcemeta::registry::PROJECT_VERSION)
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+      .text(" (Enterprise Edition)")
+#else
+      .text(" (Community Edition)")
+#endif
+      .text(" © 2025 ")
+      .open("a", {{"href", "https://www.sourcemeta.com"},
+                  {"class", "text-secondary"},
+                  {"target", "_blank"}})
+      .text("Sourcemeta, Ltd.")
+      .close("a")
+      .close("small");
+  output.open("small")
+      .open("a",
+            {{"href", "https://github.com/sourcemeta/registry/discussions"},
+             {"class", "text-secondary"},
+             {"target", "_blank"}})
+      .text("Need Help?")
+      .close("a")
+      .close("small");
+  output.close("footer");
+}
+
+template <typename T>
+auto html_start(T &output, const sourcemeta::jsontoolkit::JSON &configuration,
                 const std::string &title, const std::string &description,
                 const std::optional<std::string> &path) -> void {
-  const auto &base_url{configuration.at("url").to_string()};
-
-  html << "<!DOCTYPE html>";
-  html << "<html class=\"h-100\" lang=\"en\">";
-  html << "<head>";
+  output.doctype();
+  output.open("html", {{"class", "h-100"}, {"lang", "en"}});
+  output.open("head");
 
   // Meta headers
-  html << "<meta charset=\"utf-8\">";
-  html << "<meta name=\"referrer\" content=\"no-referrer\">";
-  html << "<meta name=\"viewport\" content=\"width=device-width, "
-          "initial-scale=1.0\">";
-  html << "<meta http-equiv=\"x-ua-compatible\" content=\"ie=edge\">";
+  output.open("meta", {{"charset", "utf-8"}})
+      .open("meta", {{"name", "referrer"}, {"content", "no-referrer"}})
+      .open("meta", {{"name", "viewport"},
+                     {"content", "width=device-width, initial-scale=1.0"}})
+      .open("meta",
+            {{"http-equiv", "x-ua-compatible"}, {"content", "ie=edge"}});
 
   // Site metadata
-  html << "<title>" << title << "</title>";
-  html << "<meta name=\"description\" content=\"" << description << "\">";
+  output.open("title").text(title).close("title");
+  output.open("meta", {{"name", "description"}, {"content", description}});
   if (path.has_value()) {
-    html << "<link rel=\"canonical\" href=\"" << base_url << path.value()
-         << "\">";
+    output.open("link",
+                {{"rel", "canonical"},
+                 {"href", configuration.at("url").to_string() + path.value()}});
   }
-  html << "<link rel=\"stylesheet\" href=\"/static/style.min.css\">";
+
+  sourcemeta::registry::html::partials::css(output, "/static/style.min.css");
 
   // Application icons
   // TODO: Allow changing these by supporing an object in the
   // configuration manifest to select static files to override
-  html << "<link rel=\"icon\" href=\"/static/favicon.ico\" sizes=\"any\">";
-  html
-      << "<link rel=\"icon\" href=\"/static/icon.svg\" type=\"image/svg+xml\">";
-  html << "<link rel=\"shortcut icon\" type=\"image/png\" "
-          "href=\"/static/apple-touch-icon.png\">";
-  html << "<link rel=\"apple-touch-icon\" sizes=\"180x180\" "
-          "href=\"/static/apple-touch-icon.png\">";
-  html << "<link rel=\"manifest\" href=\"/static/manifest.webmanifest\">";
+  output
+      .open(
+          "link",
+          {{"rel", "icon"}, {"href", "/static/favicon.ico"}, {"sizes", "any"}})
+      .open("link", {{"rel", "icon"},
+                     {"href", "/static/icon.svg"},
+                     {"type", "image/svg+xml"}})
+      .open("link", {{"rel", "shortcut icon"},
+                     {"href", "/static/apple-touch-icon.png"},
+                     {"type", "image/png"}})
+      .open("link", {{"rel", "apple-touch-icon"},
+                     {"href", "/static/apple-touch-icon.png"},
+                     {"sizes", "180x180"}})
+      .open("link",
+            {{"rel", "manifest"}, {"href", "/static/manifest.webmanifest"}});
 
-  if (configuration.defines("analytics")) {
-    if (configuration.at("analytics").defines("plausible")) {
-      html << "<script defer data-domain=\"";
-      html << configuration.at("analytics").at("plausible").to_string();
-      html << "\" src=\"https://plausible.io/js/script.js\"></script>";
-    }
+  if (configuration.defines("analytics") &&
+      configuration.at("analytics").defines("plausible")) {
+    output
+        .open("script",
+              {{"defer", ""},
+               {"data-domain",
+                configuration.at("analytics").at("plausible").to_string()},
+               {"src", "https://plausible.io/js/script.js"}})
+        .close("script");
   }
 
-  html << "</head>";
-  html << "<body class=\"h-100 d-flex flex-column\">";
+  output.close("head");
+  output.open("body", {{"class", "h-100 d-flex flex-column"}});
 
-  const auto &site_name{configuration.at("title").to_string()};
-
-  html << "<nav class=\"navbar navbar-expand border-bottom bg-body\">";
-  html << "<div class=\"container-fluid px-4 py-1 align-items-center "
-          "flex-column flex-sm-row\">";
-  html << "<a class=\"navbar-brand\" href=\"" << base_url << "\">";
-  html << "<img src=\"/static/icon.svg\" alt=\"" << site_name
-       << "\" height=\"30\" width=\"30\" class=\"me-2\">";
-  html << "<span class=\"align-middle fw-bold\">" << site_name << "</span>";
-  html << "<span class=\"align-middle fw-lighter\"> Schemas</span>";
-  html << "</a>";
-
-  html << "<div class=\"mt-3 mt-sm-0 flex-grow-1 position-relative\">";
-  html << "<div class=\"input-group\">";
-  html << "<span class=\"input-group-text\">";
-  html << "<i class=\"bi bi-search\"></i>";
-  html << "</span>";
-  html << "<input class=\"form-control\" type=\"search\" id=\"search\" "
-          "placeholder=\"Search\" aria-label=\"Search\" autocomplete=\"off\">";
-  html << "</div>";
-  html << "<ul class=\"d-none list-group position-absolute w-100 mt-2 "
-          "shadow-sm\" id=\"search-result\"></ul>";
-  html << "</div>";
-
-  if (configuration.defines("action")) {
-    html << "<a class=\"ms-3 btn btn-dark\" role=\"button\" href=\"";
-    html << configuration.at("action").at("url").to_string();
-    html << "\">";
-    if (configuration.at("action").defines("icon")) {
-      html << "<i class=\"me-2 bi bi-";
-      html << configuration.at("action").at("icon").to_string();
-      html << "\"></i>";
-    }
-
-    html << configuration.at("action").at("title").to_string();
-    html << "</a>";
-  }
-
-  html << "</div>";
-  html << "</nav>";
+  html_navigation(output, configuration);
 }
 
-template <typename T> auto html_end(T &html) -> void {
-  html << "<script async defer src=\"/static/main.js\"></script>";
-
-  html << "<div class=\"container-fluid px-4 mb-2\">";
-  html << "<footer class=\"border-top text-secondary py-3 d-flex "
-          "align-items-center justify-content-between\">";
-  html << "<small>";
-  html << "<a href=\"https://github.com/sourcemeta/registry\" "
-          "class=\"text-secondary\" target=\"_blank\">";
-  html << "Registry";
-  html << "</a>";
-  html << " v";
-  html << sourcemeta::registry::PROJECT_VERSION;
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
-  html << " (Enterprise Edition)";
-#else
-  html << " (Community Edition)";
-#endif
-  html << " © 2025 ";
-  html << "<a class=\"text-secondary\" "
-          "href=\"https://www.sourcemeta.com\" target=\"_blank\">";
-  html << "Sourcemeta, Ltd.";
-  html << "</a>";
-  html << "</small>";
-
-  html << "<small>";
-  html << "<a class=\"text-secondary\" "
-          "href=\"https://github.com/sourcemeta/registry/discussions\" "
-          "target=\"_blank\">";
-  html << "Need Help?";
-  html << "</a>";
-  html << "</small>";
-
-  html << "</footer>";
-  html << "</div>";
-
-  html << "</body>";
-  html << "</html>";
+template <typename T> auto html_end(T &output) -> void {
+  output
+      .open("script",
+            {{"async", ""}, {"defer", ""}, {"src", "/static/main.js"}})
+      .close("script");
+  output.open("div", {{"class", "container-fluid px-4 mb-2"}});
+  html_footer(output);
+  output.close("div");
+  output.close("body");
+  output.close("html");
 }
 
+// TODO: Refactor this function to use new HTML utilities
 template <typename T>
 auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
     -> void {
