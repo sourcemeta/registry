@@ -84,6 +84,7 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
 }
 
 template <typename T> auto html_end(T &html) -> void {
+  html << "<script async defer src=\"/static/main.js\"></script>";
   html << "</body>";
   html << "</html>";
 }
