@@ -96,7 +96,7 @@ template <typename T> auto html_end(T &html) -> void {
           "align-items-center justify-content-between\">";
   html << "<small>";
   html << "<a href=\"https://github.com/sourcemeta/registry\" "
-          "class=\"text-secondary\">";
+          "class=\"text-secondary\" target=\"_blank\">";
   html << "Registry";
   html << "</a>";
   html << " v";
@@ -108,14 +108,15 @@ template <typename T> auto html_end(T &html) -> void {
 #endif
   html << " © 2025 ";
   html << "<a class=\"text-secondary\" "
-          "href=\"https://www.sourcemeta.com\">";
+          "href=\"https://www.sourcemeta.com\" target=\"_blank\">";
   html << "Sourcemeta, Ltd.";
   html << "</a>";
   html << "</small>";
 
   html << "<small>";
   html << "<a class=\"text-secondary\" "
-          "href=\"https://github.com/sourcemeta/registry/discussions\">";
+          "href=\"https://github.com/sourcemeta/registry/discussions\" "
+          "target=\"_blank\">";
   html << "Need Help?";
   html << "</a>";
   html << "</small>";
@@ -203,7 +204,7 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
         html << "<i class=\"bi bi-github text-secondary me-1\"></i>";
         html << "<a href=\"https://github.com/";
         html << meta.at("github").to_string();
-        html << "\" class=\"text-secondary\">";
+        html << "\" class=\"text-secondary\" target=\"_blank\">";
         html << meta.at("github").to_string();
         html << "</a>";
         html << "</small>";
@@ -214,7 +215,7 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
         html << "<i class=\"bi bi-link-45deg text-secondary me-1\"></i>";
         html << "<a href=\"";
         html << meta.at("website").to_string();
-        html << "\" class=\"text-secondary\">";
+        html << "\" class=\"text-secondary\" target=\"_blank\">";
         html << meta.at("website").to_string();
         html << "</a>";
         html << "</small>";
@@ -272,7 +273,7 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
       html << "<a "
               "href=\"https://www.learnjsonschema.com/";
       html << base_dialect;
-      html << "\">";
+      html << "\" target=\"_blank\">";
       html << "<span class=\"align-middle badge ";
 
       // Highlight the latest version in a different manner
