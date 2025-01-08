@@ -218,7 +218,7 @@ auto generate_toc(
     std::ofstream html{index_path.parent_path() / "index.html"};
     assert(!html.fail());
     sourcemeta::registry::enterprise::html_start(
-        html, configuration, configuration.at("title").to_string(),
+        html, configuration, configuration.at("title").to_string() + " Schemas",
         configuration.at("description").to_string(), "");
     sourcemeta::registry::enterprise::html_file_manager(html, meta);
     sourcemeta::registry::enterprise::html_end(html);
@@ -230,7 +230,12 @@ auto generate_toc(
     std::ofstream html{index_path.parent_path() / "index.html"};
     assert(!html.fail());
     sourcemeta::registry::enterprise::html_start(
-        html, configuration, page_relative_path, page_relative_path,
+        html, configuration,
+        meta.defines("title") ? meta.at("title").to_string()
+                              : page_relative_path,
+        meta.defines("description")
+            ? meta.at("description").to_string()
+            : ("Schemas located at " + page_relative_path),
         page_relative_path);
     sourcemeta::registry::enterprise::html_file_manager(html, meta);
     sourcemeta::registry::enterprise::html_end(html);
@@ -280,7 +285,15 @@ auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
       stream_not_found, configuration, "Not Found",
       "What you are looking for is not here", std::nullopt);
   stream_not_found << "<div class=\"container-fluid p-4\">";
-  stream_not_found << "Not Found";
+  stream_not_found << "<h2 class=\"fw-bold\">";
+  stream_not_found << "Oops! What you are looking for is not here";
+  stream_not_found << "</h2>";
+  stream_not_found << "<p class=\"lead\">";
+  stream_not_found << "Are you sure the link you got is correct?";
+  stream_not_found << "</p>";
+  stream_not_found << "<a href=\"/\">";
+  stream_not_found << "Get back to the home page";
+  stream_not_found << "</a>";
   stream_not_found << "</div>";
   sourcemeta::registry::enterprise::html_end(stream_not_found);
   stream_not_found << "\n";
