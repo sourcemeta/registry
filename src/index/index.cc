@@ -15,6 +15,7 @@
 #include <fstream>     // std::ofstream
 #include <functional>  // std::ref
 #include <iostream>    // std::cerr, std::cout
+#include <map>         // std::map
 #include <span>        // std::span
 #include <sstream>     // std::ostringstream
 #include <string>      // std::string
@@ -52,6 +53,19 @@ static auto url_join(const std::string &first, const std::string &second,
   }
 
   return result.str();
+}
+
+static auto
+print_validation_output(const sourcemeta::blaze::ErrorOutput &output) -> void {
+  for (const auto &entry : output) {
+    std::cerr << entry.message << "\n";
+    std::cerr << "  at instance location \"";
+    sourcemeta::jsontoolkit::stringify(entry.instance_location, std::cerr);
+    std::cerr << "\"\n";
+    std::cerr << "  at evaluate path \"";
+    sourcemeta::jsontoolkit::stringify(entry.evaluate_path, std::cerr);
+    std::cerr << "\"\n";
+  }
 }
 
 static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
@@ -130,6 +144,7 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
     }
   }
 
+  std::map<std::string, sourcemeta::blaze::Template> compiled_schemas;
   for (const auto &schema : resolver) {
     std::cerr << "-- Processing schema: " << schema.first << "\n";
     sourcemeta::jsontoolkit::URI schema_uri{schema.first};
@@ -144,6 +159,36 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
     if (!result.has_value()) {
       std::cout << "Cannot resolve the schema with identifier " << schema.first
                 << "\n";
+      return EXIT_FAILURE;
+    }
+
+    const auto dialect_identifier{
+        sourcemeta::jsontoolkit::dialect(result.value())};
+    assert(dialect_identifier.has_value());
+    if (!compiled_schemas.contains(dialect_identifier.value())) {
+      const auto metaschema{resolver(dialect_identifier.value())};
+      assert(metaschema.has_value());
+      std::cerr << "Compiling metaschema: " << dialect_identifier.value()
+                << "\n";
+      compiled_schemas.emplace(
+          dialect_identifier.value(),
+          sourcemeta::blaze::compile(
+              metaschema.value(),
+              sourcemeta::jsontoolkit::default_schema_walker, resolver,
+              sourcemeta::blaze::default_schema_compiler,
+              sourcemeta::blaze::Mode::FastValidation));
+    }
+
+    // TODO: Write unit tests for this
+    sourcemeta::blaze::ErrorOutput validation_output{result.value()};
+    sourcemeta::blaze::Evaluator evaluator;
+    std::cerr << "Validating against its metaschema: " << schema.first << "\n";
+    const auto metaschema_validation_result{
+        evaluator.validate(compiled_schemas.at(dialect_identifier.value()),
+                           result.value(), std::ref(validation_output))};
+    if (!metaschema_validation_result) {
+      std::cerr << "error: The schema does not adhere to its metaschema\n";
+      print_validation_output(validation_output);
       return EXIT_FAILURE;
     }
 
@@ -195,16 +240,7 @@ static auto index_main(const std::string_view &program,
                                        std::ref(validation_output))};
   if (!result) {
     std::cerr << "error: Invalid configuration\n";
-    for (const auto &entry : validation_output) {
-      std::cerr << entry.message << "\n";
-      std::cerr << "  at instance location \"";
-      sourcemeta::jsontoolkit::stringify(entry.instance_location, std::cerr);
-      std::cerr << "\"\n";
-      std::cerr << "  at evaluate path \"";
-      sourcemeta::jsontoolkit::stringify(entry.evaluate_path, std::cerr);
-      std::cerr << "\"\n";
-    }
-
+    print_validation_output(validation_output);
     return EXIT_FAILURE;
   }
 

@@ -58,6 +58,7 @@ lint:
 .PHONY: test
 test: 
 	./test/cli/common/index/invalid-configuration.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/common/index/invalid-schema.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/common/index/url-base-trailing-slash.sh $(PREFIX)/bin/sourcemeta-registry-index
 ifeq ($(ENTERPRISE), ON)
 	./test/cli/ee/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
