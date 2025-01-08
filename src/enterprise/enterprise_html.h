@@ -7,6 +7,8 @@
 #include <optional>   // std::optional
 #include <string>     // std::string
 
+#include "configure.h"
+
 namespace sourcemeta::registry::enterprise {
 
 template <typename T>
@@ -16,7 +18,7 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
   const auto &base_url{configuration.at("url").to_string()};
 
   html << "<!DOCTYPE html>";
-  html << "<html lang=\"en\">";
+  html << "<html class=\"h-100\" lang=\"en\">";
   html << "<head>";
 
   // Meta headers
@@ -56,7 +58,7 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
   }
 
   html << "</head>";
-  html << "<body class=\"h-100\">";
+  html << "<body class=\"h-100 d-flex flex-column\">";
 
   const auto &site_name{configuration.at("title").to_string()};
 
@@ -88,6 +90,39 @@ auto html_start(T &html, const sourcemeta::jsontoolkit::JSON &configuration,
 
 template <typename T> auto html_end(T &html) -> void {
   html << "<script async defer src=\"/static/main.js\"></script>";
+
+  html << "<div class=\"container-fluid px-4 mb-2\">";
+  html << "<footer class=\"border-top text-secondary py-3 d-flex "
+          "align-items-center justify-content-between\">";
+  html << "<small>";
+  html << "<a href=\"https://github.com/sourcemeta/registry\" "
+          "class=\"text-secondary\">";
+  html << "Registry";
+  html << "</a>";
+  html << " v";
+  html << sourcemeta::registry::PROJECT_VERSION;
+#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+  html << " (Enterprise Edition)";
+#else
+  html << " (Community Edition)";
+#endif
+  html << " © 2025 ";
+  html << "<a class=\"text-secondary\" "
+          "href=\"https://www.sourcemeta.com\">";
+  html << "Sourcemeta, Ltd.";
+  html << "</a>";
+  html << "</small>";
+
+  html << "<small>";
+  html << "<a class=\"text-secondary\" "
+          "href=\"https://github.com/sourcemeta/registry/discussions\">";
+  html << "Need Help?";
+  html << "</a>";
+  html << "</small>";
+
+  html << "</footer>";
+  html << "</div>";
+
   html << "</body>";
   html << "</html>";
 }
@@ -132,7 +167,7 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
     html << "</nav>";
   }
 
-  html << "<div class=\"container-fluid p-4\">";
+  html << "<div class=\"container-fluid p-4 flex-grow-1\">";
   html << "<table class=\"table table-bordered border-light-subtle "
           "table-light\">";
 
