@@ -85,9 +85,7 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
             .canonicalize()};
     const auto collection_base_uri_string{collection_base_uri.recompose()};
 
-    std::cerr << "-- Processing collection: " << schema_entry.first << "\n";
-    std::cerr << "Base directory: " << collection_path.string() << "\n";
-    std::cerr << "Base URI: " << collection_base_uri_string << "\n";
+    std::cerr << "Discovering schemas at: " << collection_path.string() << "\n";
 
     const std::optional<std::string> default_dialect{
         schema_entry.second.defines("defaultDialect")
@@ -104,7 +102,7 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
         continue;
       }
 
-      std::cerr << "Found schema: " << entry.path().string() << "\n";
+      std::cerr << "-- Found schema: " << entry.path().string() << "\n";
 
       // Calculate a default identifier for the schema through their file system
       // location, to accomodate for schema collections that purely rely on
@@ -124,11 +122,11 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
                                                   default_identifier.str())};
       auto identifier_uri{
           sourcemeta::jsontoolkit::URI{current_identifier}.canonicalize()};
-      std::cerr << "Current identifier: " << identifier_uri.recompose() << "\n";
+      std::cerr << identifier_uri.recompose();
       identifier_uri.relative_to(collection_base_uri);
       if (identifier_uri.is_absolute()) {
-        std::cout << "Cannot resolve the schema identifier against the "
-                     "collection base\n";
+        std::cout << "\nerror: Cannot resolve the schema identifier against "
+                     "the collection base\n";
         return EXIT_FAILURE;
       }
 
@@ -139,7 +137,7 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
                    // extension, as we want to use the non-extension URI to
                    // potentially metadata about schemas, etc
                    "json")};
-      std::cerr << "Rebased identifier: " << new_identifier << "\n";
+      std::cerr << " => " << new_identifier << "\n";
       resolver.reidentify(current_identifier, new_identifier);
     }
   }
@@ -219,9 +217,8 @@ static auto index_main(const std::string_view &program,
   const auto configuration_path{std::filesystem::canonical(arguments[0])};
   const auto output{std::filesystem::weakly_canonical(arguments[1])};
 
-  std::cerr << "-- Using configuration: " << configuration_path.string()
-            << "\n";
-  std::cerr << "-- Writing output to: " << output.string() << "\n";
+  std::cerr << "Using configuration: " << configuration_path.string() << "\n";
+  std::cerr << "Writing output to: " << output.string() << "\n";
 
   const auto configuration_schema{sourcemeta::jsontoolkit::parse(
       std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
