@@ -60,7 +60,7 @@ static auto request_path_to_schema_uri(const std::string &server_base_url,
   return schema_identifier.str();
 }
 
-static auto resolver(std::string_view identifier)
+static auto resolver(std::string_view identifier, const bool bundle)
     -> std::optional<sourcemeta::jsontoolkit::JSON> {
   static const auto SERVER_BASE_URL{
       sourcemeta::jsontoolkit::URI{configuration().at("url").to_string()}
@@ -76,7 +76,8 @@ static auto resolver(std::string_view identifier)
 
   assert(uri.path().has_value());
   const auto schema_path{
-      path_join(*(__global_data) / "schemas", uri.path().value())};
+      bundle ? path_join(*(__global_data) / "bundles", uri.path().value())
+             : path_join(*(__global_data) / "schemas", uri.path().value())};
   if (!std::filesystem::exists(schema_path)) {
     return std::nullopt;
   }
@@ -198,7 +199,8 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
 
   const auto schema_identifier{request_path_to_schema_uri(
       configuration().at("url").to_string(), request_path)};
-  const auto maybe_schema{resolver(schema_identifier)};
+  const auto maybe_schema{
+      resolver(schema_identifier, request.query("bundle").has_value())};
   if (!maybe_schema.has_value()) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
@@ -258,8 +260,10 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
   }
 #endif
 
-  const auto maybe_schema{resolver(request_path_to_schema_uri(
-      configuration().at("url").to_string(), request.path()))};
+  const auto maybe_schema{
+      resolver(request_path_to_schema_uri(configuration().at("url").to_string(),
+                                          request.path()),
+               false)};
 
   if (maybe_schema.has_value()) {
     json_error(logger, request, response,

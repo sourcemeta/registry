@@ -1,8 +1,10 @@
 #include <sourcemeta/jsontoolkit/jsonschema.h>
 #include <sourcemeta/jsontoolkit/jsonschema_resolver.h>
 
-#include <cassert> // assert
-#include <sstream> // std::ostringstream
+#include <algorithm> // std::transform
+#include <cassert>   // assert
+#include <cctype>    // std::tolower
+#include <sstream>   // std::ostringstream
 
 namespace sourcemeta::jsontoolkit {
 
@@ -79,6 +81,15 @@ FlatFileSchemaResolver::FlatFileSchemaResolver() {}
 FlatFileSchemaResolver::FlatFileSchemaResolver(const SchemaResolver &resolver)
     : default_resolver{resolver} {}
 
+static auto to_lowercase(const std::string_view input) -> std::string {
+  std::string result{input};
+  std::transform(result.cbegin(), result.cend(), result.begin(),
+                 [](const auto character) {
+                   return static_cast<char>(std::tolower(character));
+                 });
+  return result;
+}
+
 auto FlatFileSchemaResolver::add(
     const std::filesystem::path &path,
     const std::optional<std::string> &default_dialect,
@@ -95,9 +106,13 @@ auto FlatFileSchemaResolver::add(
     throw SchemaError(error.str());
   }
 
+  // Filesystems behave differently with regards to casing. To unify
+  // them, assume they are case-insensitive.
+  const auto effective_identifier{to_lowercase(identifier.value())};
+
   const auto result{this->schemas.emplace(
-      identifier.value(),
-      Entry{canonical, default_dialect, identifier.value()})};
+      effective_identifier,
+      Entry{canonical, default_dialect, effective_identifier})};
   if (!result.second && result.first->second.path != canonical) {
     std::ostringstream error;
     error << "Cannot register the same identifier twice: "
@@ -111,15 +126,16 @@ auto FlatFileSchemaResolver::add(
 auto FlatFileSchemaResolver::reidentify(const std::string &schema,
                                         const std::string &new_identifier)
     -> void {
-  const auto result{this->schemas.find(schema)};
+  const auto result{this->schemas.find(to_lowercase(schema))};
   assert(result != this->schemas.cend());
-  this->schemas.insert_or_assign(new_identifier, std::move(result->second));
+  this->schemas.insert_or_assign(to_lowercase(new_identifier),
+                                 std::move(result->second));
   this->schemas.erase(result);
 }
 
 auto FlatFileSchemaResolver::operator()(std::string_view identifier) const
     -> std::optional<JSON> {
-  const std::string string_identifier{identifier};
+  const std::string string_identifier{to_lowercase(identifier)};
   const auto result{this->schemas.find(string_identifier)};
   if (result != this->schemas.cend()) {
     auto schema{sourcemeta::jsontoolkit::from_file(result->second.path)};
