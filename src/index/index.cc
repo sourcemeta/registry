@@ -177,7 +177,6 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
               sourcemeta::blaze::Mode::FastValidation));
     }
 
-    // TODO: Write unit tests for this
     sourcemeta::blaze::ErrorOutput validation_output{result.value()};
     sourcemeta::blaze::Evaluator evaluator;
     std::cerr << "Validating against its metaschema: " << schema.first << "\n";
