@@ -67,6 +67,12 @@ static auto uri_parse(const std::string &data, UriUriA *uri) -> void {
 
 static auto canonicalize_path(const std::string &path, const bool is_relative)
     -> std::optional<std::string> {
+  // TODO: This is a hack, as this whole function works badly for
+  // relative paths with ".."
+  if (path.starts_with("..")) {
+    return path;
+  }
+
   std::vector<std::string> segments;
   std::string segment;
 
@@ -278,7 +284,12 @@ auto URI::path() const -> std::optional<std::string> {
     return "/" + this->path_.value();
   }
 
-  return path_;
+  if (this->data.starts_with('/') && this->data.size() > 1 &&
+      this->path_.has_value()) {
+    return "/" + this->path_.value();
+  }
+
+  return this->path_;
 }
 
 auto URI::path(const std::string &path) -> URI & {
