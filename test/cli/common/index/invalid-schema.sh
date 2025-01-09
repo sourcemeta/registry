@@ -34,14 +34,11 @@ EOF
 test "$CODE" = "1" || exit 1
 
 cat << EOF > "$TMP/expected.txt"
--- Using configuration: $(realpath "$TMP")/configuration.json
--- Writing output to: $(realpath "$TMP")/output
--- Processing collection: example/schemas
-Base directory: $(realpath "$TMP")/schemas
-Base URI: https://example.com/
-Found schema: $(realpath "$TMP")/schemas/test.json
-Current identifier: https://example.com/test.json
-Rebased identifier: https://sourcemeta.com/example/schemas/test.json
+Using configuration: $(realpath "$TMP")/configuration.json
+Writing output to: $(realpath "$TMP")/output
+Discovering schemas at: $(realpath "$TMP")/schemas
+-- Found schema: $(realpath "$TMP")/schemas/test.json
+https://example.com/test.json => https://sourcemeta.com/example/schemas/test.json
 -- Processing schema: https://sourcemeta.com/example/schemas/test.json
 Schema output: $(realpath "$TMP")/output/schemas/example/schemas/test.json
 Compiling metaschema: http://json-schema.org/draft-07/schema#
