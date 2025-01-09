@@ -250,8 +250,7 @@ auto generate_toc(
 auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
             const sourcemeta::jsontoolkit::URI &server_url,
             const sourcemeta::jsontoolkit::JSON &configuration,
-            const std::filesystem::path &, const std::filesystem::path &output)
-    -> int {
+            const std::filesystem::path &output) -> int {
   std::cerr << "-- Indexing directory: " << output.string() << "\n";
   const auto base{std::filesystem::canonical(output / "schemas")};
   std::vector<sourcemeta::jsontoolkit::JSON> search_index;

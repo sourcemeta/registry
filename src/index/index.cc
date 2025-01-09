@@ -151,8 +151,6 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
     const auto schema_output{std::filesystem::weakly_canonical(
         output / "schemas" / schema_uri.recompose())};
     std::cerr << "Schema output: " << schema_output.string() << "\n";
-    std::filesystem::create_directories(schema_output.parent_path());
-    std::ofstream stream{schema_output};
     const auto result{resolver(schema.first)};
     if (!result.has_value()) {
       std::cout << "Cannot resolve the schema with identifier " << schema.first
@@ -189,9 +187,25 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
       return EXIT_FAILURE;
     }
 
+    std::filesystem::create_directories(schema_output.parent_path());
+    std::ofstream stream{schema_output};
     sourcemeta::jsontoolkit::prettify(
         result.value(), stream, sourcemeta::jsontoolkit::schema_format_compare);
     stream << "\n";
+
+    auto bundle_path{
+        output / "bundles" /
+        std::filesystem::relative(schema_output, output / "schemas")};
+    std::filesystem::create_directories(bundle_path.parent_path());
+    std::cerr << "Bundling: " << schema.first << "\n";
+    const auto bundled_schema{sourcemeta::jsontoolkit::bundle(
+        result.value(), sourcemeta::jsontoolkit::default_schema_walker,
+        resolver)};
+    std::ofstream bundle_stream{bundle_path};
+    sourcemeta::jsontoolkit::prettify(
+        bundled_schema, bundle_stream,
+        sourcemeta::jsontoolkit::schema_format_compare);
+    bundle_stream << "\n";
   }
 
   return EXIT_SUCCESS;
@@ -278,8 +292,7 @@ static auto index_main(const std::string_view &program,
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
   if (code == EXIT_SUCCESS) {
     return sourcemeta::registry::enterprise::attach(
-        resolver, server_url, configuration_with_defaults,
-        configuration_path.parent_path(), output);
+        resolver, server_url, configuration_with_defaults, output);
   }
 #endif
 
@@ -292,6 +305,9 @@ auto main(int argc, char *argv[]) noexcept -> int {
     const std::vector<std::string> arguments{argv + std::min(1, argc),
                                              argv + argc};
     return index_main(program, arguments);
+  } catch (const sourcemeta::jsontoolkit::SchemaResolutionError &error) {
+    std::cerr << "error: " << error.what() << "\n  at " << error.id() << "\n";
+    return EXIT_FAILURE;
   } catch (const std::exception &error) {
     std::cerr << "unexpected error: " << error.what() << "\n";
     return EXIT_FAILURE;
