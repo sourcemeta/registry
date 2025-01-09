@@ -30,8 +30,8 @@ auto relativize(JSON &schema, const SchemaWalker &walker,
       }
 
       URI reference{property.second.to_string()};
-      reference.canonicalize();
       reference.relative_to(base);
+      reference.canonicalize();
 
       if (reference.is_relative()) {
         subschema.assign(property.first, JSON{reference.recompose()});
