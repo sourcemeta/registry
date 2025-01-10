@@ -178,6 +178,21 @@
           }
         }
       }
+    },
+    {
+      "description": "basic HTML hero",
+      "valid": true,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "hero": "<p>Hello</p>",
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
     }
   ]
 }

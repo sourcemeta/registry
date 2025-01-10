@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8000",
   "port": 8000,
+  "hero": "<p class=\"mb-0\">A sample schema registry sandbox for testing purposes</p>",
   "action": {
     "title": "Star on GitHub",
     "url": "https://github.com/sourcemeta/registry",

@@ -222,6 +222,16 @@ auto generate_toc(
         output_html, configuration,
         configuration.at("title").to_string() + " Schemas",
         configuration.at("description").to_string(), "");
+
+    if (configuration.defines("hero")) {
+      output_html.open("div", {{"class", "container-fluid px-4"}})
+          .open("div",
+                {{"class",
+                  "bg-light border border-light-subtle mt-4 px-3 py-3"}});
+      output_html.unsafe(configuration.at("hero").to_string());
+      output_html.close("div").close("div");
+    }
+
     sourcemeta::registry::enterprise::html_file_manager(html, meta);
     sourcemeta::registry::enterprise::html_end(output_html);
     html << "\n";
