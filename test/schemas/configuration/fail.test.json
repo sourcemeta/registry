@@ -682,6 +682,44 @@
           }
         }
       }
+    },
+    {
+      "description": "github two slashes",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "pages": {
+          "example": {
+            "github": "example/foo/bar"
+          }
+        },
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
+    },
+    {
+      "description": "github with slash but no repository",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "pages": {
+          "example": {
+            "github": "example/"
+          }
+        },
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
     }
   ]
 }
