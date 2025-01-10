@@ -211,9 +211,16 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
 
   const auto schema_identifier{request_path_to_schema_uri(
       configuration().at("url").to_string(), request_path)};
-  const auto maybe_schema{resolver(schema_identifier,
-                                   request.query("bundle").has_value(),
-                                   request.query("unidentify").has_value())};
+
+  // Because Visual Studio Code famously does not support `$id` or `id`
+  // See https://github.com/microsoft/vscode-json-languageservice/issues/224
+  const auto user_agent{request.header("user-agent").value_or("")};
+  const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
+                       user_agent.starts_with("VSCodium")};
+
+  const auto maybe_schema{resolver(
+      schema_identifier, is_vscode || request.query("bundle").has_value(),
+      is_vscode || request.query("unidentify").has_value())};
   if (!maybe_schema.has_value()) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
