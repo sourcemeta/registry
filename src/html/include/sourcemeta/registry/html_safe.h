@@ -38,6 +38,11 @@ public:
     return *this;
   }
 
+  auto unsafe(const std::string_view content) -> SafeOutput & {
+    this->stream << content;
+    return *this;
+  }
+
 private:
   T &stream;
 };

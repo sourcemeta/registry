@@ -45,6 +45,9 @@
         }
       }
     },
+    "hero": {
+      "type": "string"
+    },
     "pages": {
       "type": "object",
       "minProperties": 1,
