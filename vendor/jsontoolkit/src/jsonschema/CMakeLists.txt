@@ -8,7 +8,7 @@ noa_library(NAMESPACE sourcemeta PROJECT jsontoolkit NAME jsonschema
     walker.h reference.h frame.h error.h unevaluated.h keywords.h
   SOURCES jsonschema.cc default_walker.cc frame.cc
     anchor.cc resolver.cc walker.cc bundle.cc
-    unevaluated.cc relativize.cc
+    unevaluated.cc relativize.cc unidentify.cc
     "${CMAKE_CURRENT_BINARY_DIR}/official_resolver.cc")
 
 if(JSONTOOLKIT_INSTALL)
