@@ -159,6 +159,25 @@
           }
         }
       }
+    },
+    {
+      "description": "github with repository",
+      "valid": true,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "pages": {
+          "example": {
+            "github": "example/foo"
+          }
+        },
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas"
+          }
+        }
+      }
     }
   ]
 }

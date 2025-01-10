@@ -16,7 +16,8 @@
     },
     "doc": {
       "title": "A sample schema folder",
-      "description": "For testing purposes"
+      "description": "For testing purposes",
+      "github": "sourcemeta/registry"
     }
   },
   "schemas": {

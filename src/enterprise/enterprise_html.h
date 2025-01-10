@@ -195,6 +195,28 @@ template <typename T> auto html_end(T &output) -> void {
 
 // TODO: Refactor this function to use new HTML utilities
 template <typename T>
+static auto profile_picture(T &html, const sourcemeta::jsontoolkit::JSON &meta,
+                            const std::uint64_t size,
+                            const std::string_view classes = "") -> bool {
+  if (meta.defines("github") && !meta.at("github").contains('/')) {
+    html << "<img";
+    if (!classes.empty()) {
+      html << " class=\"" << classes << "\"";
+    }
+
+    html << " src=\"https://github.com/";
+    html << meta.at("github").to_string();
+    html << ".png?size=";
+    html << size * 2;
+    html << "\" width=\"" << size << "\" height=\"" << size << "\">";
+    return true;
+  }
+
+  return false;
+}
+
+// TODO: Refactor this function to use new HTML utilities
+template <typename T>
 auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
     -> void {
   assert(meta.defines("breadcrumb"));
@@ -240,16 +262,7 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
 
   if (!meta.at("breadcrumb").empty() && meta.defines("title")) {
     html << "<div class=\"mb-4 d-flex\">";
-
-    if (meta.defines("github")) {
-      html << "<div class=\"me-4\">";
-      html << "<img src=\"https://github.com/";
-      html << meta.at("github").to_string();
-      html << ".png?size=200\" class=\"img-thumbnail\" width=\"100\" "
-              "height=\"100\">";
-      html << "</div>";
-    }
-
+    profile_picture(html, meta, 100, "img-thumbnail me-4");
     html << "<div>";
     html << "<h2 class=\"fw-bold h4\">";
     html << meta.at("title").to_string();
@@ -327,11 +340,8 @@ auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
     assert(entry.at("type").is_string());
     html << "<td class=\"text-nowrap\">";
     if (entry.at("type").to_string() == "directory") {
-      if (entry.defines("github")) {
-        html << "<img src=\"https://github.com/";
-        html << entry.at("github").to_string();
-        html << ".png?size=80\" width=\"40\" height=\"40\">";
-      } else {
+      const auto has_picture{profile_picture(html, entry, 40)};
+      if (!has_picture) {
         html << "<i class=\"bi bi-folder-fill\"></i>";
       }
     } else {
