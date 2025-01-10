@@ -198,7 +198,7 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
         std::filesystem::relative(schema_output, output / "schemas")};
     std::filesystem::create_directories(bundle_path.parent_path());
     std::cerr << "Bundling: " << schema.first << "\n";
-    const auto bundled_schema{sourcemeta::jsontoolkit::bundle(
+    auto bundled_schema{sourcemeta::jsontoolkit::bundle(
         result.value(), sourcemeta::jsontoolkit::default_schema_walker,
         resolver)};
     std::ofstream bundle_stream{bundle_path};
@@ -206,6 +206,20 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
         bundled_schema, bundle_stream,
         sourcemeta::jsontoolkit::schema_format_compare);
     bundle_stream << "\n";
+
+    auto unidentified_path{
+        output / "unidentified" /
+        std::filesystem::relative(schema_output, output / "schemas")};
+    std::filesystem::create_directories(unidentified_path.parent_path());
+    std::cerr << "Bundling without identifiers: " << schema.first << "\n";
+    sourcemeta::jsontoolkit::unidentify(
+        bundled_schema, sourcemeta::jsontoolkit::default_schema_walker,
+        resolver);
+    std::ofstream unidentified_stream{unidentified_path};
+    sourcemeta::jsontoolkit::prettify(
+        bundled_schema, unidentified_stream,
+        sourcemeta::jsontoolkit::schema_format_compare);
+    unidentified_stream << "\n";
   }
 
   return EXIT_SUCCESS;
