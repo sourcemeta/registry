@@ -17,22 +17,28 @@ auto html_navigation(T &output,
     -> void {
   output.open("nav", {{"class", "navbar navbar-expand border-bottom bg-body"}});
   output.open("div", {{"class", "container-fluid px-4 py-1 align-items-center "
-                                "flex-column flex-sm-row"}});
+                                "flex-column flex-md-row"}});
 
-  output.open("a", {{"class", "navbar-brand"},
-                    {"href", configuration.at("url").to_string()}});
+  output.open(
+      "a",
+      {{"class",
+        "navbar-brand me-0 me-md-3 d-flex align-items-center w-100 w-md-auto"},
+       {"href", configuration.at("url").to_string()}});
   sourcemeta::registry::html::partials::image(
       output, "/static/icon.svg", 30, configuration.at("title").to_string(),
       "me-2");
-  output.open("span", {{"class", "align-middle fw-bold"}})
+  output.open("span", {{"class", "fw-bold me-1"}})
       .text(configuration.at("title").to_string())
       .close("span")
-      .open("span", {{"class", "align-middle fw-lighter"}})
+      .open("span", {{"class", "fw-lighter"}})
       .text(" Schemas")
       .close("span");
   output.close("a");
 
-  output.open("div", {{"class", "mt-3 mt-sm-0 flex-grow-1 position-relative"}})
+  output
+      .open("div",
+            {{"class",
+              "mt-2 mt-md-0 flex-grow-1 position-relative w-100 w-md-auto"}})
       .open("div", {{"class", "input-group"}})
       .open("span", {{"class", "input-group-text"}})
       .open("i", {{"class", "bi bi-search"}})
@@ -53,7 +59,7 @@ auto html_navigation(T &output,
 
   if (configuration.defines("action")) {
     output.open("a",
-                {{"class", "ms-3 btn btn-dark"},
+                {{"class", "ms-md-3 btn btn-dark mt-2 mt-md-0 w-100 w-md-auto"},
                  {"role", "button"},
                  {"href", configuration.at("action").at("url").to_string()}});
 
@@ -74,10 +80,12 @@ auto html_navigation(T &output,
 }
 
 template <typename T> auto html_footer(T &output) -> void {
-  output.open("footer",
-              {{"class", "border-top text-secondary py-3 d-flex "
-                         "align-items-center justify-content-between"}});
-  output.open("small")
+  output.open(
+      "footer",
+      {{"class",
+        "border-top text-secondary py-3 d-flex "
+        "align-items-center justify-content-between flex-column flex-md-row"}});
+  output.open("small", {{"class", "mb-2 mb-md-0"}})
       .open("a", {{"href", "https://github.com/sourcemeta/registry"},
                   {"class", "text-secondary"},
                   {"target", "_blank"}})
@@ -102,6 +110,8 @@ template <typename T> auto html_footer(T &output) -> void {
             {{"href", "https://github.com/sourcemeta/registry/discussions"},
              {"class", "text-secondary"},
              {"target", "_blank"}})
+      .open("i", {{"class", "bi bi-question-square me-2"}})
+      .close("i")
       .text("Need Help?")
       .close("a")
       .close("small");

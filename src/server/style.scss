@@ -55,3 +55,10 @@ $breadcrumb-font-size: 15px;
 $bootstrap-icons-font: bootstrap-icons;
 $bootstrap-icons-font-dir: "/static";
 @import "../../vendor/bootstrap-icons/font/bootstrap-icons.scss";
+
+// Bootstrap doesn't seem to provide breakpoint-based modifiers to `.w-*`
+@include media-breakpoint-up(md) {
+  .w-md-auto {
+    width: auto !important;
+  }
+}
