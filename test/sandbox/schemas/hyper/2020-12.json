@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/hyper-schema",
+  "$id": "https://example.com/hyper/2020-12",
+  "title": "Hello World",
+  "description": "A simple JSON Hyper-Schema example",
+  "type": "object",
+  "properties": {
+    "message": {
+      "type": "string",
+      "description": "A message to say hello."
+    }
+  },
+  "required": ["message"],
+  "links": [
+    {
+      "rel": "self",
+      "href": "{+baseUrl}/hello",
+      "templateRequired": ["baseUrl"]
+    }
+  ]
+}

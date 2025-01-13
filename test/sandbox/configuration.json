@@ -42,6 +42,10 @@
     "doc": {
       "base": "https://example.com/doc",
       "path": "./schemas/doc"
+    },
+    "hyper": {
+      "base": "https://example.com/hyper",
+      "path": "./schemas/hyper"
     }
   }
 }
