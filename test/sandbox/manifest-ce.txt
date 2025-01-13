@@ -5,7 +5,9 @@
 ./bundles/example/bundling
 ./bundles/example/bundling/single.json
 ./bundles/example/extension
+./bundles/example/extension/to-without.json
 ./bundles/example/extension/with.schema.json
+./bundles/example/extension/without.json
 ./bundles/example/schemas
 ./bundles/example/schemas/absolute-refs.json
 ./bundles/example/schemas/camelcase.json
@@ -26,7 +28,9 @@
 ./schemas/example/bundling
 ./schemas/example/bundling/single.json
 ./schemas/example/extension
+./schemas/example/extension/to-without.json
 ./schemas/example/extension/with.schema.json
+./schemas/example/extension/without.json
 ./schemas/example/schemas
 ./schemas/example/schemas/absolute-refs.json
 ./schemas/example/schemas/camelcase.json
@@ -46,7 +50,9 @@
 ./unidentified/example/bundling
 ./unidentified/example/bundling/single.json
 ./unidentified/example/extension
+./unidentified/example/extension/to-without.json
 ./unidentified/example/extension/with.schema.json
+./unidentified/example/extension/without.json
 ./unidentified/example/schemas
 ./unidentified/example/schemas/absolute-refs.json
 ./unidentified/example/schemas/camelcase.json

@@ -105,3 +105,22 @@ HTTP 200
     }
   }
 }
+
+GET {{base}}/example/extension/to-without.json?bundle=1
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/extension/to-without.json",
+  "allOf": [
+    {
+      "$ref": "without"
+    }
+  ],
+  "definitions": {
+    "http://localhost:8000/example/extension/without": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://localhost:8000/example/extension/without",
+      "type": "string"
+    }
+  }
+}
