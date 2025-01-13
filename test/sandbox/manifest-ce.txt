@@ -16,6 +16,8 @@
 ./bundles/example/schemas/string.json
 ./bundles/example/v2.0
 ./bundles/example/v2.0/schema.json
+./bundles/hyper
+./bundles/hyper/2020-12.json
 ./configuration.json
 ./schemas
 ./schemas/doc
@@ -35,6 +37,8 @@
 ./schemas/example/schemas/string.json
 ./schemas/example/v2.0
 ./schemas/example/v2.0/schema.json
+./schemas/hyper
+./schemas/hyper/2020-12.json
 ./unidentified
 ./unidentified/doc
 ./unidentified/doc/string-1.json
@@ -53,3 +57,5 @@
 ./unidentified/example/schemas/string.json
 ./unidentified/example/v2.0
 ./unidentified/example/v2.0/schema.json
+./unidentified/hyper
+./unidentified/hyper/2020-12.json
