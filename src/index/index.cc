@@ -68,6 +68,21 @@ print_validation_output(const sourcemeta::blaze::ErrorOutput &output) -> void {
   }
 }
 
+static auto
+wrap_resolver(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver)
+    -> sourcemeta::jsontoolkit::SchemaResolver {
+  return [&resolver](const std::string_view identifier) {
+    const auto result{resolver(identifier)};
+    // Try with a `.json` extension as a fallback, as we do add this
+    // extension when a schema doesn't have it by default
+    if (!result.has_value() && !identifier.starts_with(".json")) {
+      return resolver(std::string{identifier} + ".json");
+    }
+
+    return resolver(identifier);
+  };
+}
+
 static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
                   const sourcemeta::jsontoolkit::URI &server_url,
                   const sourcemeta::jsontoolkit::JSON &configuration,
@@ -162,7 +177,8 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
         sourcemeta::jsontoolkit::dialect(result.value())};
     assert(dialect_identifier.has_value());
     if (!compiled_schemas.contains(dialect_identifier.value())) {
-      const auto metaschema{resolver(dialect_identifier.value())};
+      const auto metaschema{
+          wrap_resolver(resolver)(dialect_identifier.value())};
       assert(metaschema.has_value());
       std::cerr << "Compiling metaschema: " << dialect_identifier.value()
                 << "\n";
@@ -170,7 +186,8 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
           dialect_identifier.value(),
           sourcemeta::blaze::compile(
               metaschema.value(),
-              sourcemeta::jsontoolkit::default_schema_walker, resolver,
+              sourcemeta::jsontoolkit::default_schema_walker,
+              wrap_resolver(resolver),
               sourcemeta::blaze::default_schema_compiler,
               sourcemeta::blaze::Mode::FastValidation));
     }
@@ -200,7 +217,7 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
     std::cerr << "Bundling: " << schema.first << "\n";
     auto bundled_schema{sourcemeta::jsontoolkit::bundle(
         result.value(), sourcemeta::jsontoolkit::default_schema_walker,
-        resolver)};
+        wrap_resolver(resolver))};
     std::ofstream bundle_stream{bundle_path};
     sourcemeta::jsontoolkit::prettify(
         bundled_schema, bundle_stream,
@@ -214,7 +231,7 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
     std::cerr << "Bundling without identifiers: " << schema.first << "\n";
     sourcemeta::jsontoolkit::unidentify(
         bundled_schema, sourcemeta::jsontoolkit::default_schema_walker,
-        resolver);
+        wrap_resolver(resolver));
     std::ofstream unidentified_stream{unidentified_path};
     sourcemeta::jsontoolkit::prettify(
         bundled_schema, unidentified_stream,
@@ -306,7 +323,8 @@ static auto index_main(const std::string_view &program,
 #ifdef SOURCEMETA_REGISTRY_ENTERPRISE
   if (code == EXIT_SUCCESS) {
     return sourcemeta::registry::enterprise::attach(
-        resolver, server_url, configuration_with_defaults, output);
+        wrap_resolver(resolver), server_url, configuration_with_defaults,
+        output);
   }
 #endif
 

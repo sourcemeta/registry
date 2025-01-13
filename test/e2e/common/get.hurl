@@ -94,6 +94,17 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
   "type": "string"
 }
 
+# No extension
+GET {{base}}/example/extension/without.json
+HTTP 200
+Content-Type: application/schema+json
+Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/extension/without.json",
+  "type": "string"
+}
+
 # With correct casing
 GET {{base}}/example/schemas/CamelCase.json
 HTTP 200

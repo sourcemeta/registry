@@ -71,12 +71,13 @@ static auto base_dialect_id(const std::string &base_dialect) -> std::string {
 
 namespace sourcemeta::registry::enterprise {
 
-auto generate_toc(
-    const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
-    const sourcemeta::jsontoolkit::URI &server_url,
-    const sourcemeta::jsontoolkit::JSON &configuration,
-    const std::filesystem::path &base, const std::filesystem::path &directory,
-    std::vector<sourcemeta::jsontoolkit::JSON> &search_index) -> void {
+auto generate_toc(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
+                  const sourcemeta::jsontoolkit::URI &server_url,
+                  const sourcemeta::jsontoolkit::JSON &configuration,
+                  const std::filesystem::path &base,
+                  const std::filesystem::path &directory,
+                  std::vector<sourcemeta::jsontoolkit::JSON> &search_index)
+    -> void {
   const auto server_url_string{server_url.recompose()};
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::jsontoolkit::JSON::make_array()};
@@ -257,7 +258,7 @@ auto generate_toc(
   }
 }
 
-auto attach(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
+auto attach(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
             const sourcemeta::jsontoolkit::URI &server_url,
             const sourcemeta::jsontoolkit::JSON &configuration,
             const std::filesystem::path &output) -> int {
