@@ -91,11 +91,10 @@ static auto to_lowercase(const std::string_view input) -> std::string {
 }
 
 auto FlatFileSchemaResolver::add(
-    const std::filesystem::path &path,
+    const std::filesystem::path &path, const JSON &schema,
     const std::optional<std::string> &default_dialect,
     const std::optional<std::string> &default_id) -> const std::string & {
   const auto canonical{std::filesystem::canonical(path)};
-  const auto schema{sourcemeta::jsontoolkit::from_file(canonical)};
   assert(sourcemeta::jsontoolkit::is_schema(schema));
   const auto identifier{sourcemeta::jsontoolkit::identify(
       schema, *this, IdentificationStrategy::Loose, default_dialect,
@@ -121,6 +120,14 @@ auto FlatFileSchemaResolver::add(
   }
 
   return result.first->first;
+}
+
+auto FlatFileSchemaResolver::add(
+    const std::filesystem::path &path,
+    const std::optional<std::string> &default_dialect,
+    const std::optional<std::string> &default_id) -> const std::string & {
+  return this->add(path, sourcemeta::jsontoolkit::from_file(path),
+                   default_dialect, default_id);
 }
 
 auto FlatFileSchemaResolver::reidentify(const std::string &schema,
