@@ -6,6 +6,7 @@ set_target_properties(schema_registry_index PROPERTIES OUTPUT_NAME sourcemeta-re
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::jsontoolkit::uri)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::jsontoolkit::json)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::jsontoolkit::jsonschema)
+target_link_libraries(schema_registry_index PRIVATE sourcemeta::jsontoolkit::yaml)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::evaluator)
 

@@ -1,6 +1,7 @@
 #include <sourcemeta/jsontoolkit/json.h>
 #include <sourcemeta/jsontoolkit/jsonschema.h>
 #include <sourcemeta/jsontoolkit/uri.h>
+#include <sourcemeta/jsontoolkit/yaml.h>
 
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
@@ -38,6 +39,20 @@ static auto write_lower_except_trailing(T &stream, const std::string &input,
   }
 }
 
+static auto is_yaml(const std::filesystem::path &path) -> bool {
+  return path.extension() == ".yaml" || path.extension() == ".yml";
+}
+
+static auto is_schema_file(const std::filesystem::path &path) -> bool {
+  return is_yaml(path) || path.extension() == ".json";
+}
+
+static auto schema_reader(const std::filesystem::path &path)
+    -> sourcemeta::jsontoolkit::JSON {
+  return is_yaml(path) ? sourcemeta::jsontoolkit::from_yaml(path)
+                       : sourcemeta::jsontoolkit::from_file(path);
+}
+
 static auto url_join(const std::string &first, const std::string &second,
                      const std::string &third, const std::string &extension)
     -> std::string {
@@ -48,6 +63,12 @@ static auto url_join(const std::string &first, const std::string &second,
   result << '/';
   write_lower_except_trailing(result, third, '.');
   if (!result.str().ends_with(extension)) {
+    std::filesystem::path current{result.str()};
+    if (is_yaml(current)) {
+      current.replace_extension(std::string{"."} + extension);
+      return current.string();
+    }
+
     result << '.';
     result << extension;
   }
@@ -112,7 +133,7 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
 
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection_path}) {
-      if (!entry.is_regular_file() || entry.path().extension() != ".json" ||
+      if (!entry.is_regular_file() || !is_schema_file(entry.path()) ||
           entry.path().stem().string().starts_with(".")) {
         continue;
       }
@@ -133,9 +154,9 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
 
       default_identifier << relative_path;
 
-      const auto &current_identifier{resolver.add(
-          entry.path(), sourcemeta::jsontoolkit::from_file(entry.path()),
-          default_dialect, default_identifier.str())};
+      const auto &current_identifier{resolver.add(entry.path(), default_dialect,
+                                                  default_identifier.str(),
+                                                  schema_reader)};
       auto identifier_uri{
           sourcemeta::jsontoolkit::URI{current_identifier}.canonicalize()};
       std::cerr << identifier_uri.recompose();
