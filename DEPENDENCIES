@@ -1,6 +1,6 @@
 vendorpull https://github.com/sourcemeta/vendorpull dea311b5bfb53b6926a4140267959ae334d3ecf4
 noa https://github.com/sourcemeta/noa 924f5cc8549af7f12227869dcbab4259029ac650
-jsontoolkit https://github.com/sourcemeta/jsontoolkit 155f7dfe71259a3bd18cf51155ef7d63540df3f5
+jsontoolkit https://github.com/sourcemeta/jsontoolkit 93a921d0f1e99bfdfe14bfd4d2acf5981294080b
 blaze https://github.com/sourcemeta/blaze a906d6601bc5d7afd4ddb6cbf9f64326aeee1b0c
 hydra https://github.com/sourcemeta/hydra c31b5b612beb3e6a870deb2581ae437fc5183f47
 bootstrap https://github.com/twbs/bootstrap v5.3.3
