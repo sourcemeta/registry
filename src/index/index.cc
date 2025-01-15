@@ -133,8 +133,9 @@ static auto index(sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver,
 
       default_identifier << relative_path;
 
-      const auto &current_identifier{resolver.add(entry.path(), default_dialect,
-                                                  default_identifier.str())};
+      const auto &current_identifier{resolver.add(
+          entry.path(), sourcemeta::jsontoolkit::from_file(entry.path()),
+          default_dialect, default_identifier.str())};
       auto identifier_uri{
           sourcemeta::jsontoolkit::URI{current_identifier}.canonicalize()};
       std::cerr << identifier_uri.recompose();

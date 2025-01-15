@@ -123,6 +123,13 @@ public:
 
   /// Register a schema to the flat file resolver, returning the detected
   /// identifier for the schema
+  auto add(const std::filesystem::path &path, const JSON &schema,
+           const std::optional<std::string> &default_dialect = std::nullopt,
+           const std::optional<std::string> &default_id = std::nullopt)
+      -> const std::string &;
+
+  /// Read and register a schema to the flat file resolver, returning the
+  /// detected identifier for the schema
   auto add(const std::filesystem::path &path,
            const std::optional<std::string> &default_dialect = std::nullopt,
            const std::optional<std::string> &default_id = std::nullopt)
