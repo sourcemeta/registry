@@ -100,7 +100,7 @@ wrap_resolver(const sourcemeta::jsontoolkit::FlatFileSchemaResolver &resolver)
       return resolver(std::string{identifier} + ".json");
     }
 
-    return resolver(identifier);
+    return result;
   };
 }
 
