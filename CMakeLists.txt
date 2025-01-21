@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(registry VERSION 0.0.1 LANGUAGES CXX)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-include(vendor/noa/cmake/noa.cmake)
 
 # Options
 option(REGISTRY_DEVELOPMENT "Build the Registry in development mode" OFF)
@@ -10,6 +9,7 @@ option(REGISTRY_INDEX "Build the Registry index tool" ON)
 option(REGISTRY_ENTERPRISE "Build the Registry Enterprise edition (requires a license)" OFF)
 set(REGISTRY_PREFIX "/usr" CACHE STRING "Expected installation prefix")
 
+find_package(Noa REQUIRED)
 find_package(JSONToolkit REQUIRED)
 find_package(Blaze REQUIRED)
 find_package(Hydra REQUIRED)
