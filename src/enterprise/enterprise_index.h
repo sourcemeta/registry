@@ -1,7 +1,7 @@
 #ifndef SOURCEMETA_REGISTRY_ENTERPRISE_INDEX_H_
 #define SOURCEMETA_REGISTRY_ENTERPRISE_INDEX_H_
 
-#include <sourcemeta/jsontoolkit/json.h>
+#include <sourcemeta/core/json.h>
 
 #include "enterprise_html.h"
 
@@ -13,7 +13,7 @@
 #include <iostream>   // std::cerr
 #include <utility>    // std::move
 
-// TODO: Elevate to JSON Toolkit as a JSON string method
+// TODO: Elevate to Core as a JSON string method
 static auto trim(const std::string &input) -> std::string {
   auto copy = input;
   copy.erase(copy.find_last_not_of(' ') + 1);
@@ -71,21 +71,19 @@ static auto base_dialect_id(const std::string &base_dialect) -> std::string {
 
 namespace sourcemeta::registry::enterprise {
 
-auto generate_toc(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
-                  const sourcemeta::jsontoolkit::URI &server_url,
-                  const sourcemeta::jsontoolkit::JSON &configuration,
+auto generate_toc(const sourcemeta::core::SchemaResolver &resolver,
+                  const sourcemeta::core::URI &server_url,
+                  const sourcemeta::core::JSON &configuration,
                   const std::filesystem::path &base,
                   const std::filesystem::path &directory,
-                  std::vector<sourcemeta::jsontoolkit::JSON> &search_index)
-    -> void {
+                  std::vector<sourcemeta::core::JSON> &search_index) -> void {
   const auto server_url_string{server_url.recompose()};
   assert(directory.string().starts_with(base.string()));
-  auto entries{sourcemeta::jsontoolkit::JSON::make_array()};
+  auto entries{sourcemeta::core::JSON::make_array()};
 
   for (const auto &entry : std::filesystem::directory_iterator{directory}) {
-    auto entry_json{sourcemeta::jsontoolkit::JSON::make_object()};
-    entry_json.assign("name",
-                      sourcemeta::jsontoolkit::JSON{entry.path().filename()});
+    auto entry_json{sourcemeta::core::JSON::make_object()};
+    entry_json.assign("name", sourcemeta::core::JSON{entry.path().filename()});
     const auto entry_relative_path{
         entry.path().string().substr(base.string().size())};
     if (entry.is_directory()) {
@@ -98,27 +96,27 @@ auto generate_toc(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
         }
       }
 
-      entry_json.assign("type", sourcemeta::jsontoolkit::JSON{"directory"});
+      entry_json.assign("type", sourcemeta::core::JSON{"directory"});
       entry_json.assign(
-          "url", sourcemeta::jsontoolkit::JSON{
+          "url", sourcemeta::core::JSON{
                      entry.path().string().substr(base.string().size())});
 
       entries.push_back(std::move(entry_json));
     } else if (entry.path().extension() == ".json" &&
                !entry.path().stem().string().starts_with(".")) {
-      const auto schema{sourcemeta::jsontoolkit::from_file(entry.path())};
-      entry_json.assign("type", sourcemeta::jsontoolkit::JSON{"schema"});
+      const auto schema{sourcemeta::core::from_file(entry.path())};
+      entry_json.assign("type", sourcemeta::core::JSON{"schema"});
       if (schema.is_object() && schema.defines("title") &&
           schema.at("title").is_string()) {
-        entry_json.assign("title", sourcemeta::jsontoolkit::JSON{
+        entry_json.assign("title", sourcemeta::core::JSON{
                                        trim(schema.at("title").to_string())});
       }
 
       if (schema.is_object() && schema.defines("description") &&
           schema.at("description").is_string()) {
-        entry_json.assign("description",
-                          sourcemeta::jsontoolkit::JSON{
-                              trim(schema.at("description").to_string())});
+        entry_json.assign(
+            "description",
+            sourcemeta::core::JSON{trim(schema.at("description").to_string())});
       }
 
       // Calculate base dialect
@@ -140,25 +138,22 @@ auto generate_toc(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
 
       const auto resolved_schema{resolver(absolute_schema_url.str())};
       assert(resolved_schema.has_value());
-      const auto base_dialect{
-          sourcemeta::jsontoolkit::base_dialect(schema, resolver)};
+      const auto base_dialect{sourcemeta::core::base_dialect(schema, resolver)};
       assert(base_dialect.has_value());
-      entry_json.assign(
-          "baseDialect",
-          sourcemeta::jsontoolkit::JSON{base_dialect_id(base_dialect.value())});
+      entry_json.assign("baseDialect", sourcemeta::core::JSON{base_dialect_id(
+                                           base_dialect.value())});
 
-      entry_json.assign("url",
-                        sourcemeta::jsontoolkit::JSON{entry_relative_path});
+      entry_json.assign("url", sourcemeta::core::JSON{entry_relative_path});
 
       // Collect schemas high-level metadata for searching purposes
-      auto search_entry{sourcemeta::jsontoolkit::JSON::make_array()};
+      auto search_entry{sourcemeta::core::JSON::make_array()};
       search_entry.push_back(entry_json.at("url"));
       search_entry.push_back(entry_json.defines("title")
                                  ? entry_json.at("title")
-                                 : sourcemeta::jsontoolkit::JSON{""});
+                                 : sourcemeta::core::JSON{""});
       search_entry.push_back(entry_json.defines("description")
                                  ? entry_json.at("description")
-                                 : sourcemeta::jsontoolkit::JSON{""});
+                                 : sourcemeta::core::JSON{""});
       search_index.push_back(std::move(search_entry));
 
       entries.push_back(std::move(entry_json));
@@ -174,7 +169,7 @@ auto generate_toc(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
               return left.at("type") < right.at("type");
             });
 
-  auto meta{sourcemeta::jsontoolkit::JSON::make_object()};
+  auto meta{sourcemeta::core::JSON::make_object()};
   const auto page_entry_name{
       std::filesystem::relative(directory, base).string()};
 
@@ -193,13 +188,13 @@ auto generate_toc(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
   // Precompute the breadcrumb
   const std::filesystem::path relative_path{directory.string().substr(
       std::min(base.string().size() + 1, directory.string().size()))};
-  meta.assign("breadcrumb", sourcemeta::jsontoolkit::JSON::make_array());
+  meta.assign("breadcrumb", sourcemeta::core::JSON::make_array());
   std::filesystem::path current_path{"/"};
   for (const auto &part : relative_path) {
     current_path = current_path / part;
-    auto breadcrumb_entry{sourcemeta::jsontoolkit::JSON::make_object()};
-    breadcrumb_entry.assign("name", sourcemeta::jsontoolkit::JSON{part});
-    breadcrumb_entry.assign("url", sourcemeta::jsontoolkit::JSON{current_path});
+    auto breadcrumb_entry{sourcemeta::core::JSON::make_object()};
+    breadcrumb_entry.assign("name", sourcemeta::core::JSON{part});
+    breadcrumb_entry.assign("url", sourcemeta::core::JSON{current_path});
     meta.at("breadcrumb").push_back(std::move(breadcrumb_entry));
   }
 
@@ -210,7 +205,7 @@ auto generate_toc(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
   std::filesystem::create_directories(index_path.parent_path());
   std::ofstream stream{index_path};
   assert(!stream.fail());
-  sourcemeta::jsontoolkit::prettify(meta, stream);
+  sourcemeta::core::prettify(meta, stream);
   stream << "\n";
   stream.close();
 
@@ -258,13 +253,13 @@ auto generate_toc(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
   }
 }
 
-auto attach(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
-            const sourcemeta::jsontoolkit::URI &server_url,
-            const sourcemeta::jsontoolkit::JSON &configuration,
+auto attach(const sourcemeta::core::SchemaResolver &resolver,
+            const sourcemeta::core::URI &server_url,
+            const sourcemeta::core::JSON &configuration,
             const std::filesystem::path &output) -> int {
   std::cerr << "-- Indexing directory: " << output.string() << "\n";
   const auto base{std::filesystem::canonical(output / "schemas")};
-  std::vector<sourcemeta::jsontoolkit::JSON> search_index;
+  std::vector<sourcemeta::core::JSON> search_index;
   generate_toc(resolver, server_url, configuration, base, base, search_index);
 
   for (const auto &entry :
@@ -286,7 +281,7 @@ auto attach(const sourcemeta::jsontoolkit::SchemaResolver &resolver,
               return left.at(0) > right.at(0);
             });
   for (const auto &entry : search_index) {
-    sourcemeta::jsontoolkit::stringify(entry, stream);
+    sourcemeta::core::stringify(entry, stream);
     stream << "\n";
   }
   stream.close();
