@@ -1,7 +1,7 @@
 #ifndef SOURCEMETA_REGISTRY_ENTERPRISE_HTML_H_
 #define SOURCEMETA_REGISTRY_ENTERPRISE_HTML_H_
 
-#include <sourcemeta/jsontoolkit/json.h>
+#include <sourcemeta/core/json.h>
 #include <sourcemeta/registry/html.h>
 
 #include <optional> // std::optional
@@ -12,8 +12,7 @@
 namespace sourcemeta::registry::enterprise {
 
 template <typename T>
-auto html_navigation(T &output,
-                     const sourcemeta::jsontoolkit::JSON &configuration)
+auto html_navigation(T &output, const sourcemeta::core::JSON &configuration)
     -> void {
   output.open("nav", {{"class", "navbar navbar-expand border-bottom bg-body"}});
   output.open("div", {{"class", "container-fluid px-4 py-1 align-items-center "
@@ -119,7 +118,7 @@ template <typename T> auto html_footer(T &output) -> void {
 }
 
 template <typename T>
-auto html_start(T &output, const sourcemeta::jsontoolkit::JSON &configuration,
+auto html_start(T &output, const sourcemeta::core::JSON &configuration,
                 const std::string &title, const std::string &description,
                 const std::optional<std::string> &path) -> void {
   output.doctype();
@@ -195,7 +194,7 @@ template <typename T> auto html_end(T &output) -> void {
 
 // TODO: Refactor this function to use new HTML utilities
 template <typename T>
-static auto profile_picture(T &html, const sourcemeta::jsontoolkit::JSON &meta,
+static auto profile_picture(T &html, const sourcemeta::core::JSON &meta,
                             const std::uint64_t size,
                             const std::string_view classes = "") -> bool {
   if (meta.defines("github") && !meta.at("github").contains('/')) {
@@ -217,8 +216,7 @@ static auto profile_picture(T &html, const sourcemeta::jsontoolkit::JSON &meta,
 
 // TODO: Refactor this function to use new HTML utilities
 template <typename T>
-auto html_file_manager(T &html, const sourcemeta::jsontoolkit::JSON &meta)
-    -> void {
+auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
   assert(meta.defines("breadcrumb"));
   assert(meta.at("breadcrumb").is_array());
   if (!meta.at("breadcrumb").empty()) {

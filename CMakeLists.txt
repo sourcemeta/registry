@@ -9,8 +9,7 @@ option(REGISTRY_INDEX "Build the Registry index tool" ON)
 option(REGISTRY_ENTERPRISE "Build the Registry Enterprise edition (requires a license)" OFF)
 set(REGISTRY_PREFIX "/usr" CACHE STRING "Expected installation prefix")
 
-find_package(Noa REQUIRED)
-find_package(JSONToolkit REQUIRED)
+find_package(Core REQUIRED)
 find_package(Blaze REQUIRED)
 find_package(Hydra REQUIRED)
 
@@ -28,6 +27,6 @@ if(REGISTRY_SERVER)
 endif()
 
 if(PROJECT_IS_TOP_LEVEL AND REGISTRY_DEVELOPMENT)
-  noa_target_clang_format(SOURCES src/*.h src/*.cc)
-  noa_target_shellcheck(SOURCES test/*.sh)
+  sourcemeta_target_clang_format(SOURCES src/*.h src/*.cc)
+  sourcemeta_target_shellcheck(SOURCES test/*.sh)
 endif()

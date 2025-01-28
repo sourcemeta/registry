@@ -2,9 +2,9 @@
 #include <sourcemeta/hydra/http.h>
 #include <sourcemeta/hydra/httpserver.h>
 
-#include <sourcemeta/jsontoolkit/json.h>
-#include <sourcemeta/jsontoolkit/jsonschema.h>
-#include <sourcemeta/jsontoolkit/uri.h>
+#include <sourcemeta/core/json.h>
+#include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/core/uri.h>
 
 #include "configure.h"
 
@@ -23,9 +23,9 @@
 #include <utility>     // std::move
 
 static inline std::unique_ptr<const std::filesystem::path> __global_data;
-static auto configuration() -> const sourcemeta::jsontoolkit::JSON & {
-  static auto document{sourcemeta::jsontoolkit::from_file(
-      *(__global_data) / "configuration.json")};
+static auto configuration() -> const sourcemeta::core::JSON & {
+  static auto document{
+      sourcemeta::core::from_file(*(__global_data) / "configuration.json")};
   return document;
 }
 
@@ -73,17 +73,17 @@ static auto schema_directory(const bool bundle, const bool unidentify) noexcept
 
 static auto resolver(std::string_view identifier, const bool bundle,
                      const bool unidentify)
-    -> std::optional<sourcemeta::jsontoolkit::JSON> {
+    -> std::optional<sourcemeta::core::JSON> {
   static const auto SERVER_BASE_URL{
-      sourcemeta::jsontoolkit::URI{configuration().at("url").to_string()}
+      sourcemeta::core::URI{configuration().at("url").to_string()}
           .canonicalize()};
-  sourcemeta::jsontoolkit::URI uri{std::string{identifier}};
+  sourcemeta::core::URI uri{std::string{identifier}};
   uri.canonicalize().relative_to(SERVER_BASE_URL);
 
   // If so, this URI doesn't belong to us
   // TODO: Have a more efficient way of checking that a URI is blank
   if (uri.is_absolute() || uri.recompose().empty()) {
-    return sourcemeta::jsontoolkit::official_resolver(identifier);
+    return sourcemeta::core::official_resolver(identifier);
   }
 
   assert(uri.path().has_value());
@@ -94,7 +94,7 @@ static auto resolver(std::string_view identifier, const bool bundle,
     return std::nullopt;
   }
 
-  return sourcemeta::jsontoolkit::from_file(schema_path);
+  return sourcemeta::core::from_file(schema_path);
 }
 
 static auto json_error(const sourcemeta::hydra::http::ServerLogger &logger,
@@ -102,12 +102,12 @@ static auto json_error(const sourcemeta::hydra::http::ServerLogger &logger,
                        sourcemeta::hydra::http::ServerResponse &response,
                        const sourcemeta::hydra::http::Status code,
                        std::string &&id, std::string &&message) -> void {
-  auto object{sourcemeta::jsontoolkit::JSON::make_object()};
-  object.assign("request", sourcemeta::jsontoolkit::JSON{logger.id()});
-  object.assign("error", sourcemeta::jsontoolkit::JSON{std::move(id)});
-  object.assign("message", sourcemeta::jsontoolkit::JSON{std::move(message)});
+  auto object{sourcemeta::core::JSON::make_object()};
+  object.assign("request", sourcemeta::core::JSON{logger.id()});
+  object.assign("error", sourcemeta::core::JSON{std::move(id)});
+  object.assign("message", sourcemeta::core::JSON{std::move(message)});
   object.assign("code",
-                sourcemeta::jsontoolkit::JSON{static_cast<std::int64_t>(code)});
+                sourcemeta::core::JSON{static_cast<std::int64_t>(code)});
   response.status(code);
   response.header("Content-Type", "application/json");
   response.end(std::move(object));
@@ -132,11 +132,11 @@ auto on_search(const sourcemeta::hydra::http::ServerLogger &logger,
     return;
   }
 
-  auto result{sourcemeta::jsontoolkit::JSON::make_array()};
-  auto stream = sourcemeta::jsontoolkit::read_file(
-      *(__global_data) / "generated" / "search.jsonl");
+  auto result{sourcemeta::core::JSON::make_array()};
+  auto stream = sourcemeta::core::read_file(*(__global_data) / "generated" /
+                                            "search.jsonl");
   stream.exceptions(std::ifstream::badbit);
-  // TODO: Extend the JSON Toolkit JSONL iterators to be able
+  // TODO: Extend the Core JSONL iterators to be able
   // to access the stringified contents of the current entry
   // BEFORE parsing it as JSON, letting the client decide
   // whether to parse or not.
@@ -150,8 +150,8 @@ auto on_search(const sourcemeta::hydra::http::ServerLogger &logger,
       continue;
     }
 
-    auto entry{sourcemeta::jsontoolkit::JSON::make_object()};
-    auto line_json{sourcemeta::jsontoolkit::parse(line)};
+    auto entry{sourcemeta::core::JSON::make_object()};
+    auto line_json{sourcemeta::core::parse(line)};
     entry.assign("url", std::move(line_json.at(0)));
     entry.assign("title", std::move(line_json.at(1)));
     entry.assign("description", std::move(line_json.at(2)));
@@ -229,9 +229,8 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
   }
 
   std::ostringstream payload;
-  sourcemeta::jsontoolkit::prettify(
-      maybe_schema.value(), payload,
-      sourcemeta::jsontoolkit::schema_format_compare);
+  sourcemeta::core::prettify(maybe_schema.value(), payload,
+                             sourcemeta::core::schema_format_compare);
 
   std::ostringstream hash;
   sourcemeta::hydra::md5(payload.str(), hash);
@@ -247,7 +246,7 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
 
   // See
   // https://json-schema.org/draft/2020-12/json-schema-core.html#section-9.5.1.1
-  const auto dialect{sourcemeta::jsontoolkit::dialect(maybe_schema.value())};
+  const auto dialect{sourcemeta::core::dialect(maybe_schema.value())};
   assert(dialect.has_value());
   std::ostringstream link;
   link << "<" << dialect.value() << ">; rel=\"describedby\"";
@@ -304,7 +303,7 @@ static auto on_error(std::exception_ptr exception_ptr,
     -> void {
   try {
     std::rethrow_exception(exception_ptr);
-  } catch (const sourcemeta::jsontoolkit::SchemaResolutionError &error) {
+  } catch (const sourcemeta::core::SchemaResolutionError &error) {
     std::ostringstream message;
     message << error.what() << ": " << error.id();
     json_error(logger, request, response,

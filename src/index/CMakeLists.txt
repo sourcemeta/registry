@@ -1,12 +1,12 @@
 add_executable(schema_registry_index index.cc configure.h.in 
   "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 
-noa_add_default_options(PRIVATE schema_registry_index)
+sourcemeta_add_default_options(PRIVATE schema_registry_index)
 set_target_properties(schema_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
-target_link_libraries(schema_registry_index PRIVATE sourcemeta::jsontoolkit::uri)
-target_link_libraries(schema_registry_index PRIVATE sourcemeta::jsontoolkit::json)
-target_link_libraries(schema_registry_index PRIVATE sourcemeta::jsontoolkit::jsonschema)
-target_link_libraries(schema_registry_index PRIVATE sourcemeta::jsontoolkit::yaml)
+target_link_libraries(schema_registry_index PRIVATE sourcemeta::core::uri)
+target_link_libraries(schema_registry_index PRIVATE sourcemeta::core::json)
+target_link_libraries(schema_registry_index PRIVATE sourcemeta::core::jsonschema)
+target_link_libraries(schema_registry_index PRIVATE sourcemeta::core::yaml)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::evaluator)
 
