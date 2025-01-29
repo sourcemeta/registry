@@ -104,7 +104,7 @@ auto generate_toc(const sourcemeta::core::SchemaResolver &resolver,
       entries.push_back(std::move(entry_json));
     } else if (entry.path().extension() == ".json" &&
                !entry.path().stem().string().starts_with(".")) {
-      const auto schema{sourcemeta::core::from_file(entry.path())};
+      const auto schema{sourcemeta::core::read_json(entry.path())};
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});
       if (schema.is_object() && schema.defines("title") &&
           schema.at("title").is_string()) {
