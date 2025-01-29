@@ -175,6 +175,8 @@ static auto index(sourcemeta::core::FlatFileSchemaResolver &resolver,
                    // potentially metadata about schemas, etc
                    "json")};
       std::cerr << " => " << new_identifier << "\n";
+      // Otherwise we have things like "../" that should not be there
+      assert(new_identifier.find("..") == std::string::npos);
       resolver.reidentify(current_identifier, new_identifier);
     }
   }
