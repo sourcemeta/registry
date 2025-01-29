@@ -14,6 +14,14 @@ HTTP 200
   "type": "string"
 }
 
+GET {{base}}/example/schemas/id-same-as-base.json
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/schemas/id-same-as-base.json",
+  "type": "string"
+}
+
 # With random unknown query parameters
 GET {{base}}/example/schemas/string.json?foo=bar&baz=qux
 HTTP 200

@@ -157,8 +157,12 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
       const auto &current_identifier{resolver.add(entry.path(), default_dialect,
                                                   default_identifier.str(),
                                                   schema_reader)};
+
       auto identifier_uri{
-          sourcemeta::core::URI{current_identifier}.canonicalize()};
+          sourcemeta::core::URI{current_identifier == collection_base_uri_string
+                                    ? default_identifier.str()
+                                    : current_identifier}
+              .canonicalize()};
       std::cerr << identifier_uri.recompose();
       identifier_uri.relative_to(collection_base_uri);
       if (identifier_uri.is_absolute()) {
@@ -167,6 +171,7 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
         return EXIT_FAILURE;
       }
 
+      assert(!identifier_uri.recompose().empty());
       const auto new_identifier{
           url_join(server_url.recompose(), schema_entry.first,
                    identifier_uri.recompose(),
