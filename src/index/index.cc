@@ -49,8 +49,8 @@ static auto is_schema_file(const std::filesystem::path &path) -> bool {
 
 static auto schema_reader(const std::filesystem::path &path)
     -> sourcemeta::core::JSON {
-  return is_yaml(path) ? sourcemeta::core::from_yaml(path)
-                       : sourcemeta::core::from_file(path);
+  return is_yaml(path) ? sourcemeta::core::read_yaml(path)
+                       : sourcemeta::core::read_json(path);
 }
 
 static auto url_join(const std::string &first, const std::string &second,
@@ -90,7 +90,7 @@ print_validation_output(const sourcemeta::blaze::ErrorOutput &output) -> void {
 }
 
 static auto
-wrap_resolver(const sourcemeta::core::FlatFileSchemaResolver &resolver)
+wrap_resolver(const sourcemeta::core::SchemaFlatFileResolver &resolver)
     -> sourcemeta::core::SchemaResolver {
   return [&resolver](const std::string_view identifier) {
     const auto result{resolver(identifier)};
@@ -104,7 +104,7 @@ wrap_resolver(const sourcemeta::core::FlatFileSchemaResolver &resolver)
   };
 }
 
-static auto index(sourcemeta::core::FlatFileSchemaResolver &resolver,
+static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
                   const sourcemeta::core::URI &server_url,
                   const sourcemeta::core::JSON &configuration,
                   const std::filesystem::path &base,
@@ -208,7 +208,7 @@ static auto index(sourcemeta::core::FlatFileSchemaResolver &resolver,
       compiled_schemas.emplace(
           dialect_identifier.value(),
           sourcemeta::blaze::compile(metaschema.value(),
-                                     sourcemeta::core::default_schema_walker,
+                                     sourcemeta::core::schema_official_walker,
                                      wrap_resolver(resolver),
                                      sourcemeta::blaze::default_schema_compiler,
                                      sourcemeta::blaze::Mode::FastValidation));
@@ -238,7 +238,7 @@ static auto index(sourcemeta::core::FlatFileSchemaResolver &resolver,
     std::filesystem::create_directories(bundle_path.parent_path());
     std::cerr << "Bundling: " << schema.first << "\n";
     auto bundled_schema{sourcemeta::core::bundle(
-        result.value(), sourcemeta::core::default_schema_walker,
+        result.value(), sourcemeta::core::schema_official_walker,
         wrap_resolver(resolver))};
     std::ofstream bundle_stream{bundle_path};
     sourcemeta::core::prettify(bundled_schema, bundle_stream,
@@ -251,7 +251,7 @@ static auto index(sourcemeta::core::FlatFileSchemaResolver &resolver,
     std::filesystem::create_directories(unidentified_path.parent_path());
     std::cerr << "Bundling without identifiers: " << schema.first << "\n";
     sourcemeta::core::unidentify(bundled_schema,
-                                 sourcemeta::core::default_schema_walker,
+                                 sourcemeta::core::schema_official_walker,
                                  wrap_resolver(resolver));
     std::ofstream unidentified_stream{unidentified_path};
     sourcemeta::core::prettify(bundled_schema, unidentified_stream,
@@ -284,15 +284,15 @@ static auto index_main(const std::string_view &program,
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
   std::cerr << "Writing output to: " << output.string() << "\n";
 
-  const auto configuration_schema{sourcemeta::core::parse(
+  const auto configuration_schema{sourcemeta::core::parse_json(
       std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
   const auto compiled_configuration_schema{sourcemeta::blaze::compile(
-      configuration_schema, sourcemeta::core::default_schema_walker,
+      configuration_schema, sourcemeta::core::schema_official_walker,
       sourcemeta::core::official_resolver,
       sourcemeta::blaze::default_schema_compiler,
       sourcemeta::blaze::Mode::Exhaustive)};
 
-  const auto configuration{sourcemeta::core::from_file(configuration_path)};
+  const auto configuration{sourcemeta::core::read_json(configuration_path)};
   sourcemeta::blaze::ErrorOutput validation_output{configuration};
   sourcemeta::blaze::Evaluator evaluator;
   const auto result{evaluator.validate(compiled_configuration_schema,
@@ -331,7 +331,7 @@ static auto index_main(const std::string_view &program,
   sourcemeta::core::prettify(configuration_copy, stream);
   stream << "\n";
 
-  sourcemeta::core::FlatFileSchemaResolver resolver{
+  sourcemeta::core::SchemaFlatFileResolver resolver{
       sourcemeta::core::official_resolver};
   const auto server_url{
       sourcemeta::core::URI{configuration.at("url").to_string()}

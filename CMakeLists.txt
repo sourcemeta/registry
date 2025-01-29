@@ -9,6 +9,11 @@ option(REGISTRY_INDEX "Build the Registry index tool" ON)
 option(REGISTRY_ENTERPRISE "Build the Registry Enterprise edition (requires a license)" OFF)
 set(REGISTRY_PREFIX "/usr" CACHE STRING "Expected installation prefix")
 
+cmake_path(IS_ABSOLUTE REGISTRY_PREFIX REGISTRY_PREFIX_IS_ABSOLUTE)
+if(NOT REGISTRY_PREFIX_IS_ABSOLUTE)
+  message(FATAL_ERROR "REGISTRY_PREFIX must be an absolute path but it was: ${REGISTRY_PREFIX}")
+endif()
+
 find_package(Core REQUIRED)
 find_package(Blaze REQUIRED)
 find_package(Hydra REQUIRED)

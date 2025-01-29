@@ -25,7 +25,7 @@
 static inline std::unique_ptr<const std::filesystem::path> __global_data;
 static auto configuration() -> const sourcemeta::core::JSON & {
   static auto document{
-      sourcemeta::core::from_file(*(__global_data) / "configuration.json")};
+      sourcemeta::core::read_json(*(__global_data) / "configuration.json")};
   return document;
 }
 
@@ -94,7 +94,7 @@ static auto resolver(std::string_view identifier, const bool bundle,
     return std::nullopt;
   }
 
-  return sourcemeta::core::from_file(schema_path);
+  return sourcemeta::core::read_json(schema_path);
 }
 
 static auto json_error(const sourcemeta::hydra::http::ServerLogger &logger,
@@ -151,7 +151,7 @@ auto on_search(const sourcemeta::hydra::http::ServerLogger &logger,
     }
 
     auto entry{sourcemeta::core::JSON::make_object()};
-    auto line_json{sourcemeta::core::parse(line)};
+    auto line_json{sourcemeta::core::parse_json(line)};
     entry.assign("url", std::move(line_json.at(0)));
     entry.assign("title", std::move(line_json.at(1)));
     entry.assign("description", std::move(line_json.at(2)));
