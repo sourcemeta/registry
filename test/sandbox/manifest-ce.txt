@@ -11,6 +11,7 @@
 ./bundles/example/schemas
 ./bundles/example/schemas/absolute-refs.json
 ./bundles/example/schemas/camelcase.json
+./bundles/example/schemas/id-same-as-base.json
 ./bundles/example/schemas/no-id-draft7-ref.json
 ./bundles/example/schemas/no-id.json
 ./bundles/example/schemas/no-schema-nor-id.json
@@ -36,6 +37,7 @@
 ./schemas/example/schemas
 ./schemas/example/schemas/absolute-refs.json
 ./schemas/example/schemas/camelcase.json
+./schemas/example/schemas/id-same-as-base.json
 ./schemas/example/schemas/no-id-draft7-ref.json
 ./schemas/example/schemas/no-id.json
 ./schemas/example/schemas/no-schema-nor-id.json
@@ -60,6 +62,7 @@
 ./unidentified/example/schemas
 ./unidentified/example/schemas/absolute-refs.json
 ./unidentified/example/schemas/camelcase.json
+./unidentified/example/schemas/id-same-as-base.json
 ./unidentified/example/schemas/no-id-draft7-ref.json
 ./unidentified/example/schemas/no-id.json
 ./unidentified/example/schemas/no-schema-nor-id.json
