@@ -83,7 +83,7 @@ static auto resolver(std::string_view identifier, const bool bundle,
   // If so, this URI doesn't belong to us
   // TODO: Have a more efficient way of checking that a URI is blank
   if (uri.is_absolute() || uri.recompose().empty()) {
-    return sourcemeta::core::official_resolver(identifier);
+    return sourcemeta::core::schema_official_resolver(identifier);
   }
 
   assert(uri.path().has_value());

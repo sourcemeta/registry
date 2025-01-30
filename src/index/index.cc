@@ -293,7 +293,7 @@ static auto index_main(const std::string_view &program,
       std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
   const auto compiled_configuration_schema{sourcemeta::blaze::compile(
       configuration_schema, sourcemeta::core::schema_official_walker,
-      sourcemeta::core::official_resolver,
+      sourcemeta::core::schema_official_resolver,
       sourcemeta::blaze::default_schema_compiler,
       sourcemeta::blaze::Mode::Exhaustive)};
 
@@ -337,7 +337,7 @@ static auto index_main(const std::string_view &program,
   stream << "\n";
 
   sourcemeta::core::SchemaFlatFileResolver resolver{
-      sourcemeta::core::official_resolver};
+      sourcemeta::core::schema_official_resolver};
   const auto server_url{
       sourcemeta::core::URI{configuration.at("url").to_string()}
           .canonicalize()};
