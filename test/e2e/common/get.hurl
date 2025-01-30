@@ -14,6 +14,23 @@ HTTP 200
   "type": "string"
 }
 
+GET {{base}}/example/schemas/draft4-top-level-ref.json
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "{{base}}/example/schemas/draft4-top-level-ref.json",
+  "allOf": [
+    {
+      "$ref": "#/definitions/foo"
+    }
+  ],
+  "definitions": {
+    "foo": {
+      "type": "string"
+    }
+  }
+}
+
 GET {{base}}/example/schemas/id-same-as-base.json
 HTTP 200
 {
