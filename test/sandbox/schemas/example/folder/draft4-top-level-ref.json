@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "https://example.com/draft4-top-level-ref",
+  "$ref": "#/definitions/foo",
+  "definitions": {
+    "foo": {
+      "type": "string"
+    }
+  }
+}
