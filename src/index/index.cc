@@ -233,8 +233,7 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
 
     std::filesystem::create_directories(schema_output.parent_path());
     std::ofstream stream{schema_output};
-    sourcemeta::core::prettify(result.value(), stream,
-                               sourcemeta::core::schema_format_compare);
+    sourcemeta::core::stringify(result.value(), stream);
     stream << "\n";
 
     auto bundle_path{
@@ -246,8 +245,7 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
         result.value(), sourcemeta::core::schema_official_walker,
         wrap_resolver(resolver))};
     std::ofstream bundle_stream{bundle_path};
-    sourcemeta::core::prettify(bundled_schema, bundle_stream,
-                               sourcemeta::core::schema_format_compare);
+    sourcemeta::core::stringify(bundled_schema, bundle_stream);
     bundle_stream << "\n";
 
     auto unidentified_path{
@@ -259,8 +257,7 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
                                  sourcemeta::core::schema_official_walker,
                                  wrap_resolver(resolver));
     std::ofstream unidentified_stream{unidentified_path};
-    sourcemeta::core::prettify(bundled_schema, unidentified_stream,
-                               sourcemeta::core::schema_format_compare);
+    sourcemeta::core::stringify(bundled_schema, unidentified_stream);
     unidentified_stream << "\n";
   }
 
@@ -333,7 +330,7 @@ static auto index_main(const std::string_view &program,
   configuration_copy.erase("pages");
 
   std::ofstream stream{output / "configuration.json"};
-  sourcemeta::core::prettify(configuration_copy, stream);
+  sourcemeta::core::stringify(configuration_copy, stream);
   stream << "\n";
 
   sourcemeta::core::SchemaFlatFileResolver resolver{

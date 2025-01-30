@@ -205,7 +205,7 @@ auto generate_toc(const sourcemeta::core::SchemaResolver &resolver,
   std::filesystem::create_directories(index_path.parent_path());
   std::ofstream stream{index_path};
   assert(!stream.fail());
-  sourcemeta::core::prettify(meta, stream);
+  sourcemeta::core::stringify(meta, stream);
   stream << "\n";
   stream.close();
 
