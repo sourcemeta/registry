@@ -27,6 +27,28 @@ HTTP 200
   }
 }
 
+# TODO: This is incorrect. We should rephrase the reference
+# to NOT include .schema as otherwise the server won't resolve
+# the .schema variant
+GET {{base}}/example/schemas/ref-schema-extension.json?bundle=1
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/schemas/ref-schema-extension.json",
+  "allOf": [
+    {
+      "$ref": "string.schema.json"
+    }
+  ],
+  "definitions": {
+    "http://localhost:8000/example/schemas/string.schema.json": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://localhost:8000/example/schemas/string.schema.json",
+      "type": "string"
+    }
+  }
+}
+
 GET {{base}}/example/bundling/single.json?bundle=0
 HTTP 200
 {

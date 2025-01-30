@@ -96,8 +96,16 @@ wrap_resolver(const sourcemeta::core::SchemaFlatFileResolver &resolver)
     const auto result{resolver(identifier)};
     // Try with a `.json` extension as a fallback, as we do add this
     // extension when a schema doesn't have it by default
-    if (!result.has_value() && !identifier.starts_with(".json")) {
+    if (!result.has_value() && !identifier.ends_with(".json")) {
       return resolver(std::string{identifier} + ".json");
+    }
+
+    // If a reference ends with `.schema.json` try its `.json` variant too,
+    // as `.schema.json` is such a common convention
+    if (!result.has_value() && identifier.ends_with(".schema.json")) {
+      return resolver(
+          std::string{identifier.substr(0, identifier.length() - 12)} +
+          ".json");
     }
 
     return result;

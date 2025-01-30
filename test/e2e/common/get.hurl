@@ -31,6 +31,21 @@ HTTP 200
   }
 }
 
+# TODO: This is incorrect. We should rephrase the reference
+# to NOT include .schema as otherwise the server won't resolve
+# the .schema variant
+GET {{base}}/example/schemas/ref-schema-extension.json
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/schemas/ref-schema-extension.json",
+  "allOf": [
+    {
+      "$ref": "string.schema.json"
+    }
+  ]
+}
+
 GET {{base}}/example/schemas/id-same-as-base.json
 HTTP 200
 {
