@@ -1,9 +1,46 @@
-#ifndef SOURCEMETA_CORE_JSONSCHEMA_KEYWORDS_H_
-#define SOURCEMETA_CORE_JSONSCHEMA_KEYWORDS_H_
+#ifndef SOURCEMETA_CORE_JSONSCHEMA_TYPES_H_
+#define SOURCEMETA_CORE_JSONSCHEMA_TYPES_H_
 
-#include <cstdint> // std::uint8_t
+#include <cstdint>     // std::uint8_t
+#include <functional>  // std::function
+#include <map>         // std::map
+#include <optional>    // std::optional
+#include <set>         // std::set
+#include <string>      // std::string
+#include <string_view> // std::string_view
+
+#include <sourcemeta/core/json.h>
+#include <sourcemeta/core/jsonpointer.h>
+#include <sourcemeta/core/uri.h>
 
 namespace sourcemeta::core {
+
+// Take a URI and get back a schema
+/// @ingroup jsonschema
+///
+/// Some functions need to reference other schemas by their URIs. To accomplish
+/// this in a generic and flexible way, these functions take resolver functions
+/// as arguments, of the type sourcemeta::core::SchemaResolver.
+///
+/// For convenience, we provide the following default resolvers:
+///
+/// - sourcemeta::core::schema_official_resolver
+///
+/// You can implement resolvers to read from a local storage, to send HTTP
+/// requests, or anything your application might require. Unless your resolver
+/// is trivial, it is recommended to create a callable object that implements
+/// the function interface.
+using SchemaResolver = std::function<std::optional<JSON>(std::string_view)>;
+
+/// @ingroup jsonschema
+/// The strategy to follow when attempting to identify a schema
+enum class SchemaIdentificationStrategy : std::uint8_t {
+  /// Only proceed if we can guarantee the identifier is valid
+  Strict,
+
+  /// Attempt to guess even if we don't know the base dialect
+  Loose
+};
 
 /// @ingroup jsonschema
 /// The reference type
@@ -84,6 +121,55 @@ enum class SchemaKeywordType : std::uint8_t {
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
 #endif
+
+/// @ingroup jsonschema
+///
+/// Visit every reference in a schema. The arguments are as follows:
+///
+/// - The current subschema
+/// - The base URI of the current subschema
+/// - The reference vocabulary
+/// - The reference keyword name
+/// - The reference reference destination
+using SchemaVisitorReference = std::function<void(
+    JSON &, const URI &, const JSON::String &, const JSON::String &, URI &)>;
+
+/// @ingroup jsonschema
+/// A structure that encapsulates the result of walker over a specific keyword
+struct SchemaWalkerResult {
+  /// The walker strategy to continue traversing across the schema
+  const SchemaKeywordType type;
+  /// The vocabulary associated with the keyword, if any
+  const std::optional<std::string> vocabulary;
+  /// The keywords a given keyword depends on (if any) during the evaluation
+  /// process
+  const std::set<std::string> dependencies;
+};
+
+/// @ingroup jsonschema
+///
+/// For walking purposes, some functions need to understand which JSON Schema
+/// keywords declare other JSON Schema definitions. To accomplish this in a
+/// generic and flexible way that does not assume the use any vocabulary other
+/// than `core`, these functions take a walker function as argument, of the type
+/// sourcemeta::core::SchemaWalker.
+///
+/// For convenience, we provide the following default walkers:
+///
+/// - sourcemeta::core::schema_official_walker
+/// - sourcemeta::core::schema_walker_none
+using SchemaWalker = std::function<SchemaWalkerResult(
+    std::string_view, const std::map<std::string, bool> &)>;
+
+/// @ingroup jsonschema
+/// An entry of a schema iterator.
+struct SchemaIteratorEntry {
+  Pointer pointer;
+  std::optional<std::string> dialect;
+  std::map<std::string, bool> vocabularies;
+  std::optional<std::string> base_dialect;
+  JSON value;
+};
 
 } // namespace sourcemeta::core
 

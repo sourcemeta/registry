@@ -1,4 +1,4 @@
-#include <sourcemeta/core/jsonschema_walker.h>
+#include <sourcemeta/core/jsonschema.h>
 
 auto sourcemeta::core::schema_official_walker(
     std::string_view keyword, const std::map<std::string, bool> &vocabularies)

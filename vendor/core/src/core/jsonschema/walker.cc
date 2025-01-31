@@ -1,24 +1,7 @@
-#include <sourcemeta/core/jsonpointer.h>
 #include <sourcemeta/core/jsonschema.h>
-#include <sourcemeta/core/jsonschema_walker.h>
 
 #include <algorithm> // std::max, std::sort
 #include <cassert>   // assert
-#include <numeric>   // std::accumulate
-
-auto sourcemeta::core::schema_keyword_priority(
-    std::string_view keyword, const std::map<std::string, bool> &vocabularies,
-    const sourcemeta::core::SchemaWalker &walker) -> std::uint64_t {
-  const auto result{walker(keyword, vocabularies)};
-  return std::accumulate(
-      result.dependencies.cbegin(), result.dependencies.cend(),
-      static_cast<std::uint64_t>(0),
-      [&vocabularies, &walker](const auto accumulator, const auto &dependency) {
-        return std::max(
-            accumulator,
-            schema_keyword_priority(dependency, vocabularies, walker) + 1);
-      });
-}
 
 namespace {
 enum class SchemaWalkerType_t : std::uint8_t { Deep, Flat };
