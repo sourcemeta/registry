@@ -226,8 +226,12 @@ auto internal_analyse(const sourcemeta::core::JSON &schema,
     throw SchemaError("Cannot determine the base dialect of the schema");
   }
 
-  const std::optional<std::string> root_id{sourcemeta::core::identify(
+  std::optional<std::string> root_id{sourcemeta::core::identify(
       schema, root_base_dialect.value(), default_id)};
+  if (root_id.has_value()) {
+    root_id = URI{root_id.value()}.canonicalize().recompose();
+  }
+
   const std::optional<std::string> root_dialect{
       sourcemeta::core::dialect(schema, default_dialect)};
   assert(root_dialect.has_value());
@@ -296,7 +300,7 @@ auto internal_analyse(const sourcemeta::core::JSON &schema,
           }
 
           const bool maybe_relative_is_absolute{maybe_relative.is_absolute()};
-          maybe_relative.try_resolve_from(base);
+          maybe_relative.try_resolve_from(base).canonicalize();
           const std::string new_id{maybe_relative.recompose()};
 
           if (!maybe_relative_is_absolute ||
