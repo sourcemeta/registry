@@ -154,9 +154,35 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
 
       default_identifier << relative_path;
 
-      const auto &current_identifier{resolver.add(entry.path(), default_dialect,
-                                                  default_identifier.str(),
-                                                  schema_reader)};
+      const auto &current_identifier{resolver.add(
+          entry.path(), default_dialect, default_identifier.str(),
+          schema_reader,
+          [&schema_entry](sourcemeta::core::JSON &schema,
+                          const sourcemeta::core::URI &base,
+                          const sourcemeta::core::JSON::String &vocabulary,
+                          const sourcemeta::core::JSON::String &keyword,
+                          sourcemeta::core::URI &value) {
+            sourcemeta::core::reference_visitor_relativize(
+                schema, base, vocabulary, keyword, value);
+
+            if (schema_entry.second.defines("rebase") && value.is_absolute()) {
+              for (const auto &rebase :
+                   schema_entry.second.at("rebase").as_array()) {
+                const auto from{
+                    sourcemeta::core::URI{rebase.at("from").to_string()}
+                        .canonicalize()};
+                auto value_copy = value;
+                value_copy.relative_to(from);
+                if (value_copy.is_relative()) {
+                  value.rebase(
+                      from, sourcemeta::core::URI{rebase.at("to").to_string()}
+                                .canonicalize());
+                  schema.assign(keyword,
+                                sourcemeta::core::JSON{value.recompose()});
+                }
+              }
+            }
+          })};
 
       auto identifier_uri{
           sourcemeta::core::URI{current_identifier == collection_base_uri_string

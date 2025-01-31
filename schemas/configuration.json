@@ -98,10 +98,7 @@
         ],
         "properties": {
           "base": {
-            "type": "string",
-            "pattern": "^\\S.*\\S$",
-            "format": "uri",
-            "minLength": 1
+            "$ref": "#/definitions/uri"
           },
           "defaultDialect": {
             "type": "string",
@@ -111,6 +108,27 @@
             "type": "string",
             "pattern": "^\\S.*\\S$",
             "minLength": 1
+          },
+          "rebase": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "required": [
+                "from",
+                "to"
+              ],
+              "properties": {
+                "from": {
+                  "$ref": "#/definitions/uri"
+                },
+                "to": {
+                  "$ref": "#/definitions/uri"
+                }
+              },
+              "additionalProperties": false
+            }
           }
         },
         "additionalProperties": false
@@ -133,6 +151,12 @@
     "text": {
       "type": "string",
       "pattern": "^\\S.*\\S$",
+      "minLength": 1
+    },
+    "uri": {
+      "type": "string",
+      "pattern": "^\\S.*\\S?$",
+      "format": "uri",
       "minLength": 1
     }
   }
