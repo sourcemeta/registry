@@ -18,6 +18,8 @@
 ./bundles/example/schemas/no-schema-nor-id.json
 ./bundles/example/schemas/no-schema.json
 ./bundles/example/schemas/string.json
+./bundles/example/schemas/with-rebase-same-host.json
+./bundles/example/schemas/with-rebase.json
 ./bundles/example/schemas/yaml.json
 ./bundles/example/schemas/yml.json
 ./bundles/example/v2.0
@@ -45,6 +47,8 @@
 ./schemas/example/schemas/no-schema-nor-id.json
 ./schemas/example/schemas/no-schema.json
 ./schemas/example/schemas/string.json
+./schemas/example/schemas/with-rebase-same-host.json
+./schemas/example/schemas/with-rebase.json
 ./schemas/example/schemas/yaml.json
 ./schemas/example/schemas/yml.json
 ./schemas/example/v2.0
@@ -71,6 +75,8 @@
 ./unidentified/example/schemas/no-schema-nor-id.json
 ./unidentified/example/schemas/no-schema.json
 ./unidentified/example/schemas/string.json
+./unidentified/example/schemas/with-rebase-same-host.json
+./unidentified/example/schemas/with-rebase.json
 ./unidentified/example/schemas/yaml.json
 ./unidentified/example/schemas/yml.json
 ./unidentified/example/v2.0

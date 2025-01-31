@@ -31,6 +31,22 @@ HTTP 200
   }
 }
 
+GET {{base}}/example/schemas/with-rebase-same-host.json
+HTTP 200
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "{{base}}/example/schemas/with-rebase-same-host.json",
+  "$ref": "../bundling/single.json"
+}
+
+GET {{base}}/example/schemas/with-rebase.json
+HTTP 200
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "{{base}}/example/schemas/with-rebase.json",
+  "$ref": "/example/bundling/single.json"
+}
+
 GET {{base}}/example/schemas/id-same-as-base.json
 HTTP 200
 {

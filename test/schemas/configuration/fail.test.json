@@ -735,6 +735,77 @@
           }
         }
       }
+    },
+    {
+      "description": "empty rebase",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "hero": "<p>Hello</p>",
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas",
+            "rebase": []
+          }
+        }
+      }
+    },
+    {
+      "description": "rebase without from",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "hero": "<p>Hello</p>",
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas",
+            "rebase": [
+              { "to": "/" }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "description": "rebase without to",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "hero": "<p>Hello</p>",
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas",
+            "rebase": [
+              { "from": "https://example.com" }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "description": "rebase with duplicates",
+      "valid": false,
+      "data": {
+        "url": "https://www.example.com",
+        "port": 8000,
+        "hero": "<p>Hello</p>",
+        "schemas": {
+          "example": {
+            "base": "https://schemas.example.com",
+            "path": "./schemas",
+            "rebase": [
+              { "from": "https://example.com", "to": "/" },
+              { "from": "https://example.com", "to": "/" }
+            ]
+          }
+        }
+      }
     }
   ]
 }
