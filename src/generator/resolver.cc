@@ -145,6 +145,13 @@ auto Resolver::add(const Configuration &configuration,
                 const sourcemeta::core::JSON::String &vocabulary,
                 const sourcemeta::core::JSON::String &keyword,
                 sourcemeta::core::URI &value) {
+              const auto current_path{value.path()};
+              if (current_path.has_value()) {
+                value.path(to_lowercase(current_path.value()));
+                subschema.assign(keyword,
+                                 sourcemeta::core::JSON{value.recompose()});
+              }
+
               sourcemeta::core::reference_visitor_relativize(
                   subschema, base, vocabulary, keyword, value);
 

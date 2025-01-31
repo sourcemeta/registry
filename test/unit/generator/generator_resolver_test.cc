@@ -220,6 +220,19 @@ TEST(Generator_Resolver, example_2020_12_absolute_ref) {
   })JSON");
 }
 
+TEST(Generator_Resolver, example_2020_12_ref_with_casing) {
+  RESOLVER_INIT(resolver);
+
+  RESOLVER_ADD(resolver, "example", "2020-12-ref-with-casing.json",
+               "https://example.com/schemas/2020-12-ref-with-casing.json",
+               "http://localhost:8000/example/2020-12-ref-with-casing.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-ref-with-casing.json",
+    "$ref": "2020-12-id.json"
+  })JSON");
+}
+
 TEST(Generator_Resolver, example_2020_12_id_with_casing) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-id-with-casing.json",

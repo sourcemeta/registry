@@ -59,7 +59,7 @@ HTTP 200
 ]
 
 # Results without title/description
-GET {{base}}/api/search?q=camel
+GET {{base}}/api/search?q=camelcase.json
 HTTP 200
 [
   {

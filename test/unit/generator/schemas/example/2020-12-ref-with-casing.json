@@ -1,0 +1,5 @@
+{
+  "$id": "https://example.com/schemas/2020-12-ref-with-casing.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "2020-12-iD.Json"
+}
