@@ -432,7 +432,11 @@ auto URI::canonicalize() -> URI & {
   if (result_path.has_value()) {
     const auto canonical_path{canonicalize_path(result_path.value())};
     if (canonical_path.has_value()) {
-      this->path_ = canonical_path.value();
+      if (result_path.value().ends_with('/')) {
+        this->path_ = canonical_path.value() + "/";
+      } else {
+        this->path_ = canonical_path.value();
+      }
     }
   }
 
