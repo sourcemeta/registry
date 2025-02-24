@@ -11,6 +11,8 @@
 #include <filesystem> // std::filesystem
 #include <fstream>    // std::ofstream
 #include <iostream>   // std::cerr
+#include <regex>      // std::regex, std::smatch, std::regex_search
+#include <tuple>      // std::tuple, std::make_tuple
 #include <utility>    // std::move
 
 // TODO: Elevate to Core as a JSON string method
@@ -19,6 +21,19 @@ static auto trim(const std::string &input) -> std::string {
   copy.erase(copy.find_last_not_of(' ') + 1);
   copy.erase(0, copy.find_first_not_of(' '));
   return copy;
+}
+
+static auto try_parse_version(const sourcemeta::core::JSON::String &name)
+    -> std::optional<std::tuple<unsigned, unsigned, unsigned>> {
+  std::regex version_regex(R"(v?(\d+)\.(\d+)\.(\d+))");
+  std::smatch match;
+
+  if (std::regex_search(name, match, version_regex)) {
+    return std::make_tuple(std::stoul(match[1]), std::stoul(match[2]),
+                           std::stoul(match[3]));
+  }
+
+  return std::nullopt;
 }
 
 static auto base_dialect_id(const std::string &base_dialect) -> std::string {
@@ -160,14 +175,26 @@ auto generate_toc(const sourcemeta::core::SchemaResolver &resolver,
     }
   }
 
-  std::sort(entries.as_array().begin(), entries.as_array().end(),
-            [](const auto &left, const auto &right) {
-              if (left.at("type") == right.at("type")) {
-                return left.at("name") > right.at("name");
-              }
+  std::sort(
+      entries.as_array().begin(), entries.as_array().end(),
+      [](const auto &left, const auto &right) {
+        if (left.at("type") == right.at("type")) {
+          const auto &left_name{left.at("name")};
+          const auto &right_name{right.at("name")};
 
-              return left.at("type") < right.at("type");
-            });
+          // If the schema/directories represent SemVer versions, attempt to
+          // parse them as such and provide better sorting
+          const auto left_version{try_parse_version(left_name.to_string())};
+          const auto right_version{try_parse_version(right_name.to_string())};
+          if (left_version.has_value() && right_version.has_value()) {
+            return left_version.value() > right_version.value();
+          }
+
+          return left_name > right_name;
+        }
+
+        return left.at("type") < right.at("type");
+      });
 
   auto meta{sourcemeta::core::JSON::make_object()};
   const auto page_entry_name{
