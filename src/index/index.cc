@@ -190,10 +190,14 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
                                     : current_identifier}
               .canonicalize()};
       std::cerr << identifier_uri.recompose();
+      const auto current{identifier_uri.recompose()};
       identifier_uri.relative_to(collection_base_uri);
       if (identifier_uri.is_absolute()) {
-        std::cout << "\nerror: Cannot resolve the schema identifier against "
-                     "the collection base\n";
+        std::cerr << "\nerror: Cannot resolve the schema identifier ("
+                  << current
+                  << ") against "
+                     "the collection base ("
+                  << collection_base_uri_string << ")\n";
         return EXIT_FAILURE;
       }
 
