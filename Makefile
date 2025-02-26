@@ -62,6 +62,7 @@ test:
 	./test/cli/common/index/external-reference.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/common/index/url-base-trailing-slash.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/common/index/trailing-slash-identifier.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/common/index/bundle-ref-no-fragment.sh $(PREFIX)/bin/sourcemeta-registry-index
 ifeq ($(ENTERPRISE), ON)
 	./test/cli/ee/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/ee/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index

@@ -394,6 +394,12 @@ auto main(int argc, char *argv[]) noexcept -> int {
   } catch (const sourcemeta::core::SchemaResolutionError &error) {
     std::cerr << "error: " << error.what() << "\n  at " << error.id() << "\n";
     return EXIT_FAILURE;
+  } catch (const sourcemeta::core::SchemaReferenceError &error) {
+    std::cerr << "error: " << error.what() << "\n  " << error.id()
+              << "\n    at schema location \"";
+    sourcemeta::core::stringify(error.location(), std::cerr);
+    std::cerr << "\"\n";
+    return EXIT_FAILURE;
   } catch (const std::exception &error) {
     std::cerr << "unexpected error: " << error.what() << "\n";
     return EXIT_FAILURE;
