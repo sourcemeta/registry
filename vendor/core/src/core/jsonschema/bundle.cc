@@ -28,7 +28,7 @@ auto definitions_keyword(const std::map<std::string, bool> &vocabularies)
   // We don't attempt to bundle on dialects where we
   // don't know where to put the embedded schemas
   throw sourcemeta::core::SchemaError(
-      "Cannot determine how to bundle on this dialect");
+      "Could not determine how to perform bundling in this dialect");
 }
 
 auto embed_schema(sourcemeta::core::JSON &definitions,
@@ -137,7 +137,8 @@ auto bundle(sourcemeta::core::JSON &schema, const SchemaWalker &walker,
             const std::optional<std::string> &default_dialect) -> void {
   const auto vocabularies{
       sourcemeta::core::vocabularies(schema, resolver, default_dialect)};
-  sourcemeta::core::SchemaFrame frame;
+  sourcemeta::core::SchemaFrame frame{
+      sourcemeta::core::SchemaFrame::Mode::References};
   bundle_schema(schema, definitions_keyword(vocabularies), schema, frame,
                 walker, resolver, default_dialect);
 }
