@@ -2,7 +2,7 @@
 #define SOURCEMETA_CORE_JSONSCHEMA_TYPES_H_
 
 #include <cstdint>     // std::uint8_t
-#include <functional>  // std::function
+#include <functional>  // std::function, std::reference_wrapper
 #include <map>         // std::map
 #include <optional>    // std::optional
 #include <set>         // std::set
@@ -69,54 +69,94 @@ enum class SchemaKeywordType : std::uint8_t {
   /// The JSON Schema keyword is considered to be a comment without any
   /// additional meaning
   Comment,
-  /// The JSON Schema keyword is an applicator that potentially
-  /// takes a JSON Schema definition as an argument
-  ApplicatorValue,
-  /// The JSON Schema keyword is an applicator that potentially
-  /// takes a JSON Schema definition as an argument but its evaluation follows
-  /// special rules
-  ApplicatorValueOther,
-  /// The JSON Schema keyword is an applicator that potentially
-  /// takes a JSON Schema definition as an argument without affecting the
-  /// instance location
-  ApplicatorValueInPlace,
-  /// The JSON Schema keyword is an applicator that potentially
-  /// takes an array of potentially JSON Schema definitions
-  /// as an argument
-  ApplicatorElements,
-  /// The JSON Schema keyword is an applicator that potentially
-  /// takes an array of potentially JSON Schema definitions
-  /// as an argument without affecting the instance location
-  ApplicatorElementsInPlace,
-  /// The JSON Schema keyword is an applicator that potentially
-  /// takes an array of potentially JSON Schema definitions
-  /// as an argument without affecting the instance location and that can be
-  /// statically inlined
-  ApplicatorElementsInline,
-  /// The JSON Schema keyword is an applicator that potentially
-  /// takes an object as argument, whose values are potentially
-  /// JSON Schema definitions
-  ApplicatorMembers,
-  /// The JSON Schema keyword is an applicator that potentially
-  /// takes an object as argument, whose values are potentially
-  /// JSON Schema definitions without affecting the instance location
-  ApplicatorMembersInPlace,
-  /// The JSON Schema keyword is an applicator that may take a JSON Schema
-  /// definition or an array of potentially JSON Schema definitions
-  /// as an argument
-  ApplicatorValueOrElements,
-  /// The JSON Schema keyword is an applicator that may take a JSON Schema
-  /// definition or an array of potentially JSON Schema definitions
-  /// as an argument without affecting the instance location
-  ApplicatorValueOrElementsInPlace,
-  /// The JSON Schema keyword is an applicator that may take an array of
-  /// potentially JSON Schema definitions or an object whose values are
-  /// potentially JSON Schema definitions as an argument
-  ApplicatorElementsOrMembers,
   /// The JSON Schema keyword is a reserved location that potentially
   /// takes an object as argument, whose values are potentially
   /// JSON Schema definitions
   LocationMembers,
+
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes an object as argument, whose values are potentially
+  /// JSON Schema definitions.
+  /// The instance traverses based on the members as property names
+  ApplicatorMembersTraversePropertyStatic,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes an object as argument, whose values are potentially
+  /// JSON Schema definitions.
+  /// The instance traverses based on the members as property regular
+  /// expressions
+  ApplicatorMembersTraversePropertyRegex,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes a JSON Schema definition as an argument
+  /// The instance traverses to some of the properties
+  ApplicatorValueTraverseSomeProperty,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes a JSON Schema definition as an argument
+  /// The instance traverses to any property key
+  ApplicatorValueTraverseAnyPropertyKey,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes a JSON Schema definition as an argument
+  /// The instance traverses to any item
+  ApplicatorValueTraverseAnyItem,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes a JSON Schema definition as an argument
+  /// The instance traverses to some of the items
+  ApplicatorValueTraverseSomeItem,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes a JSON Schema definition as an argument
+  /// The instance traverses back to the parent
+  ApplicatorValueTraverseParent,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes an array of potentially JSON Schema definitions
+  /// as an argument
+  /// The instance traverses based on the element indexes
+  ApplicatorElementsTraverseItem,
+  /// The JSON Schema keyword is an applicator that may take a JSON Schema
+  /// definition or an array of potentially JSON Schema definitions
+  /// as an argument
+  /// The instance traverses to any item or based on the element indexes
+  ApplicatorValueOrElementsTraverseAnyItemOrItem,
+  /// The JSON Schema keyword is an applicator that may take a JSON Schema
+  /// definition or an array of potentially JSON Schema definitions
+  /// as an argument without affecting the instance location.
+  /// The instance does not traverse
+  ApplicatorValueOrElementsInPlace,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes an object as argument, whose values are potentially
+  /// JSON Schema definitions without affecting the instance location.
+  /// The instance does not traverse
+  ApplicatorMembersInPlaceSome,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes an array of potentially JSON Schema definitions
+  /// as an argument without affecting the instance location.
+  /// The instance does not traverse
+  ApplicatorElementsInPlace,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes an array of potentially JSON Schema definitions
+  /// as an argument without affecting the instance location
+  /// The instance does not traverse, and only some of the
+  /// elements apply.
+  ApplicatorElementsInPlaceSome,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes an array of potentially JSON Schema definitions
+  /// as an argument without affecting the instance location
+  /// The instance does not traverse, and only some of the
+  /// elements apply in negated form.
+  ApplicatorElementsInPlaceSomeNegate,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes a JSON Schema definition as an argument without affecting the
+  /// instance location.
+  /// The instance does not traverse, and only applies some of the times.
+  ApplicatorValueInPlaceMaybe,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes a JSON Schema definition as an argument but its evaluation follows
+  /// special rules.
+  /// The instance does not traverse
+  ApplicatorValueInPlaceOther,
+  /// The JSON Schema keyword is an applicator that potentially
+  /// takes a JSON Schema definition as an argument but the instance is expected
+  /// to not validate against it.
+  /// The instance does not traverse
+  ApplicatorValueInPlaceNegate,
 };
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
@@ -164,11 +204,22 @@ using SchemaWalker = std::function<SchemaWalkerResult(
 /// @ingroup jsonschema
 /// An entry of a schema iterator.
 struct SchemaIteratorEntry {
+  // TODO: Turn this into a weak pointer
+  std::optional<Pointer> parent;
+  // TODO: Turn this into a weak pointer
   Pointer pointer;
   std::optional<std::string> dialect;
   std::map<std::string, bool> vocabularies;
   std::optional<std::string> base_dialect;
-  JSON value;
+  std::reference_wrapper<const JSON> subschema;
+
+  // TODO: These two pointer templates contain some overlap.
+  // Instead, have a `base_instance_location` and a `relative_instance_location`
+  // that when concatenated, represent the full `instance_location`
+  PointerTemplate instance_location;
+  PointerTemplate relative_instance_location;
+
+  bool orphan;
 };
 
 } // namespace sourcemeta::core
