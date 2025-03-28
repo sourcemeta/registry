@@ -1,5 +1,5 @@
-#ifndef SOURCEMETA_REGISTRY_ENTERPRISE_HTML_H_
-#define SOURCEMETA_REGISTRY_ENTERPRISE_HTML_H_
+#ifndef SOURCEMETA_REGISTRY_INDEX_HTML_H_
+#define SOURCEMETA_REGISTRY_INDEX_HTML_H_
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/registry/html.h>
@@ -9,7 +9,7 @@
 
 #include "configure.h"
 
-namespace sourcemeta::registry::enterprise {
+namespace sourcemeta::registry {
 
 template <typename T>
 auto html_navigation(T &output, const sourcemeta::core::JSON &configuration)
@@ -92,16 +92,18 @@ template <typename T> auto html_footer(T &output) -> void {
       .close("a")
       .text(" v")
       .text(sourcemeta::registry::PROJECT_VERSION)
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
-      .text(" (Enterprise Edition)")
+#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
+      .text(" (Enterprise)")
+#elif defined(SOURCEMETA_REGISTRY_PRO)
+      .text(" (Pro)")
 #else
-      .text(" (Community Edition)")
+      .text(" (Starter)")
 #endif
       .text(" © 2025 ")
       .open("a", {{"href", "https://www.sourcemeta.com"},
                   {"class", "text-secondary"},
                   {"target", "_blank"}})
-      .text("Sourcemeta, Ltd.")
+      .text("Sourcemeta")
       .close("a")
       .close("small");
   output.open("small")
@@ -412,6 +414,6 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
   html << "</div>";
 }
 
-} // namespace sourcemeta::registry::enterprise
+} // namespace sourcemeta::registry
 
 #endif

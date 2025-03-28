@@ -10,17 +10,11 @@ NPM ?= npm
 # Options
 INDEX ?= ON
 SERVER ?= ON
-EDITION ?= ee
+EDITION ?= enterprise
 PRESET ?= Debug
 OUTPUT ?= ./build
 PREFIX ?= $(OUTPUT)/dist
 SANDBOX ?= ./test/sandbox
-
-ifeq ($(EDITION), ee)
-ENTERPRISE := ON
-else
-ENTERPRISE := OFF
-endif
 
 .PHONY: all
 all: configure compile test-schemas test 
@@ -33,7 +27,7 @@ configure:
 		-DREGISTRY_DEVELOPMENT:BOOL=ON \
 		-DREGISTRY_INDEX:BOOL=$(INDEX) \
 		-DREGISTRY_SERVER:BOOL=$(SERVER) \
-		-DREGISTRY_ENTERPRISE:BOOL=$(ENTERPRISE) \
+		-DREGISTRY_EDITION:STRING=$(EDITION) \
 		-DREGISTRY_PREFIX:STRING=$(or $(realpath $(PREFIX)),$(abspath $(PREFIX))) \
 		-DBUILD_SHARED_LIBS:BOOL=OFF
 
@@ -63,15 +57,19 @@ test:
 	./test/cli/common/index/url-base-trailing-slash.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/common/index/trailing-slash-identifier.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/common/index/bundle-ref-no-fragment.sh $(PREFIX)/bin/sourcemeta-registry-index
-ifeq ($(ENTERPRISE), ON)
-	./test/cli/ee/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/ee/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/ee/index/directory-index.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/ee/index/search-index.sh $(PREFIX)/bin/sourcemeta-registry-index
-else
-	./test/cli/ce/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/ce/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/ce/index/directory-index.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/common/index/directory-index.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/common/index/search-index.sh $(PREFIX)/bin/sourcemeta-registry-index
+ifeq ($(EDITION), enterprise)
+	./test/cli/$(EDITION)/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/$(EDITION)/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
+endif
+ifeq ($(EDITION), pro)
+	./test/cli/$(EDITION)/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/$(EDITION)/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
+endif
+ifeq ($(EDITION), starter)
+	./test/cli/$(EDITION)/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
+	./test/cli/$(EDITION)/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
 endif
 
 .PHONY: test-schemas
@@ -82,18 +80,16 @@ test-schemas:
 test-e2e: 
 	$(HURL) --test \
 		--variable base=$(shell jq --raw-output '.url' < $(SANDBOX)/configuration.json) \
-		test/e2e/common/*.hurl test/e2e/$(EDITION)/*.hurl
-ifeq ($(ENTERPRISE), ON)
+			test/e2e/*.hurl
 	$(NPM) --prefix test/ui install
 	$(NPX) --prefix test/ui playwright install --with-deps
 	env BASE_URL=$(shell jq --raw-output '.url' < $(SANDBOX)/configuration.json) \
 		$(NPX) --prefix test/ui playwright test --config test/ui/playwright.config.js
-endif
 
 .PHONY: sandbox
 sandbox: compile
 	$(PREFIX)/bin/sourcemeta-registry-index $(SANDBOX)/configuration.json $(OUTPUT)/sandbox
-	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox $(SANDBOX)/manifest-$(EDITION).txt
+	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox $(SANDBOX)/manifest.txt
 	$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/sandbox
 
 .PHONY: docker

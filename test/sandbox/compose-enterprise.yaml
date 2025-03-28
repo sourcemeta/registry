@@ -2,6 +2,6 @@ services:
   sandbox:
     build:
       context: .
-      dockerfile: Dockerfile.ee
+      dockerfile: Dockerfile.enterprise
     ports:
       - 8000:8000

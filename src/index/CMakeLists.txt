@@ -1,4 +1,5 @@
-add_executable(schema_registry_index index.cc configure.h.in 
+# TODO: Use new executable macro
+add_executable(schema_registry_index index.cc html.h configure.h.in 
   "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 
 sourcemeta_add_default_options(PRIVATE schema_registry_index)
@@ -9,9 +10,17 @@ target_link_libraries(schema_registry_index PRIVATE sourcemeta::core::jsonschema
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::core::yaml)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(schema_registry_index PRIVATE sourcemeta::blaze::evaluator)
+target_link_libraries(schema_registry_index PRIVATE sourcemeta::registry::html)
 
-if(REGISTRY_ENTERPRISE)
-  include(../enterprise/index.cmake)
+if(REGISTRY_EDITION STREQUAL "enterprise")
+  target_compile_definitions(schema_registry_index 
+    PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
+elseif(REGISTRY_EDITION STREQUAL "pro")
+  target_compile_definitions(schema_registry_index 
+    PRIVATE SOURCEMETA_REGISTRY_PRO)
+else()
+  target_compile_definitions(schema_registry_index 
+    PRIVATE SOURCEMETA_REGISTRY_STARTER)
 endif()
 
 file(READ "${PROJECT_SOURCE_DIR}/schemas/configuration.json" SCHEMA_CONFIGURATION)
