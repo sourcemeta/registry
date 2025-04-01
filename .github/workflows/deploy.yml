@@ -27,33 +27,47 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Community Edition
+      # Starter Edition
       - uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        id: meta-ce
+        id: meta-starter
         with:
           images: ghcr.io/${{ github.repository_owner }}/registry-ce
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        id: push-ce
+        id: push-starter
         with:
           context: .
-          file: Dockerfile.ce
+          file: Dockerfile.starter
           push: true
-          tags: ${{ steps.meta-ce.outputs.tags }}
-          labels: ${{ steps.meta-ce.outputs.labels }}
+          tags: ${{ steps.meta-starter.outputs.tags }}
+          labels: ${{ steps.meta-starter.outputs.labels }}
+
+      # Pro Edition
+      - uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        id: meta-pro
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/registry-pro
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        id: push-pro
+        with:
+          context: .
+          file: Dockerfile.pro
+          push: true
+          tags: ${{ steps.meta-pro.outputs.tags }}
+          labels: ${{ steps.meta-pro.outputs.labels }}
 
       # Enterprise Edition
       - uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        id: meta-ee
+        id: meta-enterprise
         with:
-          images: ghcr.io/${{ github.repository_owner }}/registry-ee
+          images: ghcr.io/${{ github.repository_owner }}/registry-enterprise
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        id: push-ee
+        id: push-enterprise
         with:
           context: .
-          file: Dockerfile.ee
+          file: Dockerfile.enterprise
           push: true
-          tags: ${{ steps.meta-ee.outputs.tags }}
-          labels: ${{ steps.meta-ee.outputs.labels }}
+          tags: ${{ steps.meta-enterprise.outputs.tags }}
+          labels: ${{ steps.meta-enterprise.outputs.labels }}
 
       - run: gh config set prompt disabled
         if: github.ref_type == 'tag'

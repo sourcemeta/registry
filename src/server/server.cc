@@ -113,7 +113,6 @@ static auto json_error(const sourcemeta::hydra::http::ServerLogger &logger,
   response.end(std::move(object));
 }
 
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
 auto on_index(const sourcemeta::hydra::http::ServerLogger &,
               const sourcemeta::hydra::http::ServerRequest &request,
               sourcemeta::hydra::http::ServerResponse &response) -> void {
@@ -166,15 +165,12 @@ auto on_search(const sourcemeta::hydra::http::ServerLogger &logger,
   response.status(sourcemeta::hydra::http::Status::OK);
   response.end(std::move(result));
 }
-#endif
 
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
 static auto on_static(const sourcemeta::hydra::http::ServerLogger &logger,
                       const sourcemeta::hydra::http::ServerRequest &request,
                       sourcemeta::hydra::http::ServerResponse &response)
     -> void {
-  const auto asset_path{SOURCEMETA_REGISTRY_ENTERPRISE_STATIC +
-                        request.path().substr(7)};
+  const auto asset_path{SOURCEMETA_REGISTRY_STATIC + request.path().substr(7)};
   if (!std::filesystem::exists(asset_path)) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
@@ -184,7 +180,6 @@ static auto on_static(const sourcemeta::hydra::http::ServerLogger &logger,
 
   sourcemeta::hydra::http::serve_file(asset_path, request, response);
 }
-#endif
 
 static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
                        const sourcemeta::hydra::http::ServerRequest &request,
@@ -192,7 +187,6 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
     -> void {
   const auto &request_path{request.path()};
 
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
   if (!request_path.ends_with(".json")) {
     const auto directory_path{
         path_join(*(__global_data) / "generated", request.path())};
@@ -207,7 +201,6 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
 
     return;
   }
-#endif
 
   const auto schema_identifier{request_path_to_schema_uri(
       configuration().at("url").to_string(), request_path)};
@@ -269,7 +262,6 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
                          const sourcemeta::hydra::http::ServerRequest &request,
                          sourcemeta::hydra::http::ServerResponse &response)
     -> void {
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
   if (request.path().starts_with("/api/")) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
@@ -277,7 +269,6 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
                "This HTTP method is invalid for this URL");
     return;
   }
-#endif
 
   const auto maybe_schema{
       resolver(request_path_to_schema_uri(configuration().at("url").to_string(),
@@ -322,10 +313,12 @@ static auto on_error(std::exception_ptr exception_ptr,
 // as possible, so we can take better advantage of scale-to-zero.
 auto main(int argc, char *argv[]) noexcept -> int {
   std::cerr << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
+#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
   std::cout << " Enterprise ";
+#elif defined(SOURCEMETA_REGISTRY_PRO)
+  std::cout << " Pro ";
 #else
-  std::cout << " Community ";
+  std::cout << " Starter ";
 #endif
   std::cout << "Edition\n";
 
@@ -340,13 +333,11 @@ auto main(int argc, char *argv[]) noexcept -> int {
         std::filesystem::canonical(argv[1]));
 
     sourcemeta::hydra::http::Server server;
-#ifdef SOURCEMETA_REGISTRY_ENTERPRISE
     server.route(sourcemeta::hydra::http::Method::GET, "/", on_index);
     server.route(sourcemeta::hydra::http::Method::GET, "/api/search",
                  on_search);
     server.route(sourcemeta::hydra::http::Method::GET, "/static/*", on_static);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/static/*", on_static);
-#endif
     server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);
     server.otherwise(on_otherwise);

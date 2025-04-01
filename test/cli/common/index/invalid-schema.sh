@@ -37,7 +37,7 @@ cat << EOF > "$TMP/expected.txt"
 Using configuration: $(realpath "$TMP")/configuration.json
 Writing output to: $(realpath "$TMP")/output
 Discovering schemas at: $(realpath "$TMP")/schemas
--- Found schema: $(realpath "$TMP")/schemas/test.json
+-- Found schema: $(realpath "$TMP")/schemas/test.json (#1)
 https://example.com/test.json => https://sourcemeta.com/example/schemas/test.json
 -- Processing schema: https://sourcemeta.com/example/schemas/test.json
 Schema output: $(realpath "$TMP")/output/schemas/example/schemas/test.json

@@ -36,7 +36,7 @@ cat << EOF > "$TMP/expected.txt"
 Using configuration: $(realpath "$TMP")/configuration.json
 Writing output to: $(realpath "$TMP")/output
 Discovering schemas at: $(realpath "$TMP")/schemas
--- Found schema: $(realpath "$TMP")/schemas/test.json
+-- Found schema: $(realpath "$TMP")/schemas/test.json (#1)
 https://example.com/
 error: Cannot resolve the schema identifier (https://example.com/) against the collection base (https://example.com)
 EOF

@@ -6,8 +6,11 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 option(REGISTRY_DEVELOPMENT "Build the Registry in development mode" OFF)
 option(REGISTRY_SERVER "Build the Registry server" ON)
 option(REGISTRY_INDEX "Build the Registry index tool" ON)
-option(REGISTRY_ENTERPRISE "Build the Registry Enterprise edition (requires a license)" OFF)
 set(REGISTRY_PREFIX "/usr" CACHE STRING "Expected installation prefix")
+
+# Commercial editions require a paid license
+# See https://github.com/sourcemeta/registry/blob/main/LICENSE
+set(REGISTRY_EDITION "starter" CACHE STRING "The Registry edition")
 
 cmake_path(IS_ABSOLUTE REGISTRY_PREFIX REGISTRY_PREFIX_IS_ABSOLUTE)
 if(NOT REGISTRY_PREFIX_IS_ABSOLUTE)
