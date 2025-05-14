@@ -22,7 +22,7 @@ jobs:
 
       # Dependencies
       - run: pipx install clang-format==19.1.0
-      - uses: sourcemeta/jsonschema@v7.1.4
+      - uses: sourcemeta/jsonschema@v9.3.1
       - name: Install Hurl
         run: |
           curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/${{ env.HURL_VERSION }}/hurl_${{ env.HURL_VERSION }}_amd64.deb
