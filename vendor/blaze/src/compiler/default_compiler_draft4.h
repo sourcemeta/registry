@@ -88,7 +88,8 @@ static auto
 is_closed_properties_required(const sourcemeta::core::JSON &schema,
                               const sourcemeta::blaze::ValueStringSet &required)
     -> bool {
-  return schema.defines("additionalProperties") &&
+  return !schema.defines("patternProperties") &&
+         schema.defines("additionalProperties") &&
          schema.at("additionalProperties").is_boolean() &&
          !schema.at("additionalProperties").to_boolean() &&
          schema.defines("properties") && schema.at("properties").is_object() &&
@@ -559,7 +560,7 @@ auto compiler_draft4_validation_required(const Context &context,
     ValueStringSet properties_set{json_array_to_string_set(
         schema_context.schema.at(dynamic_context.keyword))};
     if (properties_set.size() == 1) {
-      if (context.mode == Mode::FastValidation && assume_object) {
+      if (assume_object) {
         return {
             make(sourcemeta::blaze::InstructionIndex::AssertionDefinesStrict,
                  context, schema_context, dynamic_context,
@@ -629,7 +630,7 @@ auto compiler_draft4_validation_required(const Context &context,
                  context, schema_context, dynamic_context,
                  std::move(properties_set))};
       }
-    } else if (context.mode == Mode::FastValidation && assume_object) {
+    } else if (assume_object) {
       return {make(
           sourcemeta::blaze::InstructionIndex::AssertionDefinesAllStrict,
           context, schema_context, dynamic_context, std::move(properties_set))};
@@ -638,7 +639,7 @@ auto compiler_draft4_validation_required(const Context &context,
                    context, schema_context, dynamic_context,
                    std::move(properties_set))};
     }
-  } else if (context.mode == Mode::FastValidation && assume_object) {
+  } else if (assume_object) {
     assert(
         schema_context.schema.at(dynamic_context.keyword).front().is_string());
     return {make(sourcemeta::blaze::InstructionIndex::AssertionDefinesStrict,
@@ -988,10 +989,9 @@ auto compiler_draft4_applicator_properties_with_options(
         types.insert(std::get<ValueType>(property.second.front().value));
       }
 
-      if (types.size() == 1) {
-        if (schema_context.schema.defines("required") &&
-            !schema_context.schema.defines("patternProperties") &&
-            assume_object) {
+      if (types.size() == 1 &&
+          !schema_context.schema.defines("patternProperties")) {
+        if (schema_context.schema.defines("required") && assume_object) {
           auto required_copy = schema_context.schema.at("required");
           std::sort(required_copy.as_array().begin(),
                     required_copy.as_array().end());
@@ -1115,19 +1115,16 @@ auto compiler_draft4_applicator_properties_with_options(
 
     } else {
       if (track_evaluation) {
-        if (context.mode == Mode::FastValidation) {
-          // We need this wrapper as `ControlEvaluate` doesn't push to the stack
-          substeps.push_back(
-              make(sourcemeta::blaze::InstructionIndex::LogicalAnd, context,
-                   schema_context, effective_dynamic_context, ValueNone{},
-                   {make(sourcemeta::blaze::InstructionIndex::ControlEvaluate,
-                         context, schema_context, effective_dynamic_context,
-                         ValuePointer{name})}));
-        } else {
-          substeps.push_back(make(
-              sourcemeta::blaze::InstructionIndex::ControlEvaluate, context,
-              schema_context, effective_dynamic_context, ValuePointer{name}));
-        }
+        auto new_base_instance_location{
+            effective_dynamic_context.base_instance_location};
+        new_base_instance_location.push_back({name});
+        substeps.push_back(make(sourcemeta::blaze::InstructionIndex::Evaluate,
+                                context, schema_context,
+                                {effective_dynamic_context.keyword,
+                                 effective_dynamic_context.base_schema_location,
+                                 new_base_instance_location,
+                                 effective_dynamic_context.property_as_target},
+                                ValueNone{}));
       }
 
       if (!substeps.empty()) {
@@ -1404,8 +1401,8 @@ auto compiler_draft4_applicator_additionalproperties_with_options(
 
   } else if (track_evaluation) {
     if (children.empty()) {
-      return {make(sourcemeta::blaze::InstructionIndex::ControlEvaluate,
-                   context, schema_context, dynamic_context, ValuePointer{})};
+      return {make(sourcemeta::blaze::InstructionIndex::Evaluate, context,
+                   schema_context, dynamic_context, ValueNone{})};
     }
 
     return {make(sourcemeta::blaze::InstructionIndex::LoopPropertiesEvaluate,
@@ -2006,13 +2003,15 @@ auto compiler_draft4_validation_minlength(const Context &context,
     return {};
   }
 
-  return {make(
-      sourcemeta::blaze::InstructionIndex::AssertionStringSizeGreater, context,
-      schema_context, dynamic_context,
-      ValueUnsignedInteger{
-          static_cast<unsigned long>(
-              schema_context.schema.at(dynamic_context.keyword).as_integer()) -
-          1})};
+  const auto value{static_cast<unsigned long>(
+      schema_context.schema.at(dynamic_context.keyword).as_integer())};
+  if (value <= 0) {
+    return {};
+  }
+
+  return {make(sourcemeta::blaze::InstructionIndex::AssertionStringSizeGreater,
+               context, schema_context, dynamic_context,
+               ValueUnsignedInteger{value - 1})};
 }
 
 auto compiler_draft4_validation_maxitems(const Context &context,
@@ -2068,13 +2067,15 @@ auto compiler_draft4_validation_minitems(const Context &context,
     return {};
   }
 
-  return {make(
-      sourcemeta::blaze::InstructionIndex::AssertionArraySizeGreater, context,
-      schema_context, dynamic_context,
-      ValueUnsignedInteger{
-          static_cast<unsigned long>(
-              schema_context.schema.at(dynamic_context.keyword).as_integer()) -
-          1})};
+  const auto value{
+      schema_context.schema.at(dynamic_context.keyword).as_integer()};
+  if (value <= 0) {
+    return {};
+  }
+
+  return {make(sourcemeta::blaze::InstructionIndex::AssertionArraySizeGreater,
+               context, schema_context, dynamic_context,
+               ValueUnsignedInteger{static_cast<unsigned long>(value - 1)})};
 }
 
 auto compiler_draft4_validation_maxproperties(
@@ -2130,13 +2131,15 @@ auto compiler_draft4_validation_minproperties(
     return {};
   }
 
-  return {make(
-      sourcemeta::blaze::InstructionIndex::AssertionObjectSizeGreater, context,
-      schema_context, dynamic_context,
-      ValueUnsignedInteger{
-          static_cast<unsigned long>(
-              schema_context.schema.at(dynamic_context.keyword).as_integer()) -
-          1})};
+  const auto value{static_cast<unsigned long>(
+      schema_context.schema.at(dynamic_context.keyword).as_integer())};
+  if (value <= 0) {
+    return {};
+  }
+
+  return {make(sourcemeta::blaze::InstructionIndex::AssertionObjectSizeGreater,
+               context, schema_context, dynamic_context,
+               ValueUnsignedInteger{value - 1})};
 }
 
 auto compiler_draft4_validation_maximum(const Context &context,

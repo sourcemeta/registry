@@ -7,6 +7,7 @@
 
 #include <sourcemeta/blaze/compiler_error.h>
 #include <sourcemeta/blaze/compiler_output.h>
+#include <sourcemeta/blaze/compiler_unevaluated.h>
 
 #include <sourcemeta/blaze/evaluator.h>
 
@@ -17,7 +18,6 @@
 
 #include <cstdint>    // std::uint8_t
 #include <functional> // std::function
-#include <map>        // std::map
 #include <optional>   // std::optional, std::nullopt
 #include <set>        // std::set
 #include <string>     // std::string
@@ -38,7 +38,7 @@ struct SchemaContext {
   /// The current subschema
   const sourcemeta::core::JSON &schema;
   /// The schema vocabularies in use
-  const std::map<std::string, bool> &vocabularies;
+  const sourcemeta::core::Vocabularies &vocabularies;
   /// The schema base URI
   const sourcemeta::core::URI &base;
   /// The set of labels registered so far
@@ -104,7 +104,7 @@ struct Context {
   /// Whether the schema makes use of dynamic scoping
   const bool uses_dynamic_scopes;
   /// The list of unevaluated entries and their dependencies
-  const sourcemeta::core::SchemaUnevaluatedEntries unevaluated;
+  const SchemaUnevaluatedEntries unevaluated;
   /// The list of subschemas that are precompiled at the beginning of the
   /// instruction set
   const std::set<std::string> precompiled_static_schemas;
@@ -146,6 +146,24 @@ compile(const sourcemeta::core::JSON &schema,
         const sourcemeta::core::SchemaWalker &walker,
         const sourcemeta::core::SchemaResolver &resolver,
         const Compiler &compiler, const Mode mode = Mode::FastValidation,
+        const std::optional<std::string> &default_dialect = std::nullopt)
+    -> Template;
+
+/// @ingroup compiler
+///
+/// This function compiles an input JSON Schema into a template that can be
+/// later evaluated, but given an existing schema frame. The schema frame must
+/// contain reference information for the given schema and the input schema must
+/// be bundled. If those pre-conditions are not met, you will hit undefined
+/// behavior.
+///
+/// Don't use this function unless you know what you are doing.
+auto SOURCEMETA_BLAZE_COMPILER_EXPORT
+compile(const sourcemeta::core::JSON &schema,
+        const sourcemeta::core::SchemaWalker &walker,
+        const sourcemeta::core::SchemaResolver &resolver,
+        const Compiler &compiler, const sourcemeta::core::SchemaFrame &frame,
+        const Mode mode = Mode::FastValidation,
         const std::optional<std::string> &default_dialect = std::nullopt)
     -> Template;
 

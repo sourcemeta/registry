@@ -80,19 +80,6 @@ static auto url_join(const std::string &first, const std::string &second,
 }
 
 static auto
-print_validation_output(const sourcemeta::blaze::ErrorOutput &output) -> void {
-  for (const auto &entry : output) {
-    std::cerr << entry.message << "\n";
-    std::cerr << "  at instance location \"";
-    sourcemeta::core::stringify(entry.instance_location, std::cerr);
-    std::cerr << "\"\n";
-    std::cerr << "  at evaluate path \"";
-    sourcemeta::core::stringify(entry.evaluate_path, std::cerr);
-    std::cerr << "\"\n";
-  }
-}
-
-static auto
 wrap_resolver(const sourcemeta::core::SchemaFlatFileResolver &resolver)
     -> sourcemeta::core::SchemaResolver {
   return [&resolver](const std::string_view identifier) {
@@ -597,7 +584,7 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
                                      sourcemeta::blaze::Mode::FastValidation));
     }
 
-    sourcemeta::blaze::ErrorOutput validation_output{result.value()};
+    sourcemeta::blaze::SimpleOutput validation_output{result.value()};
     sourcemeta::blaze::Evaluator evaluator;
     std::cerr << "Validating against its metaschema: " << schema.first << "\n";
     const auto metaschema_validation_result{
@@ -605,7 +592,7 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
                            result.value(), std::ref(validation_output))};
     if (!metaschema_validation_result) {
       std::cerr << "error: The schema does not adhere to its metaschema\n";
-      print_validation_output(validation_output);
+      validation_output.stacktrace(std::cerr);
       return EXIT_FAILURE;
     }
 
@@ -671,14 +658,14 @@ static auto index_main(const std::string_view &program,
       sourcemeta::core::schema_official_resolver,
       sourcemeta::blaze::default_schema_compiler,
       sourcemeta::blaze::Mode::Exhaustive)};
-  sourcemeta::blaze::ErrorOutput validation_output{configuration.get()};
+  sourcemeta::blaze::SimpleOutput validation_output{configuration.get()};
   sourcemeta::blaze::Evaluator evaluator;
   const auto result{evaluator.validate(compiled_configuration_schema,
                                        configuration.get(),
                                        std::ref(validation_output))};
   if (!result) {
     std::cerr << "error: Invalid configuration\n";
-    print_validation_output(validation_output);
+    validation_output.stacktrace(std::cerr);
     return EXIT_FAILURE;
   }
 

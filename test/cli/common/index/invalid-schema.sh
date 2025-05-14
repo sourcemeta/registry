@@ -44,12 +44,6 @@ Schema output: $(realpath "$TMP")/output/schemas/example/schemas/test.json
 Compiling metaschema: http://json-schema.org/draft-07/schema#
 Validating against its metaschema: https://sourcemeta.com/example/schemas/test.json
 error: The schema does not adhere to its metaschema
-The integer value 1 was expected to equal one of the given declared values
-  at instance location "/type"
-  at evaluate path "/properties/type/anyOf/0/\$ref/enum"
-The value was expected to consist of an array of at least 1 item
-  at instance location "/type"
-  at evaluate path "/properties/type/anyOf/1/type"
 The integer value was expected to validate against at least one of the 2 given subschemas
   at instance location "/type"
   at evaluate path "/properties/type/anyOf"

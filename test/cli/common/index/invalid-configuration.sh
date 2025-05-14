@@ -22,7 +22,7 @@ test "$CODE" = "1" || exit 1
 cat << EOF > "$TMP/expected.txt"
 Using configuration: $(realpath "$TMP")/configuration.json
 error: Invalid configuration
-The object value was expected to define properties "port", "schemas", and "url" but did not define the property "url"
+The value was expected to be an object that defines properties "port", "schemas", and "url"
   at instance location ""
   at evaluate path "/required"
 EOF

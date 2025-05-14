@@ -6,11 +6,15 @@ public:
             "Setting both `exclusiveMinimum` and `minimum` at the same time "
             "is considered an anti-pattern. You should choose one"} {};
 
-  [[nodiscard]] auto condition(const sourcemeta::core::JSON &schema,
-                               const std::string &,
-                               const std::set<std::string> &vocabularies,
-                               const sourcemeta::core::Pointer &) const
-      -> bool override {
+  [[nodiscard]] auto
+  condition(const sourcemeta::core::JSON &schema,
+            const sourcemeta::core::JSON &,
+            const sourcemeta::core::Vocabularies &vocabularies,
+            const sourcemeta::core::SchemaFrame &,
+            const sourcemeta::core::SchemaFrame::Location &,
+            const sourcemeta::core::SchemaWalker &,
+            const sourcemeta::core::SchemaResolver &) const
+      -> sourcemeta::core::SchemaTransformRule::Result override {
     return contains_any(
                vocabularies,
                {"https://json-schema.org/draft/2020-12/vocab/validation",
@@ -23,12 +27,11 @@ public:
            schema.at("exclusiveMinimum").is_number();
   }
 
-  auto transform(PointerProxy &transformer) const -> void override {
-    if (transformer.value().at("exclusiveMinimum") <
-        transformer.value().at("minimum")) {
-      transformer.erase("exclusiveMinimum");
+  auto transform(JSON &schema) const -> void override {
+    if (schema.at("exclusiveMinimum") < schema.at("minimum")) {
+      schema.erase("exclusiveMinimum");
     } else {
-      transformer.erase("minimum");
+      schema.erase("minimum");
     }
   }
 };
