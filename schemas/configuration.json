@@ -2,33 +2,25 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "urn:sourcemeta:registry/configuration.json",
   "type": "object",
-  "required": [
-    "url",
-    "port",
-    "schemas"
-  ],
+  "required": [ "url", "port", "schemas" ],
   "properties": {
     "title": {
+      "default": "Sourcemeta",
       "$ref": "#/definitions/text"
     },
     "description": {
+      "default": "The next-generation JSON Schema Registry",
       "$ref": "#/definitions/text"
     },
     "action": {
       "type": "object",
-      "required": [
-        "title",
-        "url"
-      ],
+      "required": [ "title", "url" ],
       "properties": {
         "title": {
           "$ref": "#/definitions/text"
         },
         "icon": {
-          "enum": [
-            "github",
-            "link"
-          ]
+          "enum": [ "github", "link" ]
         },
         "url": {
           "$ref": "#/definitions/http-url"
@@ -92,10 +84,7 @@
       },
       "additionalProperties": {
         "type": "object",
-        "required": [
-          "base",
-          "path"
-        ],
+        "required": [ "base", "path" ],
         "properties": {
           "base": {
             "$ref": "#/definitions/uri"
@@ -115,10 +104,7 @@
             "uniqueItems": true,
             "items": {
               "type": "object",
-              "required": [
-                "from",
-                "to"
-              ],
+              "required": [ "from", "to" ],
               "properties": {
                 "from": {
                   "$ref": "#/definitions/uri"

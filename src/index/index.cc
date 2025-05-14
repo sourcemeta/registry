@@ -6,7 +6,9 @@
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
 
+#include "configuration.h"
 #include "configure.h"
+#include "helpers.h"
 #include "html.h"
 
 #include <algorithm>   // std::sort
@@ -428,19 +430,17 @@ auto attach(const sourcemeta::core::SchemaResolver &resolver,
 }
 
 static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
-                  const sourcemeta::core::URI &server_url,
-                  const sourcemeta::core::JSON &configuration,
-                  const std::filesystem::path &base,
+                  const Configuration &configuration,
                   const std::filesystem::path &output) -> int {
-  assert(std::filesystem::exists(base));
   assert(std::filesystem::exists(output));
 
   std::size_t count{0};
 
   // Populate flat file resolver
-  for (const auto &schema_entry : configuration.at("schemas").as_object()) {
-    const auto collection_path{std::filesystem::canonical(
-        base / schema_entry.second.at("path").to_string())};
+  for (const auto &schema_entry :
+       configuration.get().at("schemas").as_object()) {
+    const auto collection_path{
+        configuration.path(schema_entry.second.at("path").to_string())};
     const auto collection_base_uri{
         sourcemeta::core::URI{schema_entry.second.at("base").to_string()}
             .canonicalize()};
@@ -551,7 +551,7 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
 
       assert(!identifier_uri.recompose().empty());
       const auto new_identifier{
-          url_join(server_url.recompose(), schema_entry.first,
+          url_join(configuration.url().recompose(), schema_entry.first,
                    identifier_uri.recompose(),
                    // We want to guarantee identifiers end with a JSON
                    // extension, as we want to use the non-extension URI to
@@ -568,7 +568,7 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
   for (const auto &schema : resolver) {
     std::cerr << "-- Processing schema: " << schema.first << "\n";
     sourcemeta::core::URI schema_uri{schema.first};
-    schema_uri.relative_to(server_url);
+    schema_uri.relative_to(configuration.url());
     assert(schema_uri.is_relative());
     const auto schema_output{std::filesystem::weakly_canonical(
         output / "schemas" / schema_uri.recompose())};
@@ -663,25 +663,18 @@ static auto index_main(const std::string_view &program,
     return EXIT_FAILURE;
   }
 
-  const auto configuration_path{std::filesystem::canonical(arguments[0])};
-  const auto output{std::filesystem::weakly_canonical(arguments[1])};
-
-  std::cerr << "Using configuration: " << configuration_path.string() << "\n";
-  std::cerr << "Writing output to: " << output.string() << "\n";
-
-  const auto configuration_schema{sourcemeta::core::parse_json(
-      std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
+  Configuration configuration{std::filesystem::canonical(arguments[0])};
+  std::cerr << "Using configuration: " << configuration.path().string() << "\n";
+  // TODO: Automatically perform this check on Configuration
   const auto compiled_configuration_schema{sourcemeta::blaze::compile(
-      configuration_schema, sourcemeta::core::schema_official_walker,
+      configuration.schema(), sourcemeta::core::schema_official_walker,
       sourcemeta::core::schema_official_resolver,
       sourcemeta::blaze::default_schema_compiler,
       sourcemeta::blaze::Mode::Exhaustive)};
-
-  const auto configuration{sourcemeta::core::read_json(configuration_path)};
-  sourcemeta::blaze::ErrorOutput validation_output{configuration};
+  sourcemeta::blaze::ErrorOutput validation_output{configuration.get()};
   sourcemeta::blaze::Evaluator evaluator;
   const auto result{evaluator.validate(compiled_configuration_schema,
-                                       configuration,
+                                       configuration.get(),
                                        std::ref(validation_output))};
   if (!result) {
     std::cerr << "error: Invalid configuration\n";
@@ -689,44 +682,21 @@ static auto index_main(const std::string_view &program,
     return EXIT_FAILURE;
   }
 
-  std::filesystem::create_directories(output);
-
-  auto configuration_with_defaults = configuration;
-
-  // TODO: Perform these with a Blaze helper function that applies schema
-  // "default"s to an instance
-
-  if (!configuration_with_defaults.defines("title")) {
-    configuration_with_defaults.assign("title",
-                                       sourcemeta::core::JSON{"Sourcemeta"});
-  }
-
-  if (!configuration_with_defaults.defines("description")) {
-    configuration_with_defaults.assign(
-        "description",
-        sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
-  }
+  const auto output{std::filesystem::weakly_canonical(arguments[1])};
+  std::cerr << "Writing output to: " << output.string() << "\n";
 
   // Save the configuration file too
-  auto configuration_copy = configuration_with_defaults;
-  configuration_copy.erase("schemas");
-  configuration_copy.erase("pages");
-
-  std::ofstream stream{output / "configuration.json"};
-  sourcemeta::core::prettify(configuration_copy, stream);
-  stream << "\n";
+  std::filesystem::create_directories(output);
+  prettify_to_file(configuration.summary(), output / "configuration.json");
 
   sourcemeta::core::SchemaFlatFileResolver resolver{
       sourcemeta::core::schema_official_resolver};
-  const auto server_url{
-      sourcemeta::core::URI{configuration.at("url").to_string()}
-          .canonicalize()};
-  const auto code{index(resolver, server_url, configuration_with_defaults,
-                        configuration_path.parent_path(), output)};
+
+  const auto code{index(resolver, configuration, output)};
 
   if (code == EXIT_SUCCESS) {
-    return attach(wrap_resolver(resolver), server_url,
-                  configuration_with_defaults, output);
+    return attach(wrap_resolver(resolver), configuration.url(),
+                  configuration.get(), output);
   }
 
   return code;
