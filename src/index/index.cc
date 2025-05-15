@@ -417,7 +417,7 @@ auto attach(const sourcemeta::core::SchemaResolver &resolver,
 }
 
 static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
-                  const Configuration &configuration,
+                  const RegistryConfiguration &configuration,
                   const std::filesystem::path &output) -> int {
   assert(std::filesystem::exists(output));
 
@@ -650,9 +650,9 @@ static auto index_main(const std::string_view &program,
     return EXIT_FAILURE;
   }
 
-  Configuration configuration{std::filesystem::canonical(arguments[0])};
+  RegistryConfiguration configuration{std::filesystem::canonical(arguments[0])};
   std::cerr << "Using configuration: " << configuration.path().string() << "\n";
-  // TODO: Automatically perform this check on Configuration
+  // TODO: Automatically perform this check on RegistryConfiguration
   const auto compiled_configuration_schema{sourcemeta::blaze::compile(
       configuration.schema(), sourcemeta::core::schema_official_walker,
       sourcemeta::core::schema_official_resolver,

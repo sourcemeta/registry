@@ -8,9 +8,9 @@
 
 #include <filesystem> // std::filesystem
 
-class Configuration {
+class RegistryConfiguration {
 public:
-  Configuration(std::filesystem::path path);
+  RegistryConfiguration(std::filesystem::path path);
 
   auto path() const noexcept -> const std::filesystem::path &;
   auto path(const std::filesystem::path &other) const -> std::filesystem::path;
