@@ -12,6 +12,12 @@ class RegistryConfiguration {
 public:
   RegistryConfiguration(std::filesystem::path path);
 
+  // Just to prevent mistakes
+  RegistryConfiguration(const RegistryConfiguration &) = delete;
+  RegistryConfiguration &operator=(const RegistryConfiguration &) = delete;
+  RegistryConfiguration(RegistryConfiguration &&) = delete;
+  RegistryConfiguration &operator=(RegistryConfiguration &&) = delete;
+
   auto path() const noexcept -> const std::filesystem::path &;
   auto path(const std::filesystem::path &other) const -> std::filesystem::path;
   auto get() const noexcept -> const sourcemeta::core::JSON &;

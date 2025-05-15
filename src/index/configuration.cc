@@ -5,13 +5,13 @@
 RegistryConfiguration::RegistryConfiguration(std::filesystem::path path)
     : path_{std::move(path)}, base_{this->path_.parent_path()},
       data_{sourcemeta::core::read_json(this->path_)} {
-  // TODO: Perform this defaulting using Blaze and "default" annotations
-  assert(this->data_.is_object());
-  this->data_.assign_if_missing(
-      "title", this->schema_.at("properties").at("title").at("default"));
-  this->data_.assign_if_missing(
-      "description",
-      this->schema_.at("properties").at("description").at("default"));
+  if (this->data_.is_object()) {
+    this->data_.assign_if_missing(
+        "title", this->schema_.at("properties").at("title").at("default"));
+    this->data_.assign_if_missing(
+        "description",
+        this->schema_.at("properties").at("description").at("default"));
+  }
 }
 
 auto RegistryConfiguration::path() const noexcept

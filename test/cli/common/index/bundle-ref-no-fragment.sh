@@ -41,7 +41,6 @@ Discovering schemas at: $(realpath "$TMP")/schemas
 https://example.com/test.json => https://sourcemeta.com/example/schemas/test.json
 -- Processing schema: https://sourcemeta.com/example/schemas/test.json
 Schema output: $(realpath "$TMP")/output/schemas/example/schemas/test.json
-Compiling metaschema: http://json-schema.org/draft-07/schema#
 Validating against its metaschema: https://sourcemeta.com/example/schemas/test.json
 Bundling: https://sourcemeta.com/example/schemas/test.json
 error: Could not resolve schema reference
