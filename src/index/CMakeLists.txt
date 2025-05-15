@@ -2,7 +2,9 @@ sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index
   FOLDER "Registry/Index" 
   SOURCES index.cc html.h 
     helpers.h configure.h.in 
-    configuration.h configuration.cc "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
+    validator.h validator.cc
+    configuration.h configuration.cc 
+    "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::uri)

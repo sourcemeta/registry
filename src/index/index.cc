@@ -3,13 +3,11 @@
 #include <sourcemeta/core/uri.h>
 #include <sourcemeta/core/yaml.h>
 
-#include <sourcemeta/blaze/compiler.h>
-#include <sourcemeta/blaze/evaluator.h>
-
 #include "configuration.h"
 #include "configure.h"
 #include "helpers.h"
 #include "html.h"
+#include "validator.h"
 
 #include <algorithm>   // std::sort
 #include <cassert>     // assert
@@ -357,70 +355,43 @@ auto generate_toc(const sourcemeta::core::SchemaResolver &resolver,
   }
 }
 
-auto attach(const sourcemeta::core::SchemaResolver &resolver,
-            const sourcemeta::core::URI &server_url,
-            const sourcemeta::core::JSON &configuration,
-            const std::filesystem::path &output) -> int {
-  std::cerr << "-- Indexing directory: " << output.string() << "\n";
-  const auto base{std::filesystem::canonical(output / "schemas")};
-  std::vector<sourcemeta::core::JSON> search_index;
-  generate_toc(resolver, server_url, configuration, base, base, search_index);
+static auto index_main(const std::string_view &program,
+                       const std::span<const std::string> &arguments) -> int {
+  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
+#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
+  std::cout << " Enterprise ";
+#elif defined(SOURCEMETA_REGISTRY_PRO)
+  std::cout << " Pro ";
+#else
+  std::cout << " Starter ";
+#endif
+  std::cout << "Edition\n";
 
-  for (const auto &entry :
-       std::filesystem::recursive_directory_iterator{output / "schemas"}) {
-    if (!entry.is_directory()) {
-      continue;
-    }
-
-    std::cerr << "-- Processing: " << entry.path().string() << "\n";
-    generate_toc(resolver, server_url, configuration, base,
-                 std::filesystem::canonical(entry.path()), search_index);
+  if (arguments.size() < 2) {
+    std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
+              << " <configuration.json> <path/to/output/directory>\n";
+    return EXIT_FAILURE;
   }
 
-  std::ofstream stream{output / "generated" / "search.jsonl"};
-  assert(!stream.fail());
-  // Make newer versions of schemas appear first
-  std::sort(search_index.begin(), search_index.end(),
-            [](const auto &left, const auto &right) {
-              return left.at(0) > right.at(0);
-            });
-  for (const auto &entry : search_index) {
-    sourcemeta::core::stringify(entry, stream);
-    stream << "\n";
-  }
-  stream.close();
+  sourcemeta::core::SchemaFlatFileResolver resolver{
+      sourcemeta::core::schema_official_resolver};
+  RegistryValidator validator{resolver};
 
-  // Not found page
-  std::ofstream stream_not_found{output / "generated" / "404.html"};
-  assert(!stream_not_found.fail());
-  sourcemeta::registry::html::SafeOutput output_html{stream_not_found};
-  sourcemeta::registry::html_start(output_html, configuration, "Not Found",
-                                   "What you are looking for is not here",
-                                   std::nullopt);
-  output_html.open("div", {{"class", "container-fluid p-4"}})
-      .open("h2", {{"class", "fw-bold"}})
-      .text("Oops! What you are looking for is not here")
-      .close("h2")
-      .open("p", {{"class", "lead"}})
-      .text("Are you sure the link you got is correct?")
-      .close("p")
-      .open("a", {{"href", "/"}})
-      .text("Get back to the home page")
-      .close("a")
-      .close("div")
-      .close("div");
-  sourcemeta::registry::html_end(output_html);
-  stream_not_found << "\n";
-  stream_not_found.close();
+  // Read and validate the configuration file
+  const auto configuration_path{std::filesystem::canonical(arguments[0])};
+  std::cerr << "Using configuration: " << configuration_path.string() << "\n";
+  const RegistryConfiguration configuration{configuration_path};
+  validator.validate_or_throw(configuration.schema(), configuration.get(),
+                              "Invalid configuration");
 
-  return EXIT_SUCCESS;
-}
+  const auto output{std::filesystem::weakly_canonical(arguments[1])};
+  std::cerr << "Writing output to: " << output.string() << "\n";
 
-static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
-                  const RegistryConfiguration &configuration,
-                  const std::filesystem::path &output) -> int {
+  // Save the configuration file too
+  std::filesystem::create_directories(output);
+  prettify_to_file(configuration.summary(), output / "configuration.json");
+
   assert(std::filesystem::exists(output));
-
   std::size_t count{0};
 
   // Populate flat file resolver
@@ -551,7 +522,8 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
     }
   }
 
-  std::map<std::string, sourcemeta::blaze::Template> compiled_schemas;
+  // TODO: Why do we need this?
+  const auto wrapped_resolver{wrap_resolver(resolver)};
   for (const auto &schema : resolver) {
     std::cerr << "-- Processing schema: " << schema.first << "\n";
     sourcemeta::core::URI schema_uri{schema.first};
@@ -560,45 +532,25 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
     const auto schema_output{std::filesystem::weakly_canonical(
         output / "schemas" / schema_uri.recompose())};
     std::cerr << "Schema output: " << schema_output.string() << "\n";
-    const auto result{resolver(schema.first)};
-    if (!result.has_value()) {
+    const auto subresult{resolver(schema.first)};
+    if (!subresult.has_value()) {
       std::cout << "Cannot resolve the schema with identifier " << schema.first
                 << "\n";
       return EXIT_FAILURE;
     }
 
-    const auto dialect_identifier{sourcemeta::core::dialect(result.value())};
+    const auto dialect_identifier{sourcemeta::core::dialect(subresult.value())};
     assert(dialect_identifier.has_value());
-    if (!compiled_schemas.contains(dialect_identifier.value())) {
-      const auto metaschema{
-          wrap_resolver(resolver)(dialect_identifier.value())};
-      assert(metaschema.has_value());
-      std::cerr << "Compiling metaschema: " << dialect_identifier.value()
-                << "\n";
-      compiled_schemas.emplace(
-          dialect_identifier.value(),
-          sourcemeta::blaze::compile(metaschema.value(),
-                                     sourcemeta::core::schema_official_walker,
-                                     wrap_resolver(resolver),
-                                     sourcemeta::blaze::default_schema_compiler,
-                                     sourcemeta::blaze::Mode::FastValidation));
-    }
-
-    sourcemeta::blaze::SimpleOutput validation_output{result.value()};
-    sourcemeta::blaze::Evaluator evaluator;
+    const auto metaschema{wrapped_resolver(dialect_identifier.value())};
+    assert(metaschema.has_value());
     std::cerr << "Validating against its metaschema: " << schema.first << "\n";
-    const auto metaschema_validation_result{
-        evaluator.validate(compiled_schemas.at(dialect_identifier.value()),
-                           result.value(), std::ref(validation_output))};
-    if (!metaschema_validation_result) {
-      std::cerr << "error: The schema does not adhere to its metaschema\n";
-      validation_output.stacktrace(std::cerr);
-      return EXIT_FAILURE;
-    }
+    validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
+                                subresult.value(),
+                                "The schema does not adhere to its metaschema");
 
     std::filesystem::create_directories(schema_output.parent_path());
     std::ofstream stream{schema_output};
-    sourcemeta::core::prettify(result.value(), stream,
+    sourcemeta::core::prettify(subresult.value(), stream,
                                sourcemeta::core::schema_format_compare);
     stream << "\n";
 
@@ -608,8 +560,8 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
     std::filesystem::create_directories(bundle_path.parent_path());
     std::cerr << "Bundling: " << schema.first << "\n";
     auto bundled_schema{sourcemeta::core::bundle(
-        result.value(), sourcemeta::core::schema_official_walker,
-        wrap_resolver(resolver))};
+        subresult.value(), sourcemeta::core::schema_official_walker,
+        wrapped_resolver)};
     std::ofstream bundle_stream{bundle_path};
     sourcemeta::core::prettify(bundled_schema, bundle_stream,
                                sourcemeta::core::schema_format_compare);
@@ -622,71 +574,67 @@ static auto index(sourcemeta::core::SchemaFlatFileResolver &resolver,
     std::cerr << "Bundling without identifiers: " << schema.first << "\n";
     sourcemeta::core::unidentify(bundled_schema,
                                  sourcemeta::core::schema_official_walker,
-                                 wrap_resolver(resolver));
+                                 wrapped_resolver);
     std::ofstream unidentified_stream{unidentified_path};
     sourcemeta::core::prettify(bundled_schema, unidentified_stream,
                                sourcemeta::core::schema_format_compare);
     unidentified_stream << "\n";
   }
 
+  std::cerr << "-- Indexing directory: " << output.string() << "\n";
+  const auto base{std::filesystem::canonical(output / "schemas")};
+  std::vector<sourcemeta::core::JSON> search_index;
+  generate_toc(wrapped_resolver, configuration.url(), configuration.get(), base,
+               base, search_index);
+
+  for (const auto &entry :
+       std::filesystem::recursive_directory_iterator{output / "schemas"}) {
+    if (!entry.is_directory()) {
+      continue;
+    }
+
+    std::cerr << "-- Processing: " << entry.path().string() << "\n";
+    generate_toc(wrapped_resolver, configuration.url(), configuration.get(),
+                 base, std::filesystem::canonical(entry.path()), search_index);
+  }
+
+  std::ofstream stream{output / "generated" / "search.jsonl"};
+  assert(!stream.fail());
+  // Make newer versions of schemas appear first
+  std::sort(search_index.begin(), search_index.end(),
+            [](const auto &left, const auto &right) {
+              return left.at(0) > right.at(0);
+            });
+  for (const auto &entry : search_index) {
+    sourcemeta::core::stringify(entry, stream);
+    stream << "\n";
+  }
+  stream.close();
+
+  // Not found page
+  std::ofstream stream_not_found{output / "generated" / "404.html"};
+  assert(!stream_not_found.fail());
+  sourcemeta::registry::html::SafeOutput output_html{stream_not_found};
+  sourcemeta::registry::html_start(
+      output_html, configuration.get(), "Not Found",
+      "What you are looking for is not here", std::nullopt);
+  output_html.open("div", {{"class", "container-fluid p-4"}})
+      .open("h2", {{"class", "fw-bold"}})
+      .text("Oops! What you are looking for is not here")
+      .close("h2")
+      .open("p", {{"class", "lead"}})
+      .text("Are you sure the link you got is correct?")
+      .close("p")
+      .open("a", {{"href", "/"}})
+      .text("Get back to the home page")
+      .close("a")
+      .close("div")
+      .close("div");
+  sourcemeta::registry::html_end(output_html);
+  stream_not_found << "\n";
+  stream_not_found.close();
+
   return EXIT_SUCCESS;
-}
-
-static auto index_main(const std::string_view &program,
-                       const std::span<const std::string> &arguments) -> int {
-  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
-#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
-  std::cout << " Enterprise ";
-#elif defined(SOURCEMETA_REGISTRY_PRO)
-  std::cout << " Pro ";
-#else
-  std::cout << " Starter ";
-#endif
-  std::cout << "Edition\n";
-
-  if (arguments.size() < 2) {
-    std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
-              << " <configuration.json> <path/to/output/directory>\n";
-    return EXIT_FAILURE;
-  }
-
-  RegistryConfiguration configuration{std::filesystem::canonical(arguments[0])};
-  std::cerr << "Using configuration: " << configuration.path().string() << "\n";
-  // TODO: Automatically perform this check on RegistryConfiguration
-  const auto compiled_configuration_schema{sourcemeta::blaze::compile(
-      configuration.schema(), sourcemeta::core::schema_official_walker,
-      sourcemeta::core::schema_official_resolver,
-      sourcemeta::blaze::default_schema_compiler,
-      sourcemeta::blaze::Mode::Exhaustive)};
-  sourcemeta::blaze::SimpleOutput validation_output{configuration.get()};
-  sourcemeta::blaze::Evaluator evaluator;
-  const auto result{evaluator.validate(compiled_configuration_schema,
-                                       configuration.get(),
-                                       std::ref(validation_output))};
-  if (!result) {
-    std::cerr << "error: Invalid configuration\n";
-    validation_output.stacktrace(std::cerr);
-    return EXIT_FAILURE;
-  }
-
-  const auto output{std::filesystem::weakly_canonical(arguments[1])};
-  std::cerr << "Writing output to: " << output.string() << "\n";
-
-  // Save the configuration file too
-  std::filesystem::create_directories(output);
-  prettify_to_file(configuration.summary(), output / "configuration.json");
-
-  sourcemeta::core::SchemaFlatFileResolver resolver{
-      sourcemeta::core::schema_official_resolver};
-
-  const auto code{index(resolver, configuration, output)};
-
-  if (code == EXIT_SUCCESS) {
-    return attach(wrap_resolver(resolver), configuration.url(),
-                  configuration.get(), output);
-  }
-
-  return code;
 }
 
 auto main(int argc, char *argv[]) noexcept -> int {
@@ -695,6 +643,9 @@ auto main(int argc, char *argv[]) noexcept -> int {
     const std::vector<std::string> arguments{argv + std::min(1, argc),
                                              argv + argc};
     return index_main(program, arguments);
+  } catch (const RegistryValidatorError &error) {
+    std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
+    return EXIT_FAILURE;
   } catch (const sourcemeta::core::SchemaResolutionError &error) {
     std::cerr << "error: " << error.what() << "\n  at " << error.id() << "\n";
     return EXIT_FAILURE;
