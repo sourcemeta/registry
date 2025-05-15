@@ -293,7 +293,7 @@ auto describe(const bool valid, const Instruction &step,
     return "The schema location was marked for future use";
   }
 
-  if (step.type == sourcemeta::blaze::InstructionIndex::ControlEvaluate) {
+  if (step.type == sourcemeta::blaze::InstructionIndex::Evaluate) {
     return "The instance location was marked as evaluated";
   }
 
@@ -524,6 +524,22 @@ auto describe(const bool valid, const Instruction &step,
       }
 
       message << " was expected to validate against the schema ";
+      stringify(annotation, message);
+      return message.str();
+    }
+
+    if (keyword == "format") {
+      std::ostringstream message;
+      message << "The logical type of the";
+      if (instance_location.empty()) {
+        message << " instance";
+      } else {
+        message << " instance location \"";
+        stringify(instance_location, message);
+        message << "\"";
+      }
+
+      message << " was expected to be ";
       stringify(annotation, message);
       return message.str();
     }
@@ -1323,7 +1339,6 @@ auto describe(const bool valid, const Instruction &step,
       std::ostringstream message;
       const auto maximum{instruction_value<ValueUnsignedInteger>(step) - 1};
       message << "The array value was expected to contain at most " << maximum;
-      assert(maximum > 0);
       if (maximum == 1) {
         message << " item";
       } else {
@@ -1355,7 +1370,6 @@ auto describe(const bool valid, const Instruction &step,
     std::ostringstream message;
     const auto minimum{instruction_value<ValueUnsignedInteger>(step) + 1};
     message << "The array value was expected to contain at least " << minimum;
-    assert(minimum > 0);
     if (minimum == 1) {
       message << " item";
     } else {
@@ -1390,7 +1404,6 @@ auto describe(const bool valid, const Instruction &step,
       std::ostringstream message;
       const auto maximum{instruction_value<ValueUnsignedInteger>(step) - 1};
       message << "The object value was expected to contain at most " << maximum;
-      assert(maximum > 0);
       if (maximum == 1) {
         message << " property";
       } else {
@@ -1404,7 +1417,9 @@ auto describe(const bool valid, const Instruction &step,
       }
 
       message << " it contained " << target.size();
-      if (target.size() == 1) {
+      if (target.size() == 0) {
+        message << " properties";
+      } else if (target.size() == 1) {
         message << " property: ";
         message << escape_string(target.as_object().cbegin()->first);
       } else {
@@ -1440,7 +1455,6 @@ auto describe(const bool valid, const Instruction &step,
       const auto minimum{instruction_value<ValueUnsignedInteger>(step) + 1};
       message << "The object value was expected to contain at least "
               << minimum;
-      assert(minimum > 0);
       if (minimum == 1) {
         message << " property";
       } else {

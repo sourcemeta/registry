@@ -7,6 +7,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 # Options
 option(BLAZE_COMPILER "Build the Blaze compiler library" ON)
 option(BLAZE_EVALUATOR "Build the Blaze evaluator library" ON)
+option(BLAZE_LINTER "Build the Blaze linter rule library" ON)
 option(BLAZE_TESTS "Build the Blaze tests" OFF)
 option(BLAZE_BENCHMARK "Build the Blaze benchmarks" OFF)
 option(BLAZE_CONTRIB "Build the Blaze contrib programs" OFF)
@@ -34,12 +35,21 @@ endif()
 
 find_package(Core REQUIRED)
 
+# Don't force downstream consumers on it
+if(PROJECT_IS_TOP_LEVEL)
+  sourcemeta_enable_simd()
+endif()
+
 if(BLAZE_COMPILER)
   add_subdirectory(src/compiler)
 endif()
 
 if(BLAZE_EVALUATOR)
   add_subdirectory(src/evaluator)
+endif()
+
+if(BLAZE_LINTER)
+  add_subdirectory(src/linter)
 endif()
 
 if(BLAZE_CONTRIB)
@@ -77,6 +87,10 @@ if(BLAZE_TESTS)
 
   if(BLAZE_EVALUATOR)
     add_subdirectory(test/evaluator)
+  endif()
+
+  if(BLAZE_LINTER)
+    add_subdirectory(test/linter)
   endif()
 
   if(PROJECT_IS_TOP_LEVEL)

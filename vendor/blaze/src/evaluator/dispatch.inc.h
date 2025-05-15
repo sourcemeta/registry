@@ -1129,6 +1129,7 @@ INSTRUCTION_HANDLER(ControlGroupWhenDefinesDirect) {
   assert(!instruction.children.empty());
   assert(instruction.relative_instance_location.empty());
   const auto &value{*std::get_if<ValueProperty>(&instruction.value)};
+
   if (instance.is_object() && instance.defines(value.first, value.second)) {
     for (const auto &child : instruction.children) {
       if (!EVALUATE_RECURSE(child, instance)) {
@@ -1139,6 +1140,29 @@ INSTRUCTION_HANDLER(ControlGroupWhenDefinesDirect) {
   }
 
   EVALUATE_END_PASS_THROUGH(ControlGroupWhenDefinesDirect);
+}
+
+INSTRUCTION_HANDLER(ControlGroupWhenType) {
+  SOURCEMETA_MAYBE_UNUSED(depth);
+  SOURCEMETA_MAYBE_UNUSED(schema);
+  SOURCEMETA_MAYBE_UNUSED(callback);
+  SOURCEMETA_MAYBE_UNUSED(instance);
+  SOURCEMETA_MAYBE_UNUSED(property_target);
+  SOURCEMETA_MAYBE_UNUSED(evaluator);
+  EVALUATE_BEGIN_PASS_THROUGH(ControlGroupWhenType);
+  assert(!instruction.children.empty());
+  assert(instruction.relative_instance_location.empty());
+  const auto value{*std::get_if<ValueType>(&instruction.value)};
+  if (instance.type() == value) {
+    for (const auto &child : instruction.children) {
+      if (!EVALUATE_RECURSE(child, instance)) {
+        result = false;
+        break;
+      }
+    }
+  }
+
+  EVALUATE_END_PASS_THROUGH(ControlGroupWhenType);
 }
 
 INSTRUCTION_HANDLER(ControlLabel) {
@@ -1178,33 +1202,14 @@ INSTRUCTION_HANDLER(ControlMark) {
 }
 
 INSTRUCTION_HANDLER(ControlEvaluate) {
-  SOURCEMETA_MAYBE_UNUSED(instruction);
   SOURCEMETA_MAYBE_UNUSED(depth);
   SOURCEMETA_MAYBE_UNUSED(schema);
   SOURCEMETA_MAYBE_UNUSED(callback);
   SOURCEMETA_MAYBE_UNUSED(instance);
   SOURCEMETA_MAYBE_UNUSED(property_target);
-  SOURCEMETA_MAYBE_UNUSED(evaluator);
   EVALUATE_BEGIN_PASS_THROUGH(ControlEvaluate);
-
-#if defined(SOURCEMETA_EVALUATOR_COMPLETE) ||                                  \
-    defined(SOURCEMETA_EVALUATOR_TRACK)
   const auto &value{*std::get_if<ValuePointer>(&instruction.value)};
   evaluator.evaluate(&get(instance, value));
-#endif
-
-#ifdef SOURCEMETA_EVALUATOR_COMPLETE
-  if (callback) {
-    // TODO: Optimize this case to avoid an extra pointer copy
-    auto destination = evaluator.instance_location;
-    destination.push_back(value);
-    callback(EvaluationType::Pre, true, instruction, evaluator.evaluate_path,
-             destination, Evaluator::null);
-    callback(EvaluationType::Post, true, instruction, evaluator.evaluate_path,
-             destination, Evaluator::null);
-  }
-#endif
-
   EVALUATE_END_PASS_THROUGH(ControlEvaluate);
 }
 
@@ -1304,6 +1309,19 @@ INSTRUCTION_HANDLER(AnnotationBasenameToParent) {
       // TODO: Can we avoid a copy of the instance location here?
       evaluator.instance_location.initial(),
       evaluator.instance_location.back().to_json());
+}
+
+INSTRUCTION_HANDLER(Evaluate) {
+  SOURCEMETA_MAYBE_UNUSED(depth);
+  SOURCEMETA_MAYBE_UNUSED(schema);
+  SOURCEMETA_MAYBE_UNUSED(callback);
+  SOURCEMETA_MAYBE_UNUSED(instance);
+  SOURCEMETA_MAYBE_UNUSED(property_target);
+  EVALUATE_BEGIN_NO_PRECONDITION(Evaluate);
+  const auto &target{get(instance, instruction.relative_instance_location)};
+  evaluator.evaluate(&target);
+  result = true;
+  EVALUATE_END(Evaluate);
 }
 
 INSTRUCTION_HANDLER(LogicalNot) {
@@ -2538,7 +2556,7 @@ using DispatchHandler = bool (*)(const sourcemeta::blaze::Instruction &,
                                  sourcemeta::blaze::Evaluator &);
 
 // Must have same order as InstructionIndex
-static constexpr DispatchHandler handlers[93] = {
+static constexpr DispatchHandler handlers[95] = {
     AssertionFail,
     AssertionDefines,
     AssertionDefinesStrict,
@@ -2586,6 +2604,7 @@ static constexpr DispatchHandler handlers[93] = {
     AnnotationEmit,
     AnnotationToParent,
     AnnotationBasenameToParent,
+    Evaluate,
     LogicalNot,
     LogicalNotEvaluate,
     LogicalOr,
@@ -2627,6 +2646,7 @@ static constexpr DispatchHandler handlers[93] = {
     ControlGroup,
     ControlGroupWhenDefines,
     ControlGroupWhenDefinesDirect,
+    ControlGroupWhenType,
     ControlLabel,
     ControlMark,
     ControlEvaluate,

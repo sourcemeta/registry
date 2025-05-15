@@ -63,6 +63,7 @@ enum class InstructionIndex : std::uint8_t {
   AnnotationEmit,
   AnnotationToParent,
   AnnotationBasenameToParent,
+  Evaluate,
   LogicalNot,
   LogicalNotEvaluate,
   LogicalOr,
@@ -104,6 +105,7 @@ enum class InstructionIndex : std::uint8_t {
   ControlGroup,
   ControlGroupWhenDefines,
   ControlGroupWhenDefinesDirect,
+  ControlGroupWhenType,
   ControlLabel,
   ControlMark,
   ControlEvaluate,
@@ -160,6 +162,7 @@ constexpr std::string_view InstructionNames[] = {
     "AnnotationEmit",
     "AnnotationToParent",
     "AnnotationBasenameToParent",
+    "Evaluate",
     "LogicalNot",
     "LogicalNotEvaluate",
     "LogicalOr",
@@ -201,11 +204,27 @@ constexpr std::string_view InstructionNames[] = {
     "ControlGroup",
     "ControlGroupWhenDefines",
     "ControlGroupWhenDefinesDirect",
+    "ControlGroupWhenType",
     "ControlLabel",
     "ControlMark",
     "ControlEvaluate",
     "ControlJump",
     "ControlDynamicAnchorJump"};
+
+/// @ingroup evaluator
+/// Check if a given instruction type corresponds to an annotation
+inline auto is_annotation(const InstructionIndex type) noexcept -> bool {
+  switch (type) {
+    case InstructionIndex::AnnotationBasenameToParent:
+      return true;
+    case InstructionIndex::AnnotationToParent:
+      return true;
+    case InstructionIndex::AnnotationEmit:
+      return true;
+    default:
+      return false;
+  }
+}
 
 // Forward declaration for defining a circular structure
 #ifndef DOXYGEN

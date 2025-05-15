@@ -291,8 +291,8 @@ auto compiler_2019_09_applicator_unevaluateditems(
       return {};
     }
 
-    return {make(sourcemeta::blaze::InstructionIndex::ControlEvaluate, context,
-                 schema_context, dynamic_context, ValuePointer{})};
+    return {make(sourcemeta::blaze::InstructionIndex::Evaluate, context,
+                 schema_context, dynamic_context, ValueNone{})};
   }
 
   // TODO: Attempt to short-circuit evaluation tracking by looking at sibling
@@ -385,8 +385,8 @@ auto compiler_2019_09_applicator_unevaluatedproperties(
   }
 
   if (children.empty()) {
-    return {make(sourcemeta::blaze::InstructionIndex::ControlEvaluate, context,
-                 schema_context, dynamic_context, ValuePointer{})};
+    return {make(sourcemeta::blaze::InstructionIndex::Evaluate, context,
+                 schema_context, dynamic_context, ValueNone{})};
   } else if (!filter_strings.empty() || !filter_prefixes.empty() ||
              !filter_regexes.empty()) {
     return {make(
@@ -438,6 +438,91 @@ auto compiler_2019_09_applicator_patternproperties(
       context, schema_context, dynamic_context,
       context.mode == Mode::Exhaustive,
       requires_evaluation(context, schema_context));
+}
+
+auto compiler_2019_09_content_contentencoding(
+    const Context &context, const SchemaContext &schema_context,
+    const DynamicContext &dynamic_context, const Instructions &)
+    -> Instructions {
+  if (context.mode == Mode::FastValidation) {
+    return {};
+  }
+
+  Instructions children{
+      make(sourcemeta::blaze::InstructionIndex::AnnotationEmit, context,
+           schema_context, dynamic_context,
+           sourcemeta::core::JSON{
+               schema_context.schema.at(dynamic_context.keyword)})};
+
+  return {make(sourcemeta::blaze::InstructionIndex::ControlGroupWhenType,
+               context, schema_context,
+               relative_dynamic_context(dynamic_context), ValueType::String,
+               std::move(children))};
+}
+
+auto compiler_2019_09_content_contentmediatype(
+    const Context &context, const SchemaContext &schema_context,
+    const DynamicContext &dynamic_context, const Instructions &)
+    -> Instructions {
+  if (context.mode == Mode::FastValidation) {
+    return {};
+  }
+
+  Instructions children{
+      make(sourcemeta::blaze::InstructionIndex::AnnotationEmit, context,
+           schema_context, dynamic_context,
+           sourcemeta::core::JSON{
+               schema_context.schema.at(dynamic_context.keyword)})};
+
+  return {make(sourcemeta::blaze::InstructionIndex::ControlGroupWhenType,
+               context, schema_context,
+               relative_dynamic_context(dynamic_context), ValueType::String,
+               std::move(children))};
+}
+
+auto compiler_2019_09_content_contentschema(
+    const Context &context, const SchemaContext &schema_context,
+    const DynamicContext &dynamic_context, const Instructions &)
+    -> Instructions {
+  if (context.mode == Mode::FastValidation) {
+    return {};
+  }
+
+  // The `contentSchema` keyword does nothing without `contentMediaType`
+  if (!schema_context.schema.defines("contentMediaType")) {
+    return {};
+  }
+
+  Instructions children{
+      make(sourcemeta::blaze::InstructionIndex::AnnotationEmit, context,
+           schema_context, dynamic_context,
+           sourcemeta::core::JSON{
+               schema_context.schema.at(dynamic_context.keyword)})};
+
+  return {make(sourcemeta::blaze::InstructionIndex::ControlGroupWhenType,
+               context, schema_context,
+               relative_dynamic_context(dynamic_context), ValueType::String,
+               std::move(children))};
+}
+
+auto compiler_2019_09_format_format(const Context &context,
+                                    const SchemaContext &schema_context,
+                                    const DynamicContext &dynamic_context,
+                                    const Instructions &) -> Instructions {
+  if (context.mode == Mode::FastValidation) {
+    return {};
+  }
+
+  Instructions children{
+      make(sourcemeta::blaze::InstructionIndex::AnnotationEmit, context,
+           schema_context, dynamic_context,
+           sourcemeta::core::JSON{
+               schema_context.schema.at(dynamic_context.keyword)})};
+
+  return {make(sourcemeta::blaze::InstructionIndex::ControlGroupWhenType,
+               context, schema_context,
+               relative_dynamic_context(dynamic_context), ValueType::String,
+               std::move(children))};
 }
 
 } // namespace internal

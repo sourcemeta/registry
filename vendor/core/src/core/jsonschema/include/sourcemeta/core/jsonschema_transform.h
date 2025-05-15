@@ -8,6 +8,7 @@
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonpointer.h>
 #include <sourcemeta/core/jsonschema_resolver.h>
+#include <sourcemeta/core/uri.h>
 
 #include <cassert>     // assert
 #include <concepts>    // std::derived_from
@@ -18,7 +19,8 @@
 #include <set>         // std::set
 #include <string>      // std::string
 #include <string_view> // std::string_view
-#include <utility>     // std::move
+#include <utility>     // std::move, std::forward, std::pair
+#include <variant>     // std::variant
 #include <vector>      // std::vector
 
 namespace sourcemeta::core {
@@ -42,17 +44,18 @@ namespace sourcemeta::core {
 ///   sourcemeta::core::SchemaTransformRule("my_rule", "My rule") {};
 ///
 ///   [[nodiscard]] auto condition(const sourcemeta::core::JSON &schema,
-///                                const std::string &dialect,
-///                                const std::set<std::string> &vocabularies,
-///                                const sourcemeta::core::Pointer
-///                                  &pointer) const
-///       -> bool override
+///                                const sourcemeta::core::Vocabularies
+///                                  &vocabularies,
+///                                const sourcemeta::core::SchemaFrame &,
+///                                const sourcemeta::core::SchemaFrame::Location
+///                                &)
+///       const -> sourcemeta::core::SchemaTransformRule::Result override
 ///     return schema.defines("foo");
 ///   }
 ///
-///   auto transform(sourcemeta::core::PointerProxy &transformer)
+///   auto transform(sourcemeta::core::JSON &schema)
 ///       const -> void override {
-///     transformer.erase("foo");
+///     schema.erase("foo");
 ///   }
 /// };
 /// ```
@@ -79,28 +82,39 @@ public:
   /// Fetch the message of a rule
   [[nodiscard]] auto message() const -> const std::string &;
 
+  /// The result of evaluating a rule
+  using Result = std::variant<bool, std::string>;
+
   /// Apply the rule to a schema
-  auto
-  apply(JSON &schema, const Pointer &pointer, const SchemaResolver &resolver,
-        const std::optional<std::string> &default_dialect = std::nullopt) const
-      -> std::vector<PointerProxy::Operation>;
+  auto apply(JSON &schema, const JSON &root, const Vocabularies &vocabularies,
+             const SchemaWalker &walker, const SchemaResolver &resolver,
+             const SchemaFrame &frame,
+             const SchemaFrame::Location &location) const
+      -> std::pair<bool, Result>;
 
   /// Check if the rule applies to a schema
-  auto
-  check(const JSON &schema, const Pointer &pointer,
-        const SchemaResolver &resolver,
-        const std::optional<std::string> &default_dialect = std::nullopt) const
-      -> bool;
+  auto check(const JSON &schema, const JSON &root,
+             const Vocabularies &vocabularies, const SchemaWalker &walker,
+             const SchemaResolver &resolver, const SchemaFrame &frame,
+             const SchemaFrame::Location &location) const -> Result;
+
+  /// A method to optionally fix any reference location that was affected by the
+  /// transformation.
+  [[nodiscard]] virtual auto
+  rereference(const std::string &reference, const Pointer &origin,
+              const Pointer &target, const Pointer &current) const -> Pointer;
 
 private:
   /// The rule condition
   [[nodiscard]] virtual auto
-  condition(const JSON &schema, const std::string &dialect,
-            const std::set<std::string> &vocabularies,
-            const Pointer &pointer) const -> bool = 0;
+  condition(const JSON &schema, const JSON &root,
+            const Vocabularies &vocabularies, const SchemaFrame &frame,
+            const SchemaFrame::Location &location, const SchemaWalker &walker,
+            const SchemaResolver &resolver) const -> Result = 0;
 
-  /// The rule transformation
-  virtual auto transform(PointerProxy &transformer) const -> void = 0;
+  /// The rule transformation. If this virtual method is not overriden,
+  /// then the rule condition is considered to not be fixable.
+  virtual auto transform(JSON &schema) const -> void;
 
 // Exporting symbols that depends on the standard C++ library is considered
 // safe.
@@ -132,17 +146,18 @@ private:
 ///   MyRule() : sourcemeta::core::SchemaTransformRule("my_rule") {};
 ///
 ///   [[nodiscard]] auto condition(const sourcemeta::core::JSON &schema,
-///                                const std::string &dialect,
-///                                const std::set<std::string> &vocabularies,
-///                                const sourcemeta::core::Pointer
-///                                  &pointer) const
-///       -> bool override {
+///                                const sourcemeta::core::Vocabularies
+///                                  &vocabularies,
+///                                const sourcemeta::core::SchemaFrame &,
+///                                const sourcemeta::core::SchemaFrame::Location
+///                                &)
+///       const -> sourcemeta::core::SchemaTransformRule::Result override {
 ///     return schema.defines("foo");
 ///   }
 ///
-///   auto transform(sourcemeta::core::PointerProxy &transformer)
+///   auto transform(sourcemeta::core::JSON &schema)
 ///       const -> void override {
-///     transformer.erase("foo");
+///     schema.erase("foo");
 ///   }
 /// };
 ///
@@ -191,34 +206,39 @@ public:
 #endif
 
   /// Add a rule to the bundle
-  template <std::derived_from<SchemaTransformRule> T> auto add() -> void {
-    auto rule{std::make_unique<T>()};
+  template <std::derived_from<SchemaTransformRule> T, typename... Args>
+  auto add(Args &&...args) -> void {
+    auto rule{std::make_unique<T>(std::forward<Args>(args)...)};
     // Rules must only be defined once
     assert(!this->rules.contains(rule->name()));
     this->rules.emplace(rule->name(), std::move(rule));
   }
 
-  /// Apply the bundle of rules to a schema
-  auto
-  apply(JSON &schema, const SchemaWalker &walker,
-        const SchemaResolver &resolver, const Pointer &pointer = empty_pointer,
-        const std::optional<std::string> &default_dialect = std::nullopt) const
-      -> void;
+  /// Remove a rule from the bundle
+  auto remove(const std::string &name) -> bool;
 
-  /// The callback that is called whenever the "check" functionality reports a
-  /// rule whose condition holds true. The arguments are as follows:
+  /// The callback that is called whenever the condition of a rule holds true.
+  /// The arguments are as follows:
   ///
   /// - The JSON Pointer to the given subschema
   /// - The name of the rule
   /// - The message of the rule
-  using CheckCallback = std::function<void(
-      const Pointer &, const std::string_view, const std::string_view)>;
+  /// - The longer description of the rule (if any)
+  using Callback =
+      std::function<void(const Pointer &, const std::string_view,
+                         const std::string_view, const std::string_view)>;
+
+  /// Apply the bundle of rules to a schema
+  auto
+  apply(JSON &schema, const SchemaWalker &walker,
+        const SchemaResolver &resolver, const Callback &callback,
+        const std::optional<std::string> &default_dialect = std::nullopt) const
+      -> bool;
 
   /// Report back the rules from the bundle that need to be applied to a schema
   auto
   check(const JSON &schema, const SchemaWalker &walker,
-        const SchemaResolver &resolver, const CheckCallback &callback,
-        const Pointer &pointer = empty_pointer,
+        const SchemaResolver &resolver, const Callback &callback,
         const std::optional<std::string> &default_dialect = std::nullopt) const
       -> bool;
 

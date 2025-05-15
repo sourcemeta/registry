@@ -1,28 +1,28 @@
-# TODO: Use new executable macro
-add_executable(schema_registry_server server.cc configure.h.in 
+sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server 
+  FOLDER "Registry/Server" 
+  SOURCES server.cc configure.h.in 
   "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
 
-sourcemeta_add_default_options(PRIVATE schema_registry_server)
-set_target_properties(schema_registry_server PROPERTIES OUTPUT_NAME sourcemeta-registry-server)
-target_link_libraries(schema_registry_server PRIVATE sourcemeta::core::uri)
-target_link_libraries(schema_registry_server PRIVATE sourcemeta::core::json)
-target_link_libraries(schema_registry_server PRIVATE sourcemeta::core::jsonschema)
-target_link_libraries(schema_registry_server PRIVATE sourcemeta::hydra::http)
-target_link_libraries(schema_registry_server PRIVATE sourcemeta::hydra::httpserver)
-target_link_libraries(schema_registry_server PRIVATE sourcemeta::hydra::crypto)
+set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourcemeta-registry-server)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uri)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::json)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::jsonschema)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::http)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::httpserver)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::crypto)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
-  target_compile_definitions(schema_registry_server 
+  target_compile_definitions(sourcemeta_registry_server 
     PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
 elseif(REGISTRY_EDITION STREQUAL "pro")
-  target_compile_definitions(schema_registry_server 
+  target_compile_definitions(sourcemeta_registry_server 
     PRIVATE SOURCEMETA_REGISTRY_PRO)
 else()
-  target_compile_definitions(schema_registry_server 
+  target_compile_definitions(sourcemeta_registry_server 
     PRIVATE SOURCEMETA_REGISTRY_STARTER)
 endif()
 
-target_compile_definitions(schema_registry_server 
+target_compile_definitions(sourcemeta_registry_server 
   PRIVATE SOURCEMETA_REGISTRY_STATIC="${REGISTRY_PREFIX}/share/sourcemeta/registry")
 
 include(BootstrapFiles)
@@ -37,10 +37,10 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
     ${BOOTSTRAP_SCSS_FILES})
 
 configure_file(configure.h.in configure.h @ONLY)
-target_include_directories(schema_registry_server PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+target_include_directories(sourcemeta_registry_server PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 include(GNUInstallDirs)
-install(TARGETS schema_registry_server
+install(TARGETS sourcemeta_registry_server
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
   COMPONENT sourcemeta_registry)
 install(FILES

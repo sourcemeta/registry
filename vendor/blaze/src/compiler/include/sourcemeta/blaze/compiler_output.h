@@ -7,12 +7,18 @@
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonpointer.h>
+#include <sourcemeta/core/jsonschema.h>
 
 #include <sourcemeta/blaze/evaluator.h>
 
+#include <functional>  // std::reference_wrapper
+#include <map>         // std::map
+#include <optional>    // std::optional, std::nullopt
+#include <ostream>     // std::ostream
 #include <set>         // std::set
 #include <string>      // std::string
 #include <string_view> // std::string_view
+#include <tuple>       // std::tie
 #include <vector>      // std::vector
 
 namespace sourcemeta::blaze {
@@ -45,7 +51,7 @@ namespace sourcemeta::blaze {
 ///
 /// const sourcemeta::core::JSON instance{5};
 ///
-/// sourcemeta::blaze::ErrorOutput output{instance};
+/// sourcemeta::blaze::SimpleOutput output{instance};
 /// sourcemeta::blaze::Evaluator evaluator;
 /// const auto result{evaluator.validate(
 ///   schema_template, instance, std::ref(output))};
@@ -60,15 +66,15 @@ namespace sourcemeta::blaze {
 ///   }
 /// }
 /// ```
-class SOURCEMETA_BLAZE_COMPILER_EXPORT ErrorOutput {
+class SOURCEMETA_BLAZE_COMPILER_EXPORT SimpleOutput {
 public:
-  ErrorOutput(const sourcemeta::core::JSON &instance,
-              const sourcemeta::core::WeakPointer &base =
-                  sourcemeta::core::empty_weak_pointer);
+  SimpleOutput(const sourcemeta::core::JSON &instance,
+               const sourcemeta::core::WeakPointer &base =
+                   sourcemeta::core::empty_weak_pointer);
 
   // Prevent accidental copies
-  ErrorOutput(const ErrorOutput &) = delete;
-  auto operator=(const ErrorOutput &) -> ErrorOutput & = delete;
+  SimpleOutput(const SimpleOutput &) = delete;
+  auto operator=(const SimpleOutput &) -> SimpleOutput & = delete;
 
   struct Entry {
     const std::string message;
@@ -89,6 +95,27 @@ public:
   auto cbegin() const -> const_iterator;
   auto cend() const -> const_iterator;
 
+  /// Access annotations that were collected during evaluation, indexed by
+  /// instance location and evaluation path
+  auto annotations() const -> const auto & { return this->annotations_; }
+
+  struct Location {
+    auto operator<(const Location &other) const noexcept -> bool {
+      // Perform a lexicographical comparison
+      return std::tie(this->instance_location, this->evaluate_path,
+                      this->schema_location) < std::tie(other.instance_location,
+                                                        other.evaluate_path,
+                                                        other.schema_location);
+    }
+
+    const sourcemeta::core::WeakPointer instance_location;
+    const sourcemeta::core::WeakPointer evaluate_path;
+    const std::string schema_location;
+  };
+
+  auto stacktrace(std::ostream &stream,
+                  const std::string &indentation = "") const -> void;
+
 private:
 // Exporting symbols that depends on the standard C++ library is considered
 // safe.
@@ -99,11 +126,12 @@ private:
   const sourcemeta::core::JSON &instance_;
   const sourcemeta::core::WeakPointer base_;
   container_type output;
-  std::set<sourcemeta::core::WeakPointer> mask;
+  std::map<sourcemeta::core::WeakPointer, bool> mask;
+  std::map<Location, std::vector<sourcemeta::core::JSON>> annotations_;
 #if defined(_MSC_VER)
 #pragma warning(default : 4251)
 #endif
-};
+}; // namespace sourcemeta::blaze
 
 /// @ingroup compiler
 ///
@@ -162,14 +190,20 @@ private:
 /// ```
 class SOURCEMETA_BLAZE_COMPILER_EXPORT TraceOutput {
 public:
-  TraceOutput(const sourcemeta::core::WeakPointer &base =
-                  sourcemeta::core::empty_weak_pointer);
+  // Passing a frame of the schema is optional, but allows the output
+  // formatter to give you back additional information
+  TraceOutput(const sourcemeta::core::SchemaWalker &walker,
+              const sourcemeta::core::SchemaResolver &resolver,
+              const sourcemeta::core::WeakPointer &base =
+                  sourcemeta::core::empty_weak_pointer,
+              const std::optional<std::reference_wrapper<
+                  const sourcemeta::core::SchemaFrame>> &frame = std::nullopt);
 
   // Prevent accidental copies
-  TraceOutput(const ErrorOutput &) = delete;
+  TraceOutput(const TraceOutput &) = delete;
   auto operator=(const TraceOutput &) -> TraceOutput & = delete;
 
-  enum class EntryType { Push, Pass, Fail };
+  enum class EntryType { Push, Pass, Fail, Annotation };
 
   struct Entry {
     const EntryType type;
@@ -177,6 +211,10 @@ public:
     const sourcemeta::core::WeakPointer instance_location;
     const sourcemeta::core::WeakPointer evaluate_path;
     const std::string keyword_location;
+    const std::optional<sourcemeta::core::JSON> annotation;
+    // Whether we were able to collect vocabulary information,
+    // and the vocabulary URI, if any
+    const std::pair<bool, std::optional<std::string>> vocabulary;
   };
 
   auto operator()(const EvaluationType type, const bool result,
@@ -199,7 +237,12 @@ private:
 #if defined(_MSC_VER)
 #pragma warning(disable : 4251)
 #endif
+  const sourcemeta::core::SchemaWalker walker_;
+  const sourcemeta::core::SchemaResolver resolver_;
   const sourcemeta::core::WeakPointer base_;
+  const std::optional<
+      std::reference_wrapper<const sourcemeta::core::SchemaFrame>>
+      frame_;
   container_type output;
 #if defined(_MSC_VER)
 #pragma warning(default : 4251)

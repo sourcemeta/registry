@@ -1,6 +1,6 @@
 vendorpull https://github.com/sourcemeta/vendorpull dea311b5bfb53b6926a4140267959ae334d3ecf4
-core https://github.com/sourcemeta/core 4cb5ab6a3641b9942c774b4d167eeb0ffb7257ea
-blaze https://github.com/sourcemeta/blaze 0424f5765c4c18162a7f7ed8354134e680f6664e
+core https://github.com/sourcemeta/core 9a401d115cee533be26c9aba2fd792bd5793f6ce
+blaze https://github.com/sourcemeta/blaze 7c8f17ff09e33ce2fc4284b7583222cc20ebd831
 hydra https://github.com/sourcemeta/hydra b0182d7f0e5a035cf0af9c9d0e202da51f31e95a
 bootstrap https://github.com/twbs/bootstrap v5.3.3
 bootstrap-icons https://github.com/twbs/icons v1.11.3
