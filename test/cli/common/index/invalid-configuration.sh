@@ -20,6 +20,7 @@ EOF
 test "$CODE" = "1" || exit 1
 
 cat << EOF > "$TMP/expected.txt"
+Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/configuration.json
 error: Invalid configuration
 The value was expected to be an object that defines properties "port", "schemas", and "url"

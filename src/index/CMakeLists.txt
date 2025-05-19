@@ -1,8 +1,8 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index 
   FOLDER "Registry/Index" 
-  SOURCES index.cc html.h 
-    helpers.h configure.h.in 
+  SOURCES index.cc html.h configure.h.in 
     validator.h validator.cc
+    output.h output.cc
     configuration.h configuration.cc 
     "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 

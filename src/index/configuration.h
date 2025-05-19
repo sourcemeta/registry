@@ -24,6 +24,7 @@ public:
   auto schema() const noexcept -> const sourcemeta::core::JSON &;
   auto url() const -> const sourcemeta::core::URI &;
   // For faster processing by the server component
+  // TODO: Can we trim this down even more?
   auto summary() const -> sourcemeta::core::JSON;
 
 private:

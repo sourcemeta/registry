@@ -32,57 +32,15 @@ EOF
 "$1" "$TMP/configuration.json" "$TMP/output"
 
 cat << 'EOF' > "$TMP/index-top-level.json"
-{
-  "entries": [
-    {
-      "name": "example",
-      "type": "directory",
-      "url": "/example"
-    }
-  ],
-  "breadcrumb": []
-}
+{"entries":[{"name":"example","type":"directory","url":"/example"}],"breadcrumb":[]}
 EOF
 
 cat << 'EOF' > "$TMP/index-example.json"
-{
-  "entries": [
-    {
-      "name": "schemas",
-      "type": "directory",
-      "url": "/example/schemas"
-    }
-  ],
-  "breadcrumb": [
-    {
-      "name": "example",
-      "url": "/example"
-    }
-  ]
-}
+{"entries":[{"name":"schemas","type":"directory","url":"/example/schemas"}],"breadcrumb":[{"name":"example","url":"/example"}]}
 EOF
 
 cat << 'EOF' > "$TMP/index-schemas.json"
-{
-  "entries": [
-    {
-      "name": "test.json",
-      "type": "schema",
-      "baseDialect": "draft7",
-      "url": "/example/schemas/test.json"
-    }
-  ],
-  "breadcrumb": [
-    {
-      "name": "example",
-      "url": "/example"
-    },
-    {
-      "name": "schemas",
-      "url": "/example/schemas"
-    }
-  ]
-}
+{"entries":[{"name":"test.json","type":"schema","baseDialect":"draft7","url":"/example/schemas/test.json"}],"breadcrumb":[{"name":"example","url":"/example"},{"name":"schemas","url":"/example/schemas"}]}
 EOF
 
 diff "$TMP/output/generated/index.json" "$TMP/index-top-level.json"

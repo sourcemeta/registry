@@ -5,8 +5,8 @@
 
 #include "configuration.h"
 #include "configure.h"
-#include "helpers.h"
 #include "html.h"
+#include "output.h"
 #include "validator.h"
 
 #include <algorithm>   // std::sort
@@ -32,11 +32,9 @@ template <typename T>
 static auto write_lower_except_trailing(T &stream, const std::string &input,
                                         const char trailing) -> void {
   for (auto iterator = input.cbegin(); iterator != input.cend(); ++iterator) {
-    if (std::next(iterator) == input.cend() && *iterator == trailing) {
-      continue;
+    if (std::next(iterator) != input.cend() || *iterator != trailing) {
+      stream << static_cast<char>(std::tolower(*iterator));
     }
-
-    stream << static_cast<char>(std::tolower(*iterator));
   }
 }
 
@@ -161,7 +159,8 @@ static auto base_dialect_id(const std::string &base_dialect) -> std::string {
   return "Unknown";
 }
 
-auto generate_toc(const sourcemeta::core::SchemaResolver &resolver,
+auto generate_toc(RegistryOutput &output,
+                  const sourcemeta::core::SchemaResolver &resolver,
                   const sourcemeta::core::URI &server_url,
                   const sourcemeta::core::JSON &configuration,
                   const std::filesystem::path &base,
@@ -304,12 +303,8 @@ auto generate_toc(const sourcemeta::core::SchemaResolver &resolver,
                         std::filesystem::relative(directory, base) /
                         "index.json"};
   std::cerr << "Saving into: " << index_path.string() << "\n";
-  std::filesystem::create_directories(index_path.parent_path());
-  std::ofstream stream{index_path};
-  assert(!stream.fail());
-  sourcemeta::core::prettify(meta, stream);
-  stream << "\n";
-  stream.close();
+  output.write_generated_json(
+      std::filesystem::relative(directory, base) / "index.json", meta);
 
   if (directory == base) {
     std::cerr << "Generating HTML index page\n";
@@ -373,25 +368,22 @@ static auto index_main(const std::string_view &program,
     return EXIT_FAILURE;
   }
 
+  // Prepare the output directory
+  const auto output_path{std::filesystem::weakly_canonical(arguments[1])};
+  RegistryOutput output{output_path};
+  std::cerr << "Writing output to: " << output_path.string() << "\n";
+
+  // Read and validate the configuration file
   sourcemeta::core::SchemaFlatFileResolver resolver{
       sourcemeta::core::schema_official_resolver};
   RegistryValidator validator{resolver};
-
-  // Read and validate the configuration file
   const auto configuration_path{std::filesystem::canonical(arguments[0])};
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
   const RegistryConfiguration configuration{configuration_path};
   validator.validate_or_throw(configuration.schema(), configuration.get(),
                               "Invalid configuration");
+  output.write_configuration(configuration);
 
-  const auto output{std::filesystem::weakly_canonical(arguments[1])};
-  std::cerr << "Writing output to: " << output.string() << "\n";
-
-  // Save the configuration file too
-  std::filesystem::create_directories(output);
-  prettify_to_file(configuration.summary(), output / "configuration.json");
-
-  assert(std::filesystem::exists(output));
   std::size_t count{0};
 
   // Populate flat file resolver
@@ -403,9 +395,7 @@ static auto index_main(const std::string_view &program,
         sourcemeta::core::URI{schema_entry.second.at("base").to_string()}
             .canonicalize()};
     const auto collection_base_uri_string{collection_base_uri.recompose()};
-
     std::cerr << "Discovering schemas at: " << collection_path.string() << "\n";
-
     const std::optional<std::string> default_dialect{
         schema_entry.second.defines("defaultDialect")
             ? schema_entry.second.at("defaultDialect").to_string()
@@ -529,16 +519,9 @@ static auto index_main(const std::string_view &program,
     sourcemeta::core::URI schema_uri{schema.first};
     schema_uri.relative_to(configuration.url());
     assert(schema_uri.is_relative());
-    const auto schema_output{std::filesystem::weakly_canonical(
-        output / "schemas" / schema_uri.recompose())};
-    std::cerr << "Schema output: " << schema_output.string() << "\n";
+    std::cerr << "Schema output: " << schema_uri.recompose() << "\n";
     const auto subresult{resolver(schema.first)};
-    if (!subresult.has_value()) {
-      std::cout << "Cannot resolve the schema with identifier " << schema.first
-                << "\n";
-      return EXIT_FAILURE;
-    }
-
+    assert(subresult.has_value());
     const auto dialect_identifier{sourcemeta::core::dialect(subresult.value())};
     assert(dialect_identifier.has_value());
     const auto metaschema{wrapped_resolver(dialect_identifier.value())};
@@ -548,71 +531,47 @@ static auto index_main(const std::string_view &program,
                                 subresult.value(),
                                 "The schema does not adhere to its metaschema");
 
-    std::filesystem::create_directories(schema_output.parent_path());
-    std::ofstream stream{schema_output};
-    sourcemeta::core::prettify(subresult.value(), stream,
-                               sourcemeta::core::schema_format_compare);
-    stream << "\n";
-
-    auto bundle_path{
-        output / "bundles" /
-        std::filesystem::relative(schema_output, output / "schemas")};
-    std::filesystem::create_directories(bundle_path.parent_path());
+    // Storing artefacts
+    output.write_schema_single(schema_uri.recompose(), subresult.value());
     std::cerr << "Bundling: " << schema.first << "\n";
     auto bundled_schema{sourcemeta::core::bundle(
         subresult.value(), sourcemeta::core::schema_official_walker,
         wrapped_resolver)};
-    std::ofstream bundle_stream{bundle_path};
-    sourcemeta::core::prettify(bundled_schema, bundle_stream,
-                               sourcemeta::core::schema_format_compare);
-    bundle_stream << "\n";
-
-    auto unidentified_path{
-        output / "unidentified" /
-        std::filesystem::relative(schema_output, output / "schemas")};
-    std::filesystem::create_directories(unidentified_path.parent_path());
+    output.write_schema_bundle(schema_uri.recompose(), bundled_schema);
     std::cerr << "Bundling without identifiers: " << schema.first << "\n";
     sourcemeta::core::unidentify(bundled_schema,
                                  sourcemeta::core::schema_official_walker,
                                  wrapped_resolver);
-    std::ofstream unidentified_stream{unidentified_path};
-    sourcemeta::core::prettify(bundled_schema, unidentified_stream,
-                               sourcemeta::core::schema_format_compare);
-    unidentified_stream << "\n";
+    output.write_schema_bundle_unidentified(schema_uri.recompose(),
+                                            bundled_schema);
   }
 
-  std::cerr << "-- Indexing directory: " << output.string() << "\n";
-  const auto base{std::filesystem::canonical(output / "schemas")};
+  std::cerr << "-- Indexing directory: " << output_path.string() << "\n";
+  const auto base{std::filesystem::canonical(output_path / "schemas")};
   std::vector<sourcemeta::core::JSON> search_index;
-  generate_toc(wrapped_resolver, configuration.url(), configuration.get(), base,
-               base, search_index);
-
+  generate_toc(output, wrapped_resolver, configuration.url(),
+               configuration.get(), base, base, search_index);
   for (const auto &entry :
-       std::filesystem::recursive_directory_iterator{output / "schemas"}) {
-    if (!entry.is_directory()) {
-      continue;
+       std::filesystem::recursive_directory_iterator{output_path / "schemas"}) {
+    if (entry.is_directory()) {
+      std::cerr << "-- Processing: " << entry.path().string() << "\n";
+      generate_toc(output, wrapped_resolver, configuration.url(),
+                   configuration.get(), base,
+                   std::filesystem::canonical(entry.path()), search_index);
     }
-
-    std::cerr << "-- Processing: " << entry.path().string() << "\n";
-    generate_toc(wrapped_resolver, configuration.url(), configuration.get(),
-                 base, std::filesystem::canonical(entry.path()), search_index);
   }
 
-  std::ofstream stream{output / "generated" / "search.jsonl"};
-  assert(!stream.fail());
   // Make newer versions of schemas appear first
   std::sort(search_index.begin(), search_index.end(),
             [](const auto &left, const auto &right) {
               return left.at(0) > right.at(0);
             });
-  for (const auto &entry : search_index) {
-    sourcemeta::core::stringify(entry, stream);
-    stream << "\n";
-  }
-  stream.close();
+
+  output.write_generated_jsonl("search.jsonl", search_index.cbegin(),
+                               search_index.cend());
 
   // Not found page
-  std::ofstream stream_not_found{output / "generated" / "404.html"};
+  std::ofstream stream_not_found{output_path / "generated" / "404.html"};
   assert(!stream_not_found.fail());
   sourcemeta::registry::html::SafeOutput output_html{stream_not_found};
   sourcemeta::registry::html_start(
@@ -654,6 +613,16 @@ auto main(int argc, char *argv[]) noexcept -> int {
               << "\n    at schema location \"";
     sourcemeta::core::stringify(error.location(), std::cerr);
     std::cerr << "\"\n";
+    return EXIT_FAILURE;
+  } catch (const std::filesystem::filesystem_error &error) {
+    if (error.code() == std::make_error_condition(std::errc::file_exists) ||
+        error.code() == std::make_error_condition(std::errc::not_a_directory)) {
+      std::cerr << "error: file already exists\n  at " << error.path1().string()
+                << "\n";
+    } else {
+      std::cerr << "filesystem error: " << error.what() << "\n";
+    }
+
     return EXIT_FAILURE;
   } catch (const std::exception &error) {
     std::cerr << "unexpected error: " << error.what() << "\n";
