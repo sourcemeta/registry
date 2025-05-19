@@ -36,7 +36,6 @@ compile:
 	$(JSONSCHEMA) fmt --verbose schemas/*.json
 	$(JSONSCHEMA) lint --verbose schemas/*.json
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target clang_format
-	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target shellcheck
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --parallel 4
 	$(CMAKE) --install $(OUTPUT) --prefix $(PREFIX) --config $(PRESET) --verbose \
 		--component sourcemeta_registry
@@ -45,9 +44,8 @@ compile:
 lint:
 	$(JSONSCHEMA) fmt --check --verbose schemas/*.json
 	$(JSONSCHEMA) lint --verbose schemas/*.json
-	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target clang_format
+	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target clang_format_test
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target shellcheck
-	$(SHELLCHECK) test/cli/*/*/*.sh test/sandbox/*.sh
 
 .PHONY: test
 test: 
