@@ -13,7 +13,7 @@ cat << EOF > "$TMP/configuration.json"
   "port": 8000,
   "schemas": {
     "example/schemas": {
-      "base": "https://example.com",
+      "base": "https://example.com/",
       "path": "./schemas"
     }
   }
@@ -25,20 +25,17 @@ mkdir "$TMP/schemas"
 cat << 'EOF' > "$TMP/schemas/test.json"
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://example.com/"
+  "$id": "https://example.com/test.json"
 }
 EOF
 
+echo "foobar" > "$TMP/output"
 "$1" "$TMP/configuration.json" "$TMP/output" 2> "$TMP/output.txt" && CODE="$?" || CODE="$?"
 test "$CODE" = "1" || exit 1
 
 cat << EOF > "$TMP/expected.txt"
-Writing output to: $(realpath "$TMP")/output
-Using configuration: $(realpath "$TMP")/configuration.json
-Discovering schemas at: $(realpath "$TMP")/schemas
--- Found schema: $(realpath "$TMP")/schemas/test.json (#1)
-https://example.com/
-error: Cannot resolve the schema identifier (https://example.com/) against the collection base (https://example.com)
+error: file already exists
+  at $(realpath "$TMP")/output
 EOF
 
 diff "$TMP/output.txt" "$TMP/expected.txt"
