@@ -1,5 +1,5 @@
-#ifndef SOURCEMETA_REGISTRY_INDEX_HTML_H_
-#define SOURCEMETA_REGISTRY_INDEX_HTML_H_
+#ifndef SOURCEMETA_REGISTRY_INDEX_EXPLORER_H_
+#define SOURCEMETA_REGISTRY_INDEX_EXPLORER_H_
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/registry/html.h>
@@ -415,5 +415,92 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
 }
 
 } // namespace sourcemeta::registry
+
+static auto registry_explorer_generate(
+    const sourcemeta::core::JSON &configuration,
+    const std::filesystem::path &base,
+    const std::function<void(const std::filesystem::path &)> &callback)
+    -> void {
+  for (const auto &entry :
+       std::filesystem::recursive_directory_iterator{base}) {
+    if (entry.is_directory() || entry.path().filename() != "index.json") {
+      continue;
+    }
+
+    const auto meta{sourcemeta::core::read_json(entry.path())};
+    const auto destination{entry.path().parent_path() / "index.html"};
+    callback(destination.string().substr(base.string().size() + 1));
+
+    if (entry.path().parent_path() == base) {
+      // TODO: Use RegistryOutput to write files
+      std::ofstream html{destination};
+      assert(!html.fail());
+      sourcemeta::registry::html::SafeOutput output_html{html};
+      sourcemeta::registry::html_start(
+          output_html, configuration,
+          configuration.at("title").to_string() + " Schemas",
+          configuration.at("description").to_string(), "");
+
+      if (configuration.defines("hero")) {
+        output_html.open("div", {{"class", "container-fluid px-4"}})
+            .open("div",
+                  {{"class",
+                    "bg-light border border-light-subtle mt-4 px-3 py-3"}});
+        output_html.unsafe(configuration.at("hero").to_string());
+        output_html.close("div").close("div");
+      }
+
+      sourcemeta::registry::html_file_manager(html, meta);
+      sourcemeta::registry::html_end(output_html);
+      html << "\n";
+      html.close();
+    } else {
+      const std::filesystem::path relative_path{
+          entry.path().parent_path().string().substr(
+              std::min(base.string().size() + 1,
+                       entry.path().parent_path().string().size()))};
+      const auto page_relative_path{std::string{'/'} + relative_path.string()};
+      // TODO: Use RegistryOutput to write files
+      std::ofstream html{destination};
+      assert(!html.fail());
+      sourcemeta::registry::html::SafeOutput output_html{html};
+      sourcemeta::registry::html_start(
+          output_html, configuration,
+          meta.defines("title") ? meta.at("title").to_string()
+                                : page_relative_path,
+          meta.defines("description")
+              ? meta.at("description").to_string()
+              : ("Schemas located at " + page_relative_path),
+          page_relative_path);
+      sourcemeta::registry::html_file_manager(html, meta);
+      sourcemeta::registry::html_end(output_html);
+      html << "\n";
+      html.close();
+    }
+  }
+
+  // TODO: Use RegistryOutput to write files
+  std::ofstream stream_not_found{base / "404.html"};
+  assert(!stream_not_found.fail());
+  sourcemeta::registry::html::SafeOutput output_html{stream_not_found};
+  sourcemeta::registry::html_start(output_html, configuration, "Not Found",
+                                   "What you are looking for is not here",
+                                   std::nullopt);
+  output_html.open("div", {{"class", "container-fluid p-4"}})
+      .open("h2", {{"class", "fw-bold"}})
+      .text("Oops! What you are looking for is not here")
+      .close("h2")
+      .open("p", {{"class", "lead"}})
+      .text("Are you sure the link you got is correct?")
+      .close("p")
+      .open("a", {{"href", "/"}})
+      .text("Get back to the home page")
+      .close("a")
+      .close("div")
+      .close("div");
+  sourcemeta::registry::html_end(output_html);
+  stream_not_found << "\n";
+  stream_not_found.close();
+}
 
 #endif

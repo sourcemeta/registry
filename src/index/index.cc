@@ -6,7 +6,7 @@
 #include "collection.h"
 #include "configuration.h"
 #include "configure.h"
-#include "html.h"
+#include "explorer.h"
 #include "output.h"
 #include "resolver.h"
 #include "validator.h"
@@ -250,49 +250,6 @@ auto generate_toc(RegistryOutput &output,
   std::cerr << "Saving into: " << index_path.string() << "\n";
   output.write_generated_json(
       std::filesystem::relative(directory, base) / "index.json", meta);
-
-  if (directory == base) {
-    std::cerr << "Generating HTML index page\n";
-    std::ofstream html{index_path.parent_path() / "index.html"};
-    assert(!html.fail());
-    sourcemeta::registry::html::SafeOutput output_html{html};
-    sourcemeta::registry::html_start(
-        output_html, configuration,
-        configuration.at("title").to_string() + " Schemas",
-        configuration.at("description").to_string(), "");
-
-    if (configuration.defines("hero")) {
-      output_html.open("div", {{"class", "container-fluid px-4"}})
-          .open("div",
-                {{"class",
-                  "bg-light border border-light-subtle mt-4 px-3 py-3"}});
-      output_html.unsafe(configuration.at("hero").to_string());
-      output_html.close("div").close("div");
-    }
-
-    sourcemeta::registry::html_file_manager(html, meta);
-    sourcemeta::registry::html_end(output_html);
-    html << "\n";
-    html.close();
-  } else {
-    std::cerr << "Generating HTML directory page\n";
-    const auto page_relative_path{std::string{'/'} + relative_path.string()};
-    std::ofstream html{index_path.parent_path() / "index.html"};
-    assert(!html.fail());
-    sourcemeta::registry::html::SafeOutput output_html{html};
-    sourcemeta::registry::html_start(
-        output_html, configuration,
-        meta.defines("title") ? meta.at("title").to_string()
-                              : page_relative_path,
-        meta.defines("description")
-            ? meta.at("description").to_string()
-            : ("Schemas located at " + page_relative_path),
-        page_relative_path);
-    sourcemeta::registry::html_file_manager(html, meta);
-    sourcemeta::registry::html_end(output_html);
-    html << "\n";
-    html.close();
-  }
 }
 
 static auto index_main(const std::string_view &program,
@@ -373,6 +330,11 @@ static auto index_main(const std::string_view &program,
     }
   }
 
+  // TODO: We could parallelize this loop
+  // TODO: Instead of directly parallelizing here, construct a class
+  // that abstracts away the idea of processing input and storing output
+  // in the output directory. Then we instantiate that as "adapters" for
+  // multiple purposes, like pre-processing schemas or generating HTML files
   for (const auto &schema : resolver) {
     std::cerr << "-- Processing schema: " << schema.first << "\n";
     sourcemeta::core::URI schema_uri{schema.first};
@@ -389,9 +351,9 @@ static auto index_main(const std::string_view &program,
     validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
                                 subresult.value(),
                                 "The schema does not adhere to its metaschema");
+    output.write_schema_single(schema_uri.recompose(), subresult.value());
 
     // Storing artefacts
-    output.write_schema_single(schema_uri.recompose(), subresult.value());
     std::cerr << "Bundling: " << schema.first << "\n";
     auto bundled_schema{sourcemeta::core::bundle(
         subresult.value(), sourcemeta::core::schema_official_walker, resolver)};
@@ -427,28 +389,12 @@ static auto index_main(const std::string_view &program,
   output.write_generated_jsonl("search.jsonl", search_index.cbegin(),
                                search_index.cend());
 
-  // Not found page
-  std::ofstream stream_not_found{output_path / "generated" / "404.html"};
-  assert(!stream_not_found.fail());
-  sourcemeta::registry::html::SafeOutput output_html{stream_not_found};
-  sourcemeta::registry::html_start(
-      output_html, configuration.get(), "Not Found",
-      "What you are looking for is not here", std::nullopt);
-  output_html.open("div", {{"class", "container-fluid p-4"}})
-      .open("h2", {{"class", "fw-bold"}})
-      .text("Oops! What you are looking for is not here")
-      .close("h2")
-      .open("p", {{"class", "lead"}})
-      .text("Are you sure the link you got is correct?")
-      .close("p")
-      .open("a", {{"href", "/"}})
-      .text("Get back to the home page")
-      .close("a")
-      .close("div")
-      .close("div");
-  sourcemeta::registry::html_end(output_html);
-  stream_not_found << "\n";
-  stream_not_found.close();
+  registry_explorer_generate(
+      configuration.get(),
+      output.absolute_path(RegistryOutput::Category::Generated),
+      [](const auto &path) {
+        std::cerr << "Generating HTML: " << path.string() << "\n";
+      });
 
   return EXIT_SUCCESS;
 }

@@ -18,6 +18,11 @@ public:
   RegistryOutput(RegistryOutput &&) = delete;
   RegistryOutput &operator=(RegistryOutput &&) = delete;
 
+  enum class Category { Schemas, Bundles, Generated, Unidentified };
+
+  auto relative_path(const Category category) const -> std::filesystem::path;
+  auto absolute_path(const Category category) const -> std::filesystem::path;
+
   auto write_configuration(const RegistryConfiguration &configuration) -> void;
   auto write_schema_single(const std::filesystem::path &output,
                            const sourcemeta::core::JSON &schema) const -> void;
@@ -31,9 +36,8 @@ public:
   template <typename Iterator>
   auto write_generated_jsonl(const std::filesystem::path &output,
                              Iterator begin, Iterator end) const -> void {
-    static constexpr auto GENERATED_PREFIX{"generated"};
-    this->internal_write_jsonl(std::filesystem::path{GENERATED_PREFIX} / output,
-                               begin, end);
+    this->internal_write_jsonl(
+        this->relative_path(Category::Generated) / output, begin, end);
   }
 
   auto write_generated_json(const std::filesystem::path &output,
