@@ -1,6 +1,6 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index 
   FOLDER "Registry/Index" 
-  SOURCES index.cc html.h configure.h.in 
+  SOURCES index.cc explorer.h configure.h.in 
     collection.h collection.cc
     validator.h validator.cc
     output.h output.cc

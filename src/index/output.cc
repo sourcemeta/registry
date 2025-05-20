@@ -51,34 +51,52 @@ auto RegistryOutput::write_configuration(
   this->internal_write_json("configuration.json", configuration.summary());
 }
 
+auto RegistryOutput::relative_path(const Category category) const
+    -> std::filesystem::path {
+  switch (category) {
+    case Category::Schemas:
+      return "schemas";
+    case Category::Bundles:
+      return "bundles";
+    case Category::Generated:
+      return "generated";
+    case Category::Unidentified:
+      return "unidentified";
+    default:
+      assert(false);
+      return "";
+  }
+}
+
+auto RegistryOutput::absolute_path(const Category category) const
+    -> std::filesystem::path {
+  return this->resolve(this->relative_path(category));
+}
+
 auto RegistryOutput::write_schema_single(
     const std::filesystem::path &output,
     const sourcemeta::core::JSON &schema) const -> void {
-  static constexpr auto SCHEMAS_PREFIX{"schemas"};
   this->internal_write_jsonschema(
-      std::filesystem::path{SCHEMAS_PREFIX} / output, schema);
+      this->relative_path(Category::Schemas) / output, schema);
 }
 
 auto RegistryOutput::write_schema_bundle(
     const std::filesystem::path &output,
     const sourcemeta::core::JSON &schema) const -> void {
-  static constexpr auto BUNDLES_PREFIX{"bundles"};
   this->internal_write_jsonschema(
-      std::filesystem::path{BUNDLES_PREFIX} / output, schema);
+      this->relative_path(Category::Bundles) / output, schema);
 }
 
 auto RegistryOutput::write_schema_bundle_unidentified(
     const std::filesystem::path &output,
     const sourcemeta::core::JSON &schema) const -> void {
-  static constexpr auto UNIDENTIFIED_PREFIX{"unidentified"};
   this->internal_write_jsonschema(
-      std::filesystem::path{UNIDENTIFIED_PREFIX} / output, schema);
+      this->relative_path(Category::Unidentified) / output, schema);
 }
 
 auto RegistryOutput::write_generated_json(
     const std::filesystem::path &output,
     const sourcemeta::core::JSON &document) const -> void {
-  static constexpr auto GENERATED_PREFIX{"generated"};
-  this->internal_write_json(std::filesystem::path{GENERATED_PREFIX} / output,
+  this->internal_write_json(this->relative_path(Category::Generated) / output,
                             document);
 }
