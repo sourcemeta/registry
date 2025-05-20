@@ -19,6 +19,7 @@ public:
   RegistryConfiguration &operator=(RegistryConfiguration &&) = delete;
 
   auto path() const noexcept -> const std::filesystem::path &;
+  auto base() const noexcept -> const std::filesystem::path &;
   auto path(const std::filesystem::path &other) const -> std::filesystem::path;
   auto get() const noexcept -> const sourcemeta::core::JSON &;
   auto schema() const noexcept -> const sourcemeta::core::JSON &;

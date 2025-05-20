@@ -48,6 +48,7 @@ private:
                                  const sourcemeta::core::JSON &schema) const
       -> void;
 
+  // TODO: Move this up as a writing mechanism of sourcemeta::core::JSONL
   template <typename Iterator>
   auto internal_write_jsonl(const std::filesystem::path &output, Iterator begin,
                             Iterator end) const -> void {

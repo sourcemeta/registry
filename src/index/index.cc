@@ -3,10 +3,12 @@
 #include <sourcemeta/core/uri.h>
 #include <sourcemeta/core/yaml.h>
 
+#include "collection.h"
 #include "configuration.h"
 #include "configure.h"
 #include "html.h"
 #include "output.h"
+#include "resolver.h"
 #include "validator.h"
 
 #include <algorithm>   // std::sort
@@ -28,66 +30,9 @@
 #include <utility>     // std::move
 #include <vector>      // std::vector
 
-template <typename T>
-static auto write_lower_except_trailing(T &stream, const std::string &input,
-                                        const char trailing) -> void {
-  for (auto iterator = input.cbegin(); iterator != input.cend(); ++iterator) {
-    if (std::next(iterator) != input.cend() || *iterator != trailing) {
-      stream << static_cast<char>(std::tolower(*iterator));
-    }
-  }
-}
-
-static auto is_yaml(const std::filesystem::path &path) -> bool {
-  return path.extension() == ".yaml" || path.extension() == ".yml";
-}
-
 static auto is_schema_file(const std::filesystem::path &path) -> bool {
-  return is_yaml(path) || path.extension() == ".json";
-}
-
-static auto schema_reader(const std::filesystem::path &path)
-    -> sourcemeta::core::JSON {
-  return is_yaml(path) ? sourcemeta::core::read_yaml(path)
-                       : sourcemeta::core::read_json(path);
-}
-
-static auto url_join(const std::string &first, const std::string &second,
-                     const std::string &third, const std::string &extension)
-    -> std::string {
-  std::ostringstream result;
-  write_lower_except_trailing(result, first, '/');
-  result << '/';
-  write_lower_except_trailing(result, second, '/');
-  result << '/';
-  write_lower_except_trailing(result, third, '.');
-  if (!result.str().ends_with(extension)) {
-    std::filesystem::path current{result.str()};
-    if (is_yaml(current)) {
-      current.replace_extension(std::string{"."} + extension);
-      return current.string();
-    }
-
-    result << '.';
-    result << extension;
-  }
-
-  return result.str();
-}
-
-static auto
-wrap_resolver(const sourcemeta::core::SchemaFlatFileResolver &resolver)
-    -> sourcemeta::core::SchemaResolver {
-  return [&resolver](const std::string_view identifier) {
-    const auto result{resolver(identifier)};
-    // Try with a `.json` extension as a fallback, as we do add this
-    // extension when a schema doesn't have it by default
-    if (!result.has_value() && !identifier.starts_with(".json")) {
-      return resolver(std::string{identifier} + ".json");
-    }
-
-    return result;
-  };
+  return path.extension() == ".yaml" || path.extension() == ".yml" ||
+         path.extension() == ".json";
 }
 
 // TODO: Elevate to Core as a JSON string method
@@ -374,8 +319,7 @@ static auto index_main(const std::string_view &program,
   std::cerr << "Writing output to: " << output_path.string() << "\n";
 
   // Read and validate the configuration file
-  sourcemeta::core::SchemaFlatFileResolver resolver{
-      sourcemeta::core::schema_official_resolver};
+  RegistryResolver resolver;
   RegistryValidator validator{resolver};
   const auto configuration_path{std::filesystem::canonical(arguments[0])};
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
@@ -384,41 +328,29 @@ static auto index_main(const std::string_view &program,
                               "Invalid configuration");
   output.write_configuration(configuration);
 
-  std::size_t count{0};
-
   // Populate flat file resolver
   for (const auto &schema_entry :
        configuration.get().at("schemas").as_object()) {
-    const auto collection_path{
-        configuration.path(schema_entry.second.at("path").to_string())};
-    const auto collection_base_uri{
-        sourcemeta::core::URI{schema_entry.second.at("base").to_string()}
-            .canonicalize()};
-    const auto collection_base_uri_string{collection_base_uri.recompose()};
-    std::cerr << "Discovering schemas at: " << collection_path.string() << "\n";
-    const std::optional<std::string> default_dialect{
-        schema_entry.second.defines("defaultDialect")
-            ? schema_entry.second.at("defaultDialect").to_string()
-            : static_cast<std::optional<std::string>>(std::nullopt)};
-    if (default_dialect.has_value()) {
-      std::cerr << "Default dialect: " << default_dialect.value() << "\n";
-    }
+    const RegistryCollection collection{
+        configuration.base(), schema_entry.first, schema_entry.second};
+    std::cerr << "Discovering schemas at: " << collection.path.string() << "\n";
+    std::cerr << "Default dialect: "
+              << collection.default_dialect.value_or("<NONE>") << "\n";
 
     for (const auto &entry :
-         std::filesystem::recursive_directory_iterator{collection_path}) {
+         std::filesystem::recursive_directory_iterator{collection.path}) {
       if (!entry.is_regular_file() || !is_schema_file(entry.path()) ||
           entry.path().stem().string().starts_with(".")) {
         continue;
       }
 
-      count += 1;
       std::cerr << "-- Found schema: " << entry.path().string() << " (#"
-                << count << ")\n";
+                << resolver.size() + 1 << ")\n";
 
       // See https://github.com/sourcemeta/registry/blob/main/LICENSE
 #if defined(SOURCEMETA_REGISTRY_PRO)
       constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO{1000};
-      if (count > SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO) {
+      if (resolver.size() > SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO) {
         std::cerr << "error: The Pro edition is restricted to "
                   << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO << " schemas\n";
         std::cerr << "Upgrade to the Enterprise edition to waive limits\n";
@@ -427,7 +359,7 @@ static auto index_main(const std::string_view &program,
       }
 #elif defined(SOURCEMETA_REGISTRY_STARTER)
       constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER{100};
-      if (count > SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER) {
+      if (resolver.size() > SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER) {
         std::cerr << "error: The Starter edition is restricted to "
                   << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER << " schemas\n";
         std::cerr << "Buy a Pro or Enterprise license at "
@@ -436,84 +368,11 @@ static auto index_main(const std::string_view &program,
       }
 #endif
 
-      // Calculate a default identifier for the schema through their file system
-      // location, to accomodate for schema collections that purely rely on
-      // paths and never set `$id`.
-      const auto relative_path{
-          std::filesystem::relative(entry.path(), collection_path).string()};
-      assert(!relative_path.starts_with('/'));
-      std::ostringstream default_identifier;
-      default_identifier << collection_base_uri_string;
-      if (!collection_base_uri_string.ends_with('/')) {
-        default_identifier << '/';
-      }
-
-      default_identifier << relative_path;
-
-      const auto &current_identifier{resolver.add(
-          entry.path(), default_dialect, default_identifier.str(),
-          schema_reader,
-          [&schema_entry](sourcemeta::core::JSON &schema,
-                          const sourcemeta::core::URI &base,
-                          const sourcemeta::core::JSON::String &vocabulary,
-                          const sourcemeta::core::JSON::String &keyword,
-                          sourcemeta::core::URI &value) {
-            sourcemeta::core::reference_visitor_relativize(
-                schema, base, vocabulary, keyword, value);
-
-            if (schema_entry.second.defines("rebase") && value.is_absolute()) {
-              for (const auto &rebase :
-                   schema_entry.second.at("rebase").as_array()) {
-                const auto from{
-                    sourcemeta::core::URI{rebase.at("from").to_string()}
-                        .canonicalize()};
-                auto value_copy = value;
-                value_copy.relative_to(from);
-                if (value_copy.is_relative()) {
-                  value.rebase(
-                      from, sourcemeta::core::URI{rebase.at("to").to_string()}
-                                .canonicalize());
-                  schema.assign(keyword,
-                                sourcemeta::core::JSON{value.recompose()});
-                }
-              }
-            }
-          })};
-
-      auto identifier_uri{
-          sourcemeta::core::URI{current_identifier == collection_base_uri_string
-                                    ? default_identifier.str()
-                                    : current_identifier}
-              .canonicalize()};
-      std::cerr << identifier_uri.recompose();
-      const auto current{identifier_uri.recompose()};
-      identifier_uri.relative_to(collection_base_uri);
-      if (identifier_uri.is_absolute()) {
-        std::cerr << "\nerror: Cannot resolve the schema identifier ("
-                  << current
-                  << ") against "
-                     "the collection base ("
-                  << collection_base_uri_string << ")\n";
-        return EXIT_FAILURE;
-      }
-
-      assert(!identifier_uri.recompose().empty());
-      const auto new_identifier{
-          url_join(configuration.url().recompose(), schema_entry.first,
-                   identifier_uri.recompose(),
-                   // We want to guarantee identifiers end with a JSON
-                   // extension, as we want to use the non-extension URI to
-                   // potentially metadata about schemas, etc
-                   "json")};
-      std::cerr << " => " << new_identifier << "\n";
-      // Otherwise we have things like "../" that should not be there
-      assert(new_identifier.find("..") == std::string::npos);
-      resolver.reidentify(current_identifier, new_identifier);
+      const auto result{resolver.add(configuration, collection, entry.path())};
+      std::cerr << result.first << " => " << result.second << "\n";
     }
   }
 
-  // TODO: Why do we need this?
-  const auto wrapped_resolver{wrap_resolver(resolver)};
   for (const auto &schema : resolver) {
     std::cerr << "-- Processing schema: " << schema.first << "\n";
     sourcemeta::core::URI schema_uri{schema.first};
@@ -524,7 +383,7 @@ static auto index_main(const std::string_view &program,
     assert(subresult.has_value());
     const auto dialect_identifier{sourcemeta::core::dialect(subresult.value())};
     assert(dialect_identifier.has_value());
-    const auto metaschema{wrapped_resolver(dialect_identifier.value())};
+    const auto metaschema{resolver(dialect_identifier.value())};
     assert(metaschema.has_value());
     std::cerr << "Validating against its metaschema: " << schema.first << "\n";
     validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
@@ -535,13 +394,11 @@ static auto index_main(const std::string_view &program,
     output.write_schema_single(schema_uri.recompose(), subresult.value());
     std::cerr << "Bundling: " << schema.first << "\n";
     auto bundled_schema{sourcemeta::core::bundle(
-        subresult.value(), sourcemeta::core::schema_official_walker,
-        wrapped_resolver)};
+        subresult.value(), sourcemeta::core::schema_official_walker, resolver)};
     output.write_schema_bundle(schema_uri.recompose(), bundled_schema);
     std::cerr << "Bundling without identifiers: " << schema.first << "\n";
-    sourcemeta::core::unidentify(bundled_schema,
-                                 sourcemeta::core::schema_official_walker,
-                                 wrapped_resolver);
+    sourcemeta::core::unidentify(
+        bundled_schema, sourcemeta::core::schema_official_walker, resolver);
     output.write_schema_bundle_unidentified(schema_uri.recompose(),
                                             bundled_schema);
   }
@@ -549,15 +406,15 @@ static auto index_main(const std::string_view &program,
   std::cerr << "-- Indexing directory: " << output_path.string() << "\n";
   const auto base{std::filesystem::canonical(output_path / "schemas")};
   std::vector<sourcemeta::core::JSON> search_index;
-  generate_toc(output, wrapped_resolver, configuration.url(),
-               configuration.get(), base, base, search_index);
+  generate_toc(output, resolver, configuration.url(), configuration.get(), base,
+               base, search_index);
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{output_path / "schemas"}) {
     if (entry.is_directory()) {
       std::cerr << "-- Processing: " << entry.path().string() << "\n";
-      generate_toc(output, wrapped_resolver, configuration.url(),
-                   configuration.get(), base,
-                   std::filesystem::canonical(entry.path()), search_index);
+      generate_toc(output, resolver, configuration.url(), configuration.get(),
+                   base, std::filesystem::canonical(entry.path()),
+                   search_index);
     }
   }
 
@@ -604,6 +461,10 @@ auto main(int argc, char *argv[]) noexcept -> int {
     return index_main(program, arguments);
   } catch (const RegistryValidatorError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
+    return EXIT_FAILURE;
+  } catch (const RegistryResolverOutsideBaseError &error) {
+    std::cerr << "error: " << error.what() << "\n  at " << error.uri()
+              << "\n  with base " << error.base() << "\n";
     return EXIT_FAILURE;
   } catch (const sourcemeta::core::SchemaResolutionError &error) {
     std::cerr << "error: " << error.what() << "\n  at " << error.id() << "\n";
