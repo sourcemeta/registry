@@ -19,9 +19,14 @@ auto RegistryConfiguration::path() const noexcept
   return this->path_;
 }
 
+auto RegistryConfiguration::base() const noexcept
+    -> const std::filesystem::path & {
+  return this->base_;
+}
+
 auto RegistryConfiguration::path(const std::filesystem::path &other) const
     -> std::filesystem::path {
-  return std::filesystem::canonical(this->base_ / other);
+  return std::filesystem::canonical(this->base() / other);
 }
 
 auto RegistryConfiguration::get() const noexcept

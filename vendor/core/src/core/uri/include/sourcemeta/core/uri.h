@@ -400,6 +400,12 @@ public:
   /// colon. See https://tools.ietf.org/html/rfc3986#section-3.2.1
   [[nodiscard]] auto userinfo() const -> std::optional<std::string_view>;
 
+  /// To support equality of URIs
+  auto operator==(const URI &other) const noexcept -> bool;
+
+  /// To support ordering of URIs
+  auto operator<(const URI &other) const noexcept -> bool;
+
 private:
   bool parsed = false;
   auto parse() -> void;
@@ -410,9 +416,6 @@ private:
 #if defined(_MSC_VER)
 #pragma warning(disable : 4251)
 #endif
-  // We need to keep the string as the URI structure just
-  // points to fragments of it.
-  // We keep this as const as this class is immutable
   std::string data;
 
   std::optional<std::string> path_;

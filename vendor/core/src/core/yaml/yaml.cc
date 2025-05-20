@@ -1,3 +1,4 @@
+#include <sourcemeta/core/json_error.h>
 #include <sourcemeta/core/yaml.h>
 
 #include <sstream>     // std::ostringstream, std::istringstream

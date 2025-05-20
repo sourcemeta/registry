@@ -36,9 +36,11 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/configuration.json
 Discovering schemas at: $(realpath "$TMP")/schemas
+Default dialect: <NONE>
 -- Found schema: $(realpath "$TMP")/schemas/test.json (#1)
-https://example.com/
-error: Cannot resolve the schema identifier (https://example.com/) against the collection base (https://example.com)
+error: The schema identifier is not relative to the corresponding base
+  at https://example.com/
+  with base https://example.com
 EOF
 
 diff "$TMP/output.txt" "$TMP/expected.txt"

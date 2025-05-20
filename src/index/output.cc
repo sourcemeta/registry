@@ -41,6 +41,8 @@ auto RegistryOutput::internal_write_jsonschema(
 auto RegistryOutput::resolve(const std::filesystem::path &path) const
     -> std::filesystem::path {
   assert(path.is_relative());
+  // TODO: We need to have a "safe" path concat function that does not allow
+  // the path to escape the parent. Make it part of Core
   return this->path_ / path;
 }
 

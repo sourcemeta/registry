@@ -4,6 +4,7 @@
 #include "grammar.h"
 
 #include <sourcemeta/core/json.h>
+#include <sourcemeta/core/json_error.h>
 
 #include <cassert>    // assert
 #include <cctype>     // std::isxdigit

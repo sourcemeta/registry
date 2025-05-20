@@ -1,3 +1,4 @@
+#include <sourcemeta/core/json_error.h>
 #include <sourcemeta/core/jsonl_iterator.h>
 
 #include "grammar.h"
