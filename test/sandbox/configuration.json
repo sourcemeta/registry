@@ -49,6 +49,10 @@
     "hyper": {
       "base": "https://example.com/hyper",
       "path": "./schemas/hyper"
+    },
+    "same": {
+      "base": "http://localhost:8000/same",
+      "path": "./schemas/same"
     }
   }
 }
