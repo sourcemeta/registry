@@ -142,7 +142,9 @@ auto RegistryResolver::add(const RegistryConfiguration &configuration,
 
   // Otherwise we have things like "../" that should not be there
   assert(new_identifier.find("..") == std::string::npos);
-  this->fallback_.reidentify(current_identifier, new_identifier);
+  if (current_identifier != new_identifier) {
+    this->fallback_.reidentify(current_identifier, new_identifier);
+  }
   this->count_ += 1;
   return {std::move(current), std::move(new_identifier)};
 }

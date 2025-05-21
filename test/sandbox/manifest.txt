@@ -26,6 +26,8 @@
 ./bundles/example/v2.0/schema.json
 ./bundles/hyper
 ./bundles/hyper/2020-12.json
+./bundles/same
+./bundles/same/schema.json
 ./configuration.json
 ./generated
 ./generated/404.html
@@ -52,6 +54,9 @@
 ./generated/hyper/index.json
 ./generated/index.html
 ./generated/index.json
+./generated/same
+./generated/same/index.html
+./generated/same/index.json
 ./generated/search.jsonl
 ./schemas
 ./schemas/doc
@@ -81,6 +86,8 @@
 ./schemas/example/v2.0/schema.json
 ./schemas/hyper
 ./schemas/hyper/2020-12.json
+./schemas/same
+./schemas/same/schema.json
 ./unidentified
 ./unidentified/doc
 ./unidentified/doc/string-1.json
@@ -109,3 +116,5 @@
 ./unidentified/example/v2.0/schema.json
 ./unidentified/hyper
 ./unidentified/hyper/2020-12.json
+./unidentified/same
+./unidentified/same/schema.json
