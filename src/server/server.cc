@@ -324,8 +324,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
 
   try {
     if (argc < 2) {
-      std::cout << "Usage: " << argv[0]
-                << " <configuration.json> <path/to/output/directory>\n";
+      std::cout << "Usage: " << argv[0] << " <path/to/output/directory>\n";
       return EXIT_FAILURE;
     }
 
