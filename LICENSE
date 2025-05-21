@@ -9,8 +9,11 @@ non-transferable, and revocable License to use the Sourcemeta Registry
 ("Software") under the following editions:
 
 - Starter (Free): Limited to 100 schemas per deployed instance of the Software.
-- Pro (Commercial): Limited to 1000 schemas per deployed instance of the Software.
-- Enterprise (Commercial): No usage limits.
+- Pro (Commercial): Limited to 1000 schemas per deployed instance of the
+  Software. Includes premium support.
+- Enterprise (Commercial): No usage limits. Includes premium support. Includes
+  commercial access to the Software's underlying dual-licensed code libraries
+  maintained by Licensor under the same commercial terms.
 
 Each License is separately granted to a single Entity, where Entity refers to a
 single legal or natural person, including a company, nonprofit, and government
@@ -20,8 +23,8 @@ it is an Entity sanctioned by the Licensor jurisdiction.
 
 2. Usage & Modification Rights
 
-- The Licensee must not modify, disable, or circumvent schema limits imposed by
-  the Software or undermine the intended enforcement of Schema limits.
+- The Licensee must not modify, disable, or circumvent any limits imposed by
+  the Software or undermine the intended enforcement of any imposed limits.
 
 - The Licensee must not resell, sublicense, or provide the Software in any way
   that directly competes with Licensor or as part of a service that provides
@@ -30,12 +33,12 @@ it is an Entity sanctioned by the Licensor jurisdiction.
   direct control of an Entity other than the Licensee's.
 
 - If Licensee has a commercial License, Licensee may modify the Software as
-  long as those modifications do not modify, disable, or circumvent the Schema
-  limits of any edition, directly or indirectly.
+  long as those modifications do not modify, disable, or circumvent the limits
+  of any edition, directly or indirectly.
 
 - If Licensee distributes commercial editions of the Software to another Entity
   for self-hosting purposes, Licensee must obtain a new paid License per Entity
-  it distributes to
+  it distributes to.
 
 Licensee is excused for unknowingly breaking these terms if Licensee takes all
 practical steps to comply within 30 days of learning that the License terms
@@ -51,9 +54,9 @@ refundable within 30 days of purchase. The Licensee is responsible for all
 taxes, withholdings, duties and levies arising from the order.
 
 Licensor reserves the right to audit the Licensee's compliance with this
-License, including, but not limited to requesting schema usage reports and
-software logs, and investigating potential circumvention attempts. Licensee
-must provide proof of compliance within 14 days of an audit request.
+License, including, but not limited to requesting usage reports and software
+logs, and investigating potential circumvention attempts. Licensee must provide
+proof of compliance within 14 days of an audit request.
 
 Licensor reserves the right to amend this License at any time. Any
 modifications will apply at the time of renewal and will not affect existing
@@ -65,9 +68,32 @@ For subscription-based Licenses:
 
 - The License is valid only while the subscription is active.
 - Upon expiration or termination of the subscription, Licensee must cease all
-  use of the Software within 30 days or owe renewal License fees to Licensor.
+  use of the Software other than permitted by its free or open source tiers (if
+  available) within 30 days or owe renewal License fees to Licensor.
 
-5. External Contributions & Intellectual Property (IP)
+5. Intellectual Property Rights
+
+All intellectual property rights in the Software remain with Licensor. No sale
+or transfer of intellectual property rights is implied.
+
+6. Premium Support
+
+Licensee is entitled to receive premium support services from Licensor if its
+edition includes it. These services include:
+
+- Assistance with any use of the Software.
+- Priority handling of bug reports that are relevant to Licensee.
+- Special consideration of feature requests.
+- Advise on usage patterns, architecture, and integration.
+- Any other reasonable efforts within the scope of helping the Licensee succeed
+  with the Software.
+
+Support is provided during Licensor's business hours on weekdays and is
+subject to availability. No specific response times, service-level agreements
+(SLAs), or resolutions are guaranteed, but Licensor will make best efforts
+to respond and assist in a timely, professional, and helpful manner.
+
+7. External Contributions
 
 Licensee may submit source code contributions to the Software.
 
@@ -77,12 +103,14 @@ Licensee may submit source code contributions to the Software.
   contribution and accept full liability for any copyright or patent
   infringement.
 
-6. Limitation of Liability
+8. Limitation of Liability
 
 The Software is provided "as is", without warranties. Licensor is not liable
-for any damages arising from its use under any kind of legal claim.
+for any damages arising from its use under any kind of legal claim. Licensee
+indemnifies Licensor and its affiliates against claims arising from Licensee's
+use.
 
-7. Governing Law & Jurisdiction
+9. Governing Law & Jurisdiction
 
 This License is governed by the laws of the jurisdiction of Licensor. Any
 disputes shall be resolved in such jurisdiction.
