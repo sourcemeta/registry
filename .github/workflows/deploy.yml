@@ -59,6 +59,7 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
       - run: gh config set prompt disabled
         if: github.ref_type == 'tag'
         env:
