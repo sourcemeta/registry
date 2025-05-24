@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <vector>
+
 #include <sourcemeta/registry/generator.h>
 
 #define RESOLVER_INIT(name)                                                    \
@@ -8,24 +10,169 @@
       CONFIGURATION_PATH,                                                      \
       sourcemeta::core::read_json(CONFIGURATION_SCHEMA_PATH)};
 
-#define RESOLVER_ADD(resolver, collection_name, relative_path,                 \
-                     expected_current_uri, expected_final_uri,                 \
-                     expected_schema)                                          \
+#define RESOLVER_COLLECTION_INIT(name, collection_name)                        \
+  const sourcemeta::registry::Collection name{                                 \
+      configuration.base(), (collection_name),                                 \
+      configuration.get().at("schemas").at(collection_name)};
+
+#define RESOLVER_EXPECT(resolver, expected_uri, expected_schema)               \
   {                                                                            \
-    const sourcemeta::registry::Collection collection{                         \
-        configuration.base(), (collection_name),                               \
-        configuration.get().at("schemas").at(collection_name)};                \
-    const auto result{(resolver).add(configuration, collection,                \
-                                     std::filesystem::path{SCHEMAS_PATH} /     \
-                                         (relative_path))};                    \
-    EXPECT_EQ(result.first, (expected_current_uri));                           \
-    EXPECT_EQ(result.second, (expected_final_uri));                            \
-    const auto schema{(resolver)(result.second)};                              \
+    const auto schema{(resolver)(expected_uri)};                               \
     EXPECT_TRUE(schema.has_value());                                           \
     EXPECT_EQ(schema.value(), sourcemeta::core::parse_json(expected_schema));  \
   }
 
-TEST(Generator_Resolver, single_schema_anonymous_with_default_id) {
+#define RESOLVER_IMPORT(resolver, collection, relative_path)                   \
+  (resolver).add(configuration, collection,                                    \
+                 std::filesystem::path{SCHEMAS_PATH} / (relative_path))
+
+#define RESOLVER_ADD(resolver, collection_name, relative_path,                 \
+                     expected_current_uri, expected_final_uri,                 \
+                     expected_schema)                                          \
+  {                                                                            \
+    RESOLVER_COLLECTION_INIT((collection), (collection_name));                 \
+    const auto result{RESOLVER_IMPORT(resolver, collection, (relative_path))}; \
+    EXPECT_EQ(result.first, (expected_current_uri));                           \
+    EXPECT_EQ(result.second, (expected_final_uri));                            \
+    RESOLVER_EXPECT(resolver, (result.second), (expected_schema));             \
+  }
+
+TEST(Generator_Resolver, idempotent) {
+  RESOLVER_INIT(resolver);
+
+  RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
+               "https://example.com/schemas/2020-12-with-id",
+               "http://localhost:8000/example/2020-12-with-id.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id.json"
+  })JSON");
+
+  RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
+               "https://example.com/schemas/2020-12-with-id",
+               "http://localhost:8000/example/2020-12-with-id.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id.json"
+  })JSON");
+
+  RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
+               "https://example.com/schemas/2020-12-with-id",
+               "http://localhost:8000/example/2020-12-with-id.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id.json"
+  })JSON");
+}
+
+TEST(Generator_Resolver, iterators) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
+               "https://example.com/schemas/2020-12-with-id",
+               "http://localhost:8000/example/2020-12-with-id.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id.json"
+  })JSON");
+
+  std::vector<std::string> identifiers;
+  for (const auto &entry : resolver) {
+    identifiers.push_back(entry.first);
+  }
+
+  EXPECT_EQ(identifiers.size(), 1);
+  EXPECT_EQ(identifiers.at(0),
+            "http://localhost:8000/example/2020-12-with-id.json");
+}
+
+TEST(Generator_Resolver, duplicate_id) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-with-id-json.json",
+               "https://example.com/schemas/2020-12-with-id-json.json",
+               "http://localhost:8000/example/2020-12-with-id-json.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id-json.json"
+  })JSON");
+
+  RESOLVER_COLLECTION_INIT(collection, "example");
+  EXPECT_THROW(RESOLVER_IMPORT(resolver, collection,
+                               "2020-12-with-id-json-duplicate.json"),
+               sourcemeta::core::SchemaError);
+}
+
+TEST(Generator_Resolver, case_insensitive_lookup) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
+               "https://example.com/schemas/2020-12-with-id",
+               "http://localhost:8000/example/2020-12-with-id.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id.json"
+  })JSON");
+
+  RESOLVER_EXPECT(resolver,
+                  "http://localhost:8000/example/2020-12-with-id.json", R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id.json"
+  })JSON");
+
+  RESOLVER_EXPECT(resolver,
+                  "HTTP://LOCALHOST:8000/EXAMPLE/2020-12-WITH-ID.JSON", R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id.json"
+  })JSON");
+
+  RESOLVER_EXPECT(resolver,
+                  "hTtP://lOcaLhOST:8000/Example/2020-12-WIth-id.jsoN", R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id.json"
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_official_2020_12_meta) {
+  RESOLVER_INIT(resolver);
+  EXPECT_TRUE(
+      resolver("https://json-schema.org/draft/2020-12/schema").has_value());
+  EXPECT_EQ(resolver("https://json-schema.org/draft/2020-12/schema"),
+            sourcemeta::core::schema_official_resolver(
+                "https://json-schema.org/draft/2020-12/schema"));
+}
+
+TEST(Generator_Resolver, example_2020_12_with_id) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
+               "https://example.com/schemas/2020-12-with-id",
+               "http://localhost:8000/example/2020-12-with-id.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id.json"
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_2020_12_with_id_json) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-with-id-json.json",
+               "https://example.com/schemas/2020-12-with-id-json.json",
+               "http://localhost:8000/example/2020-12-with-id-json.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-with-id-json.json"
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_only_id) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "only-id.json",
+               "https://example.com/schemas/only-id.json",
+               "http://localhost:8000/example/only-id.json",
+               R"JSON({
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://localhost:8000/example/only-id.json"
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_2020_12_anonymous) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-anonymous.json",
                "https://example.com/schemas/2020-12-anonymous.json",
@@ -33,5 +180,143 @@ TEST(Generator_Resolver, single_schema_anonymous_with_default_id) {
                R"JSON({
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "http://localhost:8000/example/2020-12-anonymous.json"
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_2020_12_embedded_resource) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-embedded-resource.json",
+               "https://example.com/schemas/2020-12-embedded-resource.json",
+               "http://localhost:8000/example/2020-12-embedded-resource.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-embedded-resource.json",
+    "$defs": {
+      "string": {
+        "$id": "string",
+        "type": "string"
+      }
+    }
+  })JSON");
+
+  // The resolver does not expose embedded resources
+  EXPECT_FALSE(resolver("http://localhost:8000/example/string").has_value());
+  EXPECT_FALSE(
+      resolver("http://localhost:8000/example/string.json").has_value());
+}
+
+TEST(Generator_Resolver, example_2020_12_absolute_ref) {
+  RESOLVER_INIT(resolver);
+
+  // We expect absolute references to be made relative
+  RESOLVER_ADD(resolver, "example", "2020-12-absolute-ref.json",
+               "https://example.com/schemas/2020-12-absolute-ref.json",
+               "http://localhost:8000/example/2020-12-absolute-ref.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-absolute-ref.json",
+    "$ref": "2020-12-id.json"
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_2020_12_id_with_casing) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-id-with-casing.json",
+               "https://example.com/schemas/2020-12-id-with-casing.json",
+               "http://localhost:8000/example/2020-12-id-with-casing.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-id-with-casing.json"
+  })JSON");
+
+  RESOLVER_EXPECT(resolver,
+                  "http://localhost:8000/example/2020-12-iD-WiTh-cASIng.Json",
+                  R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-id-with-casing.json"
+  })JSON");
+
+  RESOLVER_EXPECT(resolver,
+                  "HTTP://LOCALHOST:8000/EXAMPLE/2020-12-ID-WITH-CASING.JSON",
+                  R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-id-with-casing.json"
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_2020_12_ref_needs_rebase) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-ref-needs-rebase.json",
+               "https://example.com/schemas/2020-12-ref-needs-rebase.json",
+               "http://localhost:8000/example/2020-12-ref-needs-rebase.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-ref-needs-rebase.json",
+    "$ref": "/example/2020-12-with-id"
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_2020_12_meta) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-meta.json",
+               "https://example.com/schemas/2020-12-meta.json",
+               "http://localhost:8000/example/2020-12-meta.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-meta.json",
+    "$vocabulary": { 
+      "https://json-schema.org/draft/2020-12/vocab/core": true 
+    }
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_2020_12_meta_schema) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_COLLECTION_INIT(collection, "example");
+  const auto schema_result{
+      RESOLVER_IMPORT(resolver, collection, "2020-12-meta-schema.json")};
+
+  // We can't resolve it yet until we first satisfy the metaschema
+  EXPECT_THROW(resolver(schema_result.second),
+               sourcemeta::core::SchemaResolutionError);
+
+  // Note we add the metaschema AFTER the schema
+  RESOLVER_IMPORT(resolver, collection, "2020-12-meta.json");
+
+  RESOLVER_EXPECT(resolver, schema_result.second, R"JSON({
+    "$schema": "http://localhost:8000/example/2020-12-meta.json",
+    "$id": "http://localhost:8000/example/2020-12-meta-schema.json"
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_2019_09_recursive_ref) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2019-09-recursive-ref.json",
+               "https://example.com/schemas/2019-09-recursive-ref.json",
+               "http://localhost:8000/example/2019-09-recursive-ref.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "http://localhost:8000/example/2019-09-recursive-ref.json",
+    "$recursiveAnchor": true,
+    "additionalProperties": {
+      "$recursiveRef": "#"
+    }
+  })JSON");
+}
+
+TEST(Generator_Resolver, example_draft4_internal_ref) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "draft4-internal-ref.json",
+               "https://example.com/schemas/draft4-internal-ref.json",
+               "http://localhost:8000/example/draft4-internal-ref.json",
+               R"JSON({
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "http://localhost:8000/example/draft4-internal-ref.json",
+    "allOf": [ { "$ref": "#/definitions/foo" } ],
+    "definitions": {
+      "foo": {
+        "type": "string"
+      }
+    }
   })JSON");
 }

@@ -1,5 +1,6 @@
-#include <sourcemeta/core/uri.h>
 #include <uriparser/Uri.h>
+
+#include <sourcemeta/core/uri.h>
 
 #include <cassert>   // assert
 #include <cstdint>   // std::uint32_t

@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "https://example.com/schemas/draft4-internal-ref.json",
+  "allOf": [ { "$ref": "#/definitions/foo" } ],
+  "definitions": {
+    "foo": {
+      "type": "string"
+    }
+  }
+}
