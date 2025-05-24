@@ -1,10 +1,5 @@
 sourcemeta_googletest(NAMESPACE sourcemeta PROJECT registry NAME generator
-  SOURCES
-    generator_resolver_test.cc
-
-    # Stubs
-    configuration.json
-    schemas/2020-12-anonymous.json)
+  SOURCES generator_resolver_test.cc)
 
 target_link_libraries(sourcemeta_registry_generator_unit
   PRIVATE sourcemeta::registry::generator)

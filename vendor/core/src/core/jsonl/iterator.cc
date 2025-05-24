@@ -1,9 +1,12 @@
+#include <sourcemeta/core/json.h>
 #include <sourcemeta/core/json_error.h>
+#include <sourcemeta/core/json_value.h>
 #include <sourcemeta/core/jsonl_iterator.h>
 
 #include "grammar.h"
 
 #include <cassert> // assert
+#include <istream> // std::basic_istream
 
 namespace sourcemeta::core {
 

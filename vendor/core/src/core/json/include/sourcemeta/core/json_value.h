@@ -11,11 +11,11 @@
 
 #include <algorithm>        // std::any_of
 #include <cassert>          // assert
+#include <cstddef>          // std::size_t
 #include <cstdint>          // std::int64_t, std::uint8_t
 #include <functional>       // std::less, std::reference_wrapper, std::function
 #include <initializer_list> // std::initializer_list
 #include <memory>           // std::allocator
-#include <optional>         // std::optional
 #include <set>              // std::set
 #include <sstream>          // std::basic_istringstream
 #include <string>           // std::basic_string, std::char_traits
