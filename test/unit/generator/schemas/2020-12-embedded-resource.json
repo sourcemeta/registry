@@ -1,0 +1,10 @@
+{
+  "$id": "https://example.com/schemas/2020-12-embedded-resource.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "string": {
+      "$id": "string",
+      "type": "string"
+    }
+  }
+}

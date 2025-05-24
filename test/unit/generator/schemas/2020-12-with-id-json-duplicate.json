@@ -1,0 +1,5 @@
+{
+  "$id": "https://example.com/schemas/2020-12-with-id-json.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "string"
+}

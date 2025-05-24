@@ -10,6 +10,7 @@
 
 #include <exception>   // std::exception
 #include <filesystem>  // std::filesystem
+#include <map>         // std::map
 #include <optional>    // std::optional
 #include <string_view> // std::string_view
 #include <utility>     // std::pair
@@ -33,18 +34,28 @@ public:
   auto operator()(std::string_view identifier) const
       -> std::optional<sourcemeta::core::JSON>;
 
+  // TODO: To optimise this class, we can have an additional method to
+  // "materialise" a schema. That means we write it back to an output location
+  // and record that output location in a new map, which is resolved without
+  // runtime transformation.
+  // Then, the callable operator can always prefer the materialised map
   auto add(const Configuration &configuration, const Collection &collection,
            const std::filesystem::path &path)
       -> std::pair<std::string, std::string>;
 
-  auto begin() const -> auto { return this->fallback_.begin(); }
-  auto end() const -> auto { return this->fallback_.end(); }
+  auto begin() const -> auto { return this->schemas.begin(); }
+  auto end() const -> auto { return this->schemas.end(); }
   auto size() const -> auto { return this->count_; }
 
+  struct Entry {
+    std::filesystem::path path;
+    std::optional<std::string> dialect;
+    std::string original_identifier;
+    sourcemeta::core::SchemaVisitorReference reference_visitor;
+  };
+
 private:
-  // TODO: Remove this class from Core and inline it in this class
-  sourcemeta::core::SchemaFlatFileResolver fallback_{
-      sourcemeta::core::schema_official_resolver};
+  std::map<std::string, Entry> schemas;
   std::size_t count_{0};
 };
 

@@ -5,7 +5,9 @@
 #include <sourcemeta/core/uri_export.h>
 #endif
 
+// NOLINTBEGIN(misc-include-cleaner)
 #include <sourcemeta/core/uri_error.h>
+// NOLINTEND(misc-include-cleaner)
 
 #include <cstdint>     // std::uint32_t
 #include <istream>     // std::istream
