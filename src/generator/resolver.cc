@@ -82,15 +82,21 @@ auto Resolver::operator()(std::string_view identifier) const
     -> std::optional<sourcemeta::core::JSON> {
   const std::string string_identifier{to_lowercase(identifier)};
 
-  auto result{this->schemas.find(string_identifier)};
-  if (result == this->schemas.cend() && !identifier.ends_with(".json")) {
+  auto result{this->views.find(string_identifier)};
+  if (result == this->views.cend() && !identifier.ends_with(".json")) {
     // Try with a `.json` extension as a fallback, as we do add this
     // extension when a schema doesn't have it by default
-    result = this->schemas.find(string_identifier + ".json");
+    result = this->views.find(string_identifier + ".json");
   }
 
-  if (result != this->schemas.cend()) {
-    auto schema{internal_schema_reader(result->second.path)};
+  if (result != this->views.cend()) {
+    if (result->second.cache_path.has_value()) {
+      return sourcemeta::core::read_json(result->second.cache_path.value());
+    } else if (!result->second.path.has_value()) {
+      return std::nullopt;
+    }
+
+    auto schema{internal_schema_reader(result->second.path.value())};
     assert(sourcemeta::core::is_schema(schema));
     if (schema.is_object() && result->second.dialect.has_value()) {
       schema.assign("$schema",
@@ -154,10 +160,10 @@ auto Resolver::add(const Configuration &configuration,
     }
   }
 
-  const auto result{this->schemas.emplace(
+  const auto result{this->views.emplace(
       effective_identifier,
       Entry{
-          canonical, current_dialect, effective_identifier,
+          std::nullopt, canonical, current_dialect, effective_identifier,
           // TODO: We should avoid this vector / string copy
           [rebases = collection.rebase](
               sourcemeta::core::JSON &schema, const sourcemeta::core::URI &base,
@@ -221,13 +227,13 @@ auto Resolver::add(const Configuration &configuration,
   // Otherwise we have things like "../" that should not be there
   assert(new_identifier.find("..") == std::string::npos);
   if (to_lowercase(current_identifier) != to_lowercase(new_identifier)) {
-    const auto match{this->schemas.find(to_lowercase(current_identifier))};
-    assert(match != this->schemas.cend());
+    const auto match{this->views.find(to_lowercase(current_identifier))};
+    assert(match != this->views.cend());
 
-    const auto target{this->schemas.find(to_lowercase(new_identifier))};
-    const auto ignore_error{target != this->schemas.cend() &&
+    const auto target{this->views.find(to_lowercase(new_identifier))};
+    const auto ignore_error{target != this->views.cend() &&
                             target->second.path == match->second.path};
-    const auto subresult{this->schemas.insert_or_assign(
+    const auto subresult{this->views.insert_or_assign(
         to_lowercase(new_identifier), std::move(match->second))};
 
     if (!subresult.second && !ignore_error) {
@@ -236,11 +242,23 @@ auto Resolver::add(const Configuration &configuration,
       throw sourcemeta::core::SchemaError(error.str());
     }
 
-    this->schemas.erase(match);
+    this->views.erase(match);
   }
 
   this->count_ += 1;
   return {std::move(current), std::move(new_identifier)};
+}
+
+auto Resolver::materialise(const std::string &uri,
+                           const std::filesystem::path &path) -> void {
+  assert(std::filesystem::exists(path));
+  auto entry{this->views.find(uri)};
+  assert(entry != this->views.cend());
+  assert(!entry->second.cache_path.has_value());
+  entry->second.cache_path = path;
+  entry->second.path = std::nullopt;
+  entry->second.dialect = std::nullopt;
+  entry->second.reference_visitor = nullptr;
 }
 
 } // namespace sourcemeta::registry

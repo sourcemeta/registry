@@ -27,13 +27,15 @@ public:
 
   auto write_configuration(const Configuration &configuration) -> void;
   auto write_schema_single(const std::filesystem::path &output,
-                           const sourcemeta::core::JSON &schema) const -> void;
+                           const sourcemeta::core::JSON &schema) const
+      -> std::filesystem::path;
   auto write_schema_bundle(const std::filesystem::path &output,
-                           const sourcemeta::core::JSON &schema) const -> void;
+                           const sourcemeta::core::JSON &schema) const
+      -> std::filesystem::path;
   auto
   write_schema_bundle_unidentified(const std::filesystem::path &output,
                                    const sourcemeta::core::JSON &schema) const
-      -> void;
+      -> std::filesystem::path;
 
   template <typename Iterator>
   auto write_generated_jsonl(const std::filesystem::path &output,
@@ -52,7 +54,7 @@ private:
       -> void;
   auto internal_write_jsonschema(const std::filesystem::path &output,
                                  const sourcemeta::core::JSON &schema) const
-      -> void;
+      -> std::filesystem::path;
 
   // TODO: Move this up as a writing mechanism of sourcemeta::core::JSONL
   template <typename Iterator>

@@ -8,12 +8,12 @@
 #include <sourcemeta/registry/generator_collection.h>
 #include <sourcemeta/registry/generator_configuration.h>
 
-#include <exception>   // std::exception
-#include <filesystem>  // std::filesystem
-#include <map>         // std::map
-#include <optional>    // std::optional
-#include <string_view> // std::string_view
-#include <utility>     // std::pair
+#include <exception>     // std::exception
+#include <filesystem>    // std::filesystem
+#include <optional>      // std::optional
+#include <string_view>   // std::string_view
+#include <unordered_map> // std::unordered_map
+#include <utility>       // std::pair
 
 namespace sourcemeta::registry {
 
@@ -34,28 +34,28 @@ public:
   auto operator()(std::string_view identifier) const
       -> std::optional<sourcemeta::core::JSON>;
 
-  // TODO: To optimise this class, we can have an additional method to
-  // "materialise" a schema. That means we write it back to an output location
-  // and record that output location in a new map, which is resolved without
-  // runtime transformation.
-  // Then, the callable operator can always prefer the materialised map
   auto add(const Configuration &configuration, const Collection &collection,
            const std::filesystem::path &path)
       -> std::pair<std::string, std::string>;
 
-  auto begin() const -> auto { return this->schemas.begin(); }
-  auto end() const -> auto { return this->schemas.end(); }
+  auto materialise(const std::string &uri, const std::filesystem::path &path)
+      -> void;
+
+  auto begin() const -> auto { return this->views.begin(); }
+  auto end() const -> auto { return this->views.end(); }
   auto size() const -> auto { return this->count_; }
 
   struct Entry {
-    std::filesystem::path path;
+    std::optional<std::filesystem::path> cache_path;
+    std::optional<std::filesystem::path> path;
     std::optional<std::string> dialect;
+    // TODO: Do we really need this member?
     std::string original_identifier;
     sourcemeta::core::SchemaVisitorReference reference_visitor;
   };
 
 private:
-  std::map<std::string, Entry> schemas;
+  std::unordered_map<std::string, Entry> views;
   std::size_t count_{0};
 };
 

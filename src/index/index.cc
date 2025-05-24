@@ -329,11 +329,8 @@ static auto index_main(const std::string_view &program,
     }
   }
 
+  // A first pass to materialise all schemas
   // TODO: We could parallelize this loop
-  // TODO: Instead of directly parallelizing here, construct a class
-  // that abstracts away the idea of processing input and storing output
-  // in the output directory. Then we instantiate that as "adapters" for
-  // multiple purposes, like pre-processing schemas or generating HTML files
   for (const auto &schema : resolver) {
     std::cerr << "-- Processing schema: " << schema.first << "\n";
     sourcemeta::core::URI schema_uri{schema.first};
@@ -350,7 +347,23 @@ static auto index_main(const std::string_view &program,
     validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
                                 subresult.value(),
                                 "The schema does not adhere to its metaschema");
-    output.write_schema_single(schema_uri.recompose(), subresult.value());
+    const auto destination{
+        output.write_schema_single(schema_uri.recompose(), subresult.value())};
+    resolver.materialise(schema.first, destination);
+  }
+
+  // TODO: We could parallelize this loop
+  // TODO: Instead of directly parallelizing here, construct a class
+  // that abstracts away the idea of processing input and storing output
+  // in the output directory. Then we instantiate that as "adapters" for
+  // multiple purposes, like pre-processing schemas or generating HTML files
+  for (const auto &schema : resolver) {
+    const auto subresult{resolver(schema.first)};
+    assert(subresult.has_value());
+
+    // TODO: Can we avoid computing this twice
+    sourcemeta::core::URI schema_uri{schema.first};
+    schema_uri.relative_to(configuration.url());
 
     // Storing artefacts
     std::cerr << "Bundling: " << schema.first << "\n";
