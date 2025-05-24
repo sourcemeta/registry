@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.com/schemas/2019-09-recursive-ref.json",
+  "$recursiveAnchor": true,
+  "additionalProperties": {
+    "$recursiveRef": "#"
+  }
+}
