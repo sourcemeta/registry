@@ -1,29 +1,31 @@
-#ifndef SOURCEMETA_REGISTRY_INDEX_OUTPUT_H_
-#define SOURCEMETA_REGISTRY_INDEX_OUTPUT_H_
+#ifndef SOURCEMETA_REGISTRY_GENERATOR_OUTPUT_H_
+#define SOURCEMETA_REGISTRY_GENERATOR_OUTPUT_H_
 
 #include <sourcemeta/core/json.h>
 
-#include "configuration.h"
+#include <sourcemeta/registry/generator_configuration.h>
 
 #include <filesystem> // std::filesystem
 #include <fstream>    // std::ofstream
 
-class RegistryOutput {
+namespace sourcemeta::registry {
+
+class Output {
 public:
-  RegistryOutput(std::filesystem::path path);
+  Output(std::filesystem::path path);
 
   // Just to prevent mistakes
-  RegistryOutput(const RegistryOutput &) = delete;
-  RegistryOutput &operator=(const RegistryOutput &) = delete;
-  RegistryOutput(RegistryOutput &&) = delete;
-  RegistryOutput &operator=(RegistryOutput &&) = delete;
+  Output(const Output &) = delete;
+  Output &operator=(const Output &) = delete;
+  Output(Output &&) = delete;
+  Output &operator=(Output &&) = delete;
 
   enum class Category { Schemas, Bundles, Generated, Unidentified };
 
   auto relative_path(const Category category) const -> std::filesystem::path;
   auto absolute_path(const Category category) const -> std::filesystem::path;
 
-  auto write_configuration(const RegistryConfiguration &configuration) -> void;
+  auto write_configuration(const Configuration &configuration) -> void;
   auto write_schema_single(const std::filesystem::path &output,
                            const sourcemeta::core::JSON &schema) const -> void;
   auto write_schema_bundle(const std::filesystem::path &output,
@@ -71,5 +73,7 @@ private:
 
   const std::filesystem::path path_;
 };
+
+} // namespace sourcemeta::registry
 
 #endif

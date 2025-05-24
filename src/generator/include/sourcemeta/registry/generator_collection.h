@@ -1,5 +1,5 @@
-#ifndef SOURCEMETA_REGISTRY_INDEX_COLLECTION_H_
-#define SOURCEMETA_REGISTRY_INDEX_COLLECTION_H_
+#ifndef SOURCEMETA_REGISTRY_GENERATOR_COLLECTION_H_
+#define SOURCEMETA_REGISTRY_GENERATOR_COLLECTION_H_
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/uri.h>
@@ -9,16 +9,18 @@
 #include <utility>    // std::pair
 #include <vector>     // std::vector
 
-struct RegistryCollection {
-  RegistryCollection(const std::filesystem::path &base_path,
-                     const sourcemeta::core::JSON::String &entry_name,
-                     const sourcemeta::core::JSON &entry);
+namespace sourcemeta::registry {
+
+struct Collection {
+  Collection(const std::filesystem::path &base_path,
+             const sourcemeta::core::JSON::String &entry_name,
+             const sourcemeta::core::JSON &entry);
 
   // Just to prevent mistakes
-  RegistryCollection(const RegistryCollection &) = delete;
-  RegistryCollection &operator=(const RegistryCollection &) = delete;
-  RegistryCollection(RegistryCollection &&) = delete;
-  RegistryCollection &operator=(RegistryCollection &&) = delete;
+  Collection(const Collection &) = delete;
+  Collection &operator=(const Collection &) = delete;
+  Collection(Collection &&) = delete;
+  Collection &operator=(Collection &&) = delete;
 
   auto default_identifier(const std::filesystem::path &schema_path) const
       -> std::string;
@@ -30,5 +32,7 @@ struct RegistryCollection {
   const std::optional<sourcemeta::core::JSON::String> default_dialect;
   std::vector<std::pair<sourcemeta::core::URI, sourcemeta::core::URI>> rebase;
 };
+
+} // namespace sourcemeta::registry
 
 #endif

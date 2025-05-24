@@ -1,4 +1,4 @@
-#include "resolver.h"
+#include <sourcemeta/registry/generator_resolver.h>
 
 #include <sourcemeta/core/yaml.h>
 
@@ -6,25 +6,25 @@
 #include <cctype>  // std::tolower
 #include <sstream> // std::ostringstream
 
-RegistryResolverOutsideBaseError::RegistryResolverOutsideBaseError(
-    std::string uri, std::string base)
+namespace sourcemeta::registry {
+
+ResolverOutsideBaseError::ResolverOutsideBaseError(std::string uri,
+                                                   std::string base)
     : uri_{std::move(uri)}, base_{std::move(base)} {}
 
-auto RegistryResolverOutsideBaseError::what() const noexcept -> const char * {
+auto ResolverOutsideBaseError::what() const noexcept -> const char * {
   return "The schema identifier is not relative to the corresponding base";
 }
 
-auto RegistryResolverOutsideBaseError::uri() const noexcept
-    -> const std::string & {
+auto ResolverOutsideBaseError::uri() const noexcept -> const std::string & {
   return this->uri_;
 }
 
-auto RegistryResolverOutsideBaseError::base() const noexcept
-    -> const std::string & {
+auto ResolverOutsideBaseError::base() const noexcept -> const std::string & {
   return this->base_;
 }
 
-auto RegistryResolver::operator()(std::string_view identifier) const
+auto Resolver::operator()(std::string_view identifier) const
     -> std::optional<sourcemeta::core::JSON> {
   const auto result{this->fallback_(identifier)};
   // Try with a `.json` extension as a fallback, as we do add this
@@ -80,9 +80,9 @@ static auto url_join(const std::string &first, const std::string &second,
   return result.str();
 }
 
-auto RegistryResolver::add(const RegistryConfiguration &configuration,
-                           const RegistryCollection &collection,
-                           const std::filesystem::path &path)
+auto Resolver::add(const Configuration &configuration,
+                   const Collection &collection,
+                   const std::filesystem::path &path)
     -> std::pair<std::string, std::string> {
   const auto default_identifier{collection.default_identifier(path)};
 
@@ -124,8 +124,7 @@ auto RegistryResolver::add(const RegistryConfiguration &configuration,
   auto current{identifier_uri.recompose()};
   identifier_uri.relative_to(collection.base_uri);
   if (identifier_uri.is_absolute()) {
-    throw RegistryResolverOutsideBaseError(current,
-                                           collection.base_uri.recompose());
+    throw ResolverOutsideBaseError(current, collection.base_uri.recompose());
   }
 
   assert(!identifier_uri.recompose().empty());
@@ -148,3 +147,5 @@ auto RegistryResolver::add(const RegistryConfiguration &configuration,
   this->count_ += 1;
   return {std::move(current), std::move(new_identifier)};
 }
+
+} // namespace sourcemeta::registry
