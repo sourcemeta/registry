@@ -3,13 +3,10 @@
 #include <sourcemeta/core/uri.h>
 #include <sourcemeta/core/yaml.h>
 
-#include "collection.h"
-#include "configuration.h"
+#include <sourcemeta/registry/generator.h>
+
 #include "configure.h"
 #include "explorer.h"
-#include "output.h"
-#include "resolver.h"
-#include "validator.h"
 
 #include <algorithm>   // std::sort
 #include <cassert>     // assert
@@ -104,7 +101,7 @@ static auto base_dialect_id(const std::string &base_dialect) -> std::string {
   return "Unknown";
 }
 
-auto generate_toc(RegistryOutput &output,
+auto generate_toc(sourcemeta::registry::Output &output,
                   const sourcemeta::core::SchemaResolver &resolver,
                   const sourcemeta::core::URI &server_url,
                   const sourcemeta::core::JSON &configuration,
@@ -272,15 +269,17 @@ static auto index_main(const std::string_view &program,
 
   // Prepare the output directory
   const auto output_path{std::filesystem::weakly_canonical(arguments[1])};
-  RegistryOutput output{output_path};
+  sourcemeta::registry::Output output{output_path};
   std::cerr << "Writing output to: " << output_path.string() << "\n";
 
   // Read and validate the configuration file
-  RegistryResolver resolver;
-  RegistryValidator validator{resolver};
+  sourcemeta::registry::Resolver resolver;
+  sourcemeta::registry::Validator validator{resolver};
   const auto configuration_path{std::filesystem::canonical(arguments[0])};
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
-  const RegistryConfiguration configuration{configuration_path};
+  const sourcemeta::registry::Configuration configuration{
+      configuration_path, sourcemeta::core::parse_json(std::string{
+                              sourcemeta::registry::SCHEMA_CONFIGURATION})};
   validator.validate_or_throw(configuration.schema(), configuration.get(),
                               "Invalid configuration");
   output.write_configuration(configuration);
@@ -288,7 +287,7 @@ static auto index_main(const std::string_view &program,
   // Populate flat file resolver
   for (const auto &schema_entry :
        configuration.get().at("schemas").as_object()) {
-    const RegistryCollection collection{
+    const sourcemeta::registry::Collection collection{
         configuration.base(), schema_entry.first, schema_entry.second};
     std::cerr << "Discovering schemas at: " << collection.path.string() << "\n";
     std::cerr << "Default dialect: "
@@ -391,7 +390,7 @@ static auto index_main(const std::string_view &program,
 
   registry_explorer_generate(
       configuration.get(),
-      output.absolute_path(RegistryOutput::Category::Generated),
+      output.absolute_path(sourcemeta::registry::Output::Category::Generated),
       [](const auto &path) {
         std::cerr << "Generating HTML: " << path.string() << "\n";
       });
@@ -405,10 +404,10 @@ auto main(int argc, char *argv[]) noexcept -> int {
     const std::vector<std::string> arguments{argv + std::min(1, argc),
                                              argv + argc};
     return index_main(program, arguments);
-  } catch (const RegistryValidatorError &error) {
+  } catch (const sourcemeta::registry::ValidatorError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
     return EXIT_FAILURE;
-  } catch (const RegistryResolverOutsideBaseError &error) {
+  } catch (const sourcemeta::registry::ResolverOutsideBaseError &error) {
     std::cerr << "error: " << error.what() << "\n  at " << error.uri()
               << "\n  with base " << error.base() << "\n";
     return EXIT_FAILURE;

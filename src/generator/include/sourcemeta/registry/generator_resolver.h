@@ -1,12 +1,12 @@
-#ifndef SOURCEMETA_REGISTRY_INDEX_RESOLVER_H_
-#define SOURCEMETA_REGISTRY_INDEX_RESOLVER_H_
+#ifndef SOURCEMETA_REGISTRY_GENERATOR_RESOLVER_H_
+#define SOURCEMETA_REGISTRY_GENERATOR_RESOLVER_H_
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/uri.h>
 
-#include "collection.h"
-#include "configuration.h"
+#include <sourcemeta/registry/generator_collection.h>
+#include <sourcemeta/registry/generator_configuration.h>
 
 #include <exception>   // std::exception
 #include <filesystem>  // std::filesystem
@@ -14,9 +14,11 @@
 #include <string_view> // std::string_view
 #include <utility>     // std::pair
 
-class RegistryResolverOutsideBaseError : public std::exception {
+namespace sourcemeta::registry {
+
+class ResolverOutsideBaseError : public std::exception {
 public:
-  RegistryResolverOutsideBaseError(std::string uri, std::string base);
+  ResolverOutsideBaseError(std::string uri, std::string base);
   [[nodiscard]] auto what() const noexcept -> const char * override;
   [[nodiscard]] auto uri() const noexcept -> const std::string &;
   [[nodiscard]] auto base() const noexcept -> const std::string &;
@@ -26,13 +28,12 @@ private:
   const std::string base_;
 };
 
-class RegistryResolver {
+class Resolver {
 public:
   auto operator()(std::string_view identifier) const
       -> std::optional<sourcemeta::core::JSON>;
 
-  auto add(const RegistryConfiguration &configuration,
-           const RegistryCollection &collection,
+  auto add(const Configuration &configuration, const Collection &collection,
            const std::filesystem::path &path)
       -> std::pair<std::string, std::string>;
 
@@ -46,5 +47,7 @@ private:
       sourcemeta::core::schema_official_resolver};
   std::size_t count_{0};
 };
+
+} // namespace sourcemeta::registry
 
 #endif

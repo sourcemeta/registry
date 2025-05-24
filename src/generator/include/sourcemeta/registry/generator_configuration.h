@@ -1,22 +1,23 @@
-#ifndef SOURCEMETA_REGISTRY_INDEX_CONFIGURATION_H_
-#define SOURCEMETA_REGISTRY_INDEX_CONFIGURATION_H_
+#ifndef SOURCEMETA_REGISTRY_GENERATOR_CONFIGURATION_H_
+#define SOURCEMETA_REGISTRY_GENERATOR_CONFIGURATION_H_
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/uri.h>
 
-#include "configure.h"
-
 #include <filesystem> // std::filesystem
 
-class RegistryConfiguration {
+namespace sourcemeta::registry {
+
+class Configuration {
 public:
-  RegistryConfiguration(std::filesystem::path path);
+  Configuration(std::filesystem::path path,
+                sourcemeta::core::JSON configuration_schema);
 
   // Just to prevent mistakes
-  RegistryConfiguration(const RegistryConfiguration &) = delete;
-  RegistryConfiguration &operator=(const RegistryConfiguration &) = delete;
-  RegistryConfiguration(RegistryConfiguration &&) = delete;
-  RegistryConfiguration &operator=(RegistryConfiguration &&) = delete;
+  Configuration(const Configuration &) = delete;
+  Configuration &operator=(const Configuration &) = delete;
+  Configuration(Configuration &&) = delete;
+  Configuration &operator=(Configuration &&) = delete;
 
   auto path() const noexcept -> const std::filesystem::path &;
   auto base() const noexcept -> const std::filesystem::path &;
@@ -32,8 +33,9 @@ private:
   const std::filesystem::path path_;
   const std::filesystem::path base_;
   sourcemeta::core::JSON data_;
-  const sourcemeta::core::JSON schema_{sourcemeta::core::parse_json(
-      std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
+  const sourcemeta::core::JSON schema_;
 };
+
+} // namespace sourcemeta::registry
 
 #endif

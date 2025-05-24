@@ -1,5 +1,5 @@
-#ifndef SOURCEMETA_REGISTRY_INDEX_VALIDATOR_H_
-#define SOURCEMETA_REGISTRY_INDEX_VALIDATOR_H_
+#ifndef SOURCEMETA_REGISTRY_GENERATOR_VALIDATOR_H_
+#define SOURCEMETA_REGISTRY_GENERATOR_VALIDATOR_H_
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
@@ -11,10 +11,12 @@
 #include <string>        // std::string
 #include <unordered_map> // std::unordered_map
 
-class RegistryValidatorError : public std::exception {
+namespace sourcemeta::registry {
+
+class ValidatorError : public std::exception {
 public:
-  RegistryValidatorError(const sourcemeta::blaze::SimpleOutput &output,
-                         std::string message);
+  ValidatorError(const sourcemeta::blaze::SimpleOutput &output,
+                 std::string message);
 
   [[nodiscard]] auto what() const noexcept -> const char * override;
   [[nodiscard]] auto stacktrace() const noexcept -> const std::string &;
@@ -24,15 +26,15 @@ private:
   std::string stacktrace_;
 };
 
-class RegistryValidator {
+class Validator {
 public:
-  RegistryValidator(const sourcemeta::core::SchemaResolver &resolver);
+  Validator(const sourcemeta::core::SchemaResolver &resolver);
 
   // Just to prevent mistakes
-  RegistryValidator(const RegistryValidator &) = delete;
-  RegistryValidator &operator=(const RegistryValidator &) = delete;
-  RegistryValidator(RegistryValidator &&) = delete;
-  RegistryValidator &operator=(RegistryValidator &&) = delete;
+  Validator(const Validator &) = delete;
+  Validator &operator=(const Validator &) = delete;
+  Validator(Validator &&) = delete;
+  Validator &operator=(Validator &&) = delete;
 
   auto compile_once(const sourcemeta::core::JSON &schema) const
       -> sourcemeta::blaze::Template;
@@ -57,5 +59,7 @@ private:
   sourcemeta::blaze::Evaluator evaluator;
   std::unordered_map<std::string, sourcemeta::blaze::Template> cache_;
 };
+
+} // namespace sourcemeta::registry
 
 #endif

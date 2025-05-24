@@ -1,12 +1,13 @@
-#include "collection.h"
+#include <sourcemeta/registry/generator_collection.h>
 
 #include <cassert> // assert
 #include <sstream> // std::ostringstream
 
-RegistryCollection::RegistryCollection(
-    const std::filesystem::path &base_path,
-    const sourcemeta::core::JSON::String &entry_name,
-    const sourcemeta::core::JSON &entry)
+namespace sourcemeta::registry {
+
+Collection::Collection(const std::filesystem::path &base_path,
+                       const sourcemeta::core::JSON::String &entry_name,
+                       const sourcemeta::core::JSON &entry)
     : path{std::filesystem::canonical(base_path /
                                       entry.at("path").to_string())},
       name{entry_name},
@@ -26,7 +27,7 @@ RegistryCollection::RegistryCollection(
   }
 }
 
-auto RegistryCollection::default_identifier(
+auto Collection::default_identifier(
     const std::filesystem::path &schema_path) const -> std::string {
   // TODO: Extract this into a URI::append_path() method
   std::ostringstream result;
@@ -41,3 +42,5 @@ auto RegistryCollection::default_identifier(
   result << relative_path;
   return result.str();
 }
+
+} // namespace sourcemeta::registry
