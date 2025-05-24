@@ -96,8 +96,12 @@ sandbox: compile
 
 .PHONY: docker
 docker:
-	$(DOCKER) build --tag registry-$(EDITION) . --file Dockerfile.$(EDITION) --progress plain
-	$(DOCKER) compose --file test/sandbox/compose-$(EDITION).yaml up --build
+	$(DOCKER) build --tag registry-$(EDITION) . --file Dockerfile \
+		--build-arg SOURCEMETA_REGISTRY_EDITION=$(EDITION) --progress plain
+	SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
+		$(DOCKER) compose --file test/sandbox/compose.yaml config
+	SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
+		$(DOCKER) compose --file test/sandbox/compose.yaml up --build
 
 .PHONY: clean
 clean: 

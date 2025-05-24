@@ -13,20 +13,27 @@ COPY CMakeLists.txt /source/CMakeLists.txt
 COPY Makefile /source/Makefile
 COPY test/cli /source/test/cli
 
+# Commercial editions require a paid license
+# See https://github.com/sourcemeta/registry/blob/main/LICENSE
+ARG SOURCEMETA_REGISTRY_EDITION=starter
+
 RUN	cmake -S /source -B ./build \
   -DCMAKE_BUILD_TYPE:STRING=Release \
   -DREGISTRY_INDEX:BOOL=ON \
   -DREGISTRY_SERVER:BOOL=ON \
   -DREGISTRY_DEVELOPMENT:BOOL=OFF \
   -DREGISTRY_TESTS:BOOL=ON \
-  -DREGISTRY_EDITION:STRING=pro \
+  -DREGISTRY_EDITION:STRING=${SOURCEMETA_REGISTRY_EDITION} \
   -DBUILD_SHARED_LIBS:BOOL=OFF
 
 RUN cmake --build /build --config Release --parallel 2
 RUN cmake --install /build --prefix /usr --verbose \
   --config Release --component sourcemeta_registry
 
-RUN make -C /source test PREFIX=/usr EDITION=pro OUTPUT=/build
+RUN make -C /source test \
+  PREFIX=/usr \
+  EDITION=${SOURCEMETA_REGISTRY_EDITION} \
+  OUTPUT=/build
 
 FROM debian:bookworm-slim
 COPY --from=builder /usr/bin/sourcemeta-registry-index \

@@ -1,7 +1,0 @@
-services:
-  sandbox:
-    build:
-      context: .
-      dockerfile: Dockerfile.pro
-    ports:
-      - 8000:8000
