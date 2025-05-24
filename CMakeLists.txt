@@ -12,6 +12,11 @@ set(REGISTRY_PREFIX "/usr" CACHE STRING "Expected installation prefix")
 # Commercial editions require a paid license
 # See https://github.com/sourcemeta/registry/blob/main/LICENSE
 set(REGISTRY_EDITION "starter" CACHE STRING "The Registry edition")
+if(REGISTRY_EDITION)
+  message(STATUS "Sourcemeta Registry edition: ${REGISTRY_EDITION}")
+else()
+  message(FATAL_ERROR "You must set an edition using REGISTRY_EDITION")
+endif()
 
 cmake_path(IS_ABSOLUTE REGISTRY_PREFIX REGISTRY_PREFIX_IS_ABSOLUTE)
 if(NOT REGISTRY_PREFIX_IS_ABSOLUTE)

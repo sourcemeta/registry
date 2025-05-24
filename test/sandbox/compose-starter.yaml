@@ -1,7 +1,0 @@
-services:
-  sandbox:
-    build:
-      context: .
-      dockerfile: Dockerfile.starter
-    ports:
-      - 8000:8000
