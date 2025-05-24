@@ -4,6 +4,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Options
 option(REGISTRY_DEVELOPMENT "Build the Registry in development mode" OFF)
+option(REGISTRY_TESTS "Build the Registry unit tests" ON)
 option(REGISTRY_SERVER "Build the Registry server" ON)
 option(REGISTRY_INDEX "Build the Registry index tool" ON)
 set(REGISTRY_PREFIX "/usr" CACHE STRING "Expected installation prefix")
@@ -36,6 +37,13 @@ if(REGISTRY_SERVER)
 endif()
 
 if(REGISTRY_DEVELOPMENT)
-  sourcemeta_target_clang_format(SOURCES src/*.h src/*.cc)
+  sourcemeta_target_clang_format(SOURCES src/*.h src/*.cc test/*.cc)
   sourcemeta_target_shellcheck(SOURCES test/*.sh)
+endif()
+
+if(REGISTRY_TESTS)
+  enable_testing()
+  if(REGISTRY_INDEX) 
+    add_subdirectory(test/unit/generator)
+  endif()
 endif()
