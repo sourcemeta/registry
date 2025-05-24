@@ -5,6 +5,7 @@ RUN apt-get --yes update && apt-get install --yes --no-install-recommends \
 COPY cmake /source/cmake
 COPY src /source/src
 COPY schemas /source/schemas
+COPY test/unit /source/test/unit
 COPY vendor /source/vendor
 COPY CMakeLists.txt /source/CMakeLists.txt
 
@@ -17,14 +18,15 @@ RUN	cmake -S /source -B ./build \
   -DREGISTRY_INDEX:BOOL=ON \
   -DREGISTRY_SERVER:BOOL=ON \
   -DREGISTRY_DEVELOPMENT:BOOL=OFF \
+  -DREGISTRY_TESTS:BOOL=ON \
   -DREGISTRY_EDITION:STRING=enterprise \
   -DBUILD_SHARED_LIBS:BOOL=OFF
 
 RUN cmake --build /build --config Release --parallel 2
-RUN cmake --install ./build --prefix /usr --verbose \
+RUN cmake --install /build --prefix /usr --verbose \
   --config Release --component sourcemeta_registry
 
-RUN make -C /source test PREFIX=/usr EDITION=enterprise
+RUN make -C /source test PREFIX=/usr EDITION=enterprise OUTPUT=/build
 
 FROM debian:bookworm-slim
 COPY --from=builder /usr/bin/sourcemeta-registry-index \

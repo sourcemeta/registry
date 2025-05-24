@@ -1,5 +1,6 @@
 # Programs
 CMAKE ?= cmake
+CTEST ?= ctest
 HURL ?= hurl
 JSONSCHEMA ?= jsonschema
 DOCKER ?= docker
@@ -25,6 +26,7 @@ configure:
 		-DCMAKE_BUILD_TYPE:STRING=$(PRESET) \
 		-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON \
 		-DREGISTRY_DEVELOPMENT:BOOL=ON \
+		-DREGISTRY_TESTS:BOOL=ON \
 		-DREGISTRY_INDEX:BOOL=$(INDEX) \
 		-DREGISTRY_SERVER:BOOL=$(SERVER) \
 		-DREGISTRY_EDITION:STRING=$(EDITION) \
@@ -49,6 +51,7 @@ lint:
 
 .PHONY: test
 test: 
+	$(CTEST) --test-dir $(OUTPUT) --build-config $(PRESET) --output-on-failure --parallel
 	./test/cli/common/index/invalid-configuration.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/common/index/invalid-schema.sh $(PREFIX)/bin/sourcemeta-registry-index
 	./test/cli/common/index/output-non-directory.sh $(PREFIX)/bin/sourcemeta-registry-index
