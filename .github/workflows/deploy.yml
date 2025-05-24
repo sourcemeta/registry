@@ -49,7 +49,7 @@ jobs:
           context: .
           file: Dockerfile
           build-args:
-            - SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }}
+            SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
