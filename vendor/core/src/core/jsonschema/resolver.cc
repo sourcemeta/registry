@@ -5,7 +5,7 @@
 
 namespace sourcemeta::core {
 
-SchemaMapResolver::SchemaMapResolver() {}
+SchemaMapResolver::SchemaMapResolver() = default;
 
 SchemaMapResolver::SchemaMapResolver(const SchemaResolver &resolver)
     : default_resolver{resolver} {}

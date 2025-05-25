@@ -504,6 +504,20 @@ JSON::at(const String &key,
   return this->data_object.data.at(key, hash);
 }
 
+[[nodiscard]] auto JSON::at_or(const String &key,
+                               const typename Object::Container::hash_type hash,
+                               const JSON &otherwise) const -> const JSON & {
+  assert(this->is_object());
+  const auto result{this->try_at(key, hash)};
+  return result ? *result : otherwise;
+}
+
+[[nodiscard]] auto JSON::at_or(const String &key, const JSON &otherwise) const
+    -> const JSON & {
+  assert(this->is_object());
+  return this->at_or(key, this->data_object.data.hash(key), otherwise);
+}
+
 [[nodiscard]] auto JSON::front() -> JSON & {
   assert(this->is_array());
   assert(!this->empty());
@@ -844,6 +858,28 @@ auto JSON::clear() -> void {
 
 auto JSON::clear_except(std::initializer_list<JSON::String> keys) -> void {
   this->clear_except(keys.begin(), keys.end());
+}
+
+auto JSON::merge(const JSON::Object &other) -> void {
+  assert(this->is_object());
+  for (const auto &pair : other) {
+    this->assign(pair.first, pair.second);
+  }
+}
+
+[[nodiscard]] auto JSON::trim() const -> JSON::String {
+  assert(this->is_string());
+  auto copy = *this;
+  copy.trim();
+  return copy.to_string();
+}
+
+auto JSON::trim() -> const JSON::String & {
+  assert(this->is_string());
+  constexpr auto WHITESPACE = " \t\n\r\v\f";
+  this->data_string.erase(this->data_string.find_last_not_of(WHITESPACE) + 1);
+  this->data_string.erase(0, this->data_string.find_first_not_of(WHITESPACE));
+  return this->to_string();
 }
 
 auto JSON::rename(const JSON::String &key, JSON::String &&to) -> void {

@@ -23,14 +23,6 @@
 #include <utility>     // std::move
 #include <vector>      // std::vector
 
-// TODO: Elevate to Core as a JSON string method
-static auto trim(const std::string &input) -> std::string {
-  auto copy = input;
-  copy.erase(copy.find_last_not_of(' ') + 1);
-  copy.erase(0, copy.find_first_not_of(' '));
-  return copy;
-}
-
 // TODO: We need a SemVer module in Core
 static auto try_parse_version(const sourcemeta::core::JSON::String &name)
     -> std::optional<std::tuple<unsigned, unsigned, unsigned>> {
@@ -45,6 +37,7 @@ static auto try_parse_version(const sourcemeta::core::JSON::String &name)
   return std::nullopt;
 }
 
+// TODO: Parse the URI instead and find the id based on the path component?
 static auto base_dialect_id(const std::string &base_dialect) -> std::string {
   if (base_dialect == "https://json-schema.org/draft/2020-12/schema" ||
       base_dialect == "https://json-schema.org/draft/2020-12/hyper-schema") {
@@ -109,50 +102,33 @@ auto generate_toc(const sourcemeta::registry::Configuration &configuration,
         entry.path().string().substr(base.string().size() + 1)};
     assert(!entry_relative_path.starts_with('/'));
     if (entry.is_directory()) {
-      // TODO: Should be a JSON::merge method
-      for (const auto &page_entry : configuration.page(entry_relative_path)) {
-        entry_json.assign(page_entry.first, page_entry.second);
-      }
-
+      entry_json.merge(configuration.page(entry_relative_path));
       entry_json.assign("type", sourcemeta::core::JSON{"directory"});
       entry_json.assign(
           "url", sourcemeta::core::JSON{
                      entry.path().string().substr(base.string().size())});
-
       entries.push_back(std::move(entry_json));
     } else if (entry.path().extension() == ".json" &&
                !entry.path().stem().string().starts_with(".")) {
       const auto schema{sourcemeta::core::read_json(entry.path())};
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});
-      if (schema.is_object() && schema.defines("title") &&
-          schema.at("title").is_string()) {
-        entry_json.assign("title", sourcemeta::core::JSON{
-                                       trim(schema.at("title").to_string())});
+      if (schema.is_object()) {
+        if (schema.defines("title")) {
+          entry_json.assign("title",
+                            sourcemeta::core::JSON{schema.at("title").trim()});
+        }
+
+        if (schema.defines("description")) {
+          entry_json.assign(
+              "description",
+              sourcemeta::core::JSON{schema.at("description").trim()});
+        }
       }
 
-      if (schema.is_object() && schema.defines("description") &&
-          schema.at("description").is_string()) {
-        entry_json.assign(
-            "description",
-            sourcemeta::core::JSON{trim(schema.at("description").to_string())});
-      }
-
-      std::ostringstream absolute_schema_url;
-      absolute_schema_url << server_url_string;
-      // TODO: We should have better utilities to avoid these
-      // URL concatenation edge cases. A URI::append method
-      if (!server_url_string.ends_with('/')) {
-        absolute_schema_url << '/';
-      }
-      absolute_schema_url << entry_relative_path;
-
-      const auto resolved_schema{resolver(absolute_schema_url.str())};
-      assert(resolved_schema.has_value());
       const auto base_dialect{sourcemeta::core::base_dialect(schema, resolver)};
       assert(base_dialect.has_value());
       entry_json.assign("baseDialect", sourcemeta::core::JSON{base_dialect_id(
                                            base_dialect.value())});
-
       entry_json.assign("url",
                         sourcemeta::core::JSON{"/" + entry_relative_path});
       entries.push_back(std::move(entry_json));
@@ -181,16 +157,8 @@ auto generate_toc(const sourcemeta::registry::Configuration &configuration,
       });
 
   auto meta{sourcemeta::core::JSON::make_object()};
-  const auto page_entry_name{
-      std::filesystem::relative(directory, base).string()};
-
-  // Precompute page metadata
-  // TODO: This should be a JSON::merge method
-  for (const auto &entry : configuration.page(page_entry_name)) {
-    meta.assign(entry.first, entry.second);
-  }
-
-  // Store entries
+  meta.merge(
+      configuration.page(std::filesystem::relative(directory, base).string()));
   meta.assign("entries", std::move(entries));
 
   // Precompute the breadcrumb
@@ -356,22 +324,18 @@ static auto index_main(const std::string_view &program,
         sourcemeta::core::JSON{"/" + schema.second.relative_path.string()});
     const auto result{resolver(schema.first)};
     assert(result.has_value());
-    entry.push_back(result.value().is_object() &&
-                            // TODO: Support an `at_or` method similar to
-                            // `std::optional::value_or`
-                            result.value().defines("title") &&
-                            result.value().at("title").is_string()
-                        // TODO: Trim this value
-                        ? result.value().at("title")
-                        : sourcemeta::core::JSON{""});
-    entry.push_back(result.value().is_object() &&
-                            // TODO: Support an `at_or` method similar to
-                            // `std::optional::value_or`
-                            result.value().defines("description") &&
-                            result.value().at("description").is_string()
-                        // TODO: Trim this value
-                        ? result.value().at("description")
-                        : sourcemeta::core::JSON{""});
+    if (result.value().is_object()) {
+      entry.push_back(sourcemeta::core::JSON{
+          result.value().at_or("title", sourcemeta::core::JSON{""}).trim()});
+      entry.push_back(sourcemeta::core::JSON{
+          result.value()
+              .at_or("description", sourcemeta::core::JSON{""})
+              .trim()});
+    } else {
+      entry.push_back(sourcemeta::core::JSON{""});
+      entry.push_back(sourcemeta::core::JSON{""});
+    }
+
     search_index.push_back(std::move(entry));
   }
 
