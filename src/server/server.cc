@@ -132,8 +132,7 @@ auto on_search(const sourcemeta::hydra::http::ServerLogger &logger,
   }
 
   auto result{sourcemeta::core::JSON::make_array()};
-  auto stream = sourcemeta::core::read_file(*(__global_data) / "generated" /
-                                            "search.jsonl");
+  auto stream = sourcemeta::core::read_file(*(__global_data) / "search.jsonl");
   stream.exceptions(std::ifstream::badbit);
   // TODO: Extend the Core JSONL iterators to be able
   // to access the stringified contents of the current entry
