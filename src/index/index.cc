@@ -10,14 +10,10 @@
 
 #include <algorithm>   // std::sort
 #include <cassert>     // assert
-#include <cctype>      // std::tolower
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>   // std::exception
 #include <filesystem>  // std::filesystem
-#include <fstream>     // std::ofstream
-#include <functional>  // std::ref
 #include <iostream>    // std::cerr, std::cout
-#include <map>         // std::map
 #include <regex>       // std::regex, std::smatch, std::regex_search
 #include <span>        // std::span
 #include <sstream>     // std::ostringstream
@@ -106,8 +102,7 @@ auto generate_toc(sourcemeta::registry::Output &output,
                   const sourcemeta::core::URI &server_url,
                   const sourcemeta::core::JSON &configuration,
                   const std::filesystem::path &base,
-                  const std::filesystem::path &directory,
-                  std::vector<sourcemeta::core::JSON> &search_index) -> void {
+                  const std::filesystem::path &directory) -> void {
   const auto server_url_string{server_url.recompose()};
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::core::JSON::make_array()};
@@ -175,18 +170,6 @@ auto generate_toc(sourcemeta::registry::Output &output,
                                            base_dialect.value())});
 
       entry_json.assign("url", sourcemeta::core::JSON{entry_relative_path});
-
-      // Collect schemas high-level metadata for searching purposes
-      auto search_entry{sourcemeta::core::JSON::make_array()};
-      search_entry.push_back(entry_json.at("url"));
-      search_entry.push_back(entry_json.defines("title")
-                                 ? entry_json.at("title")
-                                 : sourcemeta::core::JSON{""});
-      search_entry.push_back(entry_json.defines("description")
-                                 ? entry_json.at("description")
-                                 : sourcemeta::core::JSON{""});
-      search_index.push_back(std::move(search_entry));
-
       entries.push_back(std::move(entry_json));
     }
   }
@@ -379,36 +362,54 @@ static auto index_main(const std::string_view &program,
   }
 
   // --------------------------------------------
-  // (5) Generate schema navigation indexes
+  // (5) Generate schema search index
+  // --------------------------------------------
+
+  // TODO: We could parallelize this loop
+  std::vector<sourcemeta::core::JSON> search_index;
+  search_index.reserve(resolver.size());
+  for (const auto &schema : resolver) {
+    std::cerr << "Indexing: " << schema.first << "\n";
+    auto entry{sourcemeta::core::JSON::make_array()};
+    entry.push_back(
+        sourcemeta::core::JSON{"/" + schema.second.relative_path.string()});
+    const auto result{resolver(schema.first)};
+    assert(result.has_value());
+    entry.push_back(result.value().is_object() &&
+                            // TODO: Support an `at_or` method similar to
+                            // `std::optional::value_or`
+                            result.value().defines("title") &&
+                            result.value().at("title").is_string()
+                        ? result.value().at("title")
+                        : sourcemeta::core::JSON{""});
+    entry.push_back(result.value().is_object() &&
+                            // TODO: Support an `at_or` method similar to
+                            // `std::optional::value_or`
+                            result.value().defines("description") &&
+                            result.value().at("description").is_string()
+                        ? result.value().at("description")
+                        : sourcemeta::core::JSON{""});
+    search_index.push_back(std::move(entry));
+  }
+
+  output.write_search(search_index.cbegin(), search_index.cend());
+
+  // --------------------------------------------
+  // (6) Generate schema navigation indexes
   // --------------------------------------------
 
   std::cerr << "-- Indexing directory: " << output_path.string() << "\n";
   const auto base{std::filesystem::canonical(output_path / "schemas")};
-  std::vector<sourcemeta::core::JSON> search_index;
   generate_toc(output, resolver, configuration.url(), configuration.get(), base,
-               base, search_index);
+               base);
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{output_path / "schemas"}) {
     if (entry.is_directory()) {
       std::cerr << "-- Processing: " << entry.path().string() << "\n";
       generate_toc(output, resolver, configuration.url(), configuration.get(),
-                   base, std::filesystem::canonical(entry.path()),
-                   search_index);
+                   base, std::filesystem::canonical(entry.path()));
     }
   }
-
-  // --------------------------------------------
-  // (6) Generate schema search index
-  // --------------------------------------------
-
-  // Make newer versions of schemas appear first
-  std::sort(search_index.begin(), search_index.end(),
-            [](const auto &left, const auto &right) {
-              return left.at(0) > right.at(0);
-            });
-
-  output.write_generated_jsonl("search.jsonl", search_index.cbegin(),
-                               search_index.cend());
 
   // --------------------------------------------
   // (7) Generate schema explorer

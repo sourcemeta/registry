@@ -57,7 +57,6 @@
 ./generated/same
 ./generated/same/index.html
 ./generated/same/index.json
-./generated/search.jsonl
 ./schemas
 ./schemas/doc
 ./schemas/doc/string-1.json
@@ -88,6 +87,7 @@
 ./schemas/hyper/2020-12.json
 ./schemas/same
 ./schemas/same/schema.json
+./search.jsonl
 ./unidentified
 ./unidentified/doc
 ./unidentified/doc/string-1.json

@@ -45,4 +45,4 @@ cat << 'EOF' > "$TMP/expected.json"
 ["/example/schemas/no-title.json","",""]
 EOF
 
-diff "$TMP/output/generated/search.jsonl" "$TMP/expected.json"
+diff "$TMP/output/search.jsonl" "$TMP/expected.json"

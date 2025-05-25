@@ -38,10 +38,8 @@ public:
       -> std::filesystem::path;
 
   template <typename Iterator>
-  auto write_generated_jsonl(const std::filesystem::path &output,
-                             Iterator begin, Iterator end) const -> void {
-    this->internal_write_jsonl(
-        this->relative_path(Category::Generated) / output, begin, end);
+  auto write_search(Iterator begin, Iterator end) const -> void {
+    this->internal_write_jsonl("search.jsonl", begin, end);
   }
 
   auto write_generated_json(const std::filesystem::path &output,
