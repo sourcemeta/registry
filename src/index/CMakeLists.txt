@@ -1,6 +1,6 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index 
   FOLDER "Registry/Index" 
-  SOURCES index.cc explorer.h configure.h.in 
+  SOURCES index.cc explorer.h toc.h configure.h.in 
     "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
