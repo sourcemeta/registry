@@ -272,6 +272,10 @@ static auto index_main(const std::string_view &program,
   sourcemeta::registry::Output output{output_path};
   std::cerr << "Writing output to: " << output_path.string() << "\n";
 
+  // --------------------------------------------
+  // (1) Process the configuration file
+  // --------------------------------------------
+
   // Read and validate the configuration file
   sourcemeta::registry::Resolver resolver;
   sourcemeta::registry::Validator validator{resolver};
@@ -284,7 +288,10 @@ static auto index_main(const std::string_view &program,
                               "Invalid configuration");
   output.write_configuration(configuration);
 
-  // Populate flat file resolver
+  // --------------------------------------------
+  // (2) Populate the schema resolver
+  // --------------------------------------------
+
   for (const auto &schema_entry :
        configuration.get().at("schemas").as_object()) {
     const sourcemeta::registry::Collection collection{
@@ -329,14 +336,15 @@ static auto index_main(const std::string_view &program,
     }
   }
 
-  // A first pass to materialise all schemas
+  // --------------------------------------------
+  // (3) Validate and materialise schemas
+  // --------------------------------------------
+
   // TODO: We could parallelize this loop
   for (const auto &schema : resolver) {
     std::cerr << "-- Processing schema: " << schema.first << "\n";
-    sourcemeta::core::URI schema_uri{schema.first};
-    schema_uri.relative_to(configuration.url());
-    assert(schema_uri.is_relative());
-    std::cerr << "Schema output: " << schema_uri.recompose() << "\n";
+    std::cerr << "Schema output: " << schema.second.relative_path.string()
+              << "\n";
     const auto subresult{resolver(schema.first)};
     assert(subresult.has_value());
     const auto dialect_identifier{sourcemeta::core::dialect(subresult.value())};
@@ -347,10 +355,14 @@ static auto index_main(const std::string_view &program,
     validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
                                 subresult.value(),
                                 "The schema does not adhere to its metaschema");
-    const auto destination{
-        output.write_schema_single(schema_uri.recompose(), subresult.value())};
+    const auto destination{output.write_schema_single(
+        schema.second.relative_path, subresult.value())};
     resolver.materialise(schema.first, destination);
   }
+
+  // --------------------------------------------
+  // (4) Generate schema artefacts
+  // --------------------------------------------
 
   // TODO: We could parallelize this loop
   // TODO: Instead of directly parallelizing here, construct a class
@@ -361,21 +373,21 @@ static auto index_main(const std::string_view &program,
     const auto subresult{resolver(schema.first)};
     assert(subresult.has_value());
 
-    // TODO: Can we avoid computing this twice
-    sourcemeta::core::URI schema_uri{schema.first};
-    schema_uri.relative_to(configuration.url());
-
     // Storing artefacts
     std::cerr << "Bundling: " << schema.first << "\n";
     auto bundled_schema{sourcemeta::core::bundle(
         subresult.value(), sourcemeta::core::schema_official_walker, resolver)};
-    output.write_schema_bundle(schema_uri.recompose(), bundled_schema);
+    output.write_schema_bundle(schema.second.relative_path, bundled_schema);
     std::cerr << "Bundling without identifiers: " << schema.first << "\n";
     sourcemeta::core::unidentify(
         bundled_schema, sourcemeta::core::schema_official_walker, resolver);
-    output.write_schema_bundle_unidentified(schema_uri.recompose(),
+    output.write_schema_bundle_unidentified(schema.second.relative_path,
                                             bundled_schema);
   }
+
+  // --------------------------------------------
+  // (5) Generate schema navigation indexes
+  // --------------------------------------------
 
   std::cerr << "-- Indexing directory: " << output_path.string() << "\n";
   const auto base{std::filesystem::canonical(output_path / "schemas")};
@@ -392,6 +404,10 @@ static auto index_main(const std::string_view &program,
     }
   }
 
+  // --------------------------------------------
+  // (6) Generate schema search index
+  // --------------------------------------------
+
   // Make newer versions of schemas appear first
   std::sort(search_index.begin(), search_index.end(),
             [](const auto &left, const auto &right) {
@@ -400,6 +416,10 @@ static auto index_main(const std::string_view &program,
 
   output.write_generated_jsonl("search.jsonl", search_index.cbegin(),
                                search_index.cend());
+
+  // --------------------------------------------
+  // (7) Generate schema explorer
+  // --------------------------------------------
 
   registry_explorer_generate(
       configuration.get(),
