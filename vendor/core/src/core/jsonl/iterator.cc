@@ -104,7 +104,7 @@ ConstJSONLIterator::ConstJSONLIterator(
     std::basic_istream<JSON::Char, JSON::CharTraits> *stream)
     : data{stream}, internal{new Internal({this->parse_next()})} {}
 
-ConstJSONLIterator::~ConstJSONLIterator() {}
+ConstJSONLIterator::~ConstJSONLIterator() = default;
 
 auto operator==(const ConstJSONLIterator &left, const ConstJSONLIterator &right)
     -> bool {
