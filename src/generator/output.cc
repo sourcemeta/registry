@@ -30,13 +30,14 @@ auto Output::internal_write_json(const std::filesystem::path &output,
 
 auto Output::internal_write_jsonschema(
     const std::filesystem::path &output,
-    const sourcemeta::core::JSON &schema) const -> void {
+    const sourcemeta::core::JSON &schema) const -> std::filesystem::path {
   const auto destination{this->resolve(output)};
   std::filesystem::create_directories(destination.parent_path());
   auto stream{this->open(destination)};
   sourcemeta::core::prettify(schema, stream,
                              sourcemeta::core::schema_format_compare);
   stream << "\n";
+  return destination;
 }
 
 auto Output::resolve(const std::filesystem::path &path) const
@@ -75,22 +76,22 @@ auto Output::absolute_path(const Category category) const
 
 auto Output::write_schema_single(const std::filesystem::path &output,
                                  const sourcemeta::core::JSON &schema) const
-    -> void {
-  this->internal_write_jsonschema(
+    -> std::filesystem::path {
+  return this->internal_write_jsonschema(
       this->relative_path(Category::Schemas) / output, schema);
 }
 
 auto Output::write_schema_bundle(const std::filesystem::path &output,
                                  const sourcemeta::core::JSON &schema) const
-    -> void {
-  this->internal_write_jsonschema(
+    -> std::filesystem::path {
+  return this->internal_write_jsonschema(
       this->relative_path(Category::Bundles) / output, schema);
 }
 
 auto Output::write_schema_bundle_unidentified(
     const std::filesystem::path &output,
-    const sourcemeta::core::JSON &schema) const -> void {
-  this->internal_write_jsonschema(
+    const sourcemeta::core::JSON &schema) const -> std::filesystem::path {
+  return this->internal_write_jsonschema(
       this->relative_path(Category::Unidentified) / output, schema);
 }
 
