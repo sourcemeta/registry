@@ -342,16 +342,13 @@ static auto index_main(const std::string_view &program,
 
   // TODO: We could parallelize this loop
   for (const auto &schema : resolver) {
-    std::cerr << "-- Processing schema: " << schema.first << "\n";
-    std::cerr << "Schema output: " << schema.second.relative_path.string()
-              << "\n";
+    std::cerr << "Materialising: " << schema.first << "\n";
     const auto subresult{resolver(schema.first)};
     assert(subresult.has_value());
     const auto dialect_identifier{sourcemeta::core::dialect(subresult.value())};
     assert(dialect_identifier.has_value());
     const auto metaschema{resolver(dialect_identifier.value())};
     assert(metaschema.has_value());
-    std::cerr << "Validating against its metaschema: " << schema.first << "\n";
     validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
                                 subresult.value(),
                                 "The schema does not adhere to its metaschema");
@@ -365,10 +362,6 @@ static auto index_main(const std::string_view &program,
   // --------------------------------------------
 
   // TODO: We could parallelize this loop
-  // TODO: Instead of directly parallelizing here, construct a class
-  // that abstracts away the idea of processing input and storing output
-  // in the output directory. Then we instantiate that as "adapters" for
-  // multiple purposes, like pre-processing schemas or generating HTML files
   for (const auto &schema : resolver) {
     const auto subresult{resolver(schema.first)};
     assert(subresult.has_value());
