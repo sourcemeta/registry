@@ -28,6 +28,8 @@ public:
   // For faster processing by the server component
   // TODO: Can we trim this down even more?
   auto summary() const -> sourcemeta::core::JSON;
+  auto page(const sourcemeta::core::JSON::String &name) const
+      -> const sourcemeta::core::JSON::Object &;
 
 private:
   const std::filesystem::path path_;
