@@ -414,9 +414,7 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
   html << "</div>";
 }
 
-} // namespace sourcemeta::registry
-
-static auto registry_explorer_generate(
+auto explorer(
     const sourcemeta::core::JSON &configuration,
     const std::filesystem::path &base,
     const std::function<void(const std::filesystem::path &)> &callback)
@@ -502,5 +500,7 @@ static auto registry_explorer_generate(
   stream_not_found << "\n";
   stream_not_found.close();
 }
+
+} // namespace sourcemeta::registry
 
 #endif
