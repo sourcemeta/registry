@@ -52,4 +52,15 @@ auto Configuration::summary() const -> sourcemeta::core::JSON {
   return copy;
 }
 
+auto Configuration::page(const sourcemeta::core::JSON::String &name) const
+    -> const sourcemeta::core::JSON::Object & {
+  if (this->data_.defines("pages") && this->data_.at("pages").defines(name) &&
+      this->data_.at("pages").at(name).is_object()) {
+    return this->data_.at("pages").at(name).as_object();
+  } else {
+    static const sourcemeta::core::JSON::Object placeholder;
+    return placeholder;
+  }
+}
+
 } // namespace sourcemeta::registry

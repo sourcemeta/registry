@@ -23,11 +23,6 @@
 #include <utility>     // std::move
 #include <vector>      // std::vector
 
-static auto is_schema_file(const std::filesystem::path &path) -> bool {
-  return path.extension() == ".yaml" || path.extension() == ".yml" ||
-         path.extension() == ".json";
-}
-
 // TODO: Elevate to Core as a JSON string method
 static auto trim(const std::string &input) -> std::string {
   auto copy = input;
@@ -36,6 +31,7 @@ static auto trim(const std::string &input) -> std::string {
   return copy;
 }
 
+// TODO: We need a SemVer module in Core
 static auto try_parse_version(const sourcemeta::core::JSON::String &name)
     -> std::optional<std::tuple<unsigned, unsigned, unsigned>> {
   std::regex version_regex(R"(v?(\d+)\.(\d+)\.(\d+))");
@@ -97,13 +93,12 @@ static auto base_dialect_id(const std::string &base_dialect) -> std::string {
   return "Unknown";
 }
 
-auto generate_toc(sourcemeta::registry::Output &output,
+auto generate_toc(const sourcemeta::registry::Configuration &configuration,
+                  sourcemeta::registry::Output &output,
                   const sourcemeta::core::SchemaResolver &resolver,
-                  const sourcemeta::core::URI &server_url,
-                  const sourcemeta::core::JSON &configuration,
                   const std::filesystem::path &base,
                   const std::filesystem::path &directory) -> void {
-  const auto server_url_string{server_url.recompose()};
+  const auto server_url_string{configuration.url().recompose()};
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::core::JSON::make_array()};
 
@@ -111,15 +106,12 @@ auto generate_toc(sourcemeta::registry::Output &output,
     auto entry_json{sourcemeta::core::JSON::make_object()};
     entry_json.assign("name", sourcemeta::core::JSON{entry.path().filename()});
     const auto entry_relative_path{
-        entry.path().string().substr(base.string().size())};
+        entry.path().string().substr(base.string().size() + 1)};
+    assert(!entry_relative_path.starts_with('/'));
     if (entry.is_directory()) {
-      const auto collection_entry_name{entry_relative_path.substr(1)};
-      if (configuration.defines("pages") &&
-          configuration.at("pages").defines(collection_entry_name)) {
-        for (const auto &page_entry :
-             configuration.at("pages").at(collection_entry_name).as_object()) {
-          entry_json.assign(page_entry.first, page_entry.second);
-        }
+      // TODO: Should be a JSON::merge method
+      for (const auto &page_entry : configuration.page(entry_relative_path)) {
+        entry_json.assign(page_entry.first, page_entry.second);
       }
 
       entry_json.assign("type", sourcemeta::core::JSON{"directory"});
@@ -145,22 +137,14 @@ auto generate_toc(sourcemeta::registry::Output &output,
             sourcemeta::core::JSON{trim(schema.at("description").to_string())});
       }
 
-      // Calculate base dialect
       std::ostringstream absolute_schema_url;
       absolute_schema_url << server_url_string;
-
       // TODO: We should have better utilities to avoid these
-      // URL concatenation edge cases
-
+      // URL concatenation edge cases. A URI::append method
       if (!server_url_string.ends_with('/')) {
         absolute_schema_url << '/';
       }
-
-      if (entry_relative_path.starts_with('/')) {
-        absolute_schema_url << entry_relative_path.substr(1);
-      } else {
-        absolute_schema_url << entry_relative_path;
-      }
+      absolute_schema_url << entry_relative_path;
 
       const auto resolved_schema{resolver(absolute_schema_url.str())};
       assert(resolved_schema.has_value());
@@ -169,7 +153,8 @@ auto generate_toc(sourcemeta::registry::Output &output,
       entry_json.assign("baseDialect", sourcemeta::core::JSON{base_dialect_id(
                                            base_dialect.value())});
 
-      entry_json.assign("url", sourcemeta::core::JSON{entry_relative_path});
+      entry_json.assign("url",
+                        sourcemeta::core::JSON{"/" + entry_relative_path});
       entries.push_back(std::move(entry_json));
     }
   }
@@ -200,12 +185,9 @@ auto generate_toc(sourcemeta::registry::Output &output,
       std::filesystem::relative(directory, base).string()};
 
   // Precompute page metadata
-  if (configuration.defines("pages") &&
-      configuration.at("pages").defines(page_entry_name)) {
-    for (const auto &entry :
-         configuration.at("pages").at(page_entry_name).as_object()) {
-      meta.assign(entry.first, entry.second);
-    }
+  // TODO: This should be a JSON::merge method
+  for (const auto &entry : configuration.page(page_entry_name)) {
+    meta.assign(entry.first, entry.second);
   }
 
   // Store entries
@@ -224,10 +206,6 @@ auto generate_toc(sourcemeta::registry::Output &output,
     meta.at("breadcrumb").push_back(std::move(breadcrumb_entry));
   }
 
-  const auto index_path{base.parent_path() / "generated" /
-                        std::filesystem::relative(directory, base) /
-                        "index.json"};
-  std::cerr << "Saving into: " << index_path.string() << "\n";
   output.write_generated_json(
       std::filesystem::relative(directory, base) / "index.json", meta);
 }
@@ -285,7 +263,10 @@ static auto index_main(const std::string_view &program,
 
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection.path}) {
-      if (!entry.is_regular_file() || !is_schema_file(entry.path()) ||
+      const auto is_schema_file{entry.path().extension() == ".yaml" ||
+                                entry.path().extension() == ".yml" ||
+                                entry.path().extension() == ".json"};
+      if (!entry.is_regular_file() || !is_schema_file ||
           entry.path().stem().string().starts_with(".")) {
         continue;
       }
@@ -369,7 +350,7 @@ static auto index_main(const std::string_view &program,
   std::vector<sourcemeta::core::JSON> search_index;
   search_index.reserve(resolver.size());
   for (const auto &schema : resolver) {
-    std::cerr << "Indexing: " << schema.first << "\n";
+    std::cerr << "Generating search index: " << schema.first << "\n";
     auto entry{sourcemeta::core::JSON::make_array()};
     entry.push_back(
         sourcemeta::core::JSON{"/" + schema.second.relative_path.string()});
@@ -380,6 +361,7 @@ static auto index_main(const std::string_view &program,
                             // `std::optional::value_or`
                             result.value().defines("title") &&
                             result.value().at("title").is_string()
+                        // TODO: Trim this value
                         ? result.value().at("title")
                         : sourcemeta::core::JSON{""});
     entry.push_back(result.value().is_object() &&
@@ -387,6 +369,7 @@ static auto index_main(const std::string_view &program,
                             // `std::optional::value_or`
                             result.value().defines("description") &&
                             result.value().at("description").is_string()
+                        // TODO: Trim this value
                         ? result.value().at("description")
                         : sourcemeta::core::JSON{""});
     search_index.push_back(std::move(entry));
@@ -398,16 +381,16 @@ static auto index_main(const std::string_view &program,
   // (6) Generate schema navigation indexes
   // --------------------------------------------
 
-  std::cerr << "-- Indexing directory: " << output_path.string() << "\n";
-  const auto base{std::filesystem::canonical(output_path / "schemas")};
-  generate_toc(output, resolver, configuration.url(), configuration.get(), base,
-               base);
+  std::cerr << "Indexing: " << output_path.string() << "\n";
+  const auto base{
+      output.absolute_path(sourcemeta::registry::Output::Category::Schemas)};
+  generate_toc(configuration, output, resolver, base, base);
   for (const auto &entry :
-       std::filesystem::recursive_directory_iterator{output_path / "schemas"}) {
+       std::filesystem::recursive_directory_iterator{base}) {
     if (entry.is_directory()) {
-      std::cerr << "-- Processing: " << entry.path().string() << "\n";
-      generate_toc(output, resolver, configuration.url(), configuration.get(),
-                   base, std::filesystem::canonical(entry.path()));
+      std::cerr << "Indexing: " << entry.path().string() << "\n";
+      generate_toc(configuration, output, resolver, base,
+                   std::filesystem::canonical(entry.path()));
     }
   }
 
@@ -415,6 +398,7 @@ static auto index_main(const std::string_view &program,
   // (7) Generate schema explorer
   // --------------------------------------------
 
+  // TODO: Make the explorer generator use the Output class to writing files
   registry_explorer_generate(
       configuration.get(),
       output.absolute_path(sourcemeta::registry::Output::Category::Generated),
