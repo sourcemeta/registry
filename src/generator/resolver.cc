@@ -160,10 +160,10 @@ auto Resolver::add(const Configuration &configuration,
     }
   }
 
-  const auto result{this->views.emplace(
+  auto result{this->views.emplace(
       effective_identifier,
       Entry{
-          std::nullopt, canonical, current_dialect, effective_identifier,
+          std::nullopt, canonical, current_dialect, "", effective_identifier,
           // TODO: We should avoid this vector / string copy
           [rebases = collection.rebase](
               sourcemeta::core::JSON &schema, const sourcemeta::core::URI &base,
@@ -223,6 +223,10 @@ auto Resolver::add(const Configuration &configuration,
                // extension, as we want to use the non-extension URI to
                // potentially metadata about schemas, etc
                "json")};
+
+  sourcemeta::core::URI schema_uri{new_identifier};
+  schema_uri.relative_to(configuration.url());
+  result.first->second.relative_path = to_lowercase(schema_uri.recompose());
 
   // Otherwise we have things like "../" that should not be there
   assert(new_identifier.find("..") == std::string::npos);
