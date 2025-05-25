@@ -40,9 +40,7 @@ Discovering schemas at: $(realpath "$TMP")/schemas
 Default dialect: <NONE>
 -- Found schema: $(realpath "$TMP")/schemas/test.json (#1)
 https://example.com/test.json => https://sourcemeta.com/example/schemas/test.json
--- Processing schema: https://sourcemeta.com/example/schemas/test.json
-Schema output: example/schemas/test.json
-Validating against its metaschema: https://sourcemeta.com/example/schemas/test.json
+Materialising: https://sourcemeta.com/example/schemas/test.json
 Bundling: https://sourcemeta.com/example/schemas/test.json
 error: Could not resolve schema reference
   https://sourcemeta.com/example/schemas/test.json#foo

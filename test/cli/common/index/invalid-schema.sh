@@ -40,9 +40,7 @@ Discovering schemas at: $(realpath "$TMP")/schemas
 Default dialect: <NONE>
 -- Found schema: $(realpath "$TMP")/schemas/test.json (#1)
 https://example.com/test.json => https://sourcemeta.com/example/schemas/test.json
--- Processing schema: https://sourcemeta.com/example/schemas/test.json
-Schema output: example/schemas/test.json
-Validating against its metaschema: https://sourcemeta.com/example/schemas/test.json
+Materialising: https://sourcemeta.com/example/schemas/test.json
 error: The schema does not adhere to its metaschema
 The integer value was expected to validate against at least one of the 2 given subschemas
   at instance location "/type"
