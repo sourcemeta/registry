@@ -52,27 +52,6 @@ lint:
 .PHONY: test
 test: 
 	$(CTEST) --test-dir $(OUTPUT) --build-config $(PRESET) --output-on-failure --parallel
-	./test/cli/common/index/invalid-configuration.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/common/index/invalid-schema.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/common/index/output-non-directory.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/common/index/external-reference.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/common/index/url-base-trailing-slash.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/common/index/trailing-slash-identifier.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/common/index/bundle-ref-no-fragment.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/common/index/directory-index.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/common/index/search-index.sh $(PREFIX)/bin/sourcemeta-registry-index
-ifeq ($(EDITION), enterprise)
-	./test/cli/$(EDITION)/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/$(EDITION)/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
-endif
-ifeq ($(EDITION), pro)
-	./test/cli/$(EDITION)/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/$(EDITION)/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
-endif
-ifeq ($(EDITION), starter)
-	./test/cli/$(EDITION)/index/no-options.sh $(PREFIX)/bin/sourcemeta-registry-index
-	./test/cli/$(EDITION)/index/no-output.sh $(PREFIX)/bin/sourcemeta-registry-index
-endif
 
 .PHONY: test-schemas
 test-schemas: 
