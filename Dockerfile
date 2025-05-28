@@ -30,10 +30,8 @@ RUN cmake --build /build --config Release --parallel 2
 RUN cmake --install /build --prefix /usr --verbose \
   --config Release --component sourcemeta_registry
 
-RUN make -C /source test \
-  PREFIX=/usr \
-  EDITION=${SOURCEMETA_REGISTRY_EDITION} \
-  OUTPUT=/build
+RUN ctest --test-dir /build --build-config Release \
+  --output-on-failure --parallel
 
 FROM debian:bookworm-slim
 COPY --from=builder /usr/bin/sourcemeta-registry-index \
