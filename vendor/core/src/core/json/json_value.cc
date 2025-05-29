@@ -47,7 +47,7 @@ JSON::JSON(const bool value) : current_type{Type::Boolean} {
   this->data_boolean = value;
 }
 
-JSON::JSON(const std::nullptr_t) : current_type{Type::Null} {}
+JSON::JSON(const std::nullptr_t) {}
 
 JSON::JSON(const String &value) : current_type{Type::String} {
   new (&this->data_string) String{value};

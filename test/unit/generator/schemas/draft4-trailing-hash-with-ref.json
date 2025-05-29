@@ -1,0 +1,8 @@
+{
+  "id": "https://example.com/schemas/draft4-trailing-hash-with-ref.json#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "properties": {
+    "foo": { "$ref": "#/properties/bar" },
+    "bar": {}
+  }
+}

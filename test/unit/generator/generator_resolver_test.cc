@@ -320,3 +320,19 @@ TEST(Generator_Resolver, example_draft4_internal_ref) {
     }
   })JSON");
 }
+
+TEST(Generator_Resolver, example_draft4_trailing_hash_with_ref) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(
+      resolver, "example", "draft4-trailing-hash-with-ref.json",
+      "https://example.com/schemas/draft4-trailing-hash-with-ref.json",
+      "http://localhost:8000/example/draft4-trailing-hash-with-ref.json",
+      R"JSON({
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "http://localhost:8000/example/draft4-trailing-hash-with-ref.json",
+    "properties": {
+      "foo": { "$ref": "#/properties/bar" },
+      "bar": {}
+    }
+  })JSON");
+}
