@@ -21,8 +21,11 @@ jobs:
       matrix:
         edition:
           - name: starter
+            package: registry
           - name: pro
+            package: registry-pro
           - name: enterprise
+            package: registry-enterprise
 
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +45,7 @@ jobs:
       - uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         id: meta
         with:
-          images: ghcr.io/${{ github.repository_owner }}/registry
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }}
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         id: push
         with:
