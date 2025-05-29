@@ -4,7 +4,7 @@
   "schemas": {
     "example": {
       "base": "https://example.com/schemas",
-      "path": "./schemas",
+      "path": "./schemas/example",
       "defaultDialect": "http://json-schema.org/draft-07/schema#",
       "rebase": [
         { "from": "https://other.com", "to": "/example" }
