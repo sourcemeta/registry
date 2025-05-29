@@ -9,6 +9,10 @@
       "rebase": [
         { "from": "https://other.com", "to": "/example" }
       ]
+    },
+    "meta-draft4": {
+      "base": "http://json-schema.org/draft-04",
+      "path": "./schemas/meta-draft4"
     }
   }
 }
