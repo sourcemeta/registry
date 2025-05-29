@@ -99,8 +99,14 @@ auto Resolver::operator()(std::string_view identifier) const
     auto schema{internal_schema_reader(result->second.path.value())};
     assert(sourcemeta::core::is_schema(schema));
     if (schema.is_object() && result->second.dialect.has_value()) {
-      schema.assign("$schema",
-                    sourcemeta::core::JSON{result->second.dialect.value()});
+      // Don't modify references to official meta-schemas
+      const auto current{sourcemeta::core::dialect(schema)};
+      if (!current.has_value() ||
+          !sourcemeta::core::schema_official_resolver(current.value())
+               .has_value()) {
+        schema.assign("$schema",
+                      sourcemeta::core::JSON{result->second.dialect.value()});
+      }
     }
 
     // TODO: Extract the idea of a reference visitor into this project

@@ -337,3 +337,14 @@ TEST(Generator_Resolver, example_draft4_trailing_hash_with_ref) {
     }
   })JSON");
 }
+
+TEST(Generator_Resolver, meta_draft4_override) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "meta-draft4", "draft4-override.json",
+               "http://json-schema.org/draft-04/schema",
+               "http://localhost:8000/meta-draft4/schema.json",
+               R"JSON({
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "http://localhost:8000/meta-draft4/schema.json"
+  })JSON");
+}
