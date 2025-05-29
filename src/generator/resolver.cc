@@ -162,35 +162,35 @@ auto Resolver::add(const Configuration &configuration,
 
   auto result{this->views.emplace(
       effective_identifier,
-      Entry{
-          std::nullopt, canonical, current_dialect, "", effective_identifier,
-          // TODO: We should avoid this vector / string copy
-          [rebases = collection.rebase](
-              sourcemeta::core::JSON &schema, const sourcemeta::core::URI &base,
-              const sourcemeta::core::JSON::String &vocabulary,
-              const sourcemeta::core::JSON::String &keyword,
-              sourcemeta::core::URI &value) {
-            sourcemeta::core::reference_visitor_relativize(
-                schema, base, vocabulary, keyword, value);
+      Entry{std::nullopt, canonical, current_dialect, "", effective_identifier,
+            // TODO: We should avoid this vector / string copy
+            [rebases = collection.rebase](
+                sourcemeta::core::JSON &subschema,
+                const sourcemeta::core::URI &base,
+                const sourcemeta::core::JSON::String &vocabulary,
+                const sourcemeta::core::JSON::String &keyword,
+                sourcemeta::core::URI &value) {
+              sourcemeta::core::reference_visitor_relativize(
+                  subschema, base, vocabulary, keyword, value);
 
-            if (!value.is_absolute()) {
-              return;
-            }
-
-            for (const auto &rebase : rebases) {
-              // TODO: We need a method in URI to check if a URI
-              // is a base of another one without mutating either
-              auto value_copy = value;
-              value_copy.relative_to(rebase.first);
-              if (value_copy.is_relative()) {
-                auto value_other = value;
-                value_other.rebase(rebase.first, rebase.second);
-                schema.assign(keyword,
-                              sourcemeta::core::JSON{value_other.recompose()});
+              if (!value.is_absolute()) {
                 return;
               }
-            }
-          }})};
+
+              for (const auto &rebase : rebases) {
+                // TODO: We need a method in URI to check if a URI
+                // is a base of another one without mutating either
+                auto value_copy = value;
+                value_copy.relative_to(rebase.first);
+                if (value_copy.is_relative()) {
+                  auto value_other = value;
+                  value_other.rebase(rebase.first, rebase.second);
+                  subschema.assign(
+                      keyword, sourcemeta::core::JSON{value_other.recompose()});
+                  return;
+                }
+              }
+            }})};
 
   if (!result.second && result.first->second.path != canonical) {
     std::ostringstream error;
