@@ -24,7 +24,8 @@
 
 #define RESOLVER_IMPORT(resolver, collection, relative_path)                   \
   (resolver).add(configuration, collection,                                    \
-                 std::filesystem::path{SCHEMAS_PATH} / (relative_path))
+                 std::filesystem::path{SCHEMAS_PATH} / collection.name /       \
+                     (relative_path))
 
 #define RESOLVER_ADD(resolver, collection_name, relative_path,                 \
                      expected_current_uri, expected_final_uri,                 \
