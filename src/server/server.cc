@@ -81,8 +81,7 @@ static auto resolver(std::string_view identifier, const bool bundle,
   uri.canonicalize().relative_to(SERVER_BASE_URL);
 
   // If so, this URI doesn't belong to us
-  // TODO: Have a more efficient way of checking that a URI is blank
-  if (uri.is_absolute() || uri.recompose().empty()) {
+  if (uri.is_absolute() || uri.empty()) {
     return sourcemeta::core::schema_official_resolver(identifier);
   }
 
