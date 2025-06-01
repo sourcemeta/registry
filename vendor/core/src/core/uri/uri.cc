@@ -256,6 +256,13 @@ auto URI::is_fragment_only() const -> bool {
          this->fragment().has_value() && !this->query().has_value();
 }
 
+auto URI::empty() const -> bool {
+  return !this->path_.has_value() && !this->userinfo_.has_value() &&
+         !this->host_.has_value() && !this->port_.has_value() &&
+         !this->scheme_.has_value() && !this->fragment_.has_value() &&
+         !this->query_.has_value();
+}
+
 auto URI::scheme() const -> std::optional<std::string_view> {
   return this->scheme_;
 }
@@ -326,6 +333,30 @@ auto URI::path(std::string &&path) -> URI & {
 
 auto URI::fragment() const -> std::optional<std::string_view> {
   return this->fragment_;
+}
+
+auto URI::fragment(const std::string &fragment) -> URI & {
+  if (fragment.empty()) {
+    this->fragment_ = "";
+  } else if (fragment.starts_with('#')) {
+    this->fragment_ = URI{fragment}.fragment_;
+  } else {
+    this->fragment_ = URI{"#" + fragment}.fragment_;
+  }
+
+  return *this;
+}
+
+auto URI::fragment(std::string &&fragment) -> URI & {
+  if (fragment.empty()) {
+    this->fragment_ = "";
+  } else if (fragment.starts_with('#')) {
+    this->fragment_ = URI{std::move(fragment)}.fragment_;
+  } else {
+    this->fragment_ = URI{"#" + std::move(fragment)}.fragment_;
+  }
+
+  return *this;
 }
 
 auto URI::query() const -> std::optional<std::string_view> {
@@ -632,6 +663,10 @@ auto URI::operator<(const URI &other) const noexcept -> bool {
                   this->path_, this->query_, this->fragment_) <
          std::tie(other.scheme_, other.userinfo_, other.host_, other.port_,
                   other.path_, other.query_, other.fragment_);
+}
+
+auto URI::canonicalize(const std::string &input) -> std::string {
+  return URI{input}.canonicalize().recompose();
 }
 
 } // namespace sourcemeta::core
