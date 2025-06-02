@@ -227,6 +227,18 @@ public:
   /// assert(uri.path().value() == "/foo/bar");
   auto path(std::string &&path) -> URI &;
 
+  /// If the URI has a path, this method sets or replace the extension in the
+  /// path. For example:
+  ///
+  /// ```cpp
+  /// #include <sourcemeta/core/uri.h>
+  /// #include <cassert>
+  ///
+  /// sourcemeta::core::URI uri{"https://www.sourcemeta.com/foo"};
+  /// uri.extension("json");
+  /// assert(uri.recompose() == "https://www.sourcemeta.com/foo.json");
+  auto extension(std::string &&extension) -> URI &;
+
   /// Get the fragment part of the URI, if any. For example:
   ///
   /// ```cpp
