@@ -2,16 +2,17 @@
 
 #include <sourcemeta/core/uri.h>
 
-#include <cassert>   // assert
-#include <cstdint>   // std::uint32_t
-#include <istream>   // std::istream
-#include <optional>  // std::optional
-#include <sstream>   // std::ostringstream
-#include <stdexcept> // std::length_error, std::runtime_error
-#include <string>    // std::stoul, std::string, std::tolower
-#include <tuple>     // std::tie
-#include <utility>   // std::move
-#include <vector>    // std::vector
+#include <cassert>    // assert
+#include <cstdint>    // std::uint32_t
+#include <filesystem> // std::filesystem
+#include <istream>    // std::istream
+#include <optional>   // std::optional
+#include <sstream>    // std::ostringstream
+#include <stdexcept>  // std::length_error, std::runtime_error
+#include <string>     // std::stoul, std::string, std::tolower
+#include <tuple>      // std::tie
+#include <utility>    // std::move
+#include <vector>     // std::vector
 
 static auto uri_normalize(UriUriA *uri) -> void {
   if (uriNormalizeSyntaxA(uri) != URI_SUCCESS) {
@@ -328,6 +329,17 @@ auto URI::path(std::string &&path) -> URI & {
   }
 
   this->path_ = URI{std::move(path)}.path_;
+  return *this;
+}
+
+auto URI::extension(std::string &&extension) -> URI & {
+  const auto &effective_path{this->path_.value_or("")};
+  if (!effective_path.empty() && !effective_path.ends_with('/')) {
+    std::filesystem::path as_path{effective_path};
+    as_path.replace_extension(std::move(extension));
+    this->path_ = std::move(as_path).string();
+  }
+
   return *this;
 }
 

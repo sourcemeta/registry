@@ -37,27 +37,21 @@ static auto write_lower_except_trailing(T &stream, const std::string &input,
   }
 }
 
-static auto url_join(const std::string &first, const std::string &second,
-                     const std::string &third, const std::string &extension)
-    -> std::string {
+static auto url_join_json(const std::string &first, const std::string &second,
+                          const std::string &third) -> std::string {
   std::ostringstream result;
   write_lower_except_trailing(result, first, '/');
   result << '/';
   write_lower_except_trailing(result, second, '/');
   result << '/';
   write_lower_except_trailing(result, third, '.');
-  if (!result.str().ends_with(extension)) {
-    std::filesystem::path current{result.str()};
-    if (is_yaml(current)) {
-      current.replace_extension(std::string{"."} + extension);
-      return current.string();
-    }
 
-    result << '.';
-    result << extension;
-  }
-
-  return result.str();
+  sourcemeta::core::URI uri_result{result.str()};
+  // We want to guarantee identifiers end with a JSON
+  // extension, as we want to use the non-extension URI to
+  // potentially metadata about schemas, etc
+  uri_result.extension(".json");
+  return uri_result.recompose();
 }
 
 namespace sourcemeta::registry {
@@ -84,9 +78,11 @@ auto Resolver::operator()(std::string_view identifier) const
 
   auto result{this->views.find(string_identifier)};
   if (result == this->views.cend() && !identifier.ends_with(".json")) {
+    sourcemeta::core::URI uri_identifier{string_identifier};
     // Try with a `.json` extension as a fallback, as we do add this
     // extension when a schema doesn't have it by default
-    result = this->views.find(string_identifier + ".json");
+    uri_identifier.extension("json");
+    result = this->views.find(uri_identifier.recompose());
   }
 
   if (result != this->views.cend()) {
@@ -156,13 +152,8 @@ auto Resolver::add(const Configuration &configuration,
     dialect_uri.canonicalize();
     dialect_uri.relative_to(collection.base_uri);
     if (dialect_uri.is_relative()) {
-      current_dialect =
-          url_join(configuration.url().recompose(), collection.name,
-                   dialect_uri.recompose(),
-                   // We want to guarantee identifiers end with a JSON
-                   // extension, as we want to use the non-extension URI to
-                   // potentially metadata about schemas, etc
-                   "json");
+      current_dialect = url_join_json(configuration.url().recompose(),
+                                      collection.name, dialect_uri.recompose());
     }
   }
 
@@ -219,16 +210,10 @@ auto Resolver::add(const Configuration &configuration,
   }
 
   assert(!identifier_uri.recompose().empty());
-  // TODO: Make this part of the URI class as a concat method. For the
-  // extension, we should have a method for setting an extension in the path
-  // component
-  auto new_identifier{
-      url_join(configuration.url().recompose(), collection.name,
-               identifier_uri.recompose(),
-               // We want to guarantee identifiers end with a JSON
-               // extension, as we want to use the non-extension URI to
-               // potentially metadata about schemas, etc
-               "json")};
+  // TODO: Make this part of the URI class as a concat method.
+  auto new_identifier{url_join_json(configuration.url().recompose(),
+                                    collection.name,
+                                    identifier_uri.recompose())};
 
   sourcemeta::core::URI schema_uri{new_identifier};
   schema_uri.relative_to(configuration.url());
