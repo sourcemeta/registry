@@ -227,6 +227,18 @@ public:
   /// assert(uri.path().value() == "/foo/bar");
   auto path(std::string &&path) -> URI &;
 
+  /// Append a path to the existing URI path or set a path if such component
+  /// does not exist in the URI. For example:
+  ///
+  /// ```cpp
+  /// #include <sourcemeta/core/uri.h>
+  /// #include <cassert>
+  ///
+  /// sourcemeta::core::URI uri{"https://www.sourcemeta.com/foo"};
+  /// uri.append_path("bar/baz");
+  /// assert(uri.recompose() == "https://www.sourcemeta.com/foo/bar/baz");
+  auto append_path(const std::string &path) -> URI &;
+
   /// If the URI has a path, this method sets or replace the extension in the
   /// path. For example:
   ///

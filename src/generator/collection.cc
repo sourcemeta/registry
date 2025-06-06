@@ -1,8 +1,5 @@
 #include <sourcemeta/registry/generator_collection.h>
 
-#include <cassert> // assert
-#include <sstream> // std::ostringstream
-
 namespace sourcemeta::registry {
 
 Collection::Collection(const std::filesystem::path &base_path,
@@ -29,18 +26,10 @@ Collection::Collection(const std::filesystem::path &base_path,
 
 auto Collection::default_identifier(
     const std::filesystem::path &schema_path) const -> std::string {
-  // TODO: Extract this into a URI::append_path() method
-  std::ostringstream result;
-  const auto base{this->base_uri.recompose()};
-  result << base;
-  if (!base.ends_with('/')) {
-    result << '/';
-  }
-  const auto relative_path{
-      std::filesystem::relative(schema_path, this->path).string()};
-  assert(!relative_path.starts_with('/'));
-  result << relative_path;
-  return result.str();
+  return sourcemeta::core::URI{this->base_uri}
+      .append_path(std::filesystem::relative(schema_path, this->path).string())
+      .canonicalize()
+      .recompose();
 }
 
 } // namespace sourcemeta::registry

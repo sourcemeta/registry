@@ -313,7 +313,12 @@ auto URI::path(const std::string &path) -> URI & {
     throw URIError{"You cannot set a relative path"};
   }
 
-  this->path_ = URI{path}.path_;
+  if (path == "/") {
+    this->path_ = "";
+  } else {
+    this->path_ = URI{path}.path_;
+  }
+
   return *this;
 }
 
@@ -328,8 +333,28 @@ auto URI::path(std::string &&path) -> URI & {
     throw URIError{"You cannot set a relative path"};
   }
 
-  this->path_ = URI{std::move(path)}.path_;
+  if (path == "/") {
+    this->path_ = "";
+  } else {
+    this->path_ = URI{std::move(path)}.path_;
+  }
+
   return *this;
+}
+
+auto URI::append_path(const std::string &path) -> URI & {
+  if (path.empty()) {
+    return *this;
+  } else if (this->path_.has_value()) {
+    if (!this->path_.value().ends_with('/') && !path.starts_with('/')) {
+      this->path_.value() += '/';
+    }
+
+    this->path_.value() += path;
+    return *this;
+  } else {
+    return this->path(path);
+  }
 }
 
 auto URI::extension(std::string &&extension) -> URI & {
