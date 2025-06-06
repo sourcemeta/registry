@@ -27,33 +27,6 @@ static auto internal_schema_reader(const std::filesystem::path &path)
                        : sourcemeta::core::read_json(path);
 }
 
-template <typename T>
-static auto write_lower_except_trailing(T &stream, const std::string &input,
-                                        const char trailing) -> void {
-  for (auto iterator = input.cbegin(); iterator != input.cend(); ++iterator) {
-    if (std::next(iterator) != input.cend() || *iterator != trailing) {
-      stream << static_cast<char>(std::tolower(*iterator));
-    }
-  }
-}
-
-static auto url_join_json(const std::string &first, const std::string &second,
-                          const std::string &third) -> std::string {
-  std::ostringstream result;
-  write_lower_except_trailing(result, first, '/');
-  result << '/';
-  write_lower_except_trailing(result, second, '/');
-  result << '/';
-  write_lower_except_trailing(result, third, '.');
-
-  sourcemeta::core::URI uri_result{result.str()};
-  // We want to guarantee identifiers end with a JSON
-  // extension, as we want to use the non-extension URI to
-  // potentially metadata about schemas, etc
-  uri_result.extension(".json");
-  return uri_result.recompose();
-}
-
 namespace sourcemeta::registry {
 
 ResolverOutsideBaseError::ResolverOutsideBaseError(std::string uri,
@@ -152,8 +125,13 @@ auto Resolver::add(const Configuration &configuration,
     dialect_uri.canonicalize();
     dialect_uri.relative_to(collection.base_uri);
     if (dialect_uri.is_relative()) {
-      current_dialect = url_join_json(configuration.url().recompose(),
-                                      collection.name, dialect_uri.recompose());
+      current_dialect = sourcemeta::core::URI{configuration.url()}
+                            .append_path(collection.name)
+                            // TODO: Let `append_path` take a URI
+                            .append_path(dialect_uri.recompose())
+                            .canonicalize()
+                            .extension(".json")
+                            .recompose();
     }
   }
 
@@ -210,10 +188,13 @@ auto Resolver::add(const Configuration &configuration,
   }
 
   assert(!identifier_uri.recompose().empty());
-  // TODO: Make this part of the URI class as a concat method.
-  auto new_identifier{url_join_json(configuration.url().recompose(),
-                                    collection.name,
-                                    identifier_uri.recompose())};
+  auto new_identifier = sourcemeta::core::URI{configuration.url()}
+                            .append_path(collection.name)
+                            // TODO: Let `append_path` take a URI
+                            .append_path(identifier_uri.recompose())
+                            .canonicalize()
+                            .extension(".json")
+                            .recompose();
 
   sourcemeta::core::URI schema_uri{new_identifier};
   schema_uri.relative_to(configuration.url());
