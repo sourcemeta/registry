@@ -7,6 +7,7 @@ DOCKER ?= docker
 SHELLCHECK ?= shellcheck
 NPX ?= npx
 NPM ?= npm
+MKDOCS ?= mkdocs
 
 # Options
 INDEX ?= ON
@@ -81,6 +82,10 @@ docker:
 		$(DOCKER) compose --file test/sandbox/compose.yaml config
 	SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
 		$(DOCKER) compose --file test/sandbox/compose.yaml up --build
+
+.PHONY: docs
+docs: mkdocs.yml
+	$(MKDOCS) serve --config-file $< --strict --open
 
 .PHONY: clean
 clean: 
