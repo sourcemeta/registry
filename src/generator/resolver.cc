@@ -153,13 +153,9 @@ auto Resolver::add(const Configuration &configuration,
               }
 
               for (const auto &rebase : rebases) {
-                // TODO: We need a method in URI to check if a URI
-                // is a base of another one without mutating either
-                auto value_copy = value;
-                value_copy.relative_to(rebase.first);
-                if (value_copy.is_relative()) {
-                  auto value_other = value;
-                  value_other.rebase(rebase.first, rebase.second);
+                auto value_other = value;
+                value_other.rebase(rebase.first, rebase.second);
+                if (value_other != value) {
                   subschema.assign(
                       keyword, sourcemeta::core::JSON{value_other.recompose()});
                   return;
