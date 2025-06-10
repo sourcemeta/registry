@@ -85,7 +85,7 @@ static auto index_main(const std::string_view &program,
       // See https://github.com/sourcemeta/registry/blob/main/LICENSE
 #if defined(SOURCEMETA_REGISTRY_PRO)
       constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO{1000};
-      if (resolver.size() > SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO) {
+      if (resolver.size() >= SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO) {
         std::cerr << "error: The Pro edition is restricted to "
                   << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO << " schemas\n";
         std::cerr << "Upgrade to the Enterprise edition to waive limits\n";
@@ -94,7 +94,7 @@ static auto index_main(const std::string_view &program,
       }
 #elif defined(SOURCEMETA_REGISTRY_STARTER)
       constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER{100};
-      if (resolver.size() > SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER) {
+      if (resolver.size() >= SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER) {
         std::cerr << "error: The Starter edition is restricted to "
                   << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER << " schemas\n";
         std::cerr << "Buy a Pro or Enterprise license at "
