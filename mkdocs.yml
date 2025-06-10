@@ -18,6 +18,12 @@ extra:
 # TODO: Add https://squidfunk.github.io/mkdocs-material/setup/building-an-optimized-site/#built-in-optimize-plugin
 plugins:
   - search
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Configuration: configuration.md
+  - Library: library.md
+  - Editions: editions.md
 theme:
   language: en
   logo: assets/logo.svg
