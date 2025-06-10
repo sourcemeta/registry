@@ -1,0 +1,49 @@
+site_name: Sourcemeta Registry
+site_url: https://registry.sourcemeta.com
+repo_url: https://github.com/sourcemeta/registry
+repo_name: sourcemeta/registry
+copyright: Copyright &copy; Sourcemeta
+edit_uri: edit/main/docs/
+extra:
+  # See https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/linkedin 
+      link: https://www.linkedin.com/company/sourcemeta
+    - icon: fontawesome/brands/github 
+      link: https://github.com/sourcemeta
+  generator: false
+# TODO: Add https://squidfunk.github.io/mkdocs-material/setup/setting-up-social-cards/
+# TODO: Add https://squidfunk.github.io/mkdocs-material/setup/building-an-optimized-site/#built-in-optimize-plugin
+plugins:
+  - search
+theme:
+  language: en
+  logo: assets/logo.svg
+  favicon: assets/favicon.ico
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.path
+    - navigation.top
+    - navigation.footer
+    - search.share
+    - content.action.edit
+  palette: 
+    - scheme: default
+      media: "(prefers-color-scheme: light)"
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      media: "(prefers-color-scheme: dark)"
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode

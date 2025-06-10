@@ -48,3 +48,13 @@ jobs:
       - run: docker compose --file test/sandbox/compose.yaml down
         env:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
+
+  website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - run: pip install mkdocs-material 
+      - run: mkdocs build --config-file mkdocs.yml --strict --site-dir ./build/website
