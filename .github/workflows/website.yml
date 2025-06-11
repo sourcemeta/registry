@@ -1,4 +1,4 @@
-name: Website 
+name: Sourcemeta Registry Website 
 on:
   push:
     branches:
