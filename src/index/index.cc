@@ -7,6 +7,7 @@
 #include "explorer.h"
 #include "toc.h"
 
+#include <algorithm>   // std::sort
 #include <cassert>     // assert
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>   // std::exception
@@ -17,6 +18,30 @@
 #include <string_view> // std::string_view
 #include <utility>     // std::move
 #include <vector>      // std::vector
+
+static auto search_index_comparator(const sourcemeta::core::JSON &left,
+                                    const sourcemeta::core::JSON &right)
+    -> bool {
+  assert(left.is_array() && left.size() == 3);
+  assert(right.is_array() && right.size() == 3);
+
+  // Prioritise entries that have more meta-data filled in
+  const auto left_score =
+      (!left.at(1).empty() ? 1 : 0) + (!left.at(2).empty() ? 1 : 0);
+  const auto right_score =
+      (!right.at(1).empty() ? 1 : 0) + (!right.at(2).empty() ? 1 : 0);
+  if (left_score != right_score) {
+    return left_score > right_score;
+  }
+
+  // Otherwise revert to lexicographic comparisons
+  // TODO: Ideally we sort based on schema health too, given lint results
+  if (left_score > 0) {
+    return left.at(0).to_string() < right.at(0).to_string();
+  }
+
+  return false;
+}
 
 static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
@@ -179,6 +204,8 @@ static auto index_main(const std::string_view &program,
     search_index.push_back(std::move(entry));
   }
 
+  // Make sure more relevant entries get prioritised
+  std::sort(search_index.begin(), search_index.end(), search_index_comparator);
   output.write_search(search_index.cbegin(), search_index.cend());
 
   // --------------------------------------------
