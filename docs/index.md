@@ -1,17 +1,6 @@
 # Home
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+We are working hard to get the Registry to its first stable release, which
+include proper documentation. For now, please star the project to show us your
+support and feel free to explore the live sample instance at
+[schemas.sourcemeta.com](https://schemas.sourcemeta.com).
