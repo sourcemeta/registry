@@ -34,6 +34,10 @@
         { "from": "https://other.com", "to": "/example/bundling" }
       ]
     },
+    "example/camelcase/test": {
+      "base": "https://sourcemeta.com/camelcase",
+      "path": "./schemas/example/camelcase"
+    },
     "example/v2.0": {
       "base": "https://example.com/schemas",
       "path": "./schemas/example/v2.0"
