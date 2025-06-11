@@ -19,11 +19,12 @@ extra:
 plugins:
   - search
 nav:
-  - Home: index.md
-  - Getting Started: getting-started.md
-  - Configuration: configuration.md
-  - Library: library.md
-  - Editions: editions.md
+  - index.md
+  - getting-started.md
+  - configuration.md
+  - library.md
+  - commercial.md
+  - Live Example Instance: https://schemas.sourcemeta.com
 theme:
   language: en
   logo: assets/logo.svg

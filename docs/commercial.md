@@ -1,4 +1,4 @@
-# Configuration Reference
+# Buy a Commercial License
 
 We are working hard to get the Registry to its first stable release, which
 include proper documentation. For now, please star the project to show us your
