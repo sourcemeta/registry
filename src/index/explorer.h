@@ -165,15 +165,28 @@ auto html_start(T &output, const sourcemeta::core::JSON &configuration,
       .open("link",
             {{"rel", "manifest"}, {"href", "/static/manifest.webmanifest"}});
 
-  if (configuration.defines("analytics") &&
-      configuration.at("analytics").defines("plausible")) {
-    output
-        .open("script",
+  if (configuration.defines("analytics")) {
+    if (configuration.at("analytics").defines("plausible")) {
+      output
+          .open("script",
+                {{"defer", ""},
+                 {"data-domain",
+                  configuration.at("analytics").at("plausible").to_string()},
+                 {"src", "https://plausible.io/js/script.js"}})
+          .close("script");
+    }
+
+    if (configuration.at("analytics").defines("telemetrydeck")) {
+      output
+          .open(
+              "script",
               {{"defer", ""},
-               {"data-domain",
-                configuration.at("analytics").at("plausible").to_string()},
-               {"src", "https://plausible.io/js/script.js"}})
-        .close("script");
+               {"data-app-id",
+                configuration.at("analytics").at("telemetrydeck").to_string()},
+               {"src",
+                "https://cdn.telemetrydeck.com/websdk/telemetrydeck.min.js"}})
+          .close("script");
+    }
   }
 
   output.close("head");

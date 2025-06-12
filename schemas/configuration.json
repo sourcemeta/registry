@@ -34,8 +34,12 @@
       "properties": {
         "plausible": {
           "type": "string"
+        },
+        "telemetrydeck": {
+          "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "hero": {
       "type": "string"
