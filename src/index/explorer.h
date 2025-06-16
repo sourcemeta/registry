@@ -23,9 +23,7 @@ auto html_navigation(T &output, const sourcemeta::core::JSON &configuration)
       {{"class",
         "navbar-brand me-0 me-md-3 d-flex align-items-center w-100 w-md-auto"},
        {"href", configuration.at("url").to_string()}});
-  sourcemeta::registry::html::partials::image(
-      output, "/static/icon.svg", 30, configuration.at("title").to_string(),
-      "me-2");
+
   output.open("span", {{"class", "fw-bold me-1"}})
       .text(configuration.at("title").to_string())
       .close("span")
@@ -84,7 +82,11 @@ template <typename T> auto html_footer(T &output) -> void {
       {{"class",
         "border-top text-secondary py-3 d-flex "
         "align-items-center justify-content-between flex-column flex-md-row"}});
-  output.open("small", {{"class", "mb-2 mb-md-0"}})
+  output.open("small", {{"class", "mb-2 mb-md-0"}});
+  sourcemeta::registry::html::partials::image(output, "/static/icon.svg", 25,
+                                              "Sourcemeta", "me-2");
+
+  output
       .open("a", {{"href", "https://github.com/sourcemeta/registry"},
                   {"class", "text-secondary"},
                   {"target", "_blank"}})
@@ -114,8 +116,9 @@ template <typename T> auto html_footer(T &output) -> void {
       .open("i", {{"class", "bi bi-question-square me-2"}})
       .close("i")
       .text("Need Help?")
-      .close("a")
-      .close("small");
+      .close("a");
+
+  output.close("small");
   output.close("footer");
 }
 
