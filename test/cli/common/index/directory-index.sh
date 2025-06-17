@@ -29,6 +29,7 @@ cat << 'EOF' > "$TMP/schemas/test.json"
 }
 EOF
 
+export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 "$1" "$TMP/configuration.json" "$TMP/output"
 
 cat << 'EOF' > "$TMP/index-top-level.json"

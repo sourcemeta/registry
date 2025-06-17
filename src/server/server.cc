@@ -2,6 +2,8 @@
 #include <sourcemeta/hydra/http.h>
 #include <sourcemeta/hydra/httpserver.h>
 
+#include <sourcemeta/registry/license.h>
+
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/uri.h>
@@ -323,6 +325,11 @@ auto main(int argc, char *argv[]) noexcept -> int {
   try {
     if (argc < 2) {
       std::cout << "Usage: " << argv[0] << " <path/to/output/directory>\n";
+      return EXIT_FAILURE;
+    }
+
+    if (!sourcemeta::registry::license_permitted()) {
+      std::cerr << sourcemeta::registry::license_error();
       return EXIT_FAILURE;
     }
 

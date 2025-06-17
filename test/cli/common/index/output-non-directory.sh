@@ -30,6 +30,7 @@ cat << 'EOF' > "$TMP/schemas/test.json"
 EOF
 
 echo "foobar" > "$TMP/output"
+export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 "$1" "$TMP/configuration.json" "$TMP/output" 2> "$TMP/output.txt" && CODE="$?" || CODE="$?"
 test "$CODE" = "1" || exit 1
 

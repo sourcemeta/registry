@@ -10,6 +10,7 @@ target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::jsons
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::http)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::httpserver)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::crypto)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::license)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
   target_compile_definitions(sourcemeta_registry_server 
