@@ -31,6 +31,7 @@ do
 EOF
 done
 
+export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 "$1" "$TMP/configuration.json" "$TMP/dist"
 
 cat << 'EOF' > "$TMP/schemas/exceeding.json"

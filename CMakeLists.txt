@@ -31,6 +31,10 @@ find_package(Hydra REQUIRED)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=native")
 
+if(REGISTRY_INDEX OR REGISTRY_SERVER)
+  add_subdirectory(src/license)
+endif()
+
 if(REGISTRY_INDEX)
   add_subdirectory(src/generator)
   add_subdirectory(src/html)

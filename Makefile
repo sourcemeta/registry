@@ -70,9 +70,11 @@ test-e2e:
 
 .PHONY: sandbox
 sandbox: compile
-	$(PREFIX)/bin/sourcemeta-registry-index $(SANDBOX)/configuration.json $(OUTPUT)/sandbox
+	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
+		$(PREFIX)/bin/sourcemeta-registry-index $(SANDBOX)/configuration.json $(OUTPUT)/sandbox
 	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox $(SANDBOX)/manifest.txt
-	$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/sandbox
+	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
+		$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/sandbox
 
 .PHONY: docker
 docker:

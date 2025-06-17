@@ -21,22 +21,11 @@ cat << EOF > "$TMP/configuration.json"
 EOF
 
 mkdir "$TMP/schemas"
-for count in $(seq -w 1 1000)
-do
-  cat << EOF > "$TMP/schemas/$count.json"
-  {
-    "\$schema": "http://json-schema.org/draft-07/schema#",
-    "\$id": "https://example.com/$count.json"
-  }
-EOF
-done
-
-cat << 'EOF' > "$TMP/schemas/exceeding.json"
+cat << 'EOF' > "$TMP/schemas/schema.json"
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://example.com/exceeding.json"
+  "$id": "https://example.com/schema"
 }
 EOF
 
-export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 "$1" "$TMP/configuration.json" "$TMP/dist"

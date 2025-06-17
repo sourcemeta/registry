@@ -2,6 +2,7 @@
 #include <sourcemeta/core/jsonschema.h>
 
 #include <sourcemeta/registry/generator.h>
+#include <sourcemeta/registry/license.h>
 
 #include "configure.h"
 #include "explorer.h"
@@ -250,6 +251,11 @@ auto main(int argc, char *argv[]) noexcept -> int {
     const std::string_view program{argv[0]};
     const std::vector<std::string> arguments{argv + std::min(1, argc),
                                              argv + argc};
+    if (!sourcemeta::registry::license_permitted()) {
+      std::cerr << sourcemeta::registry::license_error();
+      return EXIT_FAILURE;
+    }
+
     return index_main(program, arguments);
   } catch (const sourcemeta::registry::ValidatorError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();

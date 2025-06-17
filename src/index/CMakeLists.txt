@@ -14,6 +14,7 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::yaml)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evaluator)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::html)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
   target_compile_definitions(sourcemeta_registry_index 
