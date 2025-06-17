@@ -4,6 +4,10 @@
 ./bundles/example
 ./bundles/example/bundling
 ./bundles/example/bundling/single.json
+./bundles/example/camelcase
+./bundles/example/camelcase/test
+./bundles/example/camelcase/test/no-id-absolute-ref.json
+./bundles/example/camelcase/test/no-id.json
 ./bundles/example/extension
 ./bundles/example/extension/to-without.json
 ./bundles/example/extension/with.schema.json
@@ -38,6 +42,12 @@
 ./generated/example/bundling
 ./generated/example/bundling/index.html
 ./generated/example/bundling/index.json
+./generated/example/camelcase
+./generated/example/camelcase/index.html
+./generated/example/camelcase/index.json
+./generated/example/camelcase/test
+./generated/example/camelcase/test/index.html
+./generated/example/camelcase/test/index.json
 ./generated/example/extension
 ./generated/example/extension/index.html
 ./generated/example/extension/index.json
@@ -63,6 +73,10 @@
 ./schemas/example
 ./schemas/example/bundling
 ./schemas/example/bundling/single.json
+./schemas/example/camelcase
+./schemas/example/camelcase/test
+./schemas/example/camelcase/test/no-id-absolute-ref.json
+./schemas/example/camelcase/test/no-id.json
 ./schemas/example/extension
 ./schemas/example/extension/to-without.json
 ./schemas/example/extension/with.schema.json
@@ -94,6 +108,10 @@
 ./unidentified/example
 ./unidentified/example/bundling
 ./unidentified/example/bundling/single.json
+./unidentified/example/camelcase
+./unidentified/example/camelcase/test
+./unidentified/example/camelcase/test/no-id-absolute-ref.json
+./unidentified/example/camelcase/test/no-id.json
 ./unidentified/example/extension
 ./unidentified/example/extension/to-without.json
 ./unidentified/example/extension/with.schema.json
