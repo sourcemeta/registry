@@ -2,12 +2,12 @@
 CMAKE ?= cmake
 CTEST ?= ctest
 HURL ?= hurl
-JSONSCHEMA ?= jsonschema
 DOCKER ?= docker
 SHELLCHECK ?= shellcheck
 NPX ?= npx
 NPM ?= npm
 MKDOCS ?= mkdocs
+JSONSCHEMA ?= ./build/dist/bin/jsonschema
 
 # Options
 INDEX ?= ON
@@ -19,14 +19,13 @@ PREFIX ?= $(OUTPUT)/dist
 SANDBOX ?= ./test/sandbox
 
 .PHONY: all
-all: configure compile test-schemas test 
+all: configure compile test 
 
 .PHONY: configure
 configure: 
 	$(CMAKE) -S . -B $(OUTPUT) \
 		-DCMAKE_BUILD_TYPE:STRING=$(PRESET) \
 		-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON \
-		-DREGISTRY_DEVELOPMENT:BOOL=ON \
 		-DREGISTRY_TESTS:BOOL=ON \
 		-DREGISTRY_INDEX:BOOL=$(INDEX) \
 		-DREGISTRY_SERVER:BOOL=$(SERVER) \
@@ -36,27 +35,22 @@ configure:
 
 .PHONY: compile
 compile: 
-	$(JSONSCHEMA) fmt --verbose schemas/*.json
-	$(JSONSCHEMA) lint --verbose schemas/*.json
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target clang_format
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --parallel 4
 	$(CMAKE) --install $(OUTPUT) --prefix $(PREFIX) --config $(PRESET) --verbose \
-		--component sourcemeta_registry
+		--component sourcemeta_registry --component sourcemeta_jsonschema
+	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target jsonschema_fmt
 
 .PHONY: lint
 lint:
-	$(JSONSCHEMA) fmt --check --verbose schemas/*.json
-	$(JSONSCHEMA) lint --verbose schemas/*.json
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target clang_format_test
+	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target jsonschema_fmt_test
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target shellcheck
+	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target jsonschema_lint
 
 .PHONY: test
 test: 
 	$(CTEST) --test-dir $(OUTPUT) --build-config $(PRESET) --output-on-failure --parallel
-
-.PHONY: test-schemas
-test-schemas: 
-	$(JSONSCHEMA) test test/schemas --resolve schemas
 
 .PHONY: test-e2e
 test-e2e: 

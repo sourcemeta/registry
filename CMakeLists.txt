@@ -3,7 +3,6 @@ project(registry VERSION 1.1.0 LANGUAGES CXX)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Options
-option(REGISTRY_DEVELOPMENT "Build the Registry in development mode" OFF)
 option(REGISTRY_TESTS "Build the Registry unit tests" ON)
 option(REGISTRY_SERVER "Build the Registry server" ON)
 option(REGISTRY_INDEX "Build the Registry index tool" ON)
@@ -26,6 +25,8 @@ endif()
 find_package(Core REQUIRED)
 find_package(Blaze REQUIRED)
 find_package(Hydra REQUIRED)
+find_package(JSONBinPack REQUIRED)
+find_package(JSONSchema REQUIRED)
 
 # Always optimize the current architecture
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
@@ -45,10 +46,27 @@ if(REGISTRY_SERVER)
   add_subdirectory(src/server)
 endif()
 
-if(REGISTRY_DEVELOPMENT)
-  sourcemeta_target_clang_format(SOURCES src/*.h src/*.cc test/*.cc)
-  sourcemeta_target_shellcheck(SOURCES test/*.sh)
-endif()
+sourcemeta_target_clang_format(SOURCES src/*.h src/*.cc test/*.cc)
+sourcemeta_target_shellcheck(SOURCES test/*.sh)
+
+add_custom_target(jsonschema_fmt
+  WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+  VERBATIM
+  COMMAND "$<TARGET_FILE:jsonschema_cli>" fmt --verbose 
+  "${CMAKE_CURRENT_SOURCE_DIR}/schemas"
+  COMMENT "Formatting schemas using the JSON Schema CLI")
+add_custom_target(jsonschema_fmt_test
+  WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+  VERBATIM
+  COMMAND "$<TARGET_FILE:jsonschema_cli>" fmt --check --verbose 
+  "${CMAKE_CURRENT_SOURCE_DIR}/schemas"
+  COMMENT "Checking for JSON Schema CLI formatting compliance")
+add_custom_target(jsonschema_lint
+  WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+  VERBATIM
+  COMMAND "$<TARGET_FILE:jsonschema_cli>" lint --verbose 
+  "${CMAKE_CURRENT_SOURCE_DIR}/schemas"
+  COMMENT "Checking for JSON Schema CLI linting compliance")
 
 if(REGISTRY_TESTS)
   enable_testing()
@@ -56,4 +74,5 @@ if(REGISTRY_TESTS)
     add_subdirectory(test/unit/generator)
   endif()
   add_subdirectory(test/cli)
+  add_subdirectory(test/schemas)
 endif()
