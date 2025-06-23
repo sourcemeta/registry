@@ -1,6 +1,6 @@
 FROM debian:bookworm AS builder
 RUN apt-get --yes update && apt-get install --yes --no-install-recommends \
-  build-essential cmake sassc shellcheck \
+  build-essential cmake sassc shellcheck ca-certificates \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY cmake /source/cmake
@@ -29,7 +29,7 @@ RUN	cmake -S /source -B ./build \
 
 RUN cmake --build /build --config Release --parallel 2
 RUN cmake --install /build --prefix /usr --verbose --config Release \
-  --component sourcemeta_registry --component sourcemeta_jsonschema
+  --component sourcemeta_registry 
 
 # Linting
 RUN cmake --build /build --config Release --target clang_format_test
