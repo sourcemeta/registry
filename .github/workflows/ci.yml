@@ -21,7 +21,6 @@ jobs:
       - uses: actions/checkout@v4
 
       # Dependencies
-      - uses: sourcemeta/jsonschema@v9.3.1
       - name: Install Hurl
         run: |
           curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/${{ env.HURL_VERSION }}/hurl_${{ env.HURL_VERSION }}_amd64.deb
@@ -30,12 +29,7 @@ jobs:
         env:
           HURL_VERSION: 5.0.1
 
-      # Linting
-      - run: make configure PRESET=Release INDEX=OFF SERVER=OFF EDITION=${{ matrix.edition.name }}
-      - run: make lint PRESET=Release EDITION=${{ matrix.edition.name }}
-
       # Testing
-      - run: make test-schemas PRESET=Release EDITION=${{ matrix.edition.name }}
       - run: docker build --tag registry-${{ matrix.edition.name }} . --file Dockerfile --build-arg SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }} --progress plain
       - run: docker compose --file test/sandbox/compose.yaml build
         env:

@@ -1,17 +1,18 @@
 FROM debian:bookworm AS builder
 RUN apt-get --yes update && apt-get install --yes --no-install-recommends \
-  build-essential cmake sassc && apt-get clean && rm -rf /var/lib/apt/lists/*
+  build-essential cmake sassc shellcheck ca-certificates \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY cmake /source/cmake
 COPY src /source/src
 COPY schemas /source/schemas
-COPY test/unit /source/test/unit
 COPY vendor /source/vendor
 COPY CMakeLists.txt /source/CMakeLists.txt
 
 # For testing
-COPY Makefile /source/Makefile
 COPY test/cli /source/test/cli
+COPY test/unit /source/test/unit
+COPY test/schemas /source/test/schemas
 
 # Commercial editions require a paid license
 # See https://github.com/sourcemeta/registry/blob/main/LICENSE
@@ -22,14 +23,19 @@ RUN	cmake -S /source -B ./build \
   -DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON \
   -DREGISTRY_INDEX:BOOL=ON \
   -DREGISTRY_SERVER:BOOL=ON \
-  -DREGISTRY_DEVELOPMENT:BOOL=OFF \
   -DREGISTRY_TESTS:BOOL=ON \
   -DREGISTRY_EDITION:STRING=${SOURCEMETA_REGISTRY_EDITION} \
   -DBUILD_SHARED_LIBS:BOOL=OFF
 
 RUN cmake --build /build --config Release --parallel 2
-RUN cmake --install /build --prefix /usr --verbose \
-  --config Release --component sourcemeta_registry
+RUN cmake --install /build --prefix /usr --verbose --config Release \
+  --component sourcemeta_registry 
+
+# Linting
+RUN cmake --build /build --config Release --target clang_format_test
+RUN cmake --build /build --config Release --target jsonschema_fmt_test
+RUN cmake --build /build --config Release --target jsonschema_lint
+RUN cmake --build /build --config Release --target shellcheck
 
 RUN ctest --test-dir /build --build-config Release \
   --output-on-failure --parallel
