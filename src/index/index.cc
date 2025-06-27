@@ -165,10 +165,27 @@ static auto index_main(const std::string_view &program,
     assert(subresult.has_value());
 
     // Storing artefacts
+
     std::cerr << "Bundling: " << schema.first << "\n";
     auto bundled_schema{sourcemeta::core::bundle(
         subresult.value(), sourcemeta::core::schema_official_walker, resolver)};
     output.write_schema_bundle(schema.second.relative_path, bundled_schema);
+
+    std::cerr << "Framing bundle: " << schema.first << "\n";
+    sourcemeta::core::SchemaFrame frame{
+        sourcemeta::core::SchemaFrame::Mode::References};
+    frame.analyse(bundled_schema, sourcemeta::core::schema_official_walker,
+                  resolver);
+
+    std::cerr << "Compiling in fast mode: " << schema.first << "\n";
+    const auto template_fast{sourcemeta::blaze::compile(
+        bundled_schema, sourcemeta::core::schema_official_walker, resolver,
+        sourcemeta::blaze::default_schema_compiler, frame,
+        sourcemeta::blaze::Mode::FastValidation)};
+    output.write_schema_template_fast(schema.second.relative_path,
+                                      template_fast);
+
+    // TODO: Can we re-use the frame here?
     std::cerr << "Bundling without identifiers: " << schema.first << "\n";
     sourcemeta::core::unidentify(
         bundled_schema, sourcemeta::core::schema_official_walker, resolver);
