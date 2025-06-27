@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/meta-ref.json",
+  "items": {
+    "$ref": "http://json-schema.org/draft-07/schema#"
+  }
+}

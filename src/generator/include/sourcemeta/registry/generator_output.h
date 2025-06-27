@@ -1,6 +1,7 @@
 #ifndef SOURCEMETA_REGISTRY_GENERATOR_OUTPUT_H_
 #define SOURCEMETA_REGISTRY_GENERATOR_OUTPUT_H_
 
+#include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/core/json.h>
 
 #include <sourcemeta/registry/generator_configuration.h>
@@ -20,7 +21,13 @@ public:
   Output(Output &&) = delete;
   Output &operator=(Output &&) = delete;
 
-  enum class Category { Schemas, Bundles, Generated, Unidentified };
+  enum class Category {
+    Schemas,
+    Bundles,
+    Generated,
+    Unidentified,
+    TemplateFast
+  };
 
   auto relative_path(const Category category) const -> std::filesystem::path;
   auto absolute_path(const Category category) const -> std::filesystem::path;
@@ -36,6 +43,10 @@ public:
   write_schema_bundle_unidentified(const std::filesystem::path &output,
                                    const sourcemeta::core::JSON &schema) const
       -> std::filesystem::path;
+  auto write_schema_template_fast(
+      const std::filesystem::path &output,
+      const sourcemeta::blaze::Template &compiled_schema) const
+      -> std::filesystem::path;
 
   template <typename Iterator>
   auto write_search(Iterator begin, Iterator end) const -> void {
@@ -49,7 +60,7 @@ public:
 private:
   auto internal_write_json(const std::filesystem::path &output,
                            const sourcemeta::core::JSON &document) const
-      -> void;
+      -> std::filesystem::path;
   auto internal_write_jsonschema(const std::filesystem::path &output,
                                  const sourcemeta::core::JSON &schema) const
       -> std::filesystem::path;

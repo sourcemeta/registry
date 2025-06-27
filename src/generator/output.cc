@@ -20,12 +20,13 @@ auto Output::open(const std::filesystem::path &output) const -> std::ofstream {
 
 auto Output::internal_write_json(const std::filesystem::path &output,
                                  const sourcemeta::core::JSON &document) const
-    -> void {
+    -> std::filesystem::path {
   const auto destination{this->resolve(output)};
   std::filesystem::create_directories(destination.parent_path());
   auto stream{this->open(destination)};
   sourcemeta::core::stringify(document, stream);
   stream << "\n";
+  return destination;
 }
 
 auto Output::internal_write_jsonschema(
@@ -63,6 +64,8 @@ auto Output::relative_path(const Category category) const
       return "generated";
     case Category::Unidentified:
       return "unidentified";
+    case Category::TemplateFast:
+      return "fast";
     default:
       assert(false);
       return "";
@@ -93,6 +96,15 @@ auto Output::write_schema_bundle_unidentified(
     const sourcemeta::core::JSON &schema) const -> std::filesystem::path {
   return this->internal_write_jsonschema(
       this->relative_path(Category::Unidentified) / output, schema);
+}
+
+auto Output::write_schema_template_fast(
+    const std::filesystem::path &output,
+    const sourcemeta::blaze::Template &compiled_schema) const
+    -> std::filesystem::path {
+  return this->internal_write_json(this->relative_path(Category::TemplateFast) /
+                                       output,
+                                   sourcemeta::blaze::to_json(compiled_schema));
 }
 
 auto Output::write_generated_json(const std::filesystem::path &output,
