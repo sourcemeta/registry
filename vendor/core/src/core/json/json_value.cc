@@ -117,7 +117,7 @@ JSON::JSON(const JSON &other) : current_type{other.current_type} {
   }
 }
 
-JSON::JSON(JSON &&other) : current_type{other.current_type} {
+JSON::JSON(JSON &&other) noexcept : current_type{other.current_type} {
   switch (other.current_type) {
     case Type::Boolean:
       this->data_boolean = other.data_boolean;
@@ -174,7 +174,7 @@ auto JSON::operator=(const JSON &other) -> JSON & {
   return *this;
 }
 
-auto JSON::operator=(JSON &&other) -> JSON & {
+auto JSON::operator=(JSON &&other) noexcept -> JSON & {
   this->maybe_destruct_union();
   this->current_type = other.current_type;
   switch (other.current_type) {
@@ -801,12 +801,12 @@ auto JSON::push_back_if_unique(JSON &&value)
 
 auto JSON::assign(const JSON::String &key, const JSON &value) -> void {
   assert(this->is_object());
-  this->data_object.data.assign(key, value);
+  this->data_object.data.emplace(key, value);
 }
 
 auto JSON::assign(const JSON::String &key, JSON &&value) -> void {
   assert(this->is_object());
-  this->data_object.data.assign(key, std::move(value));
+  this->data_object.data.emplace(key, value);
 }
 
 auto JSON::assign_if_missing(const JSON::String &key, const JSON &value)
@@ -861,7 +861,12 @@ auto JSON::clear_except(std::initializer_list<JSON::String> keys) -> void {
 auto JSON::merge(const JSON::Object &other) -> void {
   assert(this->is_object());
   for (const auto &pair : other) {
-    this->assign(pair.first, pair.second);
+    const auto maybe_key{this->try_at(pair.first, pair.hash)};
+    if (maybe_key && maybe_key->is_object() && pair.second.is_object()) {
+      this->at(pair.first, pair.hash).merge(pair.second.as_object());
+    } else {
+      this->assign(pair.first, pair.second);
+    }
   }
 }
 
