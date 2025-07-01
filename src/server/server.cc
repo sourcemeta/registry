@@ -1,4 +1,3 @@
-#include <sourcemeta/hydra/crypto.h>
 #include <sourcemeta/hydra/http.h>
 #include <sourcemeta/hydra/httpserver.h>
 
@@ -6,6 +5,7 @@
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/uri.h>
 
 #include "configure.h"
@@ -226,7 +226,7 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
                              sourcemeta::core::schema_format_compare);
 
   std::ostringstream hash;
-  sourcemeta::hydra::md5(payload.str(), hash);
+  sourcemeta::core::md5(payload.str(), hash);
 
   if (!request.header_if_none_match(hash.str())) {
     response.status(sourcemeta::hydra::http::Status::NOT_MODIFIED);

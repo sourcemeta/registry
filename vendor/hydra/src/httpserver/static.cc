@@ -1,4 +1,4 @@
-#include <sourcemeta/hydra/crypto.h>
+#include <sourcemeta/core/md5.h>
 #include <sourcemeta/hydra/httpserver.h>
 
 #include <cassert>    // assert
@@ -40,7 +40,7 @@ auto serve_file(const std::filesystem::path &file_path,
   std::ostringstream contents;
   contents << stream.rdbuf();
   std::ostringstream etag;
-  sourcemeta::hydra::md5(contents.str(), etag);
+  sourcemeta::core::md5(contents.str(), etag);
 
   if (!request.header_if_none_match(etag.str())) {
     response.status(sourcemeta::hydra::http::Status::NOT_MODIFIED);

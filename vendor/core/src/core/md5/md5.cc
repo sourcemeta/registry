@@ -1,11 +1,29 @@
-#include <sourcemeta/hydra/crypto.h>
+#include <sourcemeta/core/md5.h>
 
 #include <iomanip> // std::setfill, std::setw
 #include <ios>     // std::hex
 
-#include "bearssl.h"
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wimplicit-int-conversion"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#elif defined(_MSC_VER)
+#pragma warning(disable : 4244 4267)
+#endif
+extern "C" {
+#include <bearssl.h>
+}
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+#pragma warning(default : 4244 4267)
+#endif
 
-namespace sourcemeta::hydra {
+namespace sourcemeta::core {
 
 auto md5(std::string_view input, std::ostream &output) -> void {
   br_md5_context context;
@@ -23,4 +41,4 @@ auto md5(std::string_view input, std::ostream &output) -> void {
   output.unsetf(std::ios_base::hex);
 }
 
-} // namespace sourcemeta::hydra
+} // namespace sourcemeta::core

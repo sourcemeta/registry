@@ -1,13 +1,13 @@
-#include <sourcemeta/hydra/crypto.h>
+#include <sourcemeta/core/uuid.h>
 
 #include <cstdint> // std::uint8_t
 #include <random> // std::random_device, std::mt19937, std::uniform_int_distribution
 #include <string_view> // std::string_view
 
-namespace sourcemeta::hydra {
+namespace sourcemeta::core {
 
 // Adapted from https://stackoverflow.com/a/58467162/1641422
-auto uuid() -> std::string {
+auto uuidv4() -> std::string {
   static std::random_device device;
   static std::mt19937 generator{device()};
   static constexpr std::string_view digits = "0123456789abcdef";
@@ -29,4 +29,4 @@ auto uuid() -> std::string {
   return result;
 }
 
-} // namespace sourcemeta::hydra
+} // namespace sourcemeta::core

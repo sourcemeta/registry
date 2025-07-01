@@ -1,8 +1,7 @@
+#include <sourcemeta/core/gzip.h>
 #include <sourcemeta/hydra/httpserver_response.h>
 
 #include "uwebsockets.h"
-
-#include <zlib.h>
 
 #include <cassert>     // assert
 #include <cstring>     // memset
@@ -10,40 +9,6 @@
 #include <stdexcept>   // std::runtime_error
 #include <string>      // std::string
 #include <string_view> // std::string_view
-
-static auto zlib_compress_gzip(std::string_view input) -> std::string {
-  z_stream stream;
-  memset(&stream, 0, sizeof(stream));
-  int code = deflateInit2(&stream, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
-                          16 + MAX_WBITS, 8, Z_DEFAULT_STRATEGY);
-  if (code != Z_OK) {
-    throw std::runtime_error("deflateInit2 failed while compressing");
-  }
-
-  stream.next_in = reinterpret_cast<Bytef *>(const_cast<char *>(input.data()));
-  stream.avail_in = static_cast<uInt>(input.size());
-
-  char buffer[4096];
-  std::ostringstream compressed;
-
-  do {
-    stream.next_out = reinterpret_cast<Bytef *>(buffer);
-    stream.avail_out = sizeof(buffer);
-    code = deflate(&stream, Z_FINISH);
-    compressed.write(buffer, sizeof(buffer) - stream.avail_out);
-  } while (code == Z_OK);
-
-  if (code != Z_STREAM_END) {
-    throw std::runtime_error("Compression failure");
-  }
-
-  code = deflateEnd(&stream);
-  if (code != Z_OK) {
-    throw std::runtime_error("Compression failure");
-  }
-
-  return compressed.str();
-}
 
 namespace sourcemeta::hydra::http {
 
@@ -125,15 +90,15 @@ auto ServerResponse::end(const std::string_view message) -> void {
     this->internal->handler->writeHeader(key, value);
   }
 
-  switch (this->content_encoding) {
-    case ServerContentEncoding::GZIP:
-      this->internal->handler->end(zlib_compress_gzip(message));
+  if (this->content_encoding == ServerContentEncoding::GZIP) {
+    auto result{sourcemeta::core::gzip(message)};
+    if (!result.has_value()) {
+      throw std::runtime_error("Compression failed");
+    }
 
-      break;
-    case ServerContentEncoding::Identity:
-      this->internal->handler->end(message);
-
-      break;
+    this->internal->handler->end(result.value());
+  } else if (this->content_encoding == ServerContentEncoding::Identity) {
+    this->internal->handler->end(message);
   }
 }
 
@@ -146,16 +111,17 @@ auto ServerResponse::head(const std::string_view message) -> void {
     this->internal->handler->writeHeader(key, value);
   }
 
-  switch (this->content_encoding) {
-    case ServerContentEncoding::GZIP:
-      this->internal->handler->endWithoutBody(
-          zlib_compress_gzip(message).size());
-      this->internal->handler->end();
-      break;
-    case ServerContentEncoding::Identity:
-      this->internal->handler->endWithoutBody(message.size());
-      this->internal->handler->end();
-      break;
+  if (this->content_encoding == ServerContentEncoding::GZIP) {
+    auto result{sourcemeta::core::gzip(message)};
+    if (!result.has_value()) {
+      throw std::runtime_error("Compression failed");
+    }
+
+    this->internal->handler->endWithoutBody(result.value().size());
+    this->internal->handler->end();
+  } else if (this->content_encoding == ServerContentEncoding::Identity) {
+    this->internal->handler->endWithoutBody(message.size());
+    this->internal->handler->end();
   }
 }
 
