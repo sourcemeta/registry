@@ -1,11 +1,11 @@
-#ifndef SOURCEMETA_HYDRA_HTTPCLIENT_RESPONSE_H
-#define SOURCEMETA_HYDRA_HTTPCLIENT_RESPONSE_H
+#ifndef SOURCEMETA_HYDRA_HTTP_RESPONSE_H
+#define SOURCEMETA_HYDRA_HTTP_RESPONSE_H
 
-#ifndef SOURCEMETA_HYDRA_HTTPCLIENT_EXPORT
-#include <sourcemeta/hydra/httpclient_export.h>
+#ifndef SOURCEMETA_HYDRA_HTTP_EXPORT
+#include <sourcemeta/hydra/http_export.h>
 #endif
 
-#include <sourcemeta/hydra/http.h>
+#include <sourcemeta/hydra/http_status.h>
 
 #include <chrono>   // std::chrono::system_clock::time_point
 #include <map>      // std::map
@@ -16,9 +16,9 @@
 
 namespace sourcemeta::hydra::http {
 
-/// @ingroup httpclient
+/// @ingroup http
 /// This class represents a non-streaming HTTP response.
-class SOURCEMETA_HYDRA_HTTPCLIENT_EXPORT ClientResponse {
+class SOURCEMETA_HYDRA_HTTP_EXPORT ClientResponse {
 public:
   // We don't want to document this internal constructor
 #if !defined(DOXYGEN)
@@ -30,7 +30,7 @@ public:
   /// Get the status code of the response. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <cassert>
   ///
   /// sourcemeta::hydra::http::ClientRequest request{"https://www.example.com"};
@@ -46,7 +46,7 @@ public:
   /// sourcemeta::hydra::http::ClientRequest::capture.
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <cassert>
   ///
   /// sourcemeta::hydra::http::ClientRequest request{"https://www.example.com"};
@@ -68,7 +68,7 @@ public:
   /// sourcemeta::hydra::http::ClientRequest::capture.
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <cassert>
   ///
   /// sourcemeta::hydra::http::ClientRequest request{"https://www.example.com"};
@@ -87,7 +87,7 @@ public:
   /// request, using sourcemeta::hydra::http::ClientRequest::capture.
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   ///
   /// sourcemeta::hydra::http::ClientRequest request{"https://www.example.com"};
@@ -105,7 +105,7 @@ public:
   /// Get a container for all the captured response headers. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   ///
   /// sourcemeta::hydra::http::ClientRequest request{"https://www.example.com"};
@@ -129,7 +129,7 @@ public:
   /// For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <cassert>
   ///
   /// sourcemeta::hydra::http::ClientRequest request{"https://www.example.com"};
@@ -144,7 +144,7 @@ public:
   /// using sourcemeta::hydra::http::ClientResponse::empty. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <cassert>
   /// #include <iostream>
   /// #include <iterator>

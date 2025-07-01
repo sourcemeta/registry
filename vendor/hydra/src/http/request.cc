@@ -1,8 +1,5 @@
 #include <sourcemeta/hydra/http.h>
 
-#include <sourcemeta/hydra/httpclient_request.h>
-#include <sourcemeta/hydra/httpclient_response.h>
-
 #include <algorithm>        // std::copy
 #include <cstdint>          // std::uint8_t
 #include <future>           // std::future, std::promise

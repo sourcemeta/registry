@@ -1,4 +1,4 @@
-#include <sourcemeta/hydra/httpclient_stream.h>
+#include <sourcemeta/hydra/http.h>
 
 #include <curl/curl.h>
 
