@@ -1,7 +1,5 @@
 #include <sourcemeta/hydra/http.h>
 
-#include <sourcemeta/hydra/httpclient_response.h>
-
 #include <cassert>  // assert
 #include <map>      // std::map
 #include <optional> // std::optional, std::nullopt

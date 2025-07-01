@@ -14,12 +14,63 @@
 #include "command.h"
 #include "utils.h"
 
-// TODO: Add a flag to emit output using the standard JSON Schema output format
-// TODO: Add a flag to take a pre-compiled schema as input
+namespace {
+
+auto get_precompiled_schema_template_path(
+    const std::map<std::string, std::vector<std::string>> &options)
+    -> std::optional<std::filesystem::path> {
+  if (options.contains("template") && !options.at("template").empty()) {
+    return options.at("template").front();
+  } else if (options.contains("m") && !options.at("m").empty()) {
+    return options.at("m").front();
+  } else {
+    return std::nullopt;
+  }
+}
+
+auto get_schema_template(
+    const sourcemeta::core::JSON &bundled,
+    const sourcemeta::core::SchemaResolver &resolver,
+    const sourcemeta::core::SchemaFrame &frame,
+    const std::optional<std::string> &default_dialect,
+    const std::optional<std::string> &default_id, const bool fast_mode,
+    const std::map<std::string, std::vector<std::string>> &options)
+    -> sourcemeta::blaze::Template {
+  const auto precompiled{get_precompiled_schema_template_path(options)};
+  if (precompiled.has_value()) {
+    sourcemeta::jsonschema::cli::log_verbose(options)
+        << "Parsing pre-compiled schema template: "
+        << sourcemeta::jsonschema::cli::safe_weakly_canonical(
+               precompiled.value())
+               .string()
+        << "\n";
+    const auto schema_template{
+        sourcemeta::jsonschema::cli::read_file(precompiled.value())};
+    const auto precompiled_result{
+        sourcemeta::blaze::from_json(schema_template)};
+    if (precompiled_result.has_value()) {
+      return precompiled_result.value();
+    } else {
+      std::cerr << "warning: Failed to parse pre-compiled schema template. "
+                   "Compiling from scratch\n";
+    }
+  }
+
+  return sourcemeta::blaze::compile(
+      bundled, sourcemeta::core::schema_official_walker, resolver,
+      sourcemeta::blaze::default_schema_compiler, frame,
+      fast_mode ? sourcemeta::blaze::Mode::FastValidation
+                : sourcemeta::blaze::Mode::Exhaustive,
+      default_dialect, default_id);
+}
+
+} // namespace
+
 auto sourcemeta::jsonschema::cli::validate(
     const std::span<const std::string> &arguments) -> int {
-  const auto options{parse_options(
-      arguments, {"h", "http", "b", "benchmark", "t", "trace", "f", "fast"})};
+  const auto options{
+      parse_options(arguments, {"h", "http", "b", "benchmark", "t", "trace",
+                                "f", "fast", "j", "json"})};
 
   if (options.at("").size() < 1) {
     std::cerr
@@ -56,20 +107,22 @@ auto sourcemeta::jsonschema::cli::validate(
   const auto fast_mode{options.contains("f") || options.contains("fast")};
   const auto benchmark{options.contains("b") || options.contains("benchmark")};
   const auto trace{options.contains("t") || options.contains("trace")};
+  const auto json_output{options.contains("j") || options.contains("json")};
 
+  const auto default_id{
+      sourcemeta::core::URI::from_path(
+          sourcemeta::jsonschema::cli::safe_weakly_canonical(schema_path))
+          .recompose()};
   const sourcemeta::core::JSON bundled{
       sourcemeta::core::bundle(schema, sourcemeta::core::schema_official_walker,
-                               custom_resolver, dialect)};
+                               custom_resolver, dialect, default_id)};
   sourcemeta::core::SchemaFrame frame{
       sourcemeta::core::SchemaFrame::Mode::References};
   frame.analyse(bundled, sourcemeta::core::schema_official_walker,
-                custom_resolver, dialect);
-  const auto schema_template{sourcemeta::blaze::compile(
-      bundled, sourcemeta::core::schema_official_walker, custom_resolver,
-      sourcemeta::blaze::default_schema_compiler, frame,
-      fast_mode ? sourcemeta::blaze::Mode::FastValidation
-                : sourcemeta::blaze::Mode::Exhaustive,
-      dialect)};
+                custom_resolver, dialect, default_id);
+  const auto schema_template{get_schema_template(bundled, custom_resolver,
+                                                 frame, dialect, default_id,
+                                                 fast_mode, options)};
 
   sourcemeta::blaze::Evaluator evaluator;
 
@@ -112,7 +165,7 @@ auto sourcemeta::jsonschema::cli::validate(
                                            std::ref(trace_output));
           } else if (fast_mode) {
             subresult = evaluator.validate(schema_template, instance);
-          } else {
+          } else if (!json_output) {
             subresult =
                 evaluator.validate(schema_template, instance, std::ref(output));
           }
@@ -120,6 +173,22 @@ auto sourcemeta::jsonschema::cli::validate(
           if (trace) {
             print(trace_output, std::cout);
             result = subresult;
+          } else if (json_output) {
+            const auto suboutput{sourcemeta::blaze::standard(
+                evaluator, schema_template, instance,
+                fast_mode ? sourcemeta::blaze::StandardOutput::Flag
+                          : sourcemeta::blaze::StandardOutput::Basic)};
+            assert(suboutput.is_object());
+            assert(suboutput.defines("valid"));
+            assert(suboutput.at("valid").is_boolean());
+
+            sourcemeta::core::prettify(suboutput, std::cout);
+            std::cout << "\n";
+
+            if (!suboutput.at("valid").to_boolean()) {
+              result = false;
+              break;
+            }
           } else if (subresult) {
             log_verbose(options)
                 << "ok: " << safe_weakly_canonical(instance_path).string()
@@ -174,7 +243,7 @@ auto sourcemeta::jsonschema::cli::validate(
                                        std::ref(trace_output));
       } else if (fast_mode) {
         subresult = evaluator.validate(schema_template, instance);
-      } else {
+      } else if (!json_output) {
         subresult =
             evaluator.validate(schema_template, instance, std::ref(output));
       }
@@ -182,6 +251,20 @@ auto sourcemeta::jsonschema::cli::validate(
       if (trace) {
         print(trace_output, std::cout);
         result = subresult;
+      } else if (json_output) {
+        const auto suboutput{sourcemeta::blaze::standard(
+            evaluator, schema_template, instance,
+            fast_mode ? sourcemeta::blaze::StandardOutput::Flag
+                      : sourcemeta::blaze::StandardOutput::Basic)};
+        assert(suboutput.is_object());
+        assert(suboutput.defines("valid"));
+        assert(suboutput.at("valid").is_boolean());
+        if (!suboutput.at("valid").to_boolean()) {
+          result = false;
+        }
+
+        sourcemeta::core::prettify(suboutput, std::cout);
+        std::cout << "\n";
       } else if (subresult) {
         log_verbose(options)
             << "ok: " << safe_weakly_canonical(instance_path).string()

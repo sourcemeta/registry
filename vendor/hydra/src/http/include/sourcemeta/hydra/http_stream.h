@@ -1,11 +1,9 @@
-#ifndef SOURCEMETA_HYDRA_HTTPCLIENT_STREAM_H
-#define SOURCEMETA_HYDRA_HTTPCLIENT_STREAM_H
+#ifndef SOURCEMETA_HYDRA_HTTP_STREAM_H
+#define SOURCEMETA_HYDRA_HTTP_STREAM_H
 
-#ifndef SOURCEMETA_HYDRA_HTTPCLIENT_EXPORT
-#include <sourcemeta/hydra/httpclient_export.h>
+#ifndef SOURCEMETA_HYDRA_HTTP_EXPORT
+#include <sourcemeta/hydra/http_export.h>
 #endif
-
-#include <sourcemeta/hydra/http.h>
 
 #include <cstdint>     // std::uint8_t
 #include <functional>  // std::function
@@ -18,14 +16,14 @@
 
 namespace sourcemeta::hydra::http {
 
-/// @ingroup httpclient
+/// @ingroup http
 /// This class is used to perform a streaming HTTP request.
-class SOURCEMETA_HYDRA_HTTPCLIENT_EXPORT ClientStream {
+class SOURCEMETA_HYDRA_HTTP_EXPORT ClientStream {
 public:
   /// Construct a streaming HTTP request to a given URL. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
@@ -57,7 +55,7 @@ public:
   /// Move an instance of this class. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <utility>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
@@ -68,7 +66,7 @@ public:
   /// Move an instance of this class. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <utility>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
@@ -90,7 +88,7 @@ public:
   /// `GET`. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
@@ -115,7 +113,7 @@ public:
   /// Retrieve the HTTP method that the request will be sent with. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   /// #include <cassert>
   ///
@@ -128,7 +126,7 @@ public:
   /// Set an HTTP request header. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
@@ -151,7 +149,7 @@ public:
   /// Set an HTTP request header whose value is an integer. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
@@ -174,7 +172,7 @@ public:
   /// Retrieve the URL that the request will be sent to. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
@@ -186,7 +184,7 @@ public:
   /// For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   /// #include <cassert>
   ///
@@ -229,7 +227,7 @@ public:
   /// behavior. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
@@ -254,7 +252,7 @@ public:
   /// as it may result in undefined behavior. For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <iostream>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
@@ -285,7 +283,7 @@ public:
   /// For example:
   ///
   /// ```cpp
-  /// #include <sourcemeta/hydra/httpclient.h>
+  /// #include <sourcemeta/hydra/http.h>
   /// #include <sstream>
   ///
   /// sourcemeta::hydra::http::ClientStream request{"https://www.example.com"};
