@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(registry VERSION 1.1.0 LANGUAGES CXX)
+project(registry VERSION 1.1.0 LANGUAGES C CXX)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Options
@@ -24,7 +24,7 @@ endif()
 
 find_package(Core REQUIRED)
 find_package(Blaze REQUIRED)
-find_package(Hydra REQUIRED)
+find_package(Hydra REQUIRED http)
 find_package(JSONBinPack REQUIRED)
 find_package(JSONSchema REQUIRED)
 
@@ -43,6 +43,8 @@ if(REGISTRY_INDEX)
 endif()
 
 if(REGISTRY_SERVER)
+  find_package(uSockets REQUIRED)
+  find_package(uWebSockets REQUIRED)
   add_subdirectory(src/server)
 endif()
 
