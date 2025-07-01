@@ -43,22 +43,16 @@ if(HYDRA_HTTPCLIENT OR HYDRA_HTTPSERVER OR HYDRA_BUCKET)
   add_subdirectory(src/http)
 endif()
 
-if(HYDRA_CRYPTO OR HYDRA_HTTPCLIENT OR HYDRA_BUCKET)
-  find_package(BearSSL REQUIRED)
-endif()
-
 if(HYDRA_CRYPTO OR HYDRA_HTTPSERVER OR HYDRA_BUCKET)
   add_subdirectory(src/crypto)
 endif()
 
 if(HYDRA_HTTPCLIENT OR HYDRA_BUCKET)
-  find_package(ZLIB REQUIRED)
   find_package(CURL REQUIRED)
   add_subdirectory(src/httpclient)
 endif()
 
 if(HYDRA_HTTPSERVER)
-  find_package(ZLIB REQUIRED)
   find_package(uSockets REQUIRED)
   find_package(uWebSockets REQUIRED)
   add_subdirectory(src/httpserver)

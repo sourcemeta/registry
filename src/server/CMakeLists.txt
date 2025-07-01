@@ -7,9 +7,9 @@ set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourceme
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uri)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::jsonschema)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::http)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::httpserver)
-target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::crypto)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::license)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
