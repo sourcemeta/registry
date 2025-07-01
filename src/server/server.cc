@@ -1,5 +1,6 @@
 #include <sourcemeta/hydra/http.h>
-#include <sourcemeta/hydra/httpserver.h>
+
+#include "httpserver.h"
 
 #include <sourcemeta/registry/license.h>
 
@@ -98,9 +99,8 @@ static auto resolver(std::string_view identifier, const bool bundle,
   return sourcemeta::core::read_json(schema_path);
 }
 
-static auto json_error(const sourcemeta::hydra::http::ServerLogger &logger,
-                       const sourcemeta::hydra::http::ServerRequest &,
-                       sourcemeta::hydra::http::ServerResponse &response,
+static auto json_error(const ServerLogger &logger, const ServerRequest &,
+                       ServerResponse &response,
                        const sourcemeta::hydra::http::Status code,
                        std::string &&id, std::string &&message) -> void {
   auto object{sourcemeta::core::JSON::make_object()};
@@ -114,16 +114,13 @@ static auto json_error(const sourcemeta::hydra::http::ServerLogger &logger,
   response.end(std::move(object));
 }
 
-auto on_index(const sourcemeta::hydra::http::ServerLogger &,
-              const sourcemeta::hydra::http::ServerRequest &request,
-              sourcemeta::hydra::http::ServerResponse &response) -> void {
-  sourcemeta::hydra::http::serve_file(
-      *(__global_data) / "generated" / "index.html", request, response);
+auto on_index(const ServerLogger &, const ServerRequest &request,
+              ServerResponse &response) -> void {
+  serve_file(*(__global_data) / "generated" / "index.html", request, response);
 }
 
-auto on_search(const sourcemeta::hydra::http::ServerLogger &logger,
-               const sourcemeta::hydra::http::ServerRequest &request,
-               sourcemeta::hydra::http::ServerResponse &response) -> void {
+auto on_search(const ServerLogger &logger, const ServerRequest &request,
+               ServerResponse &response) -> void {
   const auto query{request.query("q")};
   if (!query.has_value()) {
     json_error(logger, request, response,
@@ -166,10 +163,8 @@ auto on_search(const sourcemeta::hydra::http::ServerLogger &logger,
   response.end(std::move(result));
 }
 
-static auto on_static(const sourcemeta::hydra::http::ServerLogger &logger,
-                      const sourcemeta::hydra::http::ServerRequest &request,
-                      sourcemeta::hydra::http::ServerResponse &response)
-    -> void {
+static auto on_static(const ServerLogger &logger, const ServerRequest &request,
+                      ServerResponse &response) -> void {
   const auto asset_path{SOURCEMETA_REGISTRY_STATIC + request.path().substr(7)};
   if (!std::filesystem::exists(asset_path)) {
     json_error(logger, request, response,
@@ -178,25 +173,21 @@ static auto on_static(const sourcemeta::hydra::http::ServerLogger &logger,
     return;
   }
 
-  sourcemeta::hydra::http::serve_file(asset_path, request, response);
+  serve_file(asset_path, request, response);
 }
 
-static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
-                       const sourcemeta::hydra::http::ServerRequest &request,
-                       sourcemeta::hydra::http::ServerResponse &response)
-    -> void {
+static auto on_request(const ServerLogger &logger, const ServerRequest &request,
+                       ServerResponse &response) -> void {
   const auto &request_path{request.path()};
 
   if (!request_path.ends_with(".json")) {
     const auto directory_path{
         path_join(*(__global_data) / "generated", request.path())};
     if (std::filesystem::is_directory(directory_path)) {
-      sourcemeta::hydra::http::serve_file(directory_path / "index.html",
-                                          request, response);
+      serve_file(directory_path / "index.html", request, response);
     } else {
-      sourcemeta::hydra::http::serve_file(
-          *(__global_data) / "generated" / "404.html", request, response,
-          sourcemeta::hydra::http::Status::NOT_FOUND);
+      serve_file(*(__global_data) / "generated" / "404.html", request, response,
+                 sourcemeta::hydra::http::Status::NOT_FOUND);
     }
 
     return;
@@ -258,9 +249,8 @@ static auto on_request(const sourcemeta::hydra::http::ServerLogger &logger,
   }
 }
 
-static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
-                         const sourcemeta::hydra::http::ServerRequest &request,
-                         sourcemeta::hydra::http::ServerResponse &response)
+static auto on_otherwise(const ServerLogger &logger,
+                         const ServerRequest &request, ServerResponse &response)
     -> void {
   if (request.path().starts_with("/api/")) {
     json_error(logger, request, response,
@@ -288,10 +278,8 @@ static auto on_otherwise(const sourcemeta::hydra::http::ServerLogger &logger,
 }
 
 static auto on_error(std::exception_ptr exception_ptr,
-                     const sourcemeta::hydra::http::ServerLogger &logger,
-                     const sourcemeta::hydra::http::ServerRequest &request,
-                     sourcemeta::hydra::http::ServerResponse &response) noexcept
-    -> void {
+                     const ServerLogger &logger, const ServerRequest &request,
+                     ServerResponse &response) noexcept -> void {
   try {
     std::rethrow_exception(exception_ptr);
   } catch (const sourcemeta::core::SchemaResolutionError &error) {
@@ -336,7 +324,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     __global_data = std::make_unique<std::filesystem::path>(
         std::filesystem::canonical(argv[1]));
 
-    sourcemeta::hydra::http::Server server;
+    Server server;
     server.route(sourcemeta::hydra::http::Method::GET, "/", on_index);
     server.route(sourcemeta::hydra::http::Method::GET, "/api/search",
                  on_search);

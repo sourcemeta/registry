@@ -1,15 +1,31 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server 
   FOLDER "Registry/Server" 
-  SOURCES server.cc configure.h.in 
-  "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
+  SOURCES 
+    # TODO: Inline all of these abstractions
+    httpserver.h
+    httpserver_logger.h
+    httpserver_request.h
+    httpserver_response.h
+    uwebsockets.h
+
+    server.cc 
+    configure.h.in 
+    "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
 
 set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourcemeta-registry-server)
+
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uri)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::jsonschema)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::md5)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uuid)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::gzip)
+target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uSockets)
+target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uWebSockets)
+
+# TODO: Get rid of this library
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::http)
-target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::httpserver)
+
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::license)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")

@@ -29,11 +29,7 @@ if(NOT uSockets_FOUND)
   target_compile_definitions(usockets PUBLIC LIBUS_NO_SSL)
 
   # Configure the event loop
-  if(WIN32)
-    # TODO: Make it work on Windows. Main challenge is that uSockets
-    # relies on libuv for that platform.
-    message(FATAL_ERROR "Hydra does not support uSockets on Windows yet")
-  elseif(APPLE)
+  if(APPLE)
     target_compile_definitions(usockets PUBLIC LIBUS_USE_KQUEUE)
   else()
     target_compile_definitions(usockets PUBLIC LIBUS_USE_EPOLL)
@@ -53,34 +49,6 @@ if(NOT uSockets_FOUND)
       C_VISIBILITY_INLINES_HIDDEN FALSE
       WINDOWS_EXPORT_ALL_SYMBOLS TRUE
       EXPORT_NAME usockets)
-
-  if(HYDRA_INSTALL)
-    include(GNUInstallDirs)
-    install(TARGETS usockets
-      EXPORT usockets
-      PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-        COMPONENT sourcemeta_hydra_dev
-      PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-        COMPONENT sourcemeta_hydra_dev
-      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        COMPONENT sourcemeta_hydra
-      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        COMPONENT sourcemeta_hydra
-        NAMELINK_COMPONENT sourcemeta_hydra_dev
-      ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        COMPONENT sourcemeta_hydra_dev)
-    install(EXPORT usockets
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/usockets"
-      COMPONENT sourcemeta_hydra_dev)
-
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/usockets-config.cmake
-      "include(\"\${CMAKE_CURRENT_LIST_DIR}/usockets.cmake\")\n"
-      "check_required_components(\"usockets\")\n")
-    install(FILES
-      "${CMAKE_CURRENT_BINARY_DIR}/usockets-config.cmake"
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/usockets"
-      COMPONENT sourcemeta_hydra_dev)
-  endif()
 
   set(uSockets_FOUND ON)
 endif()
