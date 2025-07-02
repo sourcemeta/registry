@@ -21,6 +21,22 @@
 
 static inline std::unique_ptr<const std::filesystem::path> __global_data;
 
+class ServerLogger {
+public:
+  auto operator<<(std::string_view message) const -> void {
+    // Otherwise we can get messed up output interleaved from multiple threads
+    static std::mutex log_mutex;
+    std::lock_guard<std::mutex> guard{log_mutex};
+    std::cerr << "["
+              << sourcemeta::hydra::http::to_gmt(
+                     std::chrono::system_clock::now())
+              << "] " << std::this_thread::get_id() << " (" << this->identifier
+              << ") " << message << "\n";
+  }
+
+  const std::string identifier;
+};
+
 static auto json_error(const ServerLogger &logger, uWS::HttpRequest *,
                        ServerResponse &response,
                        const sourcemeta::hydra::http::Status code,
@@ -260,16 +276,40 @@ static auto on_otherwise(const ServerLogger &logger, uWS::HttpRequest *request,
              "There is no schema at this URL");
 }
 
-static auto on_error(std::exception_ptr exception_ptr,
-                     const ServerLogger &logger, uWS::HttpRequest *request,
-                     ServerResponse &response) noexcept -> void {
+static auto
+middleware(uWS::HttpResponse<true> *const response_handler,
+           uWS::HttpRequest *const request,
+           const std::function<void(const ServerLogger &, uWS::HttpRequest *,
+                                    ServerResponse &)> &callback) noexcept
+    -> void {
+  // These should never throw, otherwise we cannot even react to errors
+  ServerLogger logger{sourcemeta::core::uuidv4()};
+  ServerResponse response{response_handler};
+
+  // For easy tracking
+  response.header("X-Request-Id", logger.identifier);
+
   try {
-    std::rethrow_exception(exception_ptr);
+    // Attempt automatic content encoding negotiation, which the user can always
+    // manually override later on in their request callback
+    const bool can_satisfy_requested_content_encoding{
+        negotiate_content_encoding(request, response)};
+    if (can_satisfy_requested_content_encoding) {
+      callback(logger, request, response);
+    } else {
+      response.status = sourcemeta::hydra::http::Status::NOT_ACCEPTABLE;
+      response.end();
+    }
   } catch (const std::exception &error) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
                "uncaught-error", error.what());
   }
+
+  std::ostringstream line;
+  line << response.status << ' ' << request->getMethod() << ' '
+       << request->getUrl();
+  logger << line.str();
 }
 
 // We try to keep this function as straight to point as possible
@@ -301,24 +341,46 @@ auto main(int argc, char *argv[]) noexcept -> int {
     __global_data = std::make_unique<std::filesystem::path>(
         std::filesystem::canonical(argv[1]));
 
-    Server server;
-    server.route(sourcemeta::hydra::http::Method::GET, "/", on_index);
-    server.route(sourcemeta::hydra::http::Method::GET, "/api/search",
-                 on_search);
-    server.route(sourcemeta::hydra::http::Method::GET, "/static/*", on_static);
-    server.route(sourcemeta::hydra::http::Method::HEAD, "/static/*", on_static);
-    server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
-    server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);
-    server.otherwise(on_otherwise);
-    server.error(on_error);
-
     const auto configuration{
         sourcemeta::core::read_json(*__global_data / "configuration.json")};
     assert(configuration.defines("port"));
     assert(configuration.at("port").is_integer());
     assert(configuration.at("port").is_positive());
-    return server.run(
-        static_cast<std::uint32_t>(configuration.at("port").to_integer()));
+    const auto port{
+        static_cast<std::uint32_t>(configuration.at("port").to_integer())};
+
+    ServerLogger logger{"global"};
+    uWS::LocalCluster({}, [port, &logger](uWS::SSLApp &app) -> void {
+#define UWS_CALLBACK(callback_name)                                            \
+  [](auto *const response, auto *const request) noexcept -> void {             \
+    middleware(response, request, (callback_name));                            \
+  }
+      app.get("/", UWS_CALLBACK(on_index));
+      app.get("/api/search", UWS_CALLBACK(on_search));
+      app.get("/static/*", UWS_CALLBACK(on_static));
+      app.head("/static/*", UWS_CALLBACK(on_static));
+      app.get("/*", UWS_CALLBACK(on_request));
+      app.head("/*", UWS_CALLBACK(on_request));
+      app.any("/*", UWS_CALLBACK(on_otherwise));
+#undef UWS_CALLBACK
+      app.listen(static_cast<int>(port),
+                 [port, &logger](us_listen_socket_t *const socket) -> void {
+                   if (socket) {
+                     const auto socket_port = us_socket_local_port(
+                         true, reinterpret_cast<struct us_socket_t *>(socket));
+                     assert(socket_port > 0);
+                     assert(port == static_cast<std::uint32_t>(socket_port));
+                     logger
+                         << "Listening on port " + std::to_string(socket_port);
+                   } else {
+                     logger
+                         << "Failed to listen on port " + std::to_string(port);
+                   }
+                 });
+    });
+
+    logger << "Failed to listen on port " + std::to_string(port);
+    return EXIT_FAILURE;
   } catch (const std::exception &error) {
     std::cerr << "unexpected error: " << error.what() << "\n";
     return EXIT_FAILURE;
