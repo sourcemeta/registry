@@ -1,8 +1,7 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index 
   FOLDER "Registry/Index" 
   SOURCES index.cc explorer.h toc.h configure.h.in 
-    "${PROJECT_SOURCE_DIR}/schemas/configuration.json"
-    "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
+    "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::generator)
@@ -41,7 +40,7 @@ install(TARGETS sourcemeta_registry_index
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
   COMPONENT sourcemeta_registry)
 
-# TODO: Pre-calculate .meta files with checksums, last modified, and mime types
+# Generate CSS
 include(BootstrapFiles)
 find_program(SASSC_BIN NAMES sassc REQUIRED)
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
@@ -52,8 +51,11 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
     "${CMAKE_CURRENT_SOURCE_DIR}/style.scss"
     "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/bootstrap-icons.scss"
     ${BOOTSTRAP_SCSS_FILES})
-install(FILES
-  # Icons
+target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
+
+# Generate static files
+set(REGISTRY_STATIC
+  "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/favicon.ico"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon_192x192.png"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon_512x512.png"
@@ -61,10 +63,27 @@ install(FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/apple-touch-icon.png"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/manifest.webmanifest"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
-
-  # Styles
-  "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff"
-  "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff2"
+  "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff2")
+
+set(REGISTRY_STATIC_META)
+foreach(file_path IN LISTS REGISTRY_STATIC)
+  get_filename_component(file_name "${file_path}" NAME)
+  add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta"
+    COMMAND "${CMAKE_COMMAND}" 
+      -DINPUT="${file_path}" 
+      -DOUTPUT="${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta"
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/metadata.cmake"
+    DEPENDS "${file_path}" "${CMAKE_CURRENT_SOURCE_DIR}/metadata.cmake")
+  target_sources(sourcemeta_registry_index 
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta")
+  list(APPEND REGISTRY_STATIC_META 
+    "${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta")
+endforeach()
+
+install(FILES ${REGISTRY_STATIC}
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/static/data"
+  COMPONENT sourcemeta_registry)
+install(FILES ${REGISTRY_STATIC_META}
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/static/meta"
   COMPONENT sourcemeta_registry)
