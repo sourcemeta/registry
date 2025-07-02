@@ -52,22 +52,6 @@
 #include <utility>     // std::move
 #include <vector>      // std::vector
 
-class ServerLogger {
-public:
-  auto operator<<(std::string_view message) const -> void {
-    // Otherwise we can get messed up output interleaved from multiple threads
-    static std::mutex log_mutex;
-    std::lock_guard<std::mutex> guard{log_mutex};
-    std::cerr << "["
-              << sourcemeta::hydra::http::to_gmt(
-                     std::chrono::system_clock::now())
-              << "] " << std::this_thread::get_id() << " (" << this->identifier
-              << ") " << message << "\n";
-  }
-
-  const std::string identifier;
-};
-
 enum class ServerContentEncoding { Identity, GZIP };
 
 class ServerResponse {
@@ -146,12 +130,6 @@ private:
   std::map<std::string, std::string> headers;
 };
 
-using RouteCallback = std::function<void(const ServerLogger &,
-                                         uWS::HttpRequest *, ServerResponse &)>;
-using ErrorCallback =
-    std::function<void(std::exception_ptr, const ServerLogger &,
-                       uWS::HttpRequest *, ServerResponse &)>;
-
 static auto negotiate_content_encoding(uWS::HttpRequest *request,
                                        ServerResponse &response) -> bool {
   const auto accept_encoding{request->getHeader("accept-encoding")};
@@ -196,134 +174,6 @@ static auto negotiate_content_encoding(uWS::HttpRequest *request,
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
   return true;
 }
-
-static auto wrap_route(uWS::HttpResponse<true> *const response_handler,
-                       uWS::HttpRequest *const request,
-                       const ErrorCallback &error,
-                       const RouteCallback &callback) noexcept -> void {
-  assert(error);
-  assert(callback);
-  assert(response_handler);
-  assert(request);
-
-  // These should never throw, otherwise we cannot even react to errors
-  ServerLogger logger{sourcemeta::core::uuidv4()};
-  ServerResponse response{response_handler};
-
-  // For easy tracking
-  response.header("X-Request-Id", logger.identifier);
-
-  try {
-    // Attempt automatic content encoding negotiation, which the user can always
-    // manually override later on in their request callback
-    const bool can_satisfy_requested_content_encoding{
-        negotiate_content_encoding(request, response)};
-    if (can_satisfy_requested_content_encoding) {
-      callback(logger, request, response);
-    } else {
-      response.status = sourcemeta::hydra::http::Status::NOT_ACCEPTABLE;
-      response.end();
-    }
-  } catch (...) {
-    error(std::current_exception(), logger, request, response);
-  }
-
-  std::ostringstream line;
-  line << response.status << ' ' << request->getMethod() << ' '
-       << request->getUrl();
-  logger << line.str();
-}
-
-class Server {
-public:
-  Server() : routes{} {}
-
-  auto route(const sourcemeta::hydra::http::Method method, std::string &&path,
-             RouteCallback &&callback) -> void {
-    this->routes.emplace_back(method, std::move(path), std::move(callback));
-  }
-
-  auto otherwise(RouteCallback &&callback) -> void {
-    this->fallback = std::move(callback);
-  }
-
-  auto error(ErrorCallback &&callback) -> void {
-    this->error_handler = std::move(callback);
-  }
-
-  auto run(const std::uint32_t port) const -> int {
-    uWS::LocalCluster({}, [this, port](uWS::SSLApp &app) -> void {
-
-#define UWS_CALLBACK(callback_name)                                            \
-  [&](auto *const response_handler, auto *const request) noexcept -> void {    \
-    wrap_route(response_handler, request, this->error_handler,                 \
-               (callback_name));                                               \
-  }
-      for (const auto &entry : this->routes) {
-        switch (std::get<0>(entry)) {
-          case sourcemeta::hydra::http::Method::GET:
-            app.get(std::get<1>(entry), UWS_CALLBACK(std::get<2>(entry)));
-            break;
-          case sourcemeta::hydra::http::Method::HEAD:
-            app.head(std::get<1>(entry), UWS_CALLBACK(std::get<2>(entry)));
-            break;
-          case sourcemeta::hydra::http::Method::POST:
-            app.post(std::get<1>(entry), UWS_CALLBACK(std::get<2>(entry)));
-            break;
-          case sourcemeta::hydra::http::Method::PUT:
-            app.put(std::get<1>(entry), UWS_CALLBACK(std::get<2>(entry)));
-            break;
-          case sourcemeta::hydra::http::Method::DELETE:
-            app.del(std::get<1>(entry), UWS_CALLBACK(std::get<2>(entry)));
-            break;
-          case sourcemeta::hydra::http::Method::CONNECT:
-            app.connect(std::get<1>(entry), UWS_CALLBACK(std::get<2>(entry)));
-            break;
-          case sourcemeta::hydra::http::Method::OPTIONS:
-            app.options(std::get<1>(entry), UWS_CALLBACK(std::get<2>(entry)));
-            break;
-          case sourcemeta::hydra::http::Method::TRACE:
-            app.trace(std::get<1>(entry), UWS_CALLBACK(std::get<2>(entry)));
-            break;
-          case sourcemeta::hydra::http::Method::PATCH:
-            app.patch(std::get<1>(entry), UWS_CALLBACK(std::get<2>(entry)));
-            break;
-        }
-      }
-
-      assert(this->fallback);
-      app.any("/*", UWS_CALLBACK(this->fallback));
-#undef UWS_CALLBACK
-
-      app.listen(static_cast<int>(port),
-                 [port, this](us_listen_socket_t *const socket) -> void {
-                   if (socket) {
-                     const auto socket_port = us_socket_local_port(
-                         true, reinterpret_cast<struct us_socket_t *>(socket));
-                     assert(socket_port > 0);
-                     assert(port == static_cast<std::uint32_t>(socket_port));
-                     this->logger
-                         << "Listening on port " + std::to_string(socket_port);
-                   } else {
-                     this->logger
-                         << "Failed to listen on port " + std::to_string(port);
-                   }
-                 });
-    });
-
-    // This method only returns on failure
-    this->logger << "Failed to listen on port " + std::to_string(port);
-    return EXIT_FAILURE;
-  }
-
-private:
-  std::vector<
-      std::tuple<sourcemeta::hydra::http::Method, std::string, RouteCallback>>
-      routes;
-  RouteCallback fallback;
-  ErrorCallback error_handler;
-  ServerLogger logger{"global"};
-};
 
 auto header_if_none_match(uWS::HttpRequest *handler, std::string_view value)
     -> bool {
