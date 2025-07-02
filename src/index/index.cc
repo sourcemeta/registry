@@ -49,6 +49,21 @@ static auto search_index_comparator(const sourcemeta::core::JSON &left,
 }
 
 static auto
+write_file_metadata(const std::filesystem::path &relative_path,
+                    const sourcemeta::registry::Output &output,
+                    const sourcemeta::registry::Output::Category category,
+                    const std::string &mime) -> void {
+  auto metadata{sourcemeta::core::JSON::make_object()};
+  metadata.assign("md5",
+                  sourcemeta::core::JSON{output.md5(category, relative_path)});
+  metadata.assign("lastModified",
+                  sourcemeta::core::JSON{sourcemeta::hydra::http::to_gmt(
+                      output.last_modified(category, relative_path))});
+  metadata.assign("mime", sourcemeta::core::JSON{mime});
+  output.write_metadata(category, relative_path, metadata);
+}
+
+static auto
 write_schema_metadata(const sourcemeta::registry::Resolver &resolver,
                       const sourcemeta::registry::Resolver::Entry &entry,
                       const sourcemeta::registry::Output &output,
@@ -254,14 +269,20 @@ static auto index_main(const std::string_view &program,
   std::cerr << "Indexing: " << base.string() << "\n";
   output.write_explorer_json(
       "index.json", sourcemeta::registry::toc(configuration, base, base));
+  write_file_metadata("index.json", output,
+                      sourcemeta::registry::Output::Category::Explorer,
+                      "application/json");
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
     if (entry.is_directory()) {
       std::cerr << "Indexing: " << entry.path().string() << "\n";
       auto toc{sourcemeta::registry::toc(configuration, base, entry.path())};
-      output.write_explorer_json(std::filesystem::relative(entry.path(), base) /
-                                     "index.json",
-                                 std::move(toc));
+      const auto relative_path{std::filesystem::relative(entry.path(), base) /
+                               "index.json"};
+      output.write_explorer_json(relative_path, std::move(toc));
+      write_file_metadata(relative_path, output,
+                          sourcemeta::registry::Output::Category::Explorer,
+                          "application/json");
     }
   }
 
