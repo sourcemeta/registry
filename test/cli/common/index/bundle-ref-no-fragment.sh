@@ -37,12 +37,8 @@ test "$CODE" = "1" || exit 1
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/configuration.json
-Discovering schemas at: $(realpath "$TMP")/schemas
-Default dialect: <NONE>
--- Found schema: $(realpath "$TMP")/schemas/test.json (#1)
-https://example.com/test.json => https://sourcemeta.com/example/schemas/test.json
-Materialising: https://sourcemeta.com/example/schemas/test.json
-Bundling: https://sourcemeta.com/example/schemas/test.json
+Detecting: $(realpath "$TMP")/schemas/test.json (#1)
+Ingesting: https://sourcemeta.com/example/schemas/test.json
 error: Could not resolve schema reference
   https://sourcemeta.com/example/schemas/test.json#foo
     at schema location "/allOf/0/\$ref"
