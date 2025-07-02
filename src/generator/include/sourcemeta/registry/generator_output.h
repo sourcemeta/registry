@@ -25,7 +25,7 @@ public:
   enum class Category {
     Schemas,
     Bundles,
-    Generated,
+    Explorer,
     Unidentified,
     TemplateExhaustive
   };
@@ -54,8 +54,8 @@ public:
     this->internal_write_jsonl("search.jsonl", begin, end);
   }
 
-  auto write_generated_json(const std::filesystem::path &output,
-                            const sourcemeta::core::JSON &document) const
+  auto write_explorer_json(const std::filesystem::path &output,
+                           const sourcemeta::core::JSON &document) const
       -> void;
   auto write_metadata(const Category category,
                       const std::filesystem::path &output,
