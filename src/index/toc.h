@@ -27,31 +27,11 @@ auto try_parse_version(const sourcemeta::core::JSON::String &name)
   }
 }
 
-// The idea is to match the URLs from https://www.learnjsonschema.com
-// so we can provide links to it
-auto base_dialect_id(const std::string &base_dialect) -> std::string {
-  static const std::regex MODERN(
-      R"(^https://json-schema\.org/draft/(\d{4}-\d{2})/)");
-  static const std::regex LEGACY(R"(^http://json-schema\.org/draft-0?(\d+)/)");
-  std::smatch match;
-  if (std::regex_search(base_dialect, match, MODERN)) {
-    return match[1].str();
-  } else if (std::regex_search(base_dialect, match, LEGACY)) {
-    return "draft" + match[1].str();
-  } else {
-    // We should never get here
-    assert(false);
-    return "unknown";
-  }
-}
-
 } // namespace
 
 namespace sourcemeta::registry {
 
-auto toc(const Configuration &configuration,
-         const sourcemeta::core::SchemaResolver &resolver,
-         const std::filesystem::path &base,
+auto toc(const Configuration &configuration, const std::filesystem::path &base,
          const std::filesystem::path &directory) -> sourcemeta::core::JSON {
   const auto server_url_string{configuration.url().recompose()};
   assert(directory.string().starts_with(base.string()));
@@ -72,27 +52,10 @@ auto toc(const Configuration &configuration,
       entries.push_back(std::move(entry_json));
     } else if (entry.path().extension() == ".json" &&
                !entry.path().stem().string().starts_with(".")) {
-      const auto schema{sourcemeta::core::read_json(entry.path())};
+      entry_json.merge(
+          sourcemeta::core::read_json(entry.path().string() + ".meta")
+              .as_object());
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});
-      if (schema.is_object()) {
-        if (schema.defines("title")) {
-          entry_json.assign("title",
-                            sourcemeta::core::JSON{schema.at("title").trim()});
-        }
-
-        if (schema.defines("description")) {
-          entry_json.assign(
-              "description",
-              sourcemeta::core::JSON{schema.at("description").trim()});
-        }
-      }
-
-      const auto base_dialect{sourcemeta::core::base_dialect(schema, resolver)};
-      assert(base_dialect.has_value());
-      entry_json.assign("baseDialect", sourcemeta::core::JSON{base_dialect_id(
-                                           base_dialect.value())});
-      entry_json.assign("url",
-                        sourcemeta::core::JSON{"/" + entry_relative_path});
       entries.push_back(std::move(entry_json));
     }
   }

@@ -4,6 +4,10 @@
 #include <sourcemeta/registry/generator.h>
 #include <sourcemeta/registry/license.h>
 
+// TODO: We shouldn't be depending on Hydra here just
+// for time-related utilities
+#include <sourcemeta/hydra/http.h>
+
 #include "configure.h"
 #include "explorer.h"
 #include "toc.h"
@@ -42,6 +46,22 @@ static auto search_index_comparator(const sourcemeta::core::JSON &left,
   }
 
   return false;
+}
+
+static auto
+write_schema_metadata(const sourcemeta::registry::Resolver &resolver,
+                      const sourcemeta::registry::Resolver::Entry &entry,
+                      const sourcemeta::registry::Output &output,
+                      const sourcemeta::registry::Output::Category category,
+                      const std::string &identifier,
+                      const sourcemeta::core::JSON &schema) -> void {
+  auto metadata{resolver.metadata(identifier, schema, entry)};
+  metadata.assign(
+      "md5", sourcemeta::core::JSON{output.md5(category, entry.relative_path)});
+  metadata.assign("lastModified",
+                  sourcemeta::core::JSON{sourcemeta::hydra::http::to_gmt(
+                      output.last_modified(category, entry.relative_path))});
+  output.write_metadata(category, entry.relative_path, metadata);
 }
 
 static auto index_main(const std::string_view &program,
@@ -163,6 +183,9 @@ static auto index_main(const std::string_view &program,
   for (const auto &schema : resolver) {
     const auto subresult{resolver(schema.first)};
     assert(subresult.has_value());
+    write_schema_metadata(resolver, schema.second, output,
+                          sourcemeta::registry::Output::Category::Schemas,
+                          schema.first, subresult.value());
 
     // Storing artefacts
 
@@ -170,6 +193,9 @@ static auto index_main(const std::string_view &program,
     auto bundled_schema{sourcemeta::core::bundle(
         subresult.value(), sourcemeta::core::schema_official_walker, resolver)};
     output.write_schema_bundle(schema.second.relative_path, bundled_schema);
+    write_schema_metadata(resolver, schema.second, output,
+                          sourcemeta::registry::Output::Category::Bundles,
+                          schema.first, subresult.value());
 
     std::cerr << "Framing bundle: " << schema.first << "\n";
     sourcemeta::core::SchemaFrame frame{
@@ -191,6 +217,9 @@ static auto index_main(const std::string_view &program,
         bundled_schema, sourcemeta::core::schema_official_walker, resolver);
     output.write_schema_bundle_unidentified(schema.second.relative_path,
                                             bundled_schema);
+    write_schema_metadata(resolver, schema.second, output,
+                          sourcemeta::registry::Output::Category::Unidentified,
+                          schema.first, subresult.value());
   }
 
   // --------------------------------------------
@@ -202,23 +231,13 @@ static auto index_main(const std::string_view &program,
   search_index.reserve(resolver.size());
   for (const auto &schema : resolver) {
     std::cerr << "Generating search index: " << schema.first << "\n";
+    const auto metadata{
+        output.read_metadata(sourcemeta::registry::Output::Category::Schemas,
+                             schema.second.relative_path)};
     auto entry{sourcemeta::core::JSON::make_array()};
-    entry.push_back(
-        sourcemeta::core::JSON{"/" + schema.second.relative_path.string()});
-    const auto result{resolver(schema.first)};
-    assert(result.has_value());
-    if (result.value().is_object()) {
-      entry.push_back(sourcemeta::core::JSON{
-          result.value().at_or("title", sourcemeta::core::JSON{""}).trim()});
-      entry.push_back(sourcemeta::core::JSON{
-          result.value()
-              .at_or("description", sourcemeta::core::JSON{""})
-              .trim()});
-    } else {
-      entry.push_back(sourcemeta::core::JSON{""});
-      entry.push_back(sourcemeta::core::JSON{""});
-    }
-
+    entry.push_back(metadata.at("url"));
+    entry.push_back(metadata.at_or("title", sourcemeta::core::JSON{""}));
+    entry.push_back(metadata.at_or("description", sourcemeta::core::JSON{""}));
     search_index.push_back(std::move(entry));
   }
 
@@ -234,14 +253,12 @@ static auto index_main(const std::string_view &program,
       output.absolute_path(sourcemeta::registry::Output::Category::Schemas)};
   std::cerr << "Indexing: " << base.string() << "\n";
   output.write_generated_json(
-      "index.json",
-      sourcemeta::registry::toc(configuration, resolver, base, base));
+      "index.json", sourcemeta::registry::toc(configuration, base, base));
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
     if (entry.is_directory()) {
       std::cerr << "Indexing: " << entry.path().string() << "\n";
-      auto toc{sourcemeta::registry::toc(configuration, resolver, base,
-                                         entry.path())};
+      auto toc{sourcemeta::registry::toc(configuration, base, entry.path())};
       output.write_generated_json(
           std::filesystem::relative(entry.path(), base) / "index.json",
           std::move(toc));

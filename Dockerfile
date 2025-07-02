@@ -1,6 +1,6 @@
 FROM debian:bookworm AS builder
 RUN apt-get --yes update && apt-get install --yes --no-install-recommends \
-  build-essential cmake sassc shellcheck ca-certificates \
+  build-essential cmake sassc shellcheck ca-certificates coreutils \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY cmake /source/cmake

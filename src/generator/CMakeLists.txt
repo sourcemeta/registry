@@ -10,6 +10,8 @@ target_link_libraries(sourcemeta_registry_generator PUBLIC
   sourcemeta::core::jsonschema)
 target_link_libraries(sourcemeta_registry_generator PRIVATE
   sourcemeta::core::yaml)
+target_link_libraries(sourcemeta_registry_generator PRIVATE
+  sourcemeta::core::md5)
 
 target_link_libraries(sourcemeta_registry_generator PUBLIC
   sourcemeta::blaze::compiler)

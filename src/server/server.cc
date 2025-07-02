@@ -6,7 +6,6 @@
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
-#include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/uri.h>
 
 #include "configure.h"
@@ -40,27 +39,6 @@ static auto path_join(const std::filesystem::path &base,
   }
 
   return (base / path).lexically_normal();
-}
-
-static auto request_path_to_schema_uri(const std::string &server_base_url,
-                                       const std::string &request_path)
-    -> std::string {
-  assert(request_path.starts_with('/'));
-  assert(!server_base_url.ends_with('/'));
-  std::ostringstream schema_identifier;
-  schema_identifier << server_base_url;
-  // TODO: Can we avoid this copy?
-  auto path_copy{request_path};
-  path_copy.erase(path_copy.find_last_not_of('/') + 1);
-  for (const auto character : path_copy) {
-    schema_identifier << static_cast<char>(std::tolower(character));
-  }
-
-  if (request_path != "/" && !schema_identifier.str().ends_with(".json")) {
-    schema_identifier << ".json";
-  }
-
-  return schema_identifier.str();
 }
 
 static auto schema_directory(const bool bundle, const bool unidentify) noexcept
@@ -185,7 +163,10 @@ static auto on_static(const ServerLogger &logger, uWS::HttpRequest *request,
 
 static auto on_request(const ServerLogger &logger, uWS::HttpRequest *request,
                        ServerResponse &response) -> void {
-  const auto &request_path{request->getUrl()};
+  std::string request_path{request->getUrl()};
+  std::transform(
+      request_path.begin(), request_path.end(), request_path.begin(),
+      [](const unsigned char character) { return std::tolower(character); });
 
   if (!request_path.ends_with(".json")) {
     const auto directory_path{
@@ -200,8 +181,20 @@ static auto on_request(const ServerLogger &logger, uWS::HttpRequest *request,
     return;
   }
 
-  const auto schema_identifier{request_path_to_schema_uri(
-      configuration().at("url").to_string(), std::string{request_path})};
+  const auto bundle{!request->getQuery("bundle").empty()};
+  const auto unidentify{!request->getQuery("unidentify").empty()};
+
+  const auto metadata_path{
+      path_join(*(__global_data) / schema_directory(bundle, unidentify),
+                request_path + ".meta")};
+  if (!std::filesystem::exists(metadata_path)) {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
+               "There is no schema at this URL");
+    return;
+  }
+
+  const auto metadata{sourcemeta::core::read_json(metadata_path)};
 
   // Because Visual Studio Code famously does not support `$id` or `id`
   // See https://github.com/microsoft/vscode-json-languageservice/issues/224
@@ -209,9 +202,9 @@ static auto on_request(const ServerLogger &logger, uWS::HttpRequest *request,
   const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
                        user_agent.starts_with("VSCodium")};
 
-  const auto maybe_schema{resolver(
-      schema_identifier, is_vscode || !request->getQuery("bundle").empty(),
-      is_vscode || !request->getQuery("unidentify").empty())};
+  const auto maybe_schema{resolver(metadata.at("id").to_string(),
+                                   is_vscode || bundle,
+                                   is_vscode || unidentify)};
   if (!maybe_schema.has_value()) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
@@ -219,36 +212,27 @@ static auto on_request(const ServerLogger &logger, uWS::HttpRequest *request,
     return;
   }
 
-  std::ostringstream payload;
-  sourcemeta::core::prettify(maybe_schema.value(), payload,
-                             sourcemeta::core::schema_format_compare);
-
-  std::ostringstream hash;
-  hash << '"';
-  sourcemeta::core::md5(payload.str(), hash);
-  hash << '"';
-
-  if (!header_if_none_match(request, hash.str())) {
+  const auto hash{metadata.at("md5").to_string()};
+  if (!header_if_none_match(request, hash)) {
     response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
     response.end();
     return;
   }
 
   response.status = sourcemeta::hydra::http::Status::OK;
-  response.header("Content-Type", "application/schema+json");
-
+  response.header("Content-Type", metadata.at("mime").to_string());
   // See
   // https://json-schema.org/draft/2020-12/json-schema-core.html#section-9.5.1.1
-  const auto dialect{sourcemeta::core::dialect(maybe_schema.value())};
-  assert(dialect.has_value());
   std::ostringstream link;
-  link << "<" << dialect.value() << ">; rel=\"describedby\"";
+  link << "<" << metadata.at("dialect").to_string() << ">; rel=\"describedby\"";
   response.header("Link", link.str());
+  response.header("ETag", std::string{'"'} + hash + '"');
+  // TODO: Test this
+  response.header("Last-Modified", metadata.at("lastModified").to_string());
 
-  // For HTTP caching, we only rely on ETag hashes, as Last-Modified
-  // can be tricky to obtain in all cases.
-  response.header("ETag", hash.str());
-
+  std::ostringstream payload;
+  sourcemeta::core::prettify(maybe_schema.value(), payload,
+                             sourcemeta::core::schema_format_compare);
   if (request->getMethod() == "head") {
     response.head(payload.str());
     return;
@@ -268,21 +252,22 @@ static auto on_otherwise(const ServerLogger &logger, uWS::HttpRequest *request,
     return;
   }
 
-  const auto maybe_schema{
-      resolver(request_path_to_schema_uri(configuration().at("url").to_string(),
-                                          std::string{request->getUrl()}),
-               false, false)};
-
-  if (maybe_schema.has_value()) {
-    json_error(logger, request, response,
-               sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
-               "method-not-allowed",
-               "This HTTP method is invalid for this URL");
-  } else {
-    json_error(logger, request, response,
-               sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
-               "There is no schema at this URL");
+  if (request->getUrl().ends_with(".json")) {
+    const auto metadata_path{
+        path_join(*(__global_data) / schema_directory(false, false),
+                  std::string{request->getUrl()} + ".meta")};
+    if (std::filesystem::exists(metadata_path)) {
+      json_error(logger, request, response,
+                 sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
+                 "method-not-allowed",
+                 "This HTTP method is invalid for this URL");
+      return;
+    }
   }
+
+  json_error(logger, request, response,
+             sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
+             "There is no schema at this URL");
 }
 
 static auto on_error(std::exception_ptr exception_ptr,

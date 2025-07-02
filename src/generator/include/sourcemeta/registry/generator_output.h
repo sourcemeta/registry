@@ -6,6 +6,7 @@
 
 #include <sourcemeta/registry/generator_configuration.h>
 
+#include <chrono>     // std::chrono::system_clock::time_point
 #include <filesystem> // std::filesystem
 #include <fstream>    // std::ofstream
 
@@ -56,6 +57,19 @@ public:
   auto write_generated_json(const std::filesystem::path &output,
                             const sourcemeta::core::JSON &document) const
       -> void;
+  auto write_metadata(const Category category,
+                      const std::filesystem::path &output,
+                      const sourcemeta::core::JSON &metadata) const
+      -> std::filesystem::path;
+  auto read_metadata(const Category category,
+                     const std::filesystem::path &output) const
+      -> sourcemeta::core::JSON;
+
+  auto md5(const Category category, const std::filesystem::path &output) const
+      -> std::string;
+  auto last_modified(const Category category,
+                     const std::filesystem::path &output) const
+      -> std::chrono::system_clock::time_point;
 
 private:
   auto internal_write_json(const std::filesystem::path &output,

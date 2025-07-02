@@ -1,8 +1,10 @@
 #include <sourcemeta/registry/generator_output.h>
 
 #include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/core/md5.h>
 
 #include <cassert> // assert
+#include <sstream> // ostringstream
 
 namespace sourcemeta::registry {
 
@@ -112,6 +114,49 @@ auto Output::write_generated_json(const std::filesystem::path &output,
     -> void {
   this->internal_write_json(this->relative_path(Category::Generated) / output,
                             document);
+}
+
+auto Output::write_metadata(const Category category,
+                            const std::filesystem::path &output,
+                            const sourcemeta::core::JSON &metadata) const
+    -> std::filesystem::path {
+  return this->internal_write_json(
+      (this->relative_path(category) / output).string() + ".meta", metadata);
+}
+
+auto Output::read_metadata(const Category category,
+                           const std::filesystem::path &output) const
+    -> sourcemeta::core::JSON {
+  const std::filesystem::path absolute_path{this->resolve(
+      (this->relative_path(category) / output).string() + ".meta")};
+  assert(std::filesystem::exists(absolute_path));
+  return sourcemeta::core::read_json(absolute_path);
+}
+
+auto Output::md5(const Category category,
+                 const std::filesystem::path &output) const -> std::string {
+  const std::filesystem::path absolute_path{
+      this->resolve(this->relative_path(category) / output)};
+  std::ifstream stream{absolute_path};
+  stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+  assert(!stream.fail());
+  assert(stream.is_open());
+  std::ostringstream contents;
+  contents << stream.rdbuf();
+  std::ostringstream md5;
+  sourcemeta::core::md5(contents.str(), md5);
+  return md5.str();
+}
+
+auto Output::last_modified(const Category category,
+                           const std::filesystem::path &output) const
+    -> std::chrono::system_clock::time_point {
+  const std::filesystem::path absolute_path{
+      this->resolve(this->relative_path(category) / output)};
+  const auto last_write_time{std::filesystem::last_write_time(absolute_path)};
+  return std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+      last_write_time - std::filesystem::file_time_type::clock::now() +
+      std::chrono::system_clock::now());
 }
 
 } // namespace sourcemeta::registry
