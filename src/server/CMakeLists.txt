@@ -3,10 +3,6 @@ sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server
   SOURCES 
     # TODO: Inline all of these abstractions
     httpserver.h
-    httpserver_logger.h
-    httpserver_request.h
-    httpserver_response.h
-    uwebsockets.h
 
     server.cc 
     configure.h.in 
