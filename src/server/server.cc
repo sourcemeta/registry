@@ -1,12 +1,9 @@
+#include <sourcemeta/core/json.h>
 #include <sourcemeta/hydra/http.h>
-
-#include "httpserver.h"
-
 #include <sourcemeta/registry/license.h>
 
-#include <sourcemeta/core/json.h>
-
 #include "configure.h"
+#include "httpserver.h"
 
 #include <algorithm>   // std::search
 #include <cassert>     // assert
@@ -98,14 +95,47 @@ static auto on_static(const ServerLogger &logger, uWS::HttpRequest *request,
   std::ostringstream asset_path;
   asset_path << SOURCEMETA_REGISTRY_STATIC;
   asset_path << request->getUrl().substr(7);
-  if (!std::filesystem::exists(asset_path.str())) {
+
+  const auto metadata_path{asset_path.str() + ".meta"};
+  if (!std::filesystem::exists(metadata_path)) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
                "There is no schema at this URL");
     return;
   }
 
-  serve_file(asset_path.str(), request, response);
+  assert(std::filesystem::exists(asset_path.str()));
+  const auto metadata{sourcemeta::core::read_json(metadata_path)};
+  const auto &last_modified{metadata.at("lastModified").to_string()};
+  const auto &hash{metadata.at("md5").to_string()};
+
+  if (!header_if_modified_since(
+          request, sourcemeta::hydra::http::from_gmt(last_modified))) {
+    response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
+    response.end();
+    return;
+  } else if (!header_if_none_match(request, hash)) {
+    response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
+    response.end();
+    return;
+  }
+
+  response.status = sourcemeta::hydra::http::Status::OK;
+  response.header("Content-Type", metadata.at("mime").to_string());
+  response.header("ETag", std::string{'"'} + hash + '"');
+  response.header("Last-Modified", last_modified);
+
+  std::ifstream stream{std::filesystem::canonical(asset_path.str())};
+  stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+  assert(!stream.fail());
+  assert(stream.is_open());
+  std::ostringstream contents;
+  contents << stream.rdbuf();
+  if (request->getMethod() == "head") {
+    response.head(contents.str());
+  } else {
+    response.end(contents.str());
+  }
 }
 
 static auto schema_directory_prefix(uWS::HttpRequest *request) noexcept

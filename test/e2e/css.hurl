@@ -120,3 +120,7 @@ HTTP 200
 [Asserts]
 header "Content-Length" exists
 header "Content-Length" == {{css_content_length}}
+
+# Can't fetch the .meta version
+GET {{base}}/static/style.min.css.meta
+HTTP 404

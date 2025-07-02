@@ -28,7 +28,7 @@ else()
 endif()
 
 target_compile_definitions(sourcemeta_registry_server 
-  PRIVATE SOURCEMETA_REGISTRY_STATIC="${REGISTRY_PREFIX}/share/sourcemeta/registry/static/data")
+  PRIVATE SOURCEMETA_REGISTRY_STATIC="${REGISTRY_PREFIX}/share/sourcemeta/registry/static")
 
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(sourcemeta_registry_server PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

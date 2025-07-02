@@ -81,9 +81,6 @@ foreach(file_path IN LISTS REGISTRY_STATIC)
     "${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta")
 endforeach()
 
-install(FILES ${REGISTRY_STATIC}
-  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/static/data"
-  COMPONENT sourcemeta_registry)
-install(FILES ${REGISTRY_STATIC_META}
-  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/static/meta"
+install(FILES ${REGISTRY_STATIC} ${REGISTRY_STATIC_META}
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/static"
   COMPONENT sourcemeta_registry)
