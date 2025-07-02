@@ -20,6 +20,8 @@ target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::jsons
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uuid)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::gzip)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::compiler)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::evaluator)
 target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uSockets)
 target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uWebSockets)
 

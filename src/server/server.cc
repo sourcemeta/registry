@@ -9,6 +9,9 @@
 #include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/uri.h>
 
+#include <sourcemeta/blaze/compiler.h>
+#include <sourcemeta/blaze/evaluator.h>
+
 #include "configure.h"
 
 #include <algorithm>   // std::search
@@ -249,6 +252,59 @@ static auto on_request(const ServerLogger &logger, const ServerRequest &request,
   }
 }
 
+static auto on_validate(const ServerLogger &logger,
+                        const ServerRequest &request, ServerResponse &response)
+    -> void {
+  const auto &request_path{request.path()};
+
+  if (!request_path.ends_with(".json")) {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
+               "method-not-allowed",
+               "This HTTP method is invalid for this URL");
+    return;
+  }
+
+  const auto template_path{
+      path_join(*(__global_data) / "exhaustive", request.path())};
+  if (!std::filesystem::exists(template_path)) {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
+               "There is no schema at this URL");
+    return;
+  }
+
+  const auto template_json{sourcemeta::core::read_json(template_path)};
+  // TODO: Can we cache this conversion across runs?
+  const auto schema_template{sourcemeta::blaze::from_json(template_json)};
+  if (!schema_template.has_value()) {
+    json_error(logger, request, response,
+               sourcemeta::hydra::http::Status::INTERNAL_SERVER_ERROR,
+               "schema-template-parse-error", "Could not compile the schema");
+    return;
+  }
+
+  sourcemeta::blaze::Evaluator evaluator;
+
+  std::stringstream body;
+  response.handler->onAborted([]() {});
+  // TODO: This is triggered asynchronously?
+  response.handler->onData(
+      [&body](const std::string_view data, const bool) { body << data; });
+
+  const auto instance{sourcemeta::core::parse_json(body)};
+  const auto result{
+      sourcemeta::blaze::standard(evaluator, schema_template.value(), instance,
+                                  sourcemeta::blaze::StandardOutput::Basic)};
+
+  std::ostringstream payload;
+  sourcemeta::core::prettify(result, payload);
+
+  response.status(sourcemeta::hydra::http::Status::OK);
+  response.header("Content-Type", "application/json");
+  response.end(payload.str());
+}
+
 static auto on_otherwise(const ServerLogger &logger,
                          const ServerRequest &request, ServerResponse &response)
     -> void {
@@ -332,6 +388,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     server.route(sourcemeta::hydra::http::Method::HEAD, "/static/*", on_static);
     server.route(sourcemeta::hydra::http::Method::GET, "/*", on_request);
     server.route(sourcemeta::hydra::http::Method::HEAD, "/*", on_request);
+    server.route(sourcemeta::hydra::http::Method::POST, "/*", on_validate);
     server.otherwise(on_otherwise);
     server.error(on_error);
 
