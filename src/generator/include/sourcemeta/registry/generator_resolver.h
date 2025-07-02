@@ -55,6 +55,10 @@ public:
     sourcemeta::core::SchemaVisitorReference reference_visitor;
   };
 
+  auto metadata(const std::string &identifier,
+                const sourcemeta::core::JSON &schema, const Entry &entry) const
+      -> sourcemeta::core::JSON;
+
 private:
   std::unordered_map<std::string, Entry> views;
   std::size_t count_{0};

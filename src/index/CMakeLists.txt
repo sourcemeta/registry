@@ -16,6 +16,10 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evalu
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::html)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
 
+# TODO: Get rid of Hydra here
+target_link_libraries(sourcemeta_registry_index PRIVATE
+  sourcemeta::hydra::http)
+
 if(REGISTRY_EDITION STREQUAL "enterprise")
   target_compile_definitions(sourcemeta_registry_index 
     PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
