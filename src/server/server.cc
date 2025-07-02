@@ -99,30 +99,33 @@ static auto resolver(std::string_view identifier, const bool bundle,
   return sourcemeta::core::read_json(schema_path);
 }
 
-static auto json_error(const ServerLogger &logger, const ServerRequest &,
+static auto json_error(const ServerLogger &logger, uWS::HttpRequest *,
                        ServerResponse &response,
                        const sourcemeta::hydra::http::Status code,
                        std::string &&id, std::string &&message) -> void {
   auto object{sourcemeta::core::JSON::make_object()};
-  object.assign("request", sourcemeta::core::JSON{logger.id()});
+  object.assign("request", sourcemeta::core::JSON{logger.identifier});
   object.assign("error", sourcemeta::core::JSON{std::move(id)});
   object.assign("message", sourcemeta::core::JSON{std::move(message)});
   object.assign("code",
                 sourcemeta::core::JSON{static_cast<std::int64_t>(code)});
-  response.status(code);
+  response.status = code;
   response.header("Content-Type", "application/json");
-  response.end(std::move(object));
+
+  std::ostringstream output;
+  sourcemeta::core::prettify(object, output);
+  response.end(output.str());
 }
 
-auto on_index(const ServerLogger &, const ServerRequest &request,
+auto on_index(const ServerLogger &, uWS::HttpRequest *request,
               ServerResponse &response) -> void {
   serve_file(*(__global_data) / "generated" / "index.html", request, response);
 }
 
-auto on_search(const ServerLogger &logger, const ServerRequest &request,
+auto on_search(const ServerLogger &logger, uWS::HttpRequest *request,
                ServerResponse &response) -> void {
-  const auto query{request.query("q")};
-  if (!query.has_value()) {
+  const auto query{request->getQuery("q")};
+  if (query.empty()) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::BAD_REQUEST, "missing-query",
                "You must provide a query parameter to search for");
@@ -137,10 +140,9 @@ auto on_search(const ServerLogger &logger, const ServerRequest &request,
   // BEFORE parsing it as JSON, letting the client decide
   // whether to parse or not.
   std::string line;
-  const auto &query_value{query.value()};
   while (std::getline(stream, line)) {
-    if (std::search(line.cbegin(), line.cend(), query_value.cbegin(),
-                    query_value.cend(), [](const auto left, const auto right) {
+    if (std::search(line.cbegin(), line.cend(), query.begin(), query.end(),
+                    [](const auto left, const auto right) {
                       return std::tolower(left) == std::tolower(right);
                     }) == line.cend()) {
       continue;
@@ -159,30 +161,35 @@ auto on_search(const ServerLogger &logger, const ServerRequest &request,
     }
   }
 
-  response.status(sourcemeta::hydra::http::Status::OK);
-  response.end(std::move(result));
+  response.status = sourcemeta::hydra::http::Status::OK;
+
+  std::ostringstream output;
+  sourcemeta::core::prettify(result, output);
+  response.end(output.str());
 }
 
-static auto on_static(const ServerLogger &logger, const ServerRequest &request,
+static auto on_static(const ServerLogger &logger, uWS::HttpRequest *request,
                       ServerResponse &response) -> void {
-  const auto asset_path{SOURCEMETA_REGISTRY_STATIC + request.path().substr(7)};
-  if (!std::filesystem::exists(asset_path)) {
+  std::ostringstream asset_path;
+  asset_path << SOURCEMETA_REGISTRY_STATIC;
+  asset_path << request->getUrl().substr(7);
+  if (!std::filesystem::exists(asset_path.str())) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
                "There is no schema at this URL");
     return;
   }
 
-  serve_file(asset_path, request, response);
+  serve_file(asset_path.str(), request, response);
 }
 
-static auto on_request(const ServerLogger &logger, const ServerRequest &request,
+static auto on_request(const ServerLogger &logger, uWS::HttpRequest *request,
                        ServerResponse &response) -> void {
-  const auto &request_path{request.path()};
+  const auto &request_path{request->getUrl()};
 
   if (!request_path.ends_with(".json")) {
     const auto directory_path{
-        path_join(*(__global_data) / "generated", request.path())};
+        path_join(*(__global_data) / "generated", request_path)};
     if (std::filesystem::is_directory(directory_path)) {
       serve_file(directory_path / "index.html", request, response);
     } else {
@@ -194,17 +201,17 @@ static auto on_request(const ServerLogger &logger, const ServerRequest &request,
   }
 
   const auto schema_identifier{request_path_to_schema_uri(
-      configuration().at("url").to_string(), request_path)};
+      configuration().at("url").to_string(), std::string{request_path})};
 
   // Because Visual Studio Code famously does not support `$id` or `id`
   // See https://github.com/microsoft/vscode-json-languageservice/issues/224
-  const auto user_agent{request.header("user-agent").value_or("")};
+  const auto user_agent{request->getHeader("user-agent")};
   const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
                        user_agent.starts_with("VSCodium")};
 
   const auto maybe_schema{resolver(
-      schema_identifier, is_vscode || request.query("bundle").has_value(),
-      is_vscode || request.query("unidentify").has_value())};
+      schema_identifier, is_vscode || !request->getQuery("bundle").empty(),
+      is_vscode || !request->getQuery("unidentify").empty())};
   if (!maybe_schema.has_value()) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
@@ -217,15 +224,17 @@ static auto on_request(const ServerLogger &logger, const ServerRequest &request,
                              sourcemeta::core::schema_format_compare);
 
   std::ostringstream hash;
+  hash << '"';
   sourcemeta::core::md5(payload.str(), hash);
+  hash << '"';
 
-  if (!request.header_if_none_match(hash.str())) {
-    response.status(sourcemeta::hydra::http::Status::NOT_MODIFIED);
+  if (!header_if_none_match(request, hash.str())) {
+    response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
     response.end();
     return;
   }
 
-  response.status(sourcemeta::hydra::http::Status::OK);
+  response.status = sourcemeta::hydra::http::Status::OK;
   response.header("Content-Type", "application/schema+json");
 
   // See
@@ -238,9 +247,9 @@ static auto on_request(const ServerLogger &logger, const ServerRequest &request,
 
   // For HTTP caching, we only rely on ETag hashes, as Last-Modified
   // can be tricky to obtain in all cases.
-  response.header_etag(hash.str());
+  response.header("ETag", hash.str());
 
-  if (request.method() == sourcemeta::hydra::http::Method::HEAD) {
+  if (request->getMethod() == "head") {
     response.head(payload.str());
     return;
   } else {
@@ -249,10 +258,9 @@ static auto on_request(const ServerLogger &logger, const ServerRequest &request,
   }
 }
 
-static auto on_otherwise(const ServerLogger &logger,
-                         const ServerRequest &request, ServerResponse &response)
-    -> void {
-  if (request.path().starts_with("/api/")) {
+static auto on_otherwise(const ServerLogger &logger, uWS::HttpRequest *request,
+                         ServerResponse &response) -> void {
+  if (request->getUrl().starts_with("/api/")) {
     json_error(logger, request, response,
                sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
                "method-not-allowed",
@@ -262,7 +270,7 @@ static auto on_otherwise(const ServerLogger &logger,
 
   const auto maybe_schema{
       resolver(request_path_to_schema_uri(configuration().at("url").to_string(),
-                                          request.path()),
+                                          std::string{request->getUrl()}),
                false, false)};
 
   if (maybe_schema.has_value()) {
@@ -278,7 +286,7 @@ static auto on_otherwise(const ServerLogger &logger,
 }
 
 static auto on_error(std::exception_ptr exception_ptr,
-                     const ServerLogger &logger, const ServerRequest &request,
+                     const ServerLogger &logger, uWS::HttpRequest *request,
                      ServerResponse &response) noexcept -> void {
   try {
     std::rethrow_exception(exception_ptr);
