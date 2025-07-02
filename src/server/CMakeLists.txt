@@ -10,9 +10,7 @@ sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server
 
 set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourcemeta-registry-server)
 
-target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uri)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::json)
-target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::jsonschema)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uuid)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::gzip)
