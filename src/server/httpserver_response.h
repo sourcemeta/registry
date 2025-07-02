@@ -164,11 +164,12 @@ public:
     this->handler->end();
   }
 
+  uWS::HttpResponse<true> *handler;
+
 private:
   sourcemeta::hydra::http::Status code{sourcemeta::hydra::http::Status::OK};
   std::map<std::string, std::string> headers;
   ServerContentEncoding content_encoding = ServerContentEncoding::Identity;
-  uWS::HttpResponse<true> *handler;
 };
 
 #endif
