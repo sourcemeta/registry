@@ -252,16 +252,16 @@ static auto index_main(const std::string_view &program,
   const auto base{
       output.absolute_path(sourcemeta::registry::Output::Category::Schemas)};
   std::cerr << "Indexing: " << base.string() << "\n";
-  output.write_generated_json(
+  output.write_explorer_json(
       "index.json", sourcemeta::registry::toc(configuration, base, base));
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
     if (entry.is_directory()) {
       std::cerr << "Indexing: " << entry.path().string() << "\n";
       auto toc{sourcemeta::registry::toc(configuration, base, entry.path())};
-      output.write_generated_json(
-          std::filesystem::relative(entry.path(), base) / "index.json",
-          std::move(toc));
+      output.write_explorer_json(std::filesystem::relative(entry.path(), base) /
+                                     "index.json",
+                                 std::move(toc));
     }
   }
 
@@ -272,7 +272,7 @@ static auto index_main(const std::string_view &program,
   // TODO: Make the explorer generator use the Output class to writing files
   sourcemeta::registry::explorer(
       configuration.get(),
-      output.absolute_path(sourcemeta::registry::Output::Category::Generated),
+      output.absolute_path(sourcemeta::registry::Output::Category::Explorer),
       [](const auto &path) {
         std::cerr << "Generating HTML: " << path.string() << "\n";
       });

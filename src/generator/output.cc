@@ -62,8 +62,8 @@ auto Output::relative_path(const Category category) const
       return "schemas";
     case Category::Bundles:
       return "bundles";
-    case Category::Generated:
-      return "generated";
+    case Category::Explorer:
+      return "explorer";
     case Category::Unidentified:
       return "unidentified";
     case Category::TemplateExhaustive:
@@ -109,10 +109,10 @@ auto Output::write_schema_template_exhaustive(
       sourcemeta::blaze::to_json(compiled_schema));
 }
 
-auto Output::write_generated_json(const std::filesystem::path &output,
-                                  const sourcemeta::core::JSON &document) const
+auto Output::write_explorer_json(const std::filesystem::path &output,
+                                 const sourcemeta::core::JSON &document) const
     -> void {
-  this->internal_write_json(this->relative_path(Category::Generated) / output,
+  this->internal_write_json(this->relative_path(Category::Explorer) / output,
                             document);
 }
 

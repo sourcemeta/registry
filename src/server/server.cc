@@ -44,7 +44,7 @@ static auto json_error(const ServerLogger &logger, uWS::HttpRequest *,
 
 auto on_index(const ServerLogger &, uWS::HttpRequest *request,
               ServerResponse &response) -> void {
-  serve_file(*(__global_data) / "generated" / "index.html", request, response);
+  serve_file(*(__global_data) / "explorer" / "index.html", request, response);
 }
 
 auto on_search(const ServerLogger &logger, uWS::HttpRequest *request,
@@ -154,12 +154,12 @@ static auto on_request(const ServerLogger &logger, uWS::HttpRequest *request,
       [](const unsigned char character) { return std::tolower(character); });
 
   if (!request_path.ends_with(".json")) {
-    const auto directory_path{*(__global_data) / "generated" /
+    const auto directory_path{*(__global_data) / "explorer" /
                               request_path.substr(1)};
     if (std::filesystem::is_directory(directory_path)) {
       serve_file(directory_path / "index.html", request, response);
     } else {
-      serve_file(*(__global_data) / "generated" / "404.html", request, response,
+      serve_file(*(__global_data) / "explorer" / "404.html", request, response,
                  sourcemeta::hydra::http::Status::NOT_FOUND);
     }
 

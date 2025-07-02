@@ -47,6 +47,6 @@ cat << EOF > "$TMP/index-schemas.json"
 {"entries":[{"name":"test.json","id":"https://sourcemeta.com/example/schemas/test.json","mime":"application/schema+json","url":"/example/schemas/test.json","baseDialect":"draft7","dialect":"http://json-schema.org/draft-07/schema#","md5":"$CHECKSUM","lastModified":"$TIMESTAMP","type":"schema"}],"breadcrumb":[{"name":"example","url":"/example"},{"name":"schemas","url":"/example/schemas"}]}
 EOF
 
-diff "$TMP/output/generated/index.json" "$TMP/index-top-level.json"
-diff "$TMP/output/generated/example/index.json" "$TMP/index-example.json"
-diff "$TMP/output/generated/example/schemas/index.json" "$TMP/index-schemas.json"
+diff "$TMP/output/explorer/index.json" "$TMP/index-top-level.json"
+diff "$TMP/output/explorer/example/index.json" "$TMP/index-example.json"
+diff "$TMP/output/explorer/example/schemas/index.json" "$TMP/index-schemas.json"
