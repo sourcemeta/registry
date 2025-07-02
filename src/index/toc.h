@@ -39,11 +39,12 @@ auto toc(const Configuration &configuration, const std::filesystem::path &base,
 
   for (const auto &entry : std::filesystem::directory_iterator{directory}) {
     auto entry_json{sourcemeta::core::JSON::make_object()};
-    entry_json.assign("name", sourcemeta::core::JSON{entry.path().filename()});
     const auto entry_relative_path{
         entry.path().string().substr(base.string().size() + 1)};
     assert(!entry_relative_path.starts_with('/'));
     if (entry.is_directory()) {
+      entry_json.assign("name",
+                        sourcemeta::core::JSON{entry.path().filename()});
       entry_json.merge(configuration.page(entry_relative_path));
       entry_json.assign("type", sourcemeta::core::JSON{"directory"});
       entry_json.assign(
@@ -52,6 +53,7 @@ auto toc(const Configuration &configuration, const std::filesystem::path &base,
       entries.push_back(std::move(entry_json));
     } else if (entry.path().extension() == ".json" &&
                !entry.path().stem().string().starts_with(".")) {
+      entry_json.assign("name", sourcemeta::core::JSON{entry.path().stem()});
       entry_json.merge(
           sourcemeta::core::read_json(entry.path().string() + ".meta")
               .as_object());
