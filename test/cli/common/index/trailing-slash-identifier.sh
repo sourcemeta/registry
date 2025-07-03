@@ -36,9 +36,7 @@ test "$CODE" = "1" || exit 1
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/configuration.json
-Discovering schemas at: $(realpath "$TMP")/schemas
-Default dialect: <NONE>
--- Found schema: $(realpath "$TMP")/schemas/test.json (#1)
+Detecting: $(realpath "$TMP")/schemas/test.json (#1)
 error: The schema identifier is not relative to the corresponding base
   at https://example.com/
   with base https://example.com

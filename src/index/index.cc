@@ -126,10 +126,6 @@ static auto index_main(const std::string_view &program,
        configuration.get().at("schemas").as_object()) {
     const sourcemeta::registry::Collection collection{
         configuration.base(), schema_entry.first, schema_entry.second};
-    std::cerr << "Discovering schemas at: " << collection.path.string() << "\n";
-    std::cerr << "Default dialect: "
-              << collection.default_dialect.value_or("<NONE>") << "\n";
-
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection.path}) {
       const auto is_schema_file{entry.path().extension() == ".yaml" ||
@@ -140,7 +136,7 @@ static auto index_main(const std::string_view &program,
         continue;
       }
 
-      std::cerr << "-- Found schema: " << entry.path().string() << " (#"
+      std::cerr << "Detecting: " << entry.path().string() << " (#"
                 << resolver.size() + 1 << ")\n";
 
       // See https://github.com/sourcemeta/registry/blob/main/LICENSE
@@ -164,18 +160,17 @@ static auto index_main(const std::string_view &program,
       }
 #endif
 
-      const auto result{resolver.add(configuration, collection, entry.path())};
-      std::cerr << result.first << " => " << result.second << "\n";
+      resolver.add(configuration, collection, entry.path());
     }
   }
 
   // --------------------------------------------
-  // (3) Validate and materialise schemas
+  // (3) Generate schema artefacts
   // --------------------------------------------
 
   // TODO: We could parallelize this loop
   for (const auto &schema : resolver) {
-    std::cerr << "Materialising: " << schema.first << "\n";
+    std::cerr << "Ingesting: " << schema.first << "\n";
     const auto subresult{resolver(schema.first)};
     assert(subresult.has_value());
     const auto dialect_identifier{sourcemeta::core::dialect(subresult.value())};
@@ -188,23 +183,12 @@ static auto index_main(const std::string_view &program,
     const auto destination{output.write_schema_single(
         schema.second.relative_path, subresult.value())};
     resolver.materialise(schema.first, destination);
-  }
-
-  // --------------------------------------------
-  // (4) Generate schema artefacts
-  // --------------------------------------------
-
-  // TODO: We could parallelize this loop
-  for (const auto &schema : resolver) {
-    const auto subresult{resolver(schema.first)};
-    assert(subresult.has_value());
     write_schema_metadata(resolver, schema.second, output,
                           sourcemeta::registry::Output::Category::Schemas,
                           schema.first, subresult.value());
 
     // Storing artefacts
 
-    std::cerr << "Bundling: " << schema.first << "\n";
     auto bundled_schema{sourcemeta::core::bundle(
         subresult.value(), sourcemeta::core::schema_official_walker, resolver)};
     output.write_schema_bundle(schema.second.relative_path, bundled_schema);
@@ -212,13 +196,11 @@ static auto index_main(const std::string_view &program,
                           sourcemeta::registry::Output::Category::Bundles,
                           schema.first, subresult.value());
 
-    std::cerr << "Framing bundle: " << schema.first << "\n";
     sourcemeta::core::SchemaFrame frame{
         sourcemeta::core::SchemaFrame::Mode::References};
     frame.analyse(bundled_schema, sourcemeta::core::schema_official_walker,
                   resolver);
 
-    std::cerr << "Compiling in exhaustive mode: " << schema.first << "\n";
     const auto template_exhasutive{sourcemeta::blaze::compile(
         bundled_schema, sourcemeta::core::schema_official_walker, resolver,
         sourcemeta::blaze::default_schema_compiler, frame,
@@ -227,7 +209,6 @@ static auto index_main(const std::string_view &program,
                                             template_exhasutive);
 
     // TODO: Can we re-use the frame here?
-    std::cerr << "Bundling without identifiers: " << schema.first << "\n";
     sourcemeta::core::unidentify(
         bundled_schema, sourcemeta::core::schema_official_walker, resolver);
     output.write_schema_bundle_unidentified(schema.second.relative_path,
@@ -238,14 +219,15 @@ static auto index_main(const std::string_view &program,
   }
 
   // --------------------------------------------
-  // (5) Generate schema search index
+  // (4) Generate schema search index
   // --------------------------------------------
+
+  std::cerr << "Generating registry...\n";
 
   // TODO: We could parallelize this loop
   std::vector<sourcemeta::core::JSON> search_index;
   search_index.reserve(resolver.size());
   for (const auto &schema : resolver) {
-    std::cerr << "Generating search index: " << schema.first << "\n";
     const auto metadata{
         output.read_metadata(sourcemeta::registry::Output::Category::Schemas,
                              schema.second.relative_path)};
@@ -261,12 +243,11 @@ static auto index_main(const std::string_view &program,
   output.write_search(search_index.cbegin(), search_index.cend());
 
   // --------------------------------------------
-  // (6) Generate schema navigation indexes
+  // (5) Generate schema navigation indexes
   // --------------------------------------------
 
   const auto base{
       output.absolute_path(sourcemeta::registry::Output::Category::Schemas)};
-  std::cerr << "Indexing: " << base.string() << "\n";
   output.write_explorer_json(
       "index.json", sourcemeta::registry::toc(configuration, base, base));
   write_file_metadata("index.json", output,
@@ -275,7 +256,6 @@ static auto index_main(const std::string_view &program,
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
     if (entry.is_directory()) {
-      std::cerr << "Indexing: " << entry.path().string() << "\n";
       auto toc{sourcemeta::registry::toc(configuration, base, entry.path())};
       const auto relative_path{std::filesystem::relative(entry.path(), base) /
                                "index.json"};
@@ -287,16 +267,14 @@ static auto index_main(const std::string_view &program,
   }
 
   // --------------------------------------------
-  // (7) Generate schema explorer
+  // (6) Generate schema explorer
   // --------------------------------------------
 
   // TODO: Make the explorer generator use the Output class to writing files
   sourcemeta::registry::explorer(
       configuration.get(),
       output.absolute_path(sourcemeta::registry::Output::Category::Explorer),
-      [](const auto &path) {
-        std::cerr << "Generating HTML: " << path.string() << "\n";
-      });
+      [](const auto &) {});
 
   return EXIT_SUCCESS;
 }
@@ -320,7 +298,9 @@ auto main(int argc, char *argv[]) noexcept -> int {
               << "\n  with base " << error.base() << "\n";
     return EXIT_FAILURE;
   } catch (const sourcemeta::core::SchemaResolutionError &error) {
-    std::cerr << "error: " << error.what() << "\n  at " << error.id() << "\n";
+    std::cerr << "error: " << error.what() << "\n  " << error.id()
+              << "\n\nDid you forget to register a schema with such URI in the "
+                 "registry?\n";
     return EXIT_FAILURE;
   } catch (const sourcemeta::core::SchemaReferenceError &error) {
     std::cerr << "error: " << error.what() << "\n  " << error.id()
