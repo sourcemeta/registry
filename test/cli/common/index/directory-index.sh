@@ -40,13 +40,13 @@ cat << 'EOF' > "$TMP/index-example.json"
 {"entries":[{"name":"schemas","type":"directory","url":"/example/schemas"}],"breadcrumb":[{"name":"example","url":"/example"}]}
 EOF
 
-CHECKSUM="$(md5sum "$TMP/output/schemas/example/schemas/test.json" | cut -d ' ' -f 1)"
-TIMESTAMP="$(date -u -r "$TMP/output/schemas/example/schemas/test.json" "+%a, %d %b %Y %H:%M:%S GMT")"
+CHECKSUM="$(md5sum "$TMP/output/schemas/example/schemas/test.json.schema" | cut -d ' ' -f 1)"
+TIMESTAMP="$(date -u -r "$TMP/output/schemas/example/schemas/test.json.schema" "+%a, %d %b %Y %H:%M:%S GMT")"
 
 cat << EOF > "$TMP/index-schemas.json"
 {"entries":[{"name":"test","id":"https://sourcemeta.com/example/schemas/test.json","mime":"application/schema+json","url":"/example/schemas/test.json","baseDialect":"draft7","dialect":"http://json-schema.org/draft-07/schema#","md5":"$CHECKSUM","lastModified":"$TIMESTAMP","type":"schema"}],"breadcrumb":[{"name":"example","url":"/example"},{"name":"schemas","url":"/example/schemas"}]}
 EOF
 
-diff "$TMP/output/explorer/index.json" "$TMP/index-top-level.json"
-diff "$TMP/output/explorer/example/index.json" "$TMP/index-example.json"
-diff "$TMP/output/explorer/example/schemas/index.json" "$TMP/index-schemas.json"
+diff "$TMP/output/explorer/pages.nav" "$TMP/index-top-level.json"
+diff "$TMP/output/explorer/pages/example.nav" "$TMP/index-example.json"
+diff "$TMP/output/explorer/pages/example/schemas.nav" "$TMP/index-schemas.json"

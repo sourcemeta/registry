@@ -430,20 +430,17 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
   html << "</div>";
 }
 
-auto explorer(
-    const sourcemeta::core::JSON &configuration,
-    const std::filesystem::path &base,
-    const std::function<void(const std::filesystem::path &)> &callback)
-    -> void {
+auto explorer(const sourcemeta::core::JSON &configuration,
+              const std::filesystem::path &base) -> void {
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
-    if (entry.is_directory() || entry.path().filename() != "index.json") {
+    if (entry.is_directory() || entry.path().extension() != ".nav") {
       continue;
     }
 
     const auto meta{sourcemeta::core::read_json(entry.path())};
-    const auto destination{entry.path().parent_path() / "index.html"};
-    callback(destination.string().substr(base.string().size() + 1));
+    std::filesystem::path destination{entry.path().string()};
+    destination.replace_extension("html");
 
     if (entry.path().parent_path() == base) {
       // TODO: Use RegistryOutput to write files
@@ -469,10 +466,10 @@ auto explorer(
       html << "\n";
       html.close();
     } else {
-      const std::filesystem::path relative_path{
-          entry.path().parent_path().string().substr(
-              std::min(base.string().size() + 1,
-                       entry.path().parent_path().string().size()))};
+      std::filesystem::path relative_path{entry.path().string().substr(
+          std::min((base / "pages").string().size() + 1,
+                   entry.path().parent_path().string().size()))};
+      relative_path.replace_extension("");
       const auto page_relative_path{std::string{'/'} + relative_path.string()};
       // TODO: Use RegistryOutput to write files
       std::ofstream html{destination};

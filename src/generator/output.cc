@@ -63,11 +63,13 @@ auto Output::relative_path(const Category category) const
     case Category::Bundles:
       return "bundles";
     case Category::Explorer:
+      return "";
+    case Category::Navigation:
       return "explorer";
     case Category::Unidentified:
       return "unidentified";
     case Category::TemplateExhaustive:
-      return "exhaustive";
+      return "blaze/exhaustive";
     default:
       assert(false);
       return "";
@@ -82,37 +84,34 @@ auto Output::absolute_path(const Category category) const
 auto Output::write_schema_single(const std::filesystem::path &output,
                                  const sourcemeta::core::JSON &schema) const
     -> std::filesystem::path {
-  return this->internal_write_jsonschema(
-      this->relative_path(Category::Schemas) / output, schema);
+  return this->internal_write_jsonschema("schemas" / output, schema);
 }
 
 auto Output::write_schema_bundle(const std::filesystem::path &output,
                                  const sourcemeta::core::JSON &schema) const
     -> std::filesystem::path {
-  return this->internal_write_jsonschema(
-      this->relative_path(Category::Bundles) / output, schema);
+  return this->internal_write_jsonschema("schemas" / output, schema);
 }
 
 auto Output::write_schema_bundle_unidentified(
     const std::filesystem::path &output,
     const sourcemeta::core::JSON &schema) const -> std::filesystem::path {
-  return this->internal_write_jsonschema(
-      this->relative_path(Category::Unidentified) / output, schema);
+  return this->internal_write_jsonschema("schemas" / output, schema);
 }
 
 auto Output::write_schema_template_exhaustive(
     const std::filesystem::path &output,
     const sourcemeta::blaze::Template &compiled_schema) const
     -> std::filesystem::path {
-  return this->internal_write_json(
-      this->relative_path(Category::TemplateExhaustive) / output,
-      sourcemeta::blaze::to_json(compiled_schema));
+  return this->internal_write_json(this->relative_path(Category::Explorer) /
+                                       "schemas" / output,
+                                   sourcemeta::blaze::to_json(compiled_schema));
 }
 
 auto Output::write_explorer_json(const std::filesystem::path &output,
                                  const sourcemeta::core::JSON &document) const
     -> void {
-  this->internal_write_json(this->relative_path(Category::Explorer) / output,
+  this->internal_write_json(this->relative_path(Category::Navigation) / output,
                             document);
 }
 

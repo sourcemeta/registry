@@ -57,7 +57,7 @@ static auto json_error(const ServerLogger &logger, uWS::HttpRequest *,
 
 auto on_index(const ServerLogger &, uWS::HttpRequest *request,
               ServerResponse &response) -> void {
-  serve_file(*(__global_data) / "explorer" / "index.html", request, response);
+  serve_file(*(__global_data) / "explorer" / "pages.html", request, response);
 }
 
 auto on_search(const ServerLogger &logger, uWS::HttpRequest *request,
@@ -71,7 +71,8 @@ auto on_search(const ServerLogger &logger, uWS::HttpRequest *request,
   }
 
   auto result{sourcemeta::core::JSON::make_array()};
-  auto stream = sourcemeta::core::read_file(*(__global_data) / "search.jsonl");
+  auto stream = sourcemeta::core::read_file(*(__global_data) / "explorer" /
+                                            "search.jsonl");
   stream.exceptions(std::ifstream::badbit);
   // TODO: Extend the Core JSONL iterators to be able
   // to access the stringified contents of the current entry
@@ -154,7 +155,8 @@ static auto on_static(const ServerLogger &logger, uWS::HttpRequest *request,
   }
 }
 
-static auto schema_directory_prefix(uWS::HttpRequest *request) noexcept
+static auto get_schema_path(uWS::HttpRequest *request,
+                            const std::string &request_path) noexcept
     -> std::filesystem::path {
   // Because Visual Studio Code famously does not support `$id` or `id`
   // See https://github.com/microsoft/vscode-json-languageservice/issues/224
@@ -165,11 +167,14 @@ static auto schema_directory_prefix(uWS::HttpRequest *request) noexcept
   const auto unidentify{!request->getQuery("unidentify").empty()};
 
   if (unidentify || is_vscode) {
-    return "unidentified";
+    return std::filesystem::path{"schemas"} /
+           (request_path.substr(1) + ".unidentified");
   } else if (bundle) {
-    return "bundles";
+    return std::filesystem::path{"schemas"} /
+           (request_path.substr(1) + ".bundle");
   } else {
-    return "schemas";
+    return std::filesystem::path{"schemas"} /
+           (request_path.substr(1) + ".schema");
   }
 }
 
@@ -180,8 +185,8 @@ static auto read_schema(uWS::HttpRequest *request) -> std::optional<
   std::transform(
       request_path.begin(), request_path.end(), request_path.begin(),
       [](const unsigned char character) { return std::tolower(character); });
-  const auto schema_path{*(__global_data) / schema_directory_prefix(request) /
-                         request_path.substr(1)};
+  const auto schema_path{*(__global_data) /
+                         get_schema_path(request, request_path)};
   if (!std::filesystem::exists(schema_path)) {
     return std::nullopt;
   }
@@ -200,10 +205,10 @@ static auto on_request(const ServerLogger &logger, uWS::HttpRequest *request,
       [](const unsigned char character) { return std::tolower(character); });
 
   if (!request_path.ends_with(".json")) {
-    const auto directory_path{*(__global_data) / "explorer" /
-                              request_path.substr(1)};
-    if (std::filesystem::is_directory(directory_path)) {
-      serve_file(directory_path / "index.html", request, response);
+    const auto directory_path{*(__global_data) / "explorer" / "pages" /
+                              (request_path.substr(1) + ".html")};
+    if (std::filesystem::exists(directory_path)) {
+      serve_file(directory_path, request, response);
     } else {
       serve_file(*(__global_data) / "explorer" / "404.html", request, response,
                  sourcemeta::hydra::http::Status::NOT_FOUND);
