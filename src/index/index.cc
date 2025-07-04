@@ -220,6 +220,11 @@ static auto index_main(const std::string_view &program,
     output.write_schema_template_exhaustive(
         schema.second.relative_path.string() + ".blaze-exhaustive",
         template_exhasutive);
+    write_file_metadata(
+        std::filesystem::path{"schemas"} /
+            (schema.second.relative_path.string() + ".blaze-exhaustive"),
+        output, sourcemeta::registry::Output::Category::Explorer,
+        "application/json");
 
     // TODO: Can we re-use the frame here?
     sourcemeta::core::unidentify(
@@ -302,6 +307,9 @@ static auto index_main(const std::string_view &program,
   // Make sure more relevant entries get prioritised
   std::sort(search_index.begin(), search_index.end(), search_index_comparator);
   output.write_search(search_index.cbegin(), search_index.cend());
+  write_file_metadata("search.jsonl", output,
+                      sourcemeta::registry::Output::Category::Navigation,
+                      "application/jsonl");
 
   // --------------------------------------------
   // (6) Generate schema explorer

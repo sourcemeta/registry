@@ -55,6 +55,52 @@ static auto json_error(const ServerLogger &logger, uWS::HttpRequest *,
   response.end(output.str());
 }
 
+auto serve_file(const std::filesystem::path &file_path,
+                uWS::HttpRequest *request, ServerResponse &response,
+                const sourcemeta::hydra::http::Status code =
+                    sourcemeta::hydra::http::Status::OK) -> void {
+  assert(request->getMethod() == "get" || request->getMethod() == "head");
+  const auto meta{sourcemeta::core::read_json(file_path.string() + ".meta")};
+
+  if (!header_if_modified_since(request,
+                                sourcemeta::hydra::http::from_gmt(
+                                    meta.at("lastModified").to_string()))) {
+    response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
+    response.end();
+    return;
+  }
+
+  std::ifstream stream{std::filesystem::canonical(file_path)};
+  stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+  assert(!stream.fail());
+  assert(stream.is_open());
+
+  std::ostringstream contents;
+  contents << stream.rdbuf();
+
+  std::ostringstream etag;
+  etag << '"';
+  etag << meta.at("md5").to_string();
+  etag << '"';
+
+  if (!header_if_none_match(request, etag.str())) {
+    response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
+    response.end();
+    return;
+  }
+
+  response.status = code;
+  response.header("Content-Type", meta.at("mime").to_string());
+  response.header("ETag", etag.str());
+  response.header("Last-Modified", meta.at("lastModified").to_string());
+
+  if (request->getMethod() == "head") {
+    response.head(contents.str());
+  } else {
+    response.end(contents.str());
+  }
+}
+
 auto on_index(const ServerLogger &, uWS::HttpRequest *request,
               ServerResponse &response) -> void {
   serve_file(*(__global_data) / "explorer" / "pages.html", request, response);
