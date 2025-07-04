@@ -2,6 +2,7 @@
 #define SOURCEMETA_REGISTRY_INDEX_EXPLORER_H_
 
 #include <sourcemeta/core/json.h>
+#include <sourcemeta/core/md5.h>
 #include <sourcemeta/registry/html.h>
 
 #include <optional> // std::optional
@@ -430,6 +431,37 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
   html << "</div>";
 }
 
+static auto write_explorer_metadata(const std::filesystem::path &destination)
+    -> void {
+  auto metadata{sourcemeta::core::JSON::make_object()};
+
+  std::ifstream stream{destination};
+  stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+  assert(!stream.fail());
+  assert(stream.is_open());
+  std::ostringstream contents;
+  contents << stream.rdbuf();
+  std::ostringstream md5;
+  sourcemeta::core::md5(contents.str(), md5);
+
+  metadata.assign("md5", sourcemeta::core::JSON{md5.str()});
+
+  const auto last_write_time{std::filesystem::last_write_time(destination)};
+  auto last_modified =
+      std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+          last_write_time - std::filesystem::file_time_type::clock::now() +
+          std::chrono::system_clock::now());
+  metadata.assign(
+      "lastModified",
+      sourcemeta::core::JSON{sourcemeta::hydra::http::to_gmt(last_modified)});
+  metadata.assign("mime", sourcemeta::core::JSON{"text/html"});
+
+  std::ofstream output{destination.string() + ".meta"};
+  assert(!stream.fail());
+  sourcemeta::core::stringify(metadata, output);
+  output << "\n";
+}
+
 auto explorer(const sourcemeta::core::JSON &configuration,
               const std::filesystem::path &base) -> void {
   for (const auto &entry :
@@ -465,6 +497,7 @@ auto explorer(const sourcemeta::core::JSON &configuration,
       sourcemeta::registry::html_end(output_html);
       html << "\n";
       html.close();
+      write_explorer_metadata(destination);
     } else if (meta.defines("entries")) {
       std::filesystem::path relative_path{entry.path().string().substr(
           std::min((base / "pages").string().size() + 1,
@@ -487,6 +520,7 @@ auto explorer(const sourcemeta::core::JSON &configuration,
       sourcemeta::registry::html_end(output_html);
       html << "\n";
       html.close();
+      write_explorer_metadata(destination);
     }
   }
 
@@ -512,6 +546,7 @@ auto explorer(const sourcemeta::core::JSON &configuration,
   sourcemeta::registry::html_end(output_html);
   stream_not_found << "\n";
   stream_not_found.close();
+  write_explorer_metadata(base / "404.html");
 }
 
 } // namespace sourcemeta::registry

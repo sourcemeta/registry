@@ -2,7 +2,6 @@
 #define SOURCEMETA_REGISTRY_HTTPSERVER_H
 
 #include <sourcemeta/core/gzip.h>
-#include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/uuid.h>
 
 #include <sourcemeta/hydra/http.h>
@@ -243,61 +242,6 @@ auto header_if_modified_since(
     // modified
   } catch (const std::invalid_argument &) {
     return true;
-  }
-}
-
-auto serve_file(const std::filesystem::path &file_path,
-                uWS::HttpRequest *request, ServerResponse &response,
-                const sourcemeta::hydra::http::Status code =
-                    sourcemeta::hydra::http::Status::OK) -> void {
-  assert(request->getMethod() == "get" || request->getMethod() == "head");
-
-  // Its the responsibility of the caller to ensure the file path
-  // exists, otherwise we cannot know how the application prefers
-  // to react to such case.
-  assert(std::filesystem::exists(file_path));
-  assert(std::filesystem::is_regular_file(file_path));
-
-  const auto last_write_time{std::filesystem::last_write_time(file_path)};
-  const auto last_modified{
-      std::chrono::time_point_cast<std::chrono::system_clock::duration>(
-          last_write_time - std::filesystem::file_time_type::clock::now() +
-          std::chrono::system_clock::now())};
-
-  if (!header_if_modified_since(request, last_modified)) {
-    response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
-    response.end();
-    return;
-  }
-
-  std::ifstream stream{std::filesystem::canonical(file_path)};
-  stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-  assert(!stream.fail());
-  assert(stream.is_open());
-
-  std::ostringstream contents;
-  contents << stream.rdbuf();
-  std::ostringstream etag;
-  etag << '"';
-  sourcemeta::core::md5(contents.str(), etag);
-  etag << '"';
-
-  if (!header_if_none_match(request, etag.str())) {
-    response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
-    response.end();
-    return;
-  }
-
-  response.status = code;
-  response.header("Content-Type", sourcemeta::hydra::mime_type(file_path));
-  response.header("ETag", etag.str());
-  response.header("Last-Modified",
-                  sourcemeta::hydra::http::to_gmt(last_modified));
-
-  if (request->getMethod() == "head") {
-    response.head(contents.str());
-  } else {
-    response.end(contents.str());
   }
 }
 
