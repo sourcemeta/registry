@@ -26,6 +26,7 @@ public:
     Schemas,
     Bundles,
     Explorer,
+    Navigation,
     Unidentified,
     TemplateExhaustive
   };
@@ -51,7 +52,8 @@ public:
 
   template <typename Iterator>
   auto write_search(Iterator begin, Iterator end) const -> void {
-    this->internal_write_jsonl("search.jsonl", begin, end);
+    this->internal_write_jsonl(
+        std::filesystem::path{"explorer"} / "search.jsonl", begin, end);
   }
 
   auto write_explorer_json(const std::filesystem::path &output,

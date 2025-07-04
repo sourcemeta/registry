@@ -51,9 +51,10 @@ auto toc(const Configuration &configuration, const std::filesystem::path &base,
           "url", sourcemeta::core::JSON{
                      entry.path().string().substr(base.string().size())});
       entries.push_back(std::move(entry_json));
-    } else if (entry.path().extension() == ".json" &&
+    } else if (entry.path().extension() == ".schema" &&
                !entry.path().stem().string().starts_with(".")) {
-      entry_json.assign("name", sourcemeta::core::JSON{entry.path().stem()});
+      entry_json.assign("name", sourcemeta::core::JSON{
+                                    entry.path().stem().replace_extension("")});
       entry_json.merge(
           sourcemeta::core::read_json(entry.path().string() + ".meta")
               .as_object());

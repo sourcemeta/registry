@@ -64,19 +64,20 @@ write_file_metadata(const std::filesystem::path &relative_path,
 }
 
 static auto
-write_schema_metadata(const sourcemeta::registry::Resolver &resolver,
+write_schema_metadata(const std::filesystem::path &relative_path,
+                      const sourcemeta::registry::Resolver &resolver,
                       const sourcemeta::registry::Resolver::Entry &entry,
                       const sourcemeta::registry::Output &output,
                       const sourcemeta::registry::Output::Category category,
                       const std::string &identifier,
                       const sourcemeta::core::JSON &schema) -> void {
   auto metadata{resolver.metadata(identifier, schema, entry)};
-  metadata.assign(
-      "md5", sourcemeta::core::JSON{output.md5(category, entry.relative_path)});
+  metadata.assign("md5",
+                  sourcemeta::core::JSON{output.md5(category, relative_path)});
   metadata.assign("lastModified",
                   sourcemeta::core::JSON{sourcemeta::hydra::http::to_gmt(
-                      output.last_modified(category, entry.relative_path))});
-  output.write_metadata(category, entry.relative_path, metadata);
+                      output.last_modified(category, relative_path))});
+  output.write_metadata(category, relative_path, metadata);
 }
 
 static auto index_main(const std::string_view &program,
@@ -181,20 +182,27 @@ static auto index_main(const std::string_view &program,
                                 subresult.value(),
                                 "The schema does not adhere to its metaschema");
     const auto destination{output.write_schema_single(
-        schema.second.relative_path, subresult.value())};
+        schema.second.relative_path.string() + ".schema", subresult.value())};
     resolver.materialise(schema.first, destination);
-    write_schema_metadata(resolver, schema.second, output,
-                          sourcemeta::registry::Output::Category::Schemas,
-                          schema.first, subresult.value());
+    write_schema_metadata(
+        std::filesystem::path{"schemas"} /
+            (schema.second.relative_path.string() + ".schema"),
+        resolver, schema.second, output,
+        sourcemeta::registry::Output::Category::Explorer, schema.first,
+        subresult.value());
 
     // Storing artefacts
 
     auto bundled_schema{sourcemeta::core::bundle(
         subresult.value(), sourcemeta::core::schema_official_walker, resolver)};
-    output.write_schema_bundle(schema.second.relative_path, bundled_schema);
-    write_schema_metadata(resolver, schema.second, output,
-                          sourcemeta::registry::Output::Category::Bundles,
-                          schema.first, subresult.value());
+    output.write_schema_bundle(schema.second.relative_path.string() + ".bundle",
+                               bundled_schema);
+    write_schema_metadata(
+        std::filesystem::path{"schemas"} /
+            (schema.second.relative_path.string() + ".bundle"),
+        resolver, schema.second, output,
+        sourcemeta::registry::Output::Category::Explorer, schema.first,
+        subresult.value());
 
     sourcemeta::core::SchemaFrame frame{
         sourcemeta::core::SchemaFrame::Mode::References};
@@ -205,17 +213,21 @@ static auto index_main(const std::string_view &program,
         bundled_schema, sourcemeta::core::schema_official_walker, resolver,
         sourcemeta::blaze::default_schema_compiler, frame,
         sourcemeta::blaze::Mode::Exhaustive)};
-    output.write_schema_template_exhaustive(schema.second.relative_path,
-                                            template_exhasutive);
+    output.write_schema_template_exhaustive(
+        schema.second.relative_path.string() + ".blaze-exhaustive",
+        template_exhasutive);
 
     // TODO: Can we re-use the frame here?
     sourcemeta::core::unidentify(
         bundled_schema, sourcemeta::core::schema_official_walker, resolver);
-    output.write_schema_bundle_unidentified(schema.second.relative_path,
-                                            bundled_schema);
-    write_schema_metadata(resolver, schema.second, output,
-                          sourcemeta::registry::Output::Category::Unidentified,
-                          schema.first, subresult.value());
+    output.write_schema_bundle_unidentified(
+        schema.second.relative_path.string() + ".unidentified", bundled_schema);
+    write_schema_metadata(
+        std::filesystem::path{"schemas"} /
+            (schema.second.relative_path.string() + ".unidentified"),
+        resolver, schema.second, output,
+        sourcemeta::registry::Output::Category::Explorer, schema.first,
+        subresult.value());
   }
 
   // --------------------------------------------
@@ -228,9 +240,10 @@ static auto index_main(const std::string_view &program,
   std::vector<sourcemeta::core::JSON> search_index;
   search_index.reserve(resolver.size());
   for (const auto &schema : resolver) {
-    const auto metadata{
-        output.read_metadata(sourcemeta::registry::Output::Category::Schemas,
-                             schema.second.relative_path)};
+    const auto metadata{output.read_metadata(
+        sourcemeta::registry::Output::Category::Explorer,
+        std::filesystem::path{"schemas"} /
+            (schema.second.relative_path.string() + ".schema"))};
     auto entry{sourcemeta::core::JSON::make_array()};
     entry.push_back(metadata.at("url"));
     entry.push_back(metadata.at_or("title", sourcemeta::core::JSON{""}));
@@ -247,21 +260,23 @@ static auto index_main(const std::string_view &program,
   // --------------------------------------------
 
   const auto base{
-      output.absolute_path(sourcemeta::registry::Output::Category::Schemas)};
+      output.absolute_path(sourcemeta::registry::Output::Category::Explorer) /
+      "schemas"};
   output.write_explorer_json(
-      "index.json", sourcemeta::registry::toc(configuration, base, base));
-  write_file_metadata("index.json", output,
-                      sourcemeta::registry::Output::Category::Explorer,
+      "pages.nav", sourcemeta::registry::toc(configuration, base, base));
+  write_file_metadata("pages.nav", output,
+                      sourcemeta::registry::Output::Category::Navigation,
                       "application/json");
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
     if (entry.is_directory()) {
       auto toc{sourcemeta::registry::toc(configuration, base, entry.path())};
-      const auto relative_path{std::filesystem::relative(entry.path(), base) /
-                               "index.json"};
+      auto relative_path{
+          std::filesystem::path{"pages"} /
+          (std::filesystem::relative(entry.path(), base).string() + ".nav")};
       output.write_explorer_json(relative_path, std::move(toc));
       write_file_metadata(relative_path, output,
-                          sourcemeta::registry::Output::Category::Explorer,
+                          sourcemeta::registry::Output::Category::Navigation,
                           "application/json");
     }
   }
@@ -273,8 +288,7 @@ static auto index_main(const std::string_view &program,
   // TODO: Make the explorer generator use the Output class to writing files
   sourcemeta::registry::explorer(
       configuration.get(),
-      output.absolute_path(sourcemeta::registry::Output::Category::Explorer),
-      [](const auto &) {});
+      output.absolute_path(sourcemeta::registry::Output::Category::Navigation));
 
   return EXIT_SUCCESS;
 }

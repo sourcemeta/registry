@@ -18,5 +18,6 @@ MANIFEST="$2"
 
 cd "$DIRECTORY"
 find . -mindepth 1 | sort > "$TMP/manifest.txt"
+cat "$TMP/manifest.txt"
 cd - > /dev/null
 diff "$TMP/manifest.txt" "$MANIFEST"
