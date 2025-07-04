@@ -172,38 +172,6 @@ static auto json_error(const sourcemeta::registry::Logger &logger,
   response.end(output.str());
 }
 
-// TODO: Try to simplify and inline in serve_static_file
-static auto header_if_modified_since(
-    uWS::HttpRequest *handler,
-    const std::chrono::system_clock::time_point last_modified) -> bool {
-  // `If-Modified-Since` can only be used with a `GET` or `HEAD`.
-  // See
-  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since
-  if (handler->getMethod() != "get" && handler->getMethod() != "head") {
-    return true;
-  }
-
-  try {
-    const auto if_modified_since{handler->getHeader("if-modified-since")};
-    // If the client didn't express a modification baseline to compare to,
-    // then we just tell it that it has been modified
-    if (if_modified_since.empty()) {
-      return true;
-    }
-
-    // Time comparison can be flaky, but adding a bit of tolerance leads
-    // to more consistent behavior.
-    return (sourcemeta::hydra::http::header_gmt(
-                std::string{if_modified_since}) +
-            std::chrono::seconds(1)) < last_modified;
-    // If there is an error parsing the `If-Modified-Since` timestamp, don't
-    // abort, but lean on the safe side: the requested resource has been
-    // modified
-  } catch (const std::invalid_argument &) {
-    return true;
-  }
-}
-
 static auto serve_static_file(const sourcemeta::registry::Logger &logger,
                               uWS::HttpRequest *request,
                               ServerResponse &response,
@@ -233,13 +201,28 @@ static auto serve_static_file(const sourcemeta::registry::Logger &logger,
     return;
   }
 
+  // Note that `If-Modified-Since` can only be used with a `GET` or `HEAD`.
+  // See
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since
   const auto &last_modified{file.value().meta.at("lastModified").to_string()};
-  if (!header_if_modified_since(
-          request, sourcemeta::hydra::http::from_gmt(last_modified))) {
-    response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
-    response.header("X-Request-Id", logger.identifier);
-    response.end();
-    return;
+  const auto if_modified_since{request->getHeader("if-modified-since")};
+  if (!if_modified_since.empty()) {
+    try {
+      // Time comparison can be flaky, but adding a bit of tolerance leads
+      // to more consistent behavior.
+      if ((sourcemeta::hydra::http::from_gmt(std::string{if_modified_since}) +
+           std::chrono::seconds(1)) >=
+          sourcemeta::hydra::http::from_gmt(last_modified)) {
+        response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
+        response.header("X-Request-Id", logger.identifier);
+        response.end();
+        return;
+      }
+      // If there is an error parsing the `If-Modified-Since` timestamp, don't
+      // abort, but lean on the safe side: the requested resource has been
+      // modified
+    } catch (const std::invalid_argument &) {
+    }
   }
 
   const auto &md5{file.value().meta.at("md5").to_string()};
