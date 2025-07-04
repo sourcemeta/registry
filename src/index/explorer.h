@@ -465,7 +465,7 @@ auto explorer(const sourcemeta::core::JSON &configuration,
       sourcemeta::registry::html_end(output_html);
       html << "\n";
       html.close();
-    } else {
+    } else if (meta.defines("entries")) {
       std::filesystem::path relative_path{entry.path().string().substr(
           std::min((base / "pages").string().size() + 1,
                    entry.path().parent_path().string().size()))};

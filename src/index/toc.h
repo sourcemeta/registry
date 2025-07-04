@@ -31,7 +31,9 @@ auto try_parse_version(const sourcemeta::core::JSON::String &name)
 
 namespace sourcemeta::registry {
 
-auto toc(const Configuration &configuration, const std::filesystem::path &base,
+auto toc(const Configuration &configuration,
+         const std::filesystem::path &navigation_base,
+         const std::filesystem::path &base,
          const std::filesystem::path &directory) -> sourcemeta::core::JSON {
   const auto server_url_string{configuration.url().recompose()};
   assert(directory.string().starts_with(base.string()));
@@ -55,9 +57,13 @@ auto toc(const Configuration &configuration, const std::filesystem::path &base,
                !entry.path().stem().string().starts_with(".")) {
       entry_json.assign("name", sourcemeta::core::JSON{
                                     entry.path().stem().replace_extension("")});
+
+      auto schema_meta_path{navigation_base / "pages" / entry_relative_path};
+      schema_meta_path.replace_extension("");
+      schema_meta_path.replace_extension("nav");
+
       entry_json.merge(
-          sourcemeta::core::read_json(entry.path().string() + ".meta")
-              .as_object());
+          sourcemeta::core::read_json(schema_meta_path).as_object());
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});
       entries.push_back(std::move(entry_json));
     }
