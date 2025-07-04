@@ -34,21 +34,18 @@ export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 
 CHECKSUM_SCHEMA="$(md5sum "$TMP/output/schemas/example/schemas/test.json.schema" | cut -d ' ' -f 1)"
 TIMESTAMP_SCHEMA="$(date -u -r "$TMP/output/schemas/example/schemas/test.json.schema" "+%a, %d %b %Y %H:%M:%S GMT")"
-cat << EOF > "$TMP/schema.json"
-{"dialect":"http://json-schema.org/draft-07/schema#","mime":"application/schema+json","md5":"$CHECKSUM_SCHEMA","lastModified":"$TIMESTAMP_SCHEMA"}
-EOF
+printf '{"dialect":"http://json-schema.org/draft-07/schema#","mime":"application/schema+json","md5":"%s","lastModified":"%s"}' \
+  "$CHECKSUM_SCHEMA" "$TIMESTAMP_SCHEMA" > "$TMP/schema.json"
 
 CHECKSUM_BUNDLE="$(md5sum "$TMP/output/schemas/example/schemas/test.json.bundle" | cut -d ' ' -f 1)"
 TIMESTAMP_BUNDLE="$(date -u -r "$TMP/output/schemas/example/schemas/test.json.bundle" "+%a, %d %b %Y %H:%M:%S GMT")"
-cat << EOF > "$TMP/bundle.json"
-{"dialect":"http://json-schema.org/draft-07/schema#","mime":"application/schema+json","md5":"$CHECKSUM_BUNDLE","lastModified":"$TIMESTAMP_BUNDLE"}
-EOF
+printf '{"dialect":"http://json-schema.org/draft-07/schema#","mime":"application/schema+json","md5":"%s","lastModified":"%s"}' \
+  "$CHECKSUM_BUNDLE" "$TIMESTAMP_BUNDLE" > "$TMP/bundle.json"
 
 CHECKSUM_UNIDENTIFIED="$(md5sum "$TMP/output/schemas/example/schemas/test.json.unidentified" | cut -d ' ' -f 1)"
 TIMESTAMP_UNIDENTIFIED="$(date -u -r "$TMP/output/schemas/example/schemas/test.json.unidentified" "+%a, %d %b %Y %H:%M:%S GMT")"
-cat << EOF > "$TMP/unidentified.json"
-{"dialect":"http://json-schema.org/draft-07/schema#","mime":"application/schema+json","md5":"$CHECKSUM_UNIDENTIFIED","lastModified":"$TIMESTAMP_UNIDENTIFIED"}
-EOF
+printf '{"dialect":"http://json-schema.org/draft-07/schema#","mime":"application/schema+json","md5":"%s","lastModified":"%s"}' \
+  "$CHECKSUM_UNIDENTIFIED" "$TIMESTAMP_UNIDENTIFIED" > "$TMP/unidentified.json"
 
 diff "$TMP/output/schemas/example/schemas/test.json.schema.meta" "$TMP/schema.json"
 diff "$TMP/output/schemas/example/schemas/test.json.bundle.meta" "$TMP/bundle.json"

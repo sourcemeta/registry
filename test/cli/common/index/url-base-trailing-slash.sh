@@ -32,11 +32,10 @@ EOF
 export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 "$1" "$TMP/configuration.json" "$TMP/output"
 
-cat << 'EOF' > "$TMP/expected.json"
-{
+# shellcheck disable=SC2016
+printf '%s' '{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://sourcemeta.com/example/schemas/test.json"
-}
-EOF
+}' > "$TMP/expected.json"
 
 diff "$TMP/output/schemas/example/schemas/test.json.schema" "$TMP/expected.json"

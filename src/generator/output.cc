@@ -27,7 +27,6 @@ auto Output::internal_write_json(const std::filesystem::path &output,
   std::filesystem::create_directories(destination.parent_path());
   auto stream{this->open(destination)};
   sourcemeta::core::stringify(document, stream);
-  stream << "\n";
   return destination;
 }
 
@@ -39,7 +38,6 @@ auto Output::internal_write_jsonschema(
   auto stream{this->open(destination)};
   sourcemeta::core::prettify(schema, stream,
                              sourcemeta::core::schema_format_compare);
-  stream << "\n";
   return destination;
 }
 
