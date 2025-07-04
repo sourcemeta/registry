@@ -71,7 +71,11 @@ write_schema_metadata(const std::filesystem::path &relative_path,
                       const sourcemeta::registry::Output::Category category,
                       const std::string &identifier,
                       const sourcemeta::core::JSON &schema) -> void {
-  auto metadata{resolver.metadata(identifier, schema, entry)};
+  auto other{resolver.metadata(identifier, schema, entry)};
+
+  auto metadata{sourcemeta::core::JSON::make_object()};
+  metadata.assign("dialect", other.at("dialect"));
+  metadata.assign("mime", sourcemeta::core::JSON{"application/schema+json"});
   metadata.assign("md5",
                   sourcemeta::core::JSON{output.md5(category, relative_path)});
   metadata.assign("lastModified",
@@ -234,16 +238,60 @@ static auto index_main(const std::string_view &program,
   // (4) Generate schema search index
   // --------------------------------------------
 
-  std::cerr << "Generating registry...\n";
+  std::cerr << "Generating registry navigation...\n";
+
+  for (const auto &schema : resolver) {
+    auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
+                         schema.second.relative_path};
+    schema_nav_path.replace_extension("nav");
+    const auto subresult{resolver(schema.first)};
+    assert(subresult.has_value());
+    // TODO: Put breadcrumb inside this metadata
+    const auto metadata{
+        resolver.metadata(schema.first, subresult.value(), schema.second)};
+    output.internal_write_json(schema_nav_path, metadata);
+    write_file_metadata(schema_nav_path, output,
+                        sourcemeta::registry::Output::Category::Explorer,
+                        "application/json");
+  }
+
+  const auto base{
+      output.absolute_path(sourcemeta::registry::Output::Category::Explorer) /
+      "schemas"};
+  const auto navigation_base{
+      output.absolute_path(sourcemeta::registry::Output::Category::Navigation)};
+  output.write_explorer_json(
+      "pages.nav",
+      sourcemeta::registry::toc(configuration, navigation_base, base, base));
+  write_file_metadata("pages.nav", output,
+                      sourcemeta::registry::Output::Category::Navigation,
+                      "application/json");
+  for (const auto &entry :
+       std::filesystem::recursive_directory_iterator{base}) {
+    if (entry.is_directory()) {
+      auto toc{sourcemeta::registry::toc(configuration, navigation_base, base,
+                                         entry.path())};
+      auto relative_path{
+          std::filesystem::path{"pages"} /
+          (std::filesystem::relative(entry.path(), base).string() + ".nav")};
+      output.write_explorer_json(relative_path, std::move(toc));
+      write_file_metadata(relative_path, output,
+                          sourcemeta::registry::Output::Category::Navigation,
+                          "application/json");
+    }
+  }
+
+  std::cerr << "Generating registry search index...\n";
 
   // TODO: We could parallelize this loop
   std::vector<sourcemeta::core::JSON> search_index;
   search_index.reserve(resolver.size());
   for (const auto &schema : resolver) {
+    auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
+                         schema.second.relative_path};
+    schema_nav_path.replace_extension("nav");
     const auto metadata{output.read_metadata(
-        sourcemeta::registry::Output::Category::Explorer,
-        std::filesystem::path{"schemas"} /
-            (schema.second.relative_path.string() + ".schema"))};
+        sourcemeta::registry::Output::Category::Navigation, schema_nav_path)};
     auto entry{sourcemeta::core::JSON::make_array()};
     entry.push_back(metadata.at("url"));
     entry.push_back(metadata.at_or("title", sourcemeta::core::JSON{""}));
@@ -256,34 +304,10 @@ static auto index_main(const std::string_view &program,
   output.write_search(search_index.cbegin(), search_index.cend());
 
   // --------------------------------------------
-  // (5) Generate schema navigation indexes
-  // --------------------------------------------
-
-  const auto base{
-      output.absolute_path(sourcemeta::registry::Output::Category::Explorer) /
-      "schemas"};
-  output.write_explorer_json(
-      "pages.nav", sourcemeta::registry::toc(configuration, base, base));
-  write_file_metadata("pages.nav", output,
-                      sourcemeta::registry::Output::Category::Navigation,
-                      "application/json");
-  for (const auto &entry :
-       std::filesystem::recursive_directory_iterator{base}) {
-    if (entry.is_directory()) {
-      auto toc{sourcemeta::registry::toc(configuration, base, entry.path())};
-      auto relative_path{
-          std::filesystem::path{"pages"} /
-          (std::filesystem::relative(entry.path(), base).string() + ".nav")};
-      output.write_explorer_json(relative_path, std::move(toc));
-      write_file_metadata(relative_path, output,
-                          sourcemeta::registry::Output::Category::Navigation,
-                          "application/json");
-    }
-  }
-
-  // --------------------------------------------
   // (6) Generate schema explorer
   // --------------------------------------------
+
+  std::cerr << "Generating registry explorer...\n";
 
   // TODO: Make the explorer generator use the Output class to writing files
   sourcemeta::registry::explorer(

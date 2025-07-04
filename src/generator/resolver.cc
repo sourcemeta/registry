@@ -264,7 +264,6 @@ auto Resolver::metadata(const std::string &identifier,
                         const Entry &entry) const -> sourcemeta::core::JSON {
   auto result{sourcemeta::core::JSON::make_object()};
   result.assign("id", sourcemeta::core::JSON{identifier});
-  result.assign("mime", sourcemeta::core::JSON{"application/schema+json"});
   result.assign("url",
                 sourcemeta::core::JSON{"/" + entry.relative_path.string()});
   const auto base_dialect{sourcemeta::core::base_dialect(schema, *this)};

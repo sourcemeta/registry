@@ -123,11 +123,10 @@ auto Output::write_metadata(const Category category,
       (this->relative_path(category) / output).string() + ".meta", metadata);
 }
 
-auto Output::read_metadata(const Category category,
+auto Output::read_metadata(const Category,
                            const std::filesystem::path &output) const
     -> sourcemeta::core::JSON {
-  const std::filesystem::path absolute_path{this->resolve(
-      (this->relative_path(category) / output).string() + ".meta")};
+  const std::filesystem::path absolute_path{this->resolve(output)};
   assert(std::filesystem::exists(absolute_path));
   return sourcemeta::core::read_json(absolute_path);
 }

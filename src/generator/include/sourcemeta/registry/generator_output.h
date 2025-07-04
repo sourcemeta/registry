@@ -73,7 +73,6 @@ public:
                      const std::filesystem::path &output) const
       -> std::chrono::system_clock::time_point;
 
-private:
   auto internal_write_json(const std::filesystem::path &output,
                            const sourcemeta::core::JSON &document) const
       -> std::filesystem::path;
