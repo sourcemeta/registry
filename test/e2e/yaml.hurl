@@ -9,7 +9,6 @@ Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 [Asserts]
 header "ETag" exists
-header "X-Request-id" exists
 
 GET {{base}}/example/schemas/yaml.json
 HTTP 200
@@ -30,7 +29,6 @@ Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 [Asserts]
 header "ETag" exists
-header "X-Request-id" exists
 
 GET {{base}}/example/schemas/yml.json
 HTTP 200

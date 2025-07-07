@@ -8,7 +8,6 @@ Content-Type: application/json
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
-header "X-Request-id" exists
 jsonpath "$.breadcrumb" count == 0
 jsonpath "$.entries" count == 4
 jsonpath "$.entries[0].name" == "same"
@@ -39,7 +38,6 @@ Content-Type: application/json
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
-header "X-Request-id" exists
 jsonpath "$.breadcrumb" count == 1
 jsonpath "$.breadcrumb[0].name" == "example"
 jsonpath "$.breadcrumb[0].url" == "/example"
@@ -72,7 +70,6 @@ Content-Type: application/json
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
-header "X-Request-id" exists
 jsonpath "$.breadcrumb" count == 2
 jsonpath "$.breadcrumb[0].name" == "example"
 jsonpath "$.breadcrumb[0].url" == "/example"
@@ -92,7 +89,6 @@ Content-Type: application/json
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
-header "X-Request-id" exists
 jsonpath "$.breadcrumb" count == 2
 jsonpath "$.breadcrumb[0].name" == "example"
 jsonpath "$.breadcrumb[0].url" == "/example"
@@ -113,7 +109,6 @@ Content-Type: application/json
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
-header "X-Request-id" exists
 jsonpath "$.breadcrumb" count == 2
 jsonpath "$.breadcrumb[0].name" == "example"
 jsonpath "$.breadcrumb[0].url" == "/example"

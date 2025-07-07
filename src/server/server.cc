@@ -8,7 +8,6 @@
 #include "uwebsockets.h"
 
 #include "configure.h"
-#include "logger.h"
 #include "reader.h"
 #include "search.h"
 #include "status.h"
@@ -20,30 +19,36 @@
 #include <cstdlib>     // EXIT_FAILURE
 #include <filesystem>  // std::filesystem
 #include <iostream>    // std::cerr, std::cout
+#include <mutex>       // std::mutex, std::lock_guard
 #include <optional>    // std::optional
 #include <sstream>     // std::ostringstream, std::istringstream
 #include <stdexcept>   // std::invalid_argument
 #include <string>      // std::string, std::getline
 #include <string_view> // std::string_view
+#include <thread>      // std::this_thread
 #include <utility>     // std::move, std::pair
 #include <vector>      // std::vector
 
-static auto send_response(const char *const code,
-                          const sourcemeta::registry::Logger &logger,
-                          uWS::HttpRequest *request,
+static auto log(std::string_view message) -> void {
+  // Otherwise we can get messed up output interleaved from multiple threads
+  static std::mutex log_mutex;
+  std::lock_guard<std::mutex> guard{log_mutex};
+  std::cerr << "[" << sourcemeta::core::to_gmt(std::chrono::system_clock::now())
+            << "] " << std::this_thread::get_id() << message << "\n";
+}
+
+static auto send_response(const char *const code, uWS::HttpRequest *request,
                           uWS::HttpResponse<true> *response) -> void {
   response->end();
   std::ostringstream line;
   assert(code);
   line << code << ' ' << request->getMethod() << ' ' << request->getUrl();
-  logger << std::move(line).str();
+  log(std::move(line).str());
 }
 
 enum class ServerContentEncoding { Identity, GZIP };
 
-static auto send_response(const char *const code,
-                          const sourcemeta::registry::Logger &logger,
-                          uWS::HttpRequest *request,
+static auto send_response(const char *const code, uWS::HttpRequest *request,
                           uWS::HttpResponse<true> *response,
                           const std::string_view message,
                           const ServerContentEncoding encoding) -> void {
@@ -72,27 +77,24 @@ static auto send_response(const char *const code,
   std::ostringstream line;
   assert(code);
   line << code << ' ' << request->getMethod() << ' ' << request->getUrl();
-  logger << std::move(line).str();
+  log(std::move(line).str());
 }
 
-static auto json_error(const sourcemeta::registry::Logger &logger,
-                       uWS::HttpRequest *request,
+static auto json_error(uWS::HttpRequest *request,
                        uWS::HttpResponse<true> *response,
                        const ServerContentEncoding encoding,
                        const char *const code, std::string &&id,
                        std::string &&message) -> void {
   auto object{sourcemeta::core::JSON::make_object()};
-  object.assign("request", sourcemeta::core::JSON{logger.identifier});
   object.assign("error", sourcemeta::core::JSON{std::move(id)});
   object.assign("message", sourcemeta::core::JSON{std::move(message)});
   object.assign("code", sourcemeta::core::JSON{std::atoi(code)});
   response->writeStatus(code);
   response->writeHeader("Content-Type", "application/json");
-  response->writeHeader("X-Request-Id", logger.identifier);
 
   std::ostringstream output;
   sourcemeta::core::prettify(object, output);
-  send_response(code, logger, request, response, output.str(), encoding);
+  send_response(code, request, response, output.str(), encoding);
 }
 
 /// A header list element consists of the element value and its quality value
@@ -131,20 +133,19 @@ static auto header_list(const std::string_view &value)
   return result;
 }
 
-static auto serve_static_file(const sourcemeta::registry::Logger &logger,
-                              uWS::HttpRequest *request,
+static auto serve_static_file(uWS::HttpRequest *request,
                               uWS::HttpResponse<true> *response,
                               const ServerContentEncoding encoding,
                               const std::filesystem::path &absolute_path,
                               const char *const code) -> void {
   if (request->getMethod() != "get" && request->getMethod() != "head") {
     if (std::filesystem::exists(absolute_path)) {
-      json_error(logger, request, response, encoding,
+      json_error(request, response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     } else {
-      json_error(logger, request, response, encoding,
+      json_error(request, response, encoding,
                  sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                  "There is nothing at this URL");
     }
@@ -154,7 +155,7 @@ static auto serve_static_file(const sourcemeta::registry::Logger &logger,
 
   auto file{sourcemeta::registry::read_file(absolute_path)};
   if (!file.has_value()) {
-    json_error(logger, request, response, encoding,
+    json_error(request, response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
     return;
@@ -173,9 +174,8 @@ static auto serve_static_file(const sourcemeta::registry::Logger &logger,
            std::chrono::seconds(1)) >=
           sourcemeta::core::from_gmt(last_modified)) {
         response->writeStatus(sourcemeta::registry::STATUS_NOT_MODIFIED);
-        response->writeHeader("X-Request-Id", logger.identifier);
-        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED, logger,
-                      request, response);
+        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED, request,
+                      response);
         return;
       }
       // If there is an error parsing the `If-Modified-Since` timestamp, don't
@@ -197,16 +197,14 @@ static auto serve_static_file(const sourcemeta::registry::Logger &logger,
       if (match.first == "*" || match.first == etag_value_weak.str() ||
           match.first == etag_value_strong.str()) {
         response->writeStatus(sourcemeta::registry::STATUS_NOT_MODIFIED);
-        response->writeHeader("X-Request-Id", logger.identifier);
-        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED, logger,
-                      request, response);
+        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED, request,
+                      response);
         return;
       }
     }
   }
 
   response->writeStatus(code);
-  response->writeHeader("X-Request-Id", logger.identifier);
   response->writeHeader("Content-Type",
                         file.value().meta.at("mime").to_string());
   response->writeHeader("Last-Modified", last_modified);
@@ -226,22 +224,21 @@ static auto serve_static_file(const sourcemeta::registry::Logger &logger,
 
   std::ostringstream contents;
   contents << file.value().stream.rdbuf();
-  send_response(code, logger, request, response, contents.str(), encoding);
+  send_response(code, request, response, contents.str(), encoding);
 }
 
 static auto on_request(const std::filesystem::path &base,
-                       const sourcemeta::registry::Logger &logger,
                        uWS::HttpRequest *request,
                        uWS::HttpResponse<true> *response,
                        const ServerContentEncoding encoding) -> void {
   if (request->getUrl() == "/") {
     const auto accept{request->getHeader("accept")};
     if (accept == "application/json") {
-      serve_static_file(logger, request, response, encoding,
+      serve_static_file(request, response, encoding,
                         base / "explorer" / "pages.nav",
                         sourcemeta::registry::STATUS_OK);
     } else {
-      serve_static_file(logger, request, response, encoding,
+      serve_static_file(request, response, encoding,
                         base / "explorer" / "pages.html",
                         sourcemeta::registry::STATUS_OK);
     }
@@ -249,21 +246,20 @@ static auto on_request(const std::filesystem::path &base,
     if (request->getMethod() == "get") {
       const auto query{request->getQuery("q")};
       if (query.empty()) {
-        json_error(logger, request, response, encoding,
+        json_error(request, response, encoding,
                    sourcemeta::registry::STATUS_BAD_REQUEST, "missing-query",
                    "You must provide a query parameter to search for");
       } else {
         auto result{sourcemeta::registry::search(
             base / "explorer" / "search.jsonl", query)};
         response->writeStatus(sourcemeta::registry::STATUS_OK);
-        response->writeHeader("X-Request-Id", logger.identifier);
         std::ostringstream output;
         sourcemeta::core::prettify(result, output);
-        send_response(sourcemeta::registry::STATUS_OK, logger, request,
-                      response, output.str(), encoding);
+        send_response(sourcemeta::registry::STATUS_OK, request, response,
+                      output.str(), encoding);
       }
     } else {
-      json_error(logger, request, response, encoding,
+      json_error(request, response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
@@ -272,7 +268,7 @@ static auto on_request(const std::filesystem::path &base,
     std::ostringstream absolute_path;
     absolute_path << SOURCEMETA_REGISTRY_STATIC;
     absolute_path << request->getUrl().substr(7);
-    serve_static_file(logger, request, response, encoding, absolute_path.str(),
+    serve_static_file(request, response, encoding, absolute_path.str(),
                       sourcemeta::registry::STATUS_OK);
   } else if (request->getUrl().ends_with(".json")) {
     // Because Visual Studio Code famously does not support `$id` or `id`
@@ -303,13 +299,13 @@ static auto on_request(const std::filesystem::path &base,
       auto nav_path{base / "explorer" / "pages" / lowercase_path};
       nav_path.replace_extension(".nav");
       if (std::filesystem::exists(nav_path)) {
-        serve_static_file(logger, request, response, encoding, nav_path,
+        serve_static_file(request, response, encoding, nav_path,
                           sourcemeta::registry::STATUS_OK);
         return;
       }
     }
 
-    serve_static_file(logger, request, response, encoding, absolute_path,
+    serve_static_file(request, response, encoding, absolute_path,
                       sourcemeta::registry::STATUS_OK);
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
 
@@ -318,23 +314,23 @@ static auto on_request(const std::filesystem::path &base,
       const auto absolute_path{
           base / "explorer" / "pages" /
           (std::string{request->getUrl().substr(1)} + ".nav")};
-      serve_static_file(logger, request, response, encoding, absolute_path,
+      serve_static_file(request, response, encoding, absolute_path,
                         sourcemeta::registry::STATUS_OK);
     } else {
       const auto absolute_path{
           base / "explorer" / "pages" /
           (std::string{request->getUrl().substr(1)} + ".html")};
       if (std::filesystem::exists(absolute_path)) {
-        serve_static_file(logger, request, response, encoding, absolute_path,
+        serve_static_file(request, response, encoding, absolute_path,
                           sourcemeta::registry::STATUS_OK);
       } else {
-        serve_static_file(logger, request, response, encoding,
+        serve_static_file(request, response, encoding,
                           base / "explorer" / "404.html",
                           sourcemeta::registry::STATUS_NOT_FOUND);
       }
     }
   } else {
-    json_error(logger, request, response, encoding,
+    json_error(request, response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
   }
@@ -343,13 +339,10 @@ static auto on_request(const std::filesystem::path &base,
 static auto dispatch(const std::filesystem::path &base,
                      uWS::HttpResponse<true> *const response,
                      uWS::HttpRequest *const request) noexcept -> void {
-  // This should never throw, otherwise we cannot even react to errors
-  sourcemeta::registry::Logger logger{sourcemeta::core::uuidv4()};
-
   try {
-    // As long as the identity;q=0 or *;q=0 directives do not explicitly forbid
-    // the identity value that means no encoding, the server must never return a
-    // 406 Not Acceptable error. See
+    // As long as the identity;q=0 or *;q=0 directives do not explicitly
+    // forbid the identity value that means no encoding, the server must never
+    // return a 406 Not Acceptable error. See
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
     std::optional<ServerContentEncoding> encoding{
         ServerContentEncoding::Identity};
@@ -378,15 +371,15 @@ static auto dispatch(const std::filesystem::path &base,
     }
 
     if (encoding.has_value()) {
-      on_request(base, logger, request, response, encoding.value());
+      on_request(base, request, response, encoding.value());
     } else {
-      json_error(logger, request, response, ServerContentEncoding::Identity,
+      json_error(request, response, ServerContentEncoding::Identity,
                  sourcemeta::registry::STATUS_BAD_REQUEST,
                  "cannot-satisfy-content-encoding",
                  "The server cannot satisfy the request content encoding");
     }
   } catch (const std::exception &error) {
-    json_error(logger, request, response,
+    json_error(request, response,
                // As computing the right content encoding might throw
                ServerContentEncoding::Identity,
                sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
@@ -429,8 +422,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     const auto port{
         static_cast<std::uint32_t>(configuration.at("port").to_integer())};
 
-    sourcemeta::registry::Logger logger{"global"};
-    uWS::LocalCluster({}, [&base, port, &logger](uWS::SSLApp &app) -> void {
+    uWS::LocalCluster({}, [&base, port](uWS::SSLApp &app) -> void {
       app.any(
           "/*",
           [&base](auto *const response, auto *const request) noexcept -> void {
@@ -438,22 +430,20 @@ auto main(int argc, char *argv[]) noexcept -> int {
           });
 
       app.listen(static_cast<int>(port),
-                 [port, &logger](us_listen_socket_t *const socket) -> void {
+                 [port](us_listen_socket_t *const socket) -> void {
                    if (socket) {
                      const auto socket_port = us_socket_local_port(
                          true, reinterpret_cast<struct us_socket_t *>(socket));
                      assert(socket_port > 0);
                      assert(port == static_cast<std::uint32_t>(socket_port));
-                     logger
-                         << "Listening on port " + std::to_string(socket_port);
+                     log("Listening on port " + std::to_string(socket_port));
                    } else {
-                     logger
-                         << "Failed to listen on port " + std::to_string(port);
+                     log("Failed to listen on port " + std::to_string(port));
                    }
                  });
     });
 
-    logger << "Failed to listen on port " + std::to_string(port);
+    log("Failed to listen on port " + std::to_string(port));
     return EXIT_FAILURE;
   } catch (const std::exception &error) {
     std::cerr << "unexpected error: " << error.what() << "\n";

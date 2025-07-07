@@ -4,7 +4,6 @@ Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 [Asserts]
 header "ETag" exists
-header "X-Request-id" exists
 
 GET {{base}}/example/bundling/single.json?unidentify=1
 HTTP 200
@@ -88,7 +87,6 @@ Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 [Asserts]
 header "ETag" exists
-header "X-Request-id" exists
 
 GET {{base}}/example/v2.0/schema.json?unidentify=1
 HTTP 200
