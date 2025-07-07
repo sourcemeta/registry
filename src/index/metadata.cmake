@@ -30,4 +30,3 @@ execute_process(
 
 set(JSON_CONTENT "{ \"md5\": \"${MD5_HASH}\", \"mime\": \"${MIME}\", \"lastModified\": \"${LAST_MODIFIED}\" }")
 file(WRITE "${OUTPUT}" "${JSON_CONTENT}\n")
-message(STATUS "Computing static metadata: ${OUTPUT}")
