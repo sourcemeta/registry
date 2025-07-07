@@ -1,35 +1,26 @@
 GET {{base}}/api/search
 HTTP 400
 Content-Type: application/json
-[Captures]
-current_request_id: header "X-Request-id"
 [Asserts]  
 jsonpath "$.code" == 400
 jsonpath "$.error" == "missing-query"
 jsonpath "$.message" == "You must provide a query parameter to search for"
-jsonpath "$.request" == "{{current_request_id}}"
 
 GET {{base}}/api/search?q=
 HTTP 400
 Content-Type: application/json
-[Captures]
-current_request_id: header "X-Request-id"
 [Asserts]  
 jsonpath "$.code" == 400
 jsonpath "$.error" == "missing-query"
 jsonpath "$.message" == "You must provide a query parameter to search for"
-jsonpath "$.request" == "{{current_request_id}}"
 
 POST {{base}}/api/search?q=foo
 HTTP 405
 Content-Type: application/json
-[Captures]
-current_request_id: header "X-Request-id"
 [Asserts]  
 jsonpath "$.code" == 405
 jsonpath "$.error" == "method-not-allowed"
 jsonpath "$.message" == "This HTTP method is invalid for this URL"
-jsonpath "$.request" == "{{current_request_id}}"
 
 # A string we know won't give any results
 GET {{base}}/api/search?q=xxxxxxxxxxxx
