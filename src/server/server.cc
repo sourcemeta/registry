@@ -253,6 +253,7 @@ static auto on_request(const std::filesystem::path &base,
         auto result{sourcemeta::registry::search(
             base / "explorer" / "search.jsonl", query)};
         response->writeStatus(sourcemeta::registry::STATUS_OK);
+        response->writeHeader("Content-Type", "application/jsonl");
         std::ostringstream output;
         sourcemeta::core::prettify(result, output);
         send_response(sourcemeta::registry::STATUS_OK, request, response,
