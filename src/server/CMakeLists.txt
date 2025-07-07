@@ -1,6 +1,6 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server 
   FOLDER "Registry/Server" 
-  SOURCES reader.h logger.h search.h
+  SOURCES reader.h logger.h search.h status.h
     server.cc uwebsockets.h configure.h.in)
 
 set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourcemeta-registry-server)
@@ -8,12 +8,9 @@ set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourceme
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uuid)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::gzip)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uSockets)
 target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uWebSockets)
-
-# TODO: Get rid of this library
-target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::hydra::http)
-
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::license)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")

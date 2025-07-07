@@ -39,7 +39,7 @@ Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/configuration.json
 Detecting: $(realpath "$TMP")/schemas/test.json (#1)
 Ingesting: https://sourcemeta.com/example/schemas/test.json
-error: Could not resolve the requested schema
+error: Could not resolve the reference to an external schema
   https://sourcemeta.com/external
 
 Did you forget to register a schema with such URI in the registry?

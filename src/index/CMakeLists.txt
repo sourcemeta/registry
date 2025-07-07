@@ -6,20 +6,16 @@ sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::generator)
 
-# TODO: Revise these dependencies
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::uri)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::jsonschema)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::yaml)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::md5)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evaluator)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::html)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
-
-# TODO: Get rid of Hydra here
-target_link_libraries(sourcemeta_registry_index PRIVATE
-  sourcemeta::hydra::http)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
   target_compile_definitions(sourcemeta_registry_index 

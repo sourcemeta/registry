@@ -1,7 +1,7 @@
 #ifndef SOURCEMETA_REGISTRY_SERVER_LOGGER_H
 #define SOURCEMETA_REGISTRY_SERVER_LOGGER_H
 
-#include <sourcemeta/hydra/http.h>
+#include <sourcemeta/core/time.h>
 
 #include <chrono>      // std::chrono::system_clock
 #include <iostream>    // std::cerr
@@ -19,8 +19,7 @@ public:
     static std::mutex log_mutex;
     std::lock_guard<std::mutex> guard{log_mutex};
     std::cerr << "["
-              << sourcemeta::hydra::http::to_gmt(
-                     std::chrono::system_clock::now())
+              << sourcemeta::core::to_gmt(std::chrono::system_clock::now())
               << "] " << std::this_thread::get_id() << " (" << this->identifier
               << ") " << message << "\n";
   }
