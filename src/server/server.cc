@@ -3,6 +3,9 @@
 #include <sourcemeta/core/time.h>
 #include <sourcemeta/core/uuid.h>
 
+#include <sourcemeta/blaze/compiler.h>
+#include <sourcemeta/blaze/evaluator.h>
+
 #include <sourcemeta/registry/license.h>
 
 #include "uwebsockets.h"
@@ -19,6 +22,7 @@
 #include <cstdlib>     // EXIT_FAILURE
 #include <filesystem>  // std::filesystem
 #include <iostream>    // std::cerr, std::cout
+#include <memory>      // std::unique_ptr
 #include <mutex>       // std::mutex, std::lock_guard
 #include <optional>    // std::optional
 #include <sstream>     // std::ostringstream, std::istringstream
@@ -276,44 +280,105 @@ static auto on_request(const std::filesystem::path &base,
     serve_static_file(request, response, encoding, absolute_path.str(),
                       sourcemeta::registry::STATUS_OK);
   } else if (request->getUrl().ends_with(".json")) {
-    // Because Visual Studio Code famously does not support `$id` or `id`
-    // See https://github.com/microsoft/vscode-json-languageservice/issues/224
-    const auto &user_agent{request->getHeader("user-agent")};
-    const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
-                         user_agent.starts_with("VSCodium")};
-    const auto bundle{!request->getQuery("bundle").empty()};
-    const auto unidentify{!request->getQuery("unidentify").empty()};
-
     // Otherwise we may get unexpected results in case-sensitive file-systems
     std::string lowercase_path{request->getUrl().substr(1)};
     std::transform(
         lowercase_path.begin(), lowercase_path.end(), lowercase_path.begin(),
         [](const unsigned char character) { return std::tolower(character); });
 
-    auto absolute_path{base / "schemas" / lowercase_path};
-    if (unidentify || is_vscode) {
-      absolute_path += ".unidentified";
-    } else if (bundle) {
-      absolute_path += ".bundle";
-    } else {
-      absolute_path += ".schema";
-    }
-
-    // For convenience
-    if (!std::filesystem::exists(absolute_path)) {
-      auto nav_path{base / "explorer" / "pages" / lowercase_path};
-      nav_path.replace_extension(".nav");
-      if (std::filesystem::exists(nav_path)) {
-        serve_static_file(request, response, encoding, nav_path,
-                          sourcemeta::registry::STATUS_OK);
+    if (request->getMethod() == "post") {
+      const auto template_path{base / "schemas" /
+                               (lowercase_path + ".blaze-exhaustive")};
+      auto template_file{sourcemeta::registry::read_file(template_path)};
+      if (!template_file.has_value()) {
+        json_error(request->getMethod(), request->getUrl(), response, encoding,
+                   sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
+                   "There is nothing at this URL");
         return;
       }
+
+      response->onAborted([]() {});
+      std::unique_ptr<std::string> buffer;
+      // Because `request` gets de-allocated
+      std::string method{request->getMethod()};
+      std::string url{request->getUrl()};
+      response->onData([response, encoding, buffer = std::move(buffer),
+                        template_file = std::move(template_file),
+                        method = std::move(method),
+                        url = std::move(url)](const std::string_view chunk,
+                                              const bool is_last) mutable {
+        try {
+          if (!buffer.get()) {
+            buffer = std::make_unique<std::string>(chunk);
+          } else {
+            buffer->append(chunk);
+          }
+
+          if (is_last) {
+            if (buffer->empty()) {
+              json_error(method, url, response, encoding,
+                         sourcemeta::registry::STATUS_BAD_REQUEST,
+                         "no-instance",
+                         "You must pass an instance to validate against");
+            } else {
+              const auto instance{sourcemeta::core::parse_json(*buffer)};
+              // TODO: Cache this conversion across runs, potentially
+              // using the schema file "md5" as the cache key
+              const auto schema_template{sourcemeta::blaze::from_json(
+                  sourcemeta::core::parse_json(template_file.value().stream))};
+              assert(schema_template.has_value());
+              sourcemeta::blaze::Evaluator evaluator;
+              const auto result{sourcemeta::blaze::standard(
+                  evaluator, schema_template.value(), instance,
+                  sourcemeta::blaze::StandardOutput::Basic)};
+
+              response->writeStatus(sourcemeta::registry::STATUS_OK);
+              response->writeHeader("Content-Type", "application/json");
+              std::ostringstream payload;
+              sourcemeta::core::prettify(result, payload);
+              send_response(sourcemeta::registry::STATUS_OK, method, url,
+                            response, payload.str(), encoding);
+            }
+          }
+        } catch (const std::exception &error) {
+          json_error(method, url, response, encoding,
+                     sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                     "uncaught-error", error.what());
+        }
+      });
+    } else {
+      // Because Visual Studio Code famously does not support `$id` or `id`
+      // See
+      // https://github.com/microsoft/vscode-json-languageservice/issues/224
+      const auto &user_agent{request->getHeader("user-agent")};
+      const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
+                           user_agent.starts_with("VSCodium")};
+      const auto bundle{!request->getQuery("bundle").empty()};
+      const auto unidentify{!request->getQuery("unidentify").empty()};
+      auto absolute_path{base / "schemas" / lowercase_path};
+      if (unidentify || is_vscode) {
+        absolute_path += ".unidentified";
+      } else if (bundle) {
+        absolute_path += ".bundle";
+      } else {
+        absolute_path += ".schema";
+      }
+
+      // For convenience
+      if (!std::filesystem::exists(absolute_path)) {
+        auto nav_path{base / "explorer" / "pages" / lowercase_path};
+        nav_path.replace_extension(".nav");
+        if (std::filesystem::exists(nav_path)) {
+          serve_static_file(request, response, encoding, nav_path,
+                            sourcemeta::registry::STATUS_OK);
+          return;
+        }
+      }
+
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK);
     }
-
-    serve_static_file(request, response, encoding, absolute_path,
-                      sourcemeta::registry::STATUS_OK);
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
-
     const auto accept{request->getHeader("accept")};
     if (accept == "application/json") {
       const auto absolute_path{
