@@ -235,9 +235,16 @@ static auto on_request(const std::filesystem::path &base,
                        uWS::HttpResponse<true> *response,
                        const ServerContentEncoding encoding) -> void {
   if (request->getUrl() == "/") {
-    serve_static_file(logger, request, response, encoding,
-                      base / "explorer" / "pages.html",
-                      sourcemeta::registry::STATUS_OK);
+    const auto accept{request->getHeader("accept")};
+    if (accept == "application/json") {
+      serve_static_file(logger, request, response, encoding,
+                        base / "explorer" / "pages.nav",
+                        sourcemeta::registry::STATUS_OK);
+    } else {
+      serve_static_file(logger, request, response, encoding,
+                        base / "explorer" / "pages.html",
+                        sourcemeta::registry::STATUS_OK);
+    }
   } else if (request->getUrl() == "/api/search") {
     if (request->getMethod() == "get") {
       const auto query{request->getQuery("q")};
@@ -291,19 +298,40 @@ static auto on_request(const std::filesystem::path &base,
       absolute_path += ".schema";
     }
 
+    // For convenience
+    if (!std::filesystem::exists(absolute_path)) {
+      auto nav_path{base / "explorer" / "pages" / lowercase_path};
+      nav_path.replace_extension(".nav");
+      if (std::filesystem::exists(nav_path)) {
+        serve_static_file(logger, request, response, encoding, nav_path,
+                          sourcemeta::registry::STATUS_OK);
+        return;
+      }
+    }
+
     serve_static_file(logger, request, response, encoding, absolute_path,
                       sourcemeta::registry::STATUS_OK);
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
-    const auto absolute_path{
-        base / "explorer" / "pages" /
-        (std::string{request->getUrl().substr(1)} + ".html")};
-    if (std::filesystem::exists(absolute_path)) {
+
+    const auto accept{request->getHeader("accept")};
+    if (accept == "application/json") {
+      const auto absolute_path{
+          base / "explorer" / "pages" /
+          (std::string{request->getUrl().substr(1)} + ".nav")};
       serve_static_file(logger, request, response, encoding, absolute_path,
                         sourcemeta::registry::STATUS_OK);
     } else {
-      serve_static_file(logger, request, response, encoding,
-                        base / "explorer" / "404.html",
-                        sourcemeta::registry::STATUS_NOT_FOUND);
+      const auto absolute_path{
+          base / "explorer" / "pages" /
+          (std::string{request->getUrl().substr(1)} + ".html")};
+      if (std::filesystem::exists(absolute_path)) {
+        serve_static_file(logger, request, response, encoding, absolute_path,
+                          sourcemeta::registry::STATUS_OK);
+      } else {
+        serve_static_file(logger, request, response, encoding,
+                          base / "explorer" / "404.html",
+                          sourcemeta::registry::STATUS_NOT_FOUND);
+      }
     }
   } else {
     json_error(logger, request, response, encoding,
