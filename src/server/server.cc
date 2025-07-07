@@ -1,8 +1,7 @@
 #include <sourcemeta/core/gzip.h>
 #include <sourcemeta/core/json.h>
+#include <sourcemeta/core/time.h>
 #include <sourcemeta/core/uuid.h>
-
-#include <sourcemeta/hydra/http.h>
 
 #include <sourcemeta/registry/license.h>
 
@@ -12,181 +11,141 @@
 #include "logger.h"
 #include "reader.h"
 #include "search.h"
+#include "status.h"
 
 #include <cassert>     // assert
 #include <cctype>      // std::tolower
 #include <chrono>      // std::chrono::system_clock
-#include <cstdint>     // std::uint32_t, std::int64_t
+#include <cstdint>     // std::uint32_t, std::atoi
 #include <cstdlib>     // EXIT_FAILURE
 #include <filesystem>  // std::filesystem
 #include <iostream>    // std::cerr, std::cout
-#include <map>         // std::map
-#include <sstream>     // std::ostringstream
+#include <optional>    // std::optional
+#include <sstream>     // std::ostringstream, std::istringstream
 #include <stdexcept>   // std::invalid_argument
-#include <string>      // std::string
+#include <string>      // std::string, std::getline
 #include <string_view> // std::string_view
-#include <utility>     // std::move
+#include <utility>     // std::move, std::pair
+#include <vector>      // std::vector
 
-// TODO: Get rid of this
+static auto send_response(const char *const code,
+                          const sourcemeta::registry::Logger &logger,
+                          uWS::HttpRequest *request,
+                          uWS::HttpResponse<true> *response) -> void {
+  response->end();
+  std::ostringstream line;
+  assert(code);
+  line << code << ' ' << request->getMethod() << ' ' << request->getUrl();
+  logger << std::move(line).str();
+}
+
 enum class ServerContentEncoding { Identity, GZIP };
 
-// TODO: Simplify
-class ServerResponse {
-public:
-  ServerResponse(uWS::HttpResponse<true> *data) : handler{data} {
-    assert(this->handler);
-  }
-
-  ~ServerResponse() {}
-
-  auto header(std::string_view key, std::string_view value) -> void {
-    this->headers.emplace(key, value);
-  }
-
-  auto end(const std::string_view message) -> void {
-    std::ostringstream code_string;
-    code_string << this->status;
-    this->handler->writeStatus(code_string.str());
-
-    for (const auto &[key, value] : this->headers) {
-      this->handler->writeHeader(key, value);
+static auto send_response(const char *const code,
+                          const sourcemeta::registry::Logger &logger,
+                          uWS::HttpRequest *request,
+                          uWS::HttpResponse<true> *response,
+                          const std::string_view message,
+                          const ServerContentEncoding encoding) -> void {
+  if (encoding == ServerContentEncoding::GZIP) {
+    response->writeHeader("Content-Encoding", "gzip");
+    auto result{sourcemeta::core::gzip(message)};
+    if (!result.has_value()) {
+      throw std::runtime_error("Compression failed");
     }
 
-    if (this->encoding == ServerContentEncoding::GZIP) {
-      auto result{sourcemeta::core::gzip(message)};
-      if (!result.has_value()) {
-        throw std::runtime_error("Compression failed");
-      }
-
-      this->handler->end(result.value());
-    } else if (this->encoding == ServerContentEncoding::Identity) {
-      this->handler->end(message);
+    if (request->getMethod() == "head") {
+      response->endWithoutBody(result.value().size());
+      response->end();
+    } else {
+      response->end(result.value());
+    }
+  } else if (encoding == ServerContentEncoding::Identity) {
+    if (request->getMethod() == "head") {
+      response->endWithoutBody(message.size());
+      response->end();
+    } else {
+      response->end(message);
     }
   }
 
-  auto head(const std::string_view message) -> void {
-    std::ostringstream code_string;
-    code_string << this->status;
-    this->handler->writeStatus(code_string.str());
-
-    for (const auto &[key, value] : this->headers) {
-      this->handler->writeHeader(key, value);
-    }
-
-    if (this->encoding == ServerContentEncoding::GZIP) {
-      auto result{sourcemeta::core::gzip(message)};
-      if (!result.has_value()) {
-        throw std::runtime_error("Compression failed");
-      }
-
-      this->handler->endWithoutBody(result.value().size());
-      this->handler->end();
-    } else if (this->encoding == ServerContentEncoding::Identity) {
-      this->handler->endWithoutBody(message.size());
-      this->handler->end();
-    }
-  }
-
-  auto end() -> void {
-    std::ostringstream code_string;
-    code_string << this->status;
-    this->handler->writeStatus(code_string.str());
-
-    for (const auto &[key, value] : this->headers) {
-      this->handler->writeHeader(key, value);
-    }
-
-    this->handler->end();
-  }
-
-  uWS::HttpResponse<true> *handler;
-  sourcemeta::hydra::http::Status status{sourcemeta::hydra::http::Status::OK};
-  ServerContentEncoding encoding{ServerContentEncoding::Identity};
-
-private:
-  std::map<std::string, std::string> headers;
-};
-
-// TODO: Simplify
-static auto negotiate_content_encoding(uWS::HttpRequest *request,
-                                       ServerResponse &response) -> bool {
-  const auto accept_encoding{request->getHeader("accept-encoding")};
-  if (accept_encoding.empty()) {
-    return true;
-  }
-
-  for (const auto &encoding :
-       sourcemeta::hydra::http::header_list(std::string{accept_encoding})) {
-    if (encoding.second == 0.0f) {
-      // The client explicitly prohibited the default encoding
-      if (encoding.first == "*" || encoding.first == "identity") {
-        return false;
-      }
-
-      continue;
-    }
-
-    assert(encoding.second > 0.0f);
-
-    if (encoding.first == "identity") {
-      return true;
-    } else if (encoding.first == "*" || encoding.first == "gzip") {
-      response.header("Content-Encoding", "gzip");
-      response.encoding = ServerContentEncoding::GZIP;
-      return true;
-    }
-
-    // For compatibility with previous implementations of HTTP, applications
-    // SHOULD consider "x-gzip" [...] to be equivalent to "gzip".
-    // See https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.5
-    if (encoding.first == "x-gzip") {
-      response.header("Content-Encoding", "gzip");
-      response.encoding = ServerContentEncoding::GZIP;
-      return true;
-    }
-  }
-
-  // As long as the identity;q=0 or *;q=0 directives do not explicitly forbid
-  // the identity value that means no encoding, the server must never return a
-  // 406 Not Acceptable error. See
-  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
-  return true;
+  std::ostringstream line;
+  assert(code);
+  line << code << ' ' << request->getMethod() << ' ' << request->getUrl();
+  logger << std::move(line).str();
 }
 
 static auto json_error(const sourcemeta::registry::Logger &logger,
-                       uWS::HttpRequest *, ServerResponse &response,
-                       const sourcemeta::hydra::http::Status code,
-                       std::string &&id, std::string &&message) -> void {
+                       uWS::HttpRequest *request,
+                       uWS::HttpResponse<true> *response,
+                       const ServerContentEncoding encoding,
+                       const char *const code, std::string &&id,
+                       std::string &&message) -> void {
   auto object{sourcemeta::core::JSON::make_object()};
   object.assign("request", sourcemeta::core::JSON{logger.identifier});
   object.assign("error", sourcemeta::core::JSON{std::move(id)});
   object.assign("message", sourcemeta::core::JSON{std::move(message)});
-  object.assign("code",
-                sourcemeta::core::JSON{static_cast<std::int64_t>(code)});
-  response.status = code;
-  response.header("Content-Type", "application/json");
-  response.header("X-Request-Id", logger.identifier);
+  object.assign("code", sourcemeta::core::JSON{std::atoi(code)});
+  response->writeStatus(code);
+  response->writeHeader("Content-Type", "application/json");
+  response->writeHeader("X-Request-Id", logger.identifier);
 
   std::ostringstream output;
   sourcemeta::core::prettify(object, output);
-  response.end(output.str());
+  send_response(code, logger, request, response, output.str(), encoding);
+}
+
+/// A header list element consists of the element value and its quality value
+/// See https://developer.mozilla.org/en-US/docs/Glossary/Quality_values
+static auto header_list(const std::string_view &value)
+    -> std::vector<std::pair<std::string, float>> {
+  std::istringstream stream{std::string{value}};
+  std::string token;
+  std::vector<std::pair<std::string, float>> result;
+
+  while (std::getline(stream, token, ',')) {
+    const std::size_t start{token.find_first_not_of(" ")};
+    const std::size_t end{token.find_last_not_of(" ")};
+    if (start == std::string::npos || end == std::string::npos) {
+      continue;
+    }
+
+    // See https://developer.mozilla.org/en-US/docs/Glossary/Quality_values
+    const std::size_t value_start{token.find_first_of(";")};
+    if (value_start != std::string::npos && token[value_start + 1] == 'q' &&
+        token[value_start + 2] == '=') {
+      result.emplace_back(token.substr(start, value_start - start),
+                          std::stof(token.substr(value_start + 3)));
+    } else {
+      // No quality value is 1.0 by default
+      result.emplace_back(token.substr(start, end - start + 1), 1.0f);
+    }
+  }
+
+  // For convenient, automatically sort by the quality value
+  std::sort(result.begin(), result.end(),
+            [](const auto &left, const auto &right) {
+              return left.second > right.second;
+            });
+
+  return result;
 }
 
 static auto serve_static_file(const sourcemeta::registry::Logger &logger,
                               uWS::HttpRequest *request,
-                              ServerResponse &response,
+                              uWS::HttpResponse<true> *response,
+                              const ServerContentEncoding encoding,
                               const std::filesystem::path &absolute_path,
-                              const sourcemeta::hydra::http::Status code)
-    -> void {
+                              const char *const code) -> void {
   if (request->getMethod() != "get" && request->getMethod() != "head") {
     if (std::filesystem::exists(absolute_path)) {
-      json_error(logger, request, response,
-                 sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
+      json_error(logger, request, response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     } else {
-      json_error(logger, request, response,
-                 sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
+      json_error(logger, request, response, encoding,
+                 sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                  "There is nothing at this URL");
     }
 
@@ -195,8 +154,8 @@ static auto serve_static_file(const sourcemeta::registry::Logger &logger,
 
   auto file{sourcemeta::registry::read_file(absolute_path)};
   if (!file.has_value()) {
-    json_error(logger, request, response,
-               sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
+    json_error(logger, request, response, encoding,
+               sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
     return;
   }
@@ -210,12 +169,13 @@ static auto serve_static_file(const sourcemeta::registry::Logger &logger,
     try {
       // Time comparison can be flaky, but adding a bit of tolerance leads
       // to more consistent behavior.
-      if ((sourcemeta::hydra::http::from_gmt(std::string{if_modified_since}) +
+      if ((sourcemeta::core::from_gmt(std::string{if_modified_since}) +
            std::chrono::seconds(1)) >=
-          sourcemeta::hydra::http::from_gmt(last_modified)) {
-        response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
-        response.header("X-Request-Id", logger.identifier);
-        response.end();
+          sourcemeta::core::from_gmt(last_modified)) {
+        response->writeStatus(sourcemeta::registry::STATUS_NOT_MODIFIED);
+        response->writeHeader("X-Request-Id", logger.identifier);
+        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED, logger,
+                      request, response);
         return;
       }
       // If there is an error parsing the `If-Modified-Since` timestamp, don't
@@ -232,27 +192,28 @@ static auto serve_static_file(const sourcemeta::registry::Logger &logger,
     std::ostringstream etag_value_weak;
     etag_value_strong << '"' << md5 << '"';
     etag_value_weak << 'W' << '/' << '"' << md5 << '"';
-    for (const auto &match :
-         sourcemeta::hydra::http::header_list(std::string{if_none_match})) {
+    for (const auto &match : header_list(if_none_match)) {
       // Cache hit
       if (match.first == "*" || match.first == etag_value_weak.str() ||
           match.first == etag_value_strong.str()) {
-        response.status = sourcemeta::hydra::http::Status::NOT_MODIFIED;
-        response.header("X-Request-Id", logger.identifier);
-        response.end();
+        response->writeStatus(sourcemeta::registry::STATUS_NOT_MODIFIED);
+        response->writeHeader("X-Request-Id", logger.identifier);
+        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED, logger,
+                      request, response);
         return;
       }
     }
   }
 
-  response.status = code;
-  response.header("X-Request-Id", logger.identifier);
-  response.header("Content-Type", file.value().meta.at("mime").to_string());
-  response.header("Last-Modified", last_modified);
+  response->writeStatus(code);
+  response->writeHeader("X-Request-Id", logger.identifier);
+  response->writeHeader("Content-Type",
+                        file.value().meta.at("mime").to_string());
+  response->writeHeader("Last-Modified", last_modified);
 
   std::ostringstream etag;
   etag << '"' << md5 << '"';
-  response.header("ETag", std::move(etag).str());
+  response->writeHeader("ETag", std::move(etag).str());
 
   // See
   // https://json-schema.org/draft/2020-12/json-schema-core.html#section-9.5.1.1
@@ -260,61 +221,43 @@ static auto serve_static_file(const sourcemeta::registry::Logger &logger,
   if (dialect) {
     std::ostringstream link;
     link << "<" << dialect->to_string() << ">; rel=\"describedby\"";
-    response.header("Link", std::move(link).str());
+    response->writeHeader("Link", std::move(link).str());
   }
 
   std::ostringstream contents;
   contents << file.value().stream.rdbuf();
-  if (request->getMethod() == "head") {
-    response.head(contents.str());
-  } else {
-    response.end(contents.str());
-  }
-}
-
-static auto to_lowercase(std::string_view input) -> std::string {
-  std::string result{input};
-  std::transform(
-      result.begin(), result.end(), result.begin(),
-      [](const unsigned char character) { return std::tolower(character); });
-  return result;
+  send_response(code, logger, request, response, contents.str(), encoding);
 }
 
 static auto on_request(const std::filesystem::path &base,
                        const sourcemeta::registry::Logger &logger,
-                       uWS::HttpRequest *request, ServerResponse &response)
-    -> void {
-  const bool can_satisfy_requested_content_encoding{
-      negotiate_content_encoding(request, response)};
-  if (!can_satisfy_requested_content_encoding) {
-    json_error(logger, request, response,
-               sourcemeta::hydra::http::Status::BAD_REQUEST,
-               "cannot-satisfy-content-encoding",
-               "The server cannot satisfy the request content encoding");
-  } else if (request->getUrl() == "/") {
-    serve_static_file(logger, request, response,
+                       uWS::HttpRequest *request,
+                       uWS::HttpResponse<true> *response,
+                       const ServerContentEncoding encoding) -> void {
+  if (request->getUrl() == "/") {
+    serve_static_file(logger, request, response, encoding,
                       base / "explorer" / "pages.html",
-                      sourcemeta::hydra::http::Status::OK);
+                      sourcemeta::registry::STATUS_OK);
   } else if (request->getUrl() == "/api/search") {
     if (request->getMethod() == "get") {
       const auto query{request->getQuery("q")};
       if (query.empty()) {
-        json_error(logger, request, response,
-                   sourcemeta::hydra::http::Status::BAD_REQUEST,
-                   "missing-query",
+        json_error(logger, request, response, encoding,
+                   sourcemeta::registry::STATUS_BAD_REQUEST, "missing-query",
                    "You must provide a query parameter to search for");
       } else {
         auto result{sourcemeta::registry::search(
             base / "explorer" / "search.jsonl", query)};
-        response.status = sourcemeta::hydra::http::Status::OK;
-        response.header("X-Request-Id", logger.identifier);
+        response->writeStatus(sourcemeta::registry::STATUS_OK);
+        response->writeHeader("X-Request-Id", logger.identifier);
         std::ostringstream output;
         sourcemeta::core::prettify(result, output);
-        response.end(output.str());
+        send_response(sourcemeta::registry::STATUS_OK, logger, request,
+                      response, output.str(), encoding);
       }
     } else {
-      json_error(logger, request, response,
-                 sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
+      json_error(logger, request, response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
@@ -322,8 +265,8 @@ static auto on_request(const std::filesystem::path &base,
     std::ostringstream absolute_path;
     absolute_path << SOURCEMETA_REGISTRY_STATIC;
     absolute_path << request->getUrl().substr(7);
-    serve_static_file(logger, request, response, absolute_path.str(),
-                      sourcemeta::hydra::http::Status::OK);
+    serve_static_file(logger, request, response, encoding, absolute_path.str(),
+                      sourcemeta::registry::STATUS_OK);
   } else if (request->getUrl().ends_with(".json")) {
     // Because Visual Studio Code famously does not support `$id` or `id`
     // See https://github.com/microsoft/vscode-json-languageservice/issues/224
@@ -332,10 +275,14 @@ static auto on_request(const std::filesystem::path &base,
                          user_agent.starts_with("VSCodium")};
     const auto bundle{!request->getQuery("bundle").empty()};
     const auto unidentify{!request->getQuery("unidentify").empty()};
-    auto absolute_path{base / "schemas" /
-                       // Otherwise we may get unexpected results in
-                       // case-sensitive file-systems
-                       to_lowercase(request->getUrl().substr(1))};
+
+    // Otherwise we may get unexpected results in case-sensitive file-systems
+    std::string lowercase_path{request->getUrl().substr(1)};
+    std::transform(
+        lowercase_path.begin(), lowercase_path.end(), lowercase_path.begin(),
+        [](const unsigned char character) { return std::tolower(character); });
+
+    auto absolute_path{base / "schemas" / lowercase_path};
     if (unidentify || is_vscode) {
       absolute_path += ".unidentified";
     } else if (bundle) {
@@ -344,47 +291,79 @@ static auto on_request(const std::filesystem::path &base,
       absolute_path += ".schema";
     }
 
-    serve_static_file(logger, request, response, absolute_path,
-                      sourcemeta::hydra::http::Status::OK);
+    serve_static_file(logger, request, response, encoding, absolute_path,
+                      sourcemeta::registry::STATUS_OK);
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
     const auto absolute_path{
         base / "explorer" / "pages" /
         (std::string{request->getUrl().substr(1)} + ".html")};
     if (std::filesystem::exists(absolute_path)) {
-      serve_static_file(logger, request, response, absolute_path,
-                        sourcemeta::hydra::http::Status::OK);
+      serve_static_file(logger, request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK);
     } else {
-      serve_static_file(logger, request, response,
+      serve_static_file(logger, request, response, encoding,
                         base / "explorer" / "404.html",
-                        sourcemeta::hydra::http::Status::NOT_FOUND);
+                        sourcemeta::registry::STATUS_NOT_FOUND);
     }
   } else {
-    json_error(logger, request, response,
-               sourcemeta::hydra::http::Status::NOT_FOUND, "not-found",
+    json_error(logger, request, response, encoding,
+               sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
   }
 }
 
 static auto dispatch(const std::filesystem::path &base,
-                     uWS::HttpResponse<true> *const response_handler,
+                     uWS::HttpResponse<true> *const response,
                      uWS::HttpRequest *const request) noexcept -> void {
-  // These should never throw, otherwise we cannot even react to errors
+  // This should never throw, otherwise we cannot even react to errors
   sourcemeta::registry::Logger logger{sourcemeta::core::uuidv4()};
-  // TODO: Get rid of this class
-  ServerResponse response{response_handler};
 
   try {
-    on_request(base, logger, request, response);
+    // As long as the identity;q=0 or *;q=0 directives do not explicitly forbid
+    // the identity value that means no encoding, the server must never return a
+    // 406 Not Acceptable error. See
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding
+    std::optional<ServerContentEncoding> encoding{
+        ServerContentEncoding::Identity};
+
+    const auto accept_encoding{request->getHeader("accept-encoding")};
+    if (!accept_encoding.empty()) {
+      for (const auto &rule : header_list(accept_encoding)) {
+        if (rule.second == 0.0f &&
+            // The client explicitly prohibited the default encoding
+            (rule.first == "*" || rule.first == "identity")) {
+          encoding = std::nullopt;
+          break;
+        } else if (rule.first == "identity") {
+          break;
+        } else if (
+            rule.first == "*" || rule.first == "gzip" ||
+            // For compatibility with previous implementations of HTTP,
+            // applications SHOULD consider "x-gzip" [...] to be equivalent to
+            // "gzip". See
+            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.5
+            rule.first == "x-gzip") {
+          encoding = ServerContentEncoding::GZIP;
+          break;
+        }
+      }
+    }
+
+    if (encoding.has_value()) {
+      on_request(base, logger, request, response, encoding.value());
+    } else {
+      json_error(logger, request, response, ServerContentEncoding::Identity,
+                 sourcemeta::registry::STATUS_BAD_REQUEST,
+                 "cannot-satisfy-content-encoding",
+                 "The server cannot satisfy the request content encoding");
+    }
   } catch (const std::exception &error) {
     json_error(logger, request, response,
-               sourcemeta::hydra::http::Status::METHOD_NOT_ALLOWED,
+               // As computing the right content encoding might throw
+               ServerContentEncoding::Identity,
+               sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                "uncaught-error", error.what());
   }
-
-  std::ostringstream line;
-  line << response.status << ' ' << request->getMethod() << ' '
-       << request->getUrl();
-  logger << std::move(line).str();
 }
 
 // We try to keep this function as straight to point as possible

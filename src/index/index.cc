@@ -1,12 +1,9 @@
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/core/time.h>
 
 #include <sourcemeta/registry/generator.h>
 #include <sourcemeta/registry/license.h>
-
-// TODO: We shouldn't be depending on Hydra here just
-// for time-related utilities
-#include <sourcemeta/hydra/http.h>
 
 #include "configure.h"
 #include "explorer.h"
@@ -57,7 +54,7 @@ write_file_metadata(const std::filesystem::path &relative_path,
   metadata.assign("md5",
                   sourcemeta::core::JSON{output.md5(category, relative_path)});
   metadata.assign("lastModified",
-                  sourcemeta::core::JSON{sourcemeta::hydra::http::to_gmt(
+                  sourcemeta::core::JSON{sourcemeta::core::to_gmt(
                       output.last_modified(category, relative_path))});
   metadata.assign("mime", sourcemeta::core::JSON{mime});
   output.write_metadata(category, relative_path, metadata);
@@ -79,7 +76,7 @@ write_schema_metadata(const std::filesystem::path &relative_path,
   metadata.assign("md5",
                   sourcemeta::core::JSON{output.md5(category, relative_path)});
   metadata.assign("lastModified",
-                  sourcemeta::core::JSON{sourcemeta::hydra::http::to_gmt(
+                  sourcemeta::core::JSON{sourcemeta::core::to_gmt(
                       output.last_modified(category, relative_path))});
   output.write_metadata(category, relative_path, metadata);
 }

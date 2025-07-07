@@ -3,6 +3,8 @@
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/md5.h>
+#include <sourcemeta/core/time.h>
+
 #include <sourcemeta/registry/html.h>
 
 #include <optional> // std::optional
@@ -451,9 +453,8 @@ static auto write_explorer_metadata(const std::filesystem::path &destination)
       std::chrono::time_point_cast<std::chrono::system_clock::duration>(
           last_write_time - std::filesystem::file_time_type::clock::now() +
           std::chrono::system_clock::now());
-  metadata.assign(
-      "lastModified",
-      sourcemeta::core::JSON{sourcemeta::hydra::http::to_gmt(last_modified)});
+  metadata.assign("lastModified", sourcemeta::core::JSON{
+                                      sourcemeta::core::to_gmt(last_modified)});
   metadata.assign("mime", sourcemeta::core::JSON{"text/html"});
 
   std::ofstream output{destination.string() + ".meta"};
