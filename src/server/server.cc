@@ -34,21 +34,23 @@ static auto log(std::string_view message) -> void {
   static std::mutex log_mutex;
   std::lock_guard<std::mutex> guard{log_mutex};
   std::cerr << "[" << sourcemeta::core::to_gmt(std::chrono::system_clock::now())
-            << "] " << std::this_thread::get_id() << message << "\n";
+            << "] " << std::this_thread::get_id() << ' ' << message << "\n";
 }
 
-static auto send_response(const char *const code, uWS::HttpRequest *request,
+static auto send_response(const char *const code, const std::string_view method,
+                          const std::string_view url,
                           uWS::HttpResponse<true> *response) -> void {
   response->end();
   std::ostringstream line;
   assert(code);
-  line << code << ' ' << request->getMethod() << ' ' << request->getUrl();
+  line << code << ' ' << method << ' ' << url;
   log(std::move(line).str());
 }
 
 enum class ServerContentEncoding { Identity, GZIP };
 
-static auto send_response(const char *const code, uWS::HttpRequest *request,
+static auto send_response(const char *const code, const std::string_view method,
+                          const std::string_view url,
                           uWS::HttpResponse<true> *response,
                           const std::string_view message,
                           const ServerContentEncoding encoding) -> void {
@@ -59,14 +61,14 @@ static auto send_response(const char *const code, uWS::HttpRequest *request,
       throw std::runtime_error("Compression failed");
     }
 
-    if (request->getMethod() == "head") {
+    if (method == "head") {
       response->endWithoutBody(result.value().size());
       response->end();
     } else {
       response->end(result.value());
     }
   } else if (encoding == ServerContentEncoding::Identity) {
-    if (request->getMethod() == "head") {
+    if (method == "head") {
       response->endWithoutBody(message.size());
       response->end();
     } else {
@@ -76,11 +78,12 @@ static auto send_response(const char *const code, uWS::HttpRequest *request,
 
   std::ostringstream line;
   assert(code);
-  line << code << ' ' << request->getMethod() << ' ' << request->getUrl();
+  line << code << ' ' << method << ' ' << url;
   log(std::move(line).str());
 }
 
-static auto json_error(uWS::HttpRequest *request,
+static auto json_error(const std::string_view method,
+                       const std::string_view url,
                        uWS::HttpResponse<true> *response,
                        const ServerContentEncoding encoding,
                        const char *const code, std::string &&id,
@@ -94,7 +97,7 @@ static auto json_error(uWS::HttpRequest *request,
 
   std::ostringstream output;
   sourcemeta::core::prettify(object, output);
-  send_response(code, request, response, output.str(), encoding);
+  send_response(code, method, url, response, output.str(), encoding);
 }
 
 /// A header list element consists of the element value and its quality value
@@ -140,12 +143,12 @@ static auto serve_static_file(uWS::HttpRequest *request,
                               const char *const code) -> void {
   if (request->getMethod() != "get" && request->getMethod() != "head") {
     if (std::filesystem::exists(absolute_path)) {
-      json_error(request, response, encoding,
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     } else {
-      json_error(request, response, encoding,
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                  "There is nothing at this URL");
     }
@@ -155,7 +158,7 @@ static auto serve_static_file(uWS::HttpRequest *request,
 
   auto file{sourcemeta::registry::read_file(absolute_path)};
   if (!file.has_value()) {
-    json_error(request, response, encoding,
+    json_error(request->getMethod(), request->getUrl(), response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
     return;
@@ -174,8 +177,8 @@ static auto serve_static_file(uWS::HttpRequest *request,
            std::chrono::seconds(1)) >=
           sourcemeta::core::from_gmt(last_modified)) {
         response->writeStatus(sourcemeta::registry::STATUS_NOT_MODIFIED);
-        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED, request,
-                      response);
+        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED,
+                      request->getMethod(), request->getUrl(), response);
         return;
       }
       // If there is an error parsing the `If-Modified-Since` timestamp, don't
@@ -197,8 +200,8 @@ static auto serve_static_file(uWS::HttpRequest *request,
       if (match.first == "*" || match.first == etag_value_weak.str() ||
           match.first == etag_value_strong.str()) {
         response->writeStatus(sourcemeta::registry::STATUS_NOT_MODIFIED);
-        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED, request,
-                      response);
+        send_response(sourcemeta::registry::STATUS_NOT_MODIFIED,
+                      request->getMethod(), request->getUrl(), response);
         return;
       }
     }
@@ -224,7 +227,8 @@ static auto serve_static_file(uWS::HttpRequest *request,
 
   std::ostringstream contents;
   contents << file.value().stream.rdbuf();
-  send_response(code, request, response, contents.str(), encoding);
+  send_response(code, request->getMethod(), request->getUrl(), response,
+                contents.str(), encoding);
 }
 
 static auto on_request(const std::filesystem::path &base,
@@ -246,7 +250,7 @@ static auto on_request(const std::filesystem::path &base,
     if (request->getMethod() == "get") {
       const auto query{request->getQuery("q")};
       if (query.empty()) {
-        json_error(request, response, encoding,
+        json_error(request->getMethod(), request->getUrl(), response, encoding,
                    sourcemeta::registry::STATUS_BAD_REQUEST, "missing-query",
                    "You must provide a query parameter to search for");
       } else {
@@ -256,11 +260,11 @@ static auto on_request(const std::filesystem::path &base,
         response->writeHeader("Content-Type", "application/jsonl");
         std::ostringstream output;
         sourcemeta::core::prettify(result, output);
-        send_response(sourcemeta::registry::STATUS_OK, request, response,
-                      output.str(), encoding);
+        send_response(sourcemeta::registry::STATUS_OK, request->getMethod(),
+                      request->getUrl(), response, output.str(), encoding);
       }
     } else {
-      json_error(request, response, encoding,
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
@@ -331,7 +335,7 @@ static auto on_request(const std::filesystem::path &base,
       }
     }
   } else {
-    json_error(request, response, encoding,
+    json_error(request->getMethod(), request->getUrl(), response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
   }
@@ -374,13 +378,14 @@ static auto dispatch(const std::filesystem::path &base,
     if (encoding.has_value()) {
       on_request(base, request, response, encoding.value());
     } else {
-      json_error(request, response, ServerContentEncoding::Identity,
+      json_error(request->getMethod(), request->getUrl(), response,
+                 ServerContentEncoding::Identity,
                  sourcemeta::registry::STATUS_BAD_REQUEST,
                  "cannot-satisfy-content-encoding",
                  "The server cannot satisfy the request content encoding");
     }
   } catch (const std::exception &error) {
-    json_error(request, response,
+    json_error(request->getMethod(), request->getUrl(), response,
                // As computing the right content encoding might throw
                ServerContentEncoding::Identity,
                sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
