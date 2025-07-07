@@ -25,11 +25,13 @@ jsonpath "$.message" == "This HTTP method is invalid for this URL"
 # A string we know won't give any results
 GET {{base}}/api/search?q=xxxxxxxxxxxx
 HTTP 200
+Content-Type: application/jsonl
 []
 
 # Results with title/description
 GET {{base}}/api/search?q=bundling
 HTTP 200
+Content-Type: application/jsonl
 [
   {
     "url": "/example/bundling/single.json",
@@ -41,6 +43,7 @@ HTTP 200
 # Test casing
 GET {{base}}/api/search?q=bUNdLing
 HTTP 200
+Content-Type: application/jsonl
 [
   {
     "url": "/example/bundling/single.json",
@@ -52,6 +55,7 @@ HTTP 200
 # Results without title/description
 GET {{base}}/api/search?q=camelcase.json
 HTTP 200
+Content-Type: application/jsonl
 [
   {
     "url": "/example/schemas/camelcase.json",
@@ -63,5 +67,6 @@ HTTP 200
 # No matter what, we impose a limit on the results
 GET {{base}}/api/search?q=e
 HTTP 200
+Content-Type: application/jsonl
 [Asserts]
 jsonpath "$" count <= 10
