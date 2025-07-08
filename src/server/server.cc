@@ -3,14 +3,12 @@
 #include <sourcemeta/core/time.h>
 #include <sourcemeta/core/uuid.h>
 
-#include <sourcemeta/blaze/compiler.h>
-#include <sourcemeta/blaze/evaluator.h>
-
 #include <sourcemeta/registry/license.h>
 
 #include "uwebsockets.h"
 
 #include "configure.h"
+#include "evaluate.h"
 #include "reader.h"
 #include "search.h"
 #include "status.h"
@@ -287,10 +285,9 @@ static auto on_request(const std::filesystem::path &base,
         [](const unsigned char character) { return std::tolower(character); });
 
     if (request->getMethod() == "post") {
-      const auto template_path{base / "schemas" /
-                               (lowercase_path + ".blaze-exhaustive")};
-      auto template_file{sourcemeta::registry::read_file(template_path)};
-      if (!template_file.has_value()) {
+      auto template_path{base / "schemas" /
+                         (lowercase_path + ".blaze-exhaustive")};
+      if (!std::filesystem::exists(template_path)) {
         json_error(request->getMethod(), request->getUrl(), response, encoding,
                    sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                    "There is nothing at this URL");
@@ -300,11 +297,9 @@ static auto on_request(const std::filesystem::path &base,
       response->onAborted([]() {});
       std::unique_ptr<std::string> buffer;
       // Because `request` gets de-allocated
-      std::string method{request->getMethod()};
       std::string url{request->getUrl()};
       response->onData([response, encoding, buffer = std::move(buffer),
-                        template_file = std::move(template_file),
-                        method = std::move(method),
+                        template_path = std::move(template_path),
                         url = std::move(url)](const std::string_view chunk,
                                               const bool is_last) mutable {
         try {
@@ -316,32 +311,24 @@ static auto on_request(const std::filesystem::path &base,
 
           if (is_last) {
             if (buffer->empty()) {
-              json_error(method, url, response, encoding,
+              json_error("post", url, response, encoding,
                          sourcemeta::registry::STATUS_BAD_REQUEST,
                          "no-instance",
                          "You must pass an instance to validate against");
             } else {
               const auto instance{sourcemeta::core::parse_json(*buffer)};
-              // TODO: Cache this conversion across runs, potentially
-              // using the schema file "md5" as the cache key
-              const auto schema_template{sourcemeta::blaze::from_json(
-                  sourcemeta::core::parse_json(template_file.value().stream))};
-              assert(schema_template.has_value());
-              sourcemeta::blaze::Evaluator evaluator;
-              const auto result{sourcemeta::blaze::standard(
-                  evaluator, schema_template.value(), instance,
-                  sourcemeta::blaze::StandardOutput::Basic)};
-
+              const auto result{
+                  sourcemeta::registry::evaluate(template_path, instance)};
               response->writeStatus(sourcemeta::registry::STATUS_OK);
               response->writeHeader("Content-Type", "application/json");
               std::ostringstream payload;
               sourcemeta::core::prettify(result, payload);
-              send_response(sourcemeta::registry::STATUS_OK, method, url,
+              send_response(sourcemeta::registry::STATUS_OK, "post", url,
                             response, payload.str(), encoding);
             }
           }
         } catch (const std::exception &error) {
-          json_error(method, url, response, encoding,
+          json_error("post", url, response, encoding,
                      sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                      "uncaught-error", error.what());
         }
