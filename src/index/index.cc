@@ -95,7 +95,7 @@ static auto index_main(const std::string_view &program,
 
   if (arguments.size() < 2) {
     std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
-              << " <configuration.json> <path/to/output/directory>\n";
+              << " <registry.json> <path/to/output/directory>\n";
     return EXIT_FAILURE;
   }
 

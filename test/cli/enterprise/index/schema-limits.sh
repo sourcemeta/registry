@@ -7,7 +7,7 @@ TMP="$(mktemp -d)"
 clean() { rm -rf "$TMP"; }
 trap clean EXIT
 
-cat << EOF > "$TMP/configuration.json"
+cat << EOF > "$TMP/registry.json"
 {
   "url": "http://localhost:8000",
   "port": 8000,
@@ -39,4 +39,4 @@ cat << 'EOF' > "$TMP/schemas/exceeding.json"
 EOF
 
 export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
-"$1" "$TMP/configuration.json" "$TMP/dist"
+"$1" "$TMP/registry.json" "$TMP/dist"

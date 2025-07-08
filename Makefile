@@ -57,17 +57,17 @@ test:
 .PHONY: test-e2e
 test-e2e: 
 	$(HURL) --test \
-		--variable base=$(shell jq --raw-output '.url' < $(SANDBOX)/configuration.json) \
+		--variable base=$(shell jq --raw-output '.url' < $(SANDBOX)/registry.json) \
 			test/e2e/*.hurl
 	$(NPM) --prefix test/ui install
 	$(NPX) --prefix test/ui playwright install --with-deps
-	env BASE_URL=$(shell jq --raw-output '.url' < $(SANDBOX)/configuration.json) \
+	env BASE_URL=$(shell jq --raw-output '.url' < $(SANDBOX)/registry.json) \
 		$(NPX) --prefix test/ui playwright test --config test/ui/playwright.config.js
 
 .PHONY: sandbox
 sandbox: compile
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
-		$(PREFIX)/bin/sourcemeta-registry-index $(SANDBOX)/configuration.json $(OUTPUT)/sandbox
+		$(PREFIX)/bin/sourcemeta-registry-index $(SANDBOX)/registry.json $(OUTPUT)/sandbox
 	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox $(SANDBOX)/manifest.txt
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/sandbox

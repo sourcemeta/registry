@@ -7,7 +7,7 @@ TMP="$(mktemp -d)"
 clean() { rm -rf "$TMP"; }
 trap clean EXIT
 
-cat << EOF > "$TMP/configuration.json"
+cat << EOF > "$TMP/registry.json"
 {
   "url": "http://localhost:8000",
   "port": 8000,
@@ -28,7 +28,7 @@ cat << 'EOF' > "$TMP/schemas/schema.json"
 }
 EOF
 
-"$1" "$TMP/configuration.json" "$TMP/dist" 2> "$TMP/output.txt" && CODE="$?" || CODE="$?"
+"$1" "$TMP/registry.json" "$TMP/dist" 2> "$TMP/output.txt" && CODE="$?" || CODE="$?"
 test "$CODE" = "1" || exit 1
 
 cat << EOF > "$TMP/expected.txt"
