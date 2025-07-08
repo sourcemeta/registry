@@ -300,6 +300,7 @@ static auto on_request(const std::filesystem::path &base,
       std::string url{request->getUrl()};
       response->onData([response, encoding, buffer = std::move(buffer),
                         template_path = std::move(template_path),
+                        trace = !request->getQuery("trace").empty(),
                         url = std::move(url)](const std::string_view chunk,
                                               const bool is_last) mutable {
         try {
@@ -317,8 +318,10 @@ static auto on_request(const std::filesystem::path &base,
                          "You must pass an instance to validate against");
             } else {
               const auto instance{sourcemeta::core::parse_json(*buffer)};
-              const auto result{
-                  sourcemeta::registry::evaluate(template_path, instance)};
+              const auto result{sourcemeta::registry::evaluate(
+                  template_path, instance,
+                  trace ? sourcemeta::registry::EvaluateType::Trace
+                        : sourcemeta::registry::EvaluateType::Standard)};
               response->writeStatus(sourcemeta::registry::STATUS_OK);
               response->writeHeader("Content-Type", "application/json");
               std::ostringstream payload;
