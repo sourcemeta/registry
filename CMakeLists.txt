@@ -24,7 +24,6 @@ endif()
 
 find_package(Core REQUIRED)
 find_package(Blaze REQUIRED)
-find_package(Hydra REQUIRED http)
 find_package(JSONBinPack REQUIRED)
 find_package(JSONSchema REQUIRED)
 

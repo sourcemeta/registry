@@ -40,10 +40,9 @@ auto trace(sourcemeta::blaze::Evaluator &evaluator,
                                     [static_cast<std::underlying_type_t<
                                         sourcemeta::blaze::InstructionIndex>>(
                                         instruction.type)]});
-        step.assign("evaluatePath",
-                    sourcemeta::core::to_json(evaluate_path).value());
+        step.assign("evaluatePath", sourcemeta::core::to_json(evaluate_path));
         step.assign("instanceLocation",
-                    sourcemeta::core::to_json(instance_location).value());
+                    sourcemeta::core::to_json(instance_location));
         step.assign("keywordLocation",
                     sourcemeta::core::to_json(instruction.keyword_location));
         step.assign("annotation", annotation);
