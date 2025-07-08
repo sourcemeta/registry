@@ -1,6 +1,6 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server 
   FOLDER "Registry/Server" 
-  SOURCES reader.h search.h status.h
+  SOURCES reader.h search.h status.h evaluate.h
     server.cc uwebsockets.h configure.h.in)
 
 set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourcemeta-registry-server)
