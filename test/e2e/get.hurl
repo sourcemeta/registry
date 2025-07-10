@@ -166,3 +166,21 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
   "$id": "{{base}}/example/schemas/camelcase.json",
   "type": "string"
 }
+
+GET {{base}}/example/schemas/html.json
+HTTP 200
+Content-Type: application/schema+json
+Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/schemas/html.json"
+}
+
+GET {{base}}/example/schemas/index.html.json
+HTTP 200
+Content-Type: application/schema+json
+Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/schemas/index.html.json"
+}
