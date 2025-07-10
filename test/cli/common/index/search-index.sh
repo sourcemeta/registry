@@ -7,7 +7,7 @@ TMP="$(mktemp -d)"
 clean() { rm -rf "$TMP"; }
 trap clean EXIT
 
-cat << EOF > "$TMP/configuration.json"
+cat << EOF > "$TMP/registry.json"
 {
   "url": "https://sourcemeta.com/",
   "port": 8000,
@@ -39,7 +39,7 @@ cat << 'EOF' > "$TMP/schemas/no-title.json"
 EOF
 
 export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
-"$1" "$TMP/configuration.json" "$TMP/output"
+"$1" "$TMP/registry.json" "$TMP/output"
 
 cat << 'EOF' > "$TMP/expected.json"
 ["/example/schemas/test.json","My title","My description"]

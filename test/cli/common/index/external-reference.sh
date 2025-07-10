@@ -7,7 +7,7 @@ TMP="$(mktemp -d)"
 clean() { rm -rf "$TMP"; }
 trap clean EXIT
 
-cat << EOF > "$TMP/configuration.json"
+cat << EOF > "$TMP/registry.json"
 {
   "url": "https://sourcemeta.com/",
   "port": 8000,
@@ -31,12 +31,12 @@ cat << 'EOF' > "$TMP/schemas/test.json"
 EOF
 
 export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
-"$1" "$TMP/configuration.json" "$TMP/output" 2> "$TMP/output.txt" && CODE="$?" || CODE="$?"
+"$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt" && CODE="$?" || CODE="$?"
 test "$CODE" = "1" || exit 1
 
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
-Using configuration: $(realpath "$TMP")/configuration.json
+Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/test.json (#1)
 Ingesting: https://sourcemeta.com/example/schemas/test.json
 error: Could not resolve the reference to an external schema

@@ -14,7 +14,7 @@ VERSION="$(grep '^project' < CMakeLists.txt | head -n 1 | cut -d ' ' -f 3)"
 
 cat << EOF > "$TMP/expected.txt"
 Sourcemeta Registry v$VERSION Starter Edition
-Usage: sourcemeta-registry-index <configuration.json> <path/to/output/directory>
+Usage: sourcemeta-registry-index <registry.json> <path/to/output/directory>
 EOF
 
 diff "$TMP/output.txt" "$TMP/expected.txt"
