@@ -4,6 +4,7 @@
 
 #include <sourcemeta/registry/generator.h>
 #include <sourcemeta/registry/license.h>
+#include <sourcemeta/registry/resolver.h>
 
 #include "configure.h"
 #include "explorer.h"
@@ -60,6 +61,55 @@ write_file_metadata(const std::filesystem::path &relative_path,
   output.write_metadata(category, relative_path, metadata);
 }
 
+// The idea is to match the URLs from https://www.learnjsonschema.com
+// so we can provide links to it
+static auto base_dialect_id(const std::string &base_dialect) -> std::string {
+  static const std::regex MODERN(
+      R"(^https://json-schema\.org/draft/(\d{4}-\d{2})/)");
+  static const std::regex LEGACY(R"(^http://json-schema\.org/draft-0?(\d+)/)");
+  std::smatch match;
+  if (std::regex_search(base_dialect, match, MODERN)) {
+    return match[1].str();
+  } else if (std::regex_search(base_dialect, match, LEGACY)) {
+    return "draft" + match[1].str();
+  } else {
+    // We should never get here
+    assert(false);
+    return "unknown";
+  }
+}
+
+static auto
+get_resolver_metadata(const sourcemeta::registry::Resolver &resolver,
+                      const std::string &identifier,
+                      const sourcemeta::core::JSON &schema,
+                      const sourcemeta::registry::Resolver::Entry &entry)
+    -> sourcemeta::core::JSON {
+  auto result{sourcemeta::core::JSON::make_object()};
+  result.assign("id", sourcemeta::core::JSON{identifier});
+  result.assign("url",
+                sourcemeta::core::JSON{"/" + entry.relative_path.string()});
+  const auto base_dialect{sourcemeta::core::base_dialect(schema, resolver)};
+  assert(base_dialect.has_value());
+  result.assign("baseDialect",
+                sourcemeta::core::JSON{base_dialect_id(base_dialect.value())});
+  const auto dialect{sourcemeta::core::dialect(schema, base_dialect)};
+  assert(dialect.has_value());
+  result.assign("dialect", sourcemeta::core::JSON{dialect.value()});
+  if (schema.is_object()) {
+    const auto title{schema.try_at("title")};
+    if (title && title->is_string()) {
+      result.assign("title", sourcemeta::core::JSON{title->trim()});
+    }
+    const auto description{schema.try_at("description")};
+    if (description && description->is_string()) {
+      result.assign("description", sourcemeta::core::JSON{description->trim()});
+    }
+  }
+
+  return result;
+}
+
 static auto
 write_schema_metadata(const std::filesystem::path &relative_path,
                       const sourcemeta::registry::Resolver &resolver,
@@ -68,7 +118,7 @@ write_schema_metadata(const std::filesystem::path &relative_path,
                       const sourcemeta::registry::Output::Category category,
                       const std::string &identifier,
                       const sourcemeta::core::JSON &schema) -> void {
-  auto other{resolver.metadata(identifier, schema, entry)};
+  auto other{get_resolver_metadata(resolver, identifier, schema, entry)};
 
   auto metadata{sourcemeta::core::JSON::make_object()};
   metadata.assign("dialect", other.at("dialect"));
@@ -126,7 +176,7 @@ static auto index_main(const std::string_view &program,
 
   for (const auto &schema_entry :
        configuration.get().at("schemas").as_object()) {
-    const sourcemeta::registry::Collection collection{
+    const sourcemeta::registry::ResolverCollection collection{
         configuration.base(), schema_entry.first, schema_entry.second};
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection.path}) {
@@ -249,8 +299,8 @@ static auto index_main(const std::string_view &program,
     const auto subresult{resolver(schema.first)};
     assert(subresult.has_value());
     // TODO: Put breadcrumb inside this metadata
-    const auto metadata{
-        resolver.metadata(schema.first, subresult.value(), schema.second)};
+    const auto metadata{get_resolver_metadata(
+        resolver, schema.first, subresult.value(), schema.second)};
     output.internal_write_json(schema_nav_path, metadata);
     write_file_metadata(schema_nav_path, output,
                         sourcemeta::registry::Output::Category::Explorer,

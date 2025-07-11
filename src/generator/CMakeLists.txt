@@ -1,6 +1,6 @@
 sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME generator
-  PRIVATE_HEADERS collection.h configuration.h output.h resolver.h validator.h
-  SOURCES collection.cc configuration.cc output.cc resolver.cc validator.cc)
+  PRIVATE_HEADERS configuration.h output.h validator.h
+  SOURCES configuration.cc output.cc validator.cc)
 
 target_link_libraries(sourcemeta_registry_generator PUBLIC
   sourcemeta::core::uri)
