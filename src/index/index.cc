@@ -162,7 +162,7 @@ static auto index_main(const std::string_view &program,
       }
 #endif
 
-      resolver.add(configuration, collection, entry.path());
+      resolver.add(configuration.url(), collection, entry.path());
     }
   }
 

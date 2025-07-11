@@ -113,7 +113,7 @@ auto Resolver::operator()(std::string_view identifier) const
   return sourcemeta::core::schema_official_resolver(identifier);
 }
 
-auto Resolver::add(const Configuration &configuration,
+auto Resolver::add(const sourcemeta::core::URI &server_url,
                    const Collection &collection,
                    const std::filesystem::path &path)
     -> std::pair<std::string, std::string> {
@@ -144,7 +144,7 @@ auto Resolver::add(const Configuration &configuration,
     dialect_uri.canonicalize();
     dialect_uri.relative_to(collection.base_uri);
     if (dialect_uri.is_relative()) {
-      current_dialect = sourcemeta::core::URI{configuration.url()}
+      current_dialect = sourcemeta::core::URI{server_url}
                             .append_path(collection.name)
                             // TODO: Let `append_path` take a URI
                             .append_path(dialect_uri.recompose())
@@ -210,7 +210,7 @@ auto Resolver::add(const Configuration &configuration,
   }
 
   assert(!identifier_uri.recompose().empty());
-  auto new_identifier = sourcemeta::core::URI{configuration.url()}
+  auto new_identifier = sourcemeta::core::URI{server_url}
                             .append_path(collection.name)
                             // TODO: Let `append_path` take a URI
                             .append_path(identifier_uri.recompose())
@@ -219,7 +219,7 @@ auto Resolver::add(const Configuration &configuration,
                             .recompose();
 
   sourcemeta::core::URI schema_uri{new_identifier};
-  schema_uri.relative_to(configuration.url());
+  schema_uri.relative_to(server_url);
   result.first->second.relative_path = to_lowercase(schema_uri.recompose());
 
   // Otherwise we have things like "../" that should not be there

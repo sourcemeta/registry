@@ -6,14 +6,12 @@
 
 #define RESOLVER_INIT(name)                                                    \
   sourcemeta::registry::Resolver name;                                         \
-  sourcemeta::registry::Configuration configuration{                           \
-      CONFIGURATION_PATH,                                                      \
-      sourcemeta::core::read_json(CONFIGURATION_SCHEMA_PATH)};
+  const auto configuration{sourcemeta::core::read_json(CONFIGURATION_PATH)};
 
 #define RESOLVER_COLLECTION_INIT(name, collection_name)                        \
   const sourcemeta::registry::Collection name{                                 \
-      configuration.base(), (collection_name),                                 \
-      configuration.get().at("schemas").at(collection_name)};
+      std::filesystem::path{CONFIGURATION_PATH}.parent_path(),                 \
+      (collection_name), configuration.at("schemas").at(collection_name)};
 
 #define RESOLVER_EXPECT(resolver, expected_uri, expected_schema)               \
   {                                                                            \
@@ -23,7 +21,7 @@
   }
 
 #define RESOLVER_IMPORT(resolver, collection, relative_path)                   \
-  (resolver).add(configuration, collection,                                    \
+  (resolver).add(configuration.at("url").to_string(), collection,              \
                  std::filesystem::path{SCHEMAS_PATH} / collection.name /       \
                      (relative_path))
 
