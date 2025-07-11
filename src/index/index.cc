@@ -1,135 +1,26 @@
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
-#include <sourcemeta/core/md5.h>
-#include <sourcemeta/core/time.h>
-
-#include <sourcemeta/blaze/compiler.h>
 
 #include <sourcemeta/registry/license.h>
 #include <sourcemeta/registry/resolver.h>
 
-#include "configuration.h"
 #include "configure.h"
-#include "explorer.h"
+#include "generators.h"
+#include "html_partials.h"
+#include "html_safe.h"
 #include "output.h"
-#include "toc.h"
 #include "validator.h"
 
-#include <algorithm>   // std::sort
 #include <cassert>     // assert
-#include <chrono>      // std::chrono::system_clock::time_point
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>   // std::exception
 #include <filesystem>  // std::filesystem
 #include <iostream>    // std::cerr, std::cout
 #include <span>        // std::span
-#include <sstream>     // std::ostringstream
 #include <string>      // std::string
 #include <string_view> // std::string_view
 #include <utility>     // std::move
 #include <vector>      // std::vector
-
-static auto search_index_comparator(const sourcemeta::core::JSON &left,
-                                    const sourcemeta::core::JSON &right)
-    -> bool {
-  assert(left.is_array() && left.size() == 3);
-  assert(right.is_array() && right.size() == 3);
-
-  // Prioritise entries that have more meta-data filled in
-  const auto left_score =
-      (!left.at(1).empty() ? 1 : 0) + (!left.at(2).empty() ? 1 : 0);
-  const auto right_score =
-      (!right.at(1).empty() ? 1 : 0) + (!right.at(2).empty() ? 1 : 0);
-  if (left_score != right_score) {
-    return left_score > right_score;
-  }
-
-  // Otherwise revert to lexicographic comparisons
-  // TODO: Ideally we sort based on schema health too, given lint results
-  if (left_score > 0) {
-    return left.at(0).to_string() < right.at(0).to_string();
-  }
-
-  return false;
-}
-
-static auto generate_meta(const std::filesystem::path &absolute_path,
-                          const std::string &mime,
-                          const std::optional<std::string> &dialect)
-    -> sourcemeta::core::JSON {
-  auto metadata{sourcemeta::core::JSON::make_object()};
-  std::ifstream stream{absolute_path};
-  stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-  assert(!stream.fail());
-  assert(stream.is_open());
-  std::ostringstream contents;
-  contents << stream.rdbuf();
-  std::ostringstream md5;
-  sourcemeta::core::md5(contents.str(), md5);
-  metadata.assign("md5", sourcemeta::core::JSON{md5.str()});
-  const auto last_write_time{std::filesystem::last_write_time(absolute_path)};
-  const auto last_modified{
-      std::chrono::time_point_cast<std::chrono::system_clock::duration>(
-          last_write_time - std::filesystem::file_time_type::clock::now() +
-          std::chrono::system_clock::now())};
-  metadata.assign("lastModified", sourcemeta::core::JSON{
-                                      sourcemeta::core::to_gmt(last_modified)});
-  metadata.assign("mime", sourcemeta::core::JSON{mime});
-  if (dialect.has_value()) {
-    metadata.assign("dialect", sourcemeta::core::JSON{dialect.value()});
-  }
-
-  return metadata;
-}
-
-// The idea is to match the URLs from https://www.learnjsonschema.com
-// so we can provide links to it
-static auto base_dialect_id(const std::string &base_dialect) -> std::string {
-  static const std::regex MODERN(
-      R"(^https://json-schema\.org/draft/(\d{4}-\d{2})/)");
-  static const std::regex LEGACY(R"(^http://json-schema\.org/draft-0?(\d+)/)");
-  std::smatch match;
-  if (std::regex_search(base_dialect, match, MODERN)) {
-    return match[1].str();
-  } else if (std::regex_search(base_dialect, match, LEGACY)) {
-    return "draft" + match[1].str();
-  } else {
-    // We should never get here
-    assert(false);
-    return "unknown";
-  }
-}
-
-static auto
-get_resolver_metadata(const sourcemeta::registry::Resolver &resolver,
-                      const std::string &identifier,
-                      const sourcemeta::core::JSON &schema,
-                      const sourcemeta::registry::Resolver::Entry &entry)
-    -> sourcemeta::core::JSON {
-  auto result{sourcemeta::core::JSON::make_object()};
-  result.assign("id", sourcemeta::core::JSON{identifier});
-  result.assign("url",
-                sourcemeta::core::JSON{"/" + entry.relative_path.string()});
-  const auto base_dialect{sourcemeta::core::base_dialect(schema, resolver)};
-  assert(base_dialect.has_value());
-  result.assign("baseDialect",
-                sourcemeta::core::JSON{base_dialect_id(base_dialect.value())});
-  const auto dialect{sourcemeta::core::dialect(schema, base_dialect)};
-  assert(dialect.has_value());
-  result.assign("dialect", sourcemeta::core::JSON{dialect.value()});
-  if (schema.is_object()) {
-    const auto title{schema.try_at("title")};
-    if (title && title->is_string()) {
-      result.assign("title", sourcemeta::core::JSON{title->trim()});
-    }
-    const auto description{schema.try_at("description")};
-    if (description && description->is_string()) {
-      result.assign("description", sourcemeta::core::JSON{description->trim()});
-    }
-  }
-
-  return result;
-}
 
 static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
@@ -162,21 +53,35 @@ static auto index_main(const std::string_view &program,
   sourcemeta::registry::Validator validator{resolver};
   const auto configuration_path{std::filesystem::canonical(arguments[0])};
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
-  const sourcemeta::registry::Configuration configuration{
-      configuration_path, sourcemeta::core::parse_json(std::string{
-                              sourcemeta::registry::SCHEMA_CONFIGURATION})};
-  validator.validate_or_throw(configuration.schema(), configuration.get(),
+  const auto configuration_schema{sourcemeta::core::parse_json(
+      std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
+  auto configuration{sourcemeta::core::read_json(configuration_path)};
+  validator.validate_or_throw(configuration_schema, configuration,
                               "Invalid configuration");
-  output.write_json("configuration.json", configuration.summary());
+  if (configuration.is_object()) {
+    configuration.assign_if_missing(
+        "title",
+        configuration_schema.at("properties").at("title").at("default"));
+    configuration.assign_if_missing(
+        "description",
+        configuration_schema.at("properties").at("description").at("default"));
+  }
+
+  output.write_json(
+      "configuration.json",
+      sourcemeta::registry::GENERATE_SERVER_CONFIGURATION(configuration));
 
   // --------------------------------------------
   // (2) Populate the schema resolver
   // --------------------------------------------
 
-  for (const auto &schema_entry :
-       configuration.get().at("schemas").as_object()) {
+  const auto server_url{
+      sourcemeta::core::URI{configuration.at("url").to_string()}
+          .canonicalize()};
+  for (const auto &schema_entry : configuration.at("schemas").as_object()) {
     const sourcemeta::registry::ResolverCollection collection{
-        configuration.base(), schema_entry.first, schema_entry.second};
+        configuration_path.parent_path(), schema_entry.first,
+        schema_entry.second};
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection.path}) {
       const auto is_schema_file{entry.path().extension() == ".yaml" ||
@@ -211,7 +116,7 @@ static auto index_main(const std::string_view &program,
       }
 #endif
 
-      resolver.add(configuration.url(), collection, entry.path());
+      resolver.add(server_url, collection, entry.path());
     }
   }
 
@@ -231,153 +136,153 @@ static auto index_main(const std::string_view &program,
     validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
                                 subresult.value(),
                                 "The schema does not adhere to its metaschema");
+    const auto base_path{std::filesystem::path{"schemas"} /
+                         schema.second.relative_path};
     const auto destination{output.write_jsonschema(
-        std::filesystem::path{"schemas"} /
-            (schema.second.relative_path.string() + ".schema"),
-        subresult.value())};
+        base_path.string() + ".schema", subresult.value())};
+    output.write_json(base_path.string() + ".schema.meta",
+                      sourcemeta::registry::GENERATE_SCHEMA_META(
+                          output.path() / (base_path.string() + ".schema"),
+                          output.path() / (base_path.string() + ".schema")));
+
     resolver.materialise(schema.first, destination);
-    output.write_json(
-        std::filesystem::path{"schemas"} /
-            (schema.second.relative_path.string() + ".schema.meta"),
-        generate_meta(output.path() / std::filesystem::path{"schemas"} /
-                          (schema.second.relative_path.string() + ".schema"),
-                      "application/schema+json", dialect_identifier.value()));
 
     // Storing artefacts
 
-    auto bundled_schema{sourcemeta::core::bundle(
-        subresult.value(), sourcemeta::core::schema_official_walker, resolver)};
     output.write_jsonschema(
-        std::filesystem::path{"schemas"} /
-            (schema.second.relative_path.string() + ".bundle"),
-        bundled_schema);
-    output.write_json(
-        std::filesystem::path{"schemas"} /
-            (schema.second.relative_path.string() + ".bundle.meta"),
-        generate_meta(output.path() / std::filesystem::path{"schemas"} /
-                          (schema.second.relative_path.string() + ".bundle"),
-                      "application/schema+json", dialect_identifier.value()));
+        base_path.string() + ".bundle",
+        sourcemeta::registry::GENERATE_BUNDLE(resolver, destination));
+    output.write_json(base_path.string() + ".bundle.meta",
+                      sourcemeta::registry::GENERATE_SCHEMA_META(
+                          output.path() / (base_path.string() + ".bundle"),
+                          output.path() / (base_path.string() + ".schema")));
 
-    sourcemeta::core::SchemaFrame frame{
-        sourcemeta::core::SchemaFrame::Mode::References};
-    frame.analyse(bundled_schema, sourcemeta::core::schema_official_walker,
-                  resolver);
-
-    const auto template_exhaustive{sourcemeta::blaze::compile(
-        bundled_schema, sourcemeta::core::schema_official_walker, resolver,
-        sourcemeta::blaze::default_schema_compiler, frame,
-        sourcemeta::blaze::Mode::Exhaustive)};
+    output.write_json(base_path.string() + ".blaze-exhaustive",
+                      sourcemeta::registry::GENERATE_BLAZE_TEMPLATE(
+                          resolver,
+                          output.path() / (base_path.string() + ".bundle"),
+                          sourcemeta::blaze::Mode::Exhaustive));
     output.write_json(
-        std::filesystem::path{"schemas"} /
-            (schema.second.relative_path.string() + ".blaze-exhaustive"),
-        sourcemeta::blaze::to_json(template_exhaustive));
-    output.write_json(
-        std::filesystem::path{"schemas"} /
-            (schema.second.relative_path.string() + ".blaze-exhaustive.meta"),
-        generate_meta(
-            output.path() / std::filesystem::path{"schemas"} /
-                (schema.second.relative_path.string() + ".blaze-exhaustive"),
-            "application/schema+json", dialect_identifier.value()));
+        base_path.string() + ".blaze-exhaustive.meta",
+        sourcemeta::registry::GENERATE_SCHEMA_META(
+            output.path() / (base_path.string() + ".blaze-exhaustive"),
+            output.path() / (base_path.string() + ".schema")));
 
-    // TODO: Can we re-use the frame here?
-    sourcemeta::core::unidentify(
-        bundled_schema, sourcemeta::core::schema_official_walker, resolver);
     output.write_jsonschema(
-        std::filesystem::path{"schemas"} /
-            (schema.second.relative_path.string() + ".unidentified"),
-        bundled_schema);
+        base_path.string() + ".unidentified",
+        sourcemeta::registry::GENERATE_UNIDENTIFIED(
+            resolver, output.path() / (base_path.string() + ".bundle")));
     output.write_json(
-        std::filesystem::path{"schemas"} /
-            (schema.second.relative_path.string() + ".unidentified.meta"),
-        generate_meta(
-            output.path() / std::filesystem::path{"schemas"} /
-                (schema.second.relative_path.string() + ".unidentified"),
-            "application/schema+json", dialect_identifier.value()));
-  }
+        base_path.string() + ".unidentified.meta",
+        sourcemeta::registry::GENERATE_SCHEMA_META(
+            output.path() / (base_path.string() + ".unidentified"),
+            output.path() / (base_path.string() + ".schema")));
 
-  // --------------------------------------------
-  // (4) Generate schema search index
-  // --------------------------------------------
-
-  std::cerr << "Generating registry navigation...\n";
-
-  for (const auto &schema : resolver) {
     auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
                          schema.second.relative_path};
     schema_nav_path.replace_extension("nav");
-    const auto subresult{resolver(schema.first)};
-    assert(subresult.has_value());
-    // TODO: Put breadcrumb inside this metadata
-    const auto metadata{get_resolver_metadata(
-        resolver, schema.first, subresult.value(), schema.second)};
-    output.write_json(schema_nav_path, metadata);
+    output.write_json(
+        schema_nav_path,
+        sourcemeta::registry::GENERATE_NAV_SCHEMA(
+            configuration, resolver,
+            output.path() / "schemas" /
+                (schema.second.relative_path.string() + ".schema"),
+            schema.second.relative_path));
     output.write_json(schema_nav_path.string() + ".meta",
-                      generate_meta(output.path() / schema_nav_path,
-                                    "application/json", std::nullopt));
+                      sourcemeta::registry::GENERATE_META(
+                          output.path() / schema_nav_path, "application/json"));
   }
 
+  std::cerr << "Generating registry navigation...\n";
+
   const auto base{output.path() / "schemas"};
-  const auto navigation_base{output.path() / "explorer"};
-  output.write_json(
-      std::filesystem::path{"explorer"} / "pages.nav",
-      sourcemeta::registry::toc(configuration, navigation_base, base, base));
+  const auto navigation_base{output.path() / "explorer" / "pages"};
+
+  output.write_json(std::filesystem::path{"explorer"} / "pages.nav",
+                    sourcemeta::registry::GENERATE_NAV_DIRECTORY(
+                        configuration, navigation_base, base, base));
   output.write_json(
       std::filesystem::path{"explorer"} / "pages.nav.meta",
-      generate_meta(output.path() / std::filesystem::path{"explorer"} /
-                        "pages.nav",
-                    "application/json", std::nullopt));
+      sourcemeta::registry::GENERATE_META(
+          output.path() / std::filesystem::path{"explorer"} / "pages.nav",
+          "application/json"));
 
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
     if (entry.is_directory()) {
-      auto toc{sourcemeta::registry::toc(configuration, navigation_base, base,
-                                         entry.path())};
       auto relative_path{
           std::filesystem::path{"explorer"} / std::filesystem::path{"pages"} /
           (std::filesystem::relative(entry.path(), base).string() + ".nav")};
-      output.write_json(relative_path, std::move(toc));
+      output.write_json(
+          relative_path,
+          sourcemeta::registry::GENERATE_NAV_DIRECTORY(
+              configuration, navigation_base, base, entry.path()));
       output.write_json(relative_path.string() + ".meta",
-                        generate_meta(output.path() / relative_path,
-                                      "application/json", std::nullopt));
+                        sourcemeta::registry::GENERATE_META(
+                            output.path() / relative_path, "application/json"));
     }
   }
 
   std::cerr << "Generating registry search index...\n";
-
-  // TODO: We could parallelize this loop
-  std::vector<sourcemeta::core::JSON> search_index;
-  search_index.reserve(resolver.size());
+  std::vector<std::filesystem::path> navs;
+  navs.reserve(resolver.size());
   for (const auto &schema : resolver) {
-    auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
+    auto schema_nav_path{output.path() / "explorer" / "pages" /
                          schema.second.relative_path};
     schema_nav_path.replace_extension("nav");
-    const auto metadata{output.read_json(schema_nav_path)};
-    auto entry{sourcemeta::core::JSON::make_array()};
-    entry.push_back(metadata.at("url"));
-    entry.push_back(metadata.at_or("title", sourcemeta::core::JSON{""}));
-    entry.push_back(metadata.at_or("description", sourcemeta::core::JSON{""}));
-    search_index.push_back(std::move(entry));
+    navs.push_back(std::move(schema_nav_path));
   }
 
-  // Make sure more relevant entries get prioritised
-  std::sort(search_index.begin(), search_index.end(), search_index_comparator);
+  const auto search_index{sourcemeta::registry::GENERATE_SEARCH_INDEX(navs)};
   output.write_jsonl(std::filesystem::path{"explorer"} / "search.jsonl",
                      search_index.cbegin(), search_index.cend());
   output.write_json(
       std::filesystem::path{"explorer"} / "search.jsonl.meta",
-      generate_meta(output.path() / std::filesystem::path{"explorer"} /
-                        "search.jsonl",
-                    "application/jsonl", std::nullopt));
-
-  // --------------------------------------------
-  // (6) Generate schema explorer
-  // --------------------------------------------
+      sourcemeta::registry::GENERATE_META(
+          output.path() / std::filesystem::path{"explorer"} / "search.jsonl",
+          "application/jsonl"));
 
   std::cerr << "Generating registry explorer...\n";
 
-  // TODO: Make the explorer generator use the Output class to writing files
-  sourcemeta::registry::explorer(configuration.get(),
-                                 output.path() / "explorer");
+  const auto explorer_base{output.path() / "explorer" / "pages"};
+  for (const auto &entry :
+       std::filesystem::recursive_directory_iterator{explorer_base}) {
+    if (entry.is_directory() || entry.path().extension() != ".nav") {
+      continue;
+    }
+
+    const auto meta{sourcemeta::core::read_json(entry.path())};
+    if (meta.defines("entries")) {
+      auto relative_destination{
+          std::filesystem::relative(entry.path(), output.path())};
+      relative_destination.replace_extension(".html");
+      output.write_text(relative_destination,
+                        sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(
+                            configuration, entry.path()));
+      output.write_json(relative_destination.string() + ".meta",
+                        sourcemeta::registry::GENERATE_META(
+                            output.path() / relative_destination, "text/html"));
+    }
+  }
+
+  output.write_text(
+      std::filesystem::path{"explorer"} / "pages.html",
+      sourcemeta::registry::GENERATE_EXPLORER_INDEX(
+          configuration,
+          output.path() / std::filesystem::path{"explorer"} / "pages.nav"));
+  output.write_json(
+      std::filesystem::path{"explorer"} / "pages.html.meta",
+      sourcemeta::registry::GENERATE_META(
+          output.path() / std::filesystem::path{"explorer"} / "pages.html",
+          "text/html"));
+
+  output.write_text(std::filesystem::path{"explorer"} / "404.html",
+                    sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
+  output.write_json(
+      std::filesystem::path{"explorer"} / "404.html.meta",
+      sourcemeta::registry::GENERATE_META(
+          output.path() / std::filesystem::path{"explorer"} / "404.html",
+          "text/html"));
 
   return EXIT_SUCCESS;
 }
