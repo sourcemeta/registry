@@ -37,7 +37,6 @@ endif()
 
 if(REGISTRY_INDEX)
   add_subdirectory(src/generator)
-  add_subdirectory(src/html)
   add_subdirectory(src/index)
 endif()
 

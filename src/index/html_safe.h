@@ -1,5 +1,5 @@
-#ifndef SOURCEMETA_REGISTRY_HTML_SAFE_H_
-#define SOURCEMETA_REGISTRY_HTML_SAFE_H_
+#ifndef SOURCEMETA_REGISTRY_INDEX_SAFE_H_
+#define SOURCEMETA_REGISTRY_INDEX_SAFE_H_
 
 #include <initializer_list> // std::initializer_list
 #include <string_view>      // std::string_view

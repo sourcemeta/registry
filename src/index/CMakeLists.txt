@@ -1,6 +1,6 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index 
   FOLDER "Registry/Index" 
-  SOURCES index.cc explorer.h toc.h configure.h.in 
+  SOURCES index.cc explorer.h toc.h configure.h.in html_partials.h html_safe.h
     "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
@@ -14,7 +14,6 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evaluator)
-target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::html)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
