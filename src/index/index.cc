@@ -2,13 +2,15 @@
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/time.h>
 
-#include <sourcemeta/registry/generator.h>
 #include <sourcemeta/registry/license.h>
 #include <sourcemeta/registry/resolver.h>
 
+#include "configuration.h"
 #include "configure.h"
 #include "explorer.h"
+#include "output.h"
 #include "toc.h"
+#include "validator.h"
 
 #include <algorithm>   // std::sort
 #include <cassert>     // assert
