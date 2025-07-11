@@ -1,6 +1,9 @@
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/time.h>
+
+#include <sourcemeta/blaze/compiler.h>
 
 #include <sourcemeta/registry/license.h>
 #include <sourcemeta/registry/resolver.h>
@@ -14,11 +17,13 @@
 
 #include <algorithm>   // std::sort
 #include <cassert>     // assert
+#include <chrono>      // std::chrono::system_clock::time_point
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>   // std::exception
 #include <filesystem>  // std::filesystem
 #include <iostream>    // std::cerr, std::cout
 #include <span>        // std::span
+#include <sstream>     // std::ostringstream
 #include <string>      // std::string
 #include <string_view> // std::string_view
 #include <utility>     // std::move
@@ -48,19 +53,33 @@ static auto search_index_comparator(const sourcemeta::core::JSON &left,
   return false;
 }
 
-static auto
-write_file_metadata(const std::filesystem::path &relative_path,
-                    const sourcemeta::registry::Output &output,
-                    const sourcemeta::registry::Output::Category category,
-                    const std::string &mime) -> void {
+static auto generate_meta(const std::filesystem::path &absolute_path,
+                          const std::string &mime,
+                          const std::optional<std::string> &dialect)
+    -> sourcemeta::core::JSON {
   auto metadata{sourcemeta::core::JSON::make_object()};
-  metadata.assign("md5",
-                  sourcemeta::core::JSON{output.md5(category, relative_path)});
-  metadata.assign("lastModified",
-                  sourcemeta::core::JSON{sourcemeta::core::to_gmt(
-                      output.last_modified(category, relative_path))});
+  std::ifstream stream{absolute_path};
+  stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+  assert(!stream.fail());
+  assert(stream.is_open());
+  std::ostringstream contents;
+  contents << stream.rdbuf();
+  std::ostringstream md5;
+  sourcemeta::core::md5(contents.str(), md5);
+  metadata.assign("md5", sourcemeta::core::JSON{md5.str()});
+  const auto last_write_time{std::filesystem::last_write_time(absolute_path)};
+  const auto last_modified{
+      std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+          last_write_time - std::filesystem::file_time_type::clock::now() +
+          std::chrono::system_clock::now())};
+  metadata.assign("lastModified", sourcemeta::core::JSON{
+                                      sourcemeta::core::to_gmt(last_modified)});
   metadata.assign("mime", sourcemeta::core::JSON{mime});
-  output.write_metadata(category, relative_path, metadata);
+  if (dialect.has_value()) {
+    metadata.assign("dialect", sourcemeta::core::JSON{dialect.value()});
+  }
+
+  return metadata;
 }
 
 // The idea is to match the URLs from https://www.learnjsonschema.com
@@ -112,27 +131,6 @@ get_resolver_metadata(const sourcemeta::registry::Resolver &resolver,
   return result;
 }
 
-static auto
-write_schema_metadata(const std::filesystem::path &relative_path,
-                      const sourcemeta::registry::Resolver &resolver,
-                      const sourcemeta::registry::Resolver::Entry &entry,
-                      const sourcemeta::registry::Output &output,
-                      const sourcemeta::registry::Output::Category category,
-                      const std::string &identifier,
-                      const sourcemeta::core::JSON &schema) -> void {
-  auto other{get_resolver_metadata(resolver, identifier, schema, entry)};
-
-  auto metadata{sourcemeta::core::JSON::make_object()};
-  metadata.assign("dialect", other.at("dialect"));
-  metadata.assign("mime", sourcemeta::core::JSON{"application/schema+json"});
-  metadata.assign("md5",
-                  sourcemeta::core::JSON{output.md5(category, relative_path)});
-  metadata.assign("lastModified",
-                  sourcemeta::core::JSON{sourcemeta::core::to_gmt(
-                      output.last_modified(category, relative_path))});
-  output.write_metadata(category, relative_path, metadata);
-}
-
 static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
@@ -152,9 +150,8 @@ static auto index_main(const std::string_view &program,
   }
 
   // Prepare the output directory
-  const auto output_path{std::filesystem::weakly_canonical(arguments[1])};
-  sourcemeta::registry::Output output{output_path};
-  std::cerr << "Writing output to: " << output_path.string() << "\n";
+  sourcemeta::registry::Output output{arguments[1]};
+  std::cerr << "Writing output to: " << output.path().string() << "\n";
 
   // --------------------------------------------
   // (1) Process the configuration file
@@ -170,7 +167,7 @@ static auto index_main(const std::string_view &program,
                               sourcemeta::registry::SCHEMA_CONFIGURATION})};
   validator.validate_or_throw(configuration.schema(), configuration.get(),
                               "Invalid configuration");
-  output.write_configuration(configuration);
+  output.write_json("configuration.json", configuration.summary());
 
   // --------------------------------------------
   // (2) Populate the schema resolver
@@ -234,58 +231,68 @@ static auto index_main(const std::string_view &program,
     validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
                                 subresult.value(),
                                 "The schema does not adhere to its metaschema");
-    const auto destination{output.write_schema_single(
-        schema.second.relative_path.string() + ".schema", subresult.value())};
-    resolver.materialise(schema.first, destination);
-    write_schema_metadata(
+    const auto destination{output.write_jsonschema(
         std::filesystem::path{"schemas"} /
             (schema.second.relative_path.string() + ".schema"),
-        resolver, schema.second, output,
-        sourcemeta::registry::Output::Category::Explorer, schema.first,
-        subresult.value());
+        subresult.value())};
+    resolver.materialise(schema.first, destination);
+    output.write_json(
+        std::filesystem::path{"schemas"} /
+            (schema.second.relative_path.string() + ".schema.meta"),
+        generate_meta(output.path() / std::filesystem::path{"schemas"} /
+                          (schema.second.relative_path.string() + ".schema"),
+                      "application/schema+json", dialect_identifier.value()));
 
     // Storing artefacts
 
     auto bundled_schema{sourcemeta::core::bundle(
         subresult.value(), sourcemeta::core::schema_official_walker, resolver)};
-    output.write_schema_bundle(schema.second.relative_path.string() + ".bundle",
-                               bundled_schema);
-    write_schema_metadata(
+    output.write_jsonschema(
         std::filesystem::path{"schemas"} /
             (schema.second.relative_path.string() + ".bundle"),
-        resolver, schema.second, output,
-        sourcemeta::registry::Output::Category::Explorer, schema.first,
-        subresult.value());
+        bundled_schema);
+    output.write_json(
+        std::filesystem::path{"schemas"} /
+            (schema.second.relative_path.string() + ".bundle.meta"),
+        generate_meta(output.path() / std::filesystem::path{"schemas"} /
+                          (schema.second.relative_path.string() + ".bundle"),
+                      "application/schema+json", dialect_identifier.value()));
 
     sourcemeta::core::SchemaFrame frame{
         sourcemeta::core::SchemaFrame::Mode::References};
     frame.analyse(bundled_schema, sourcemeta::core::schema_official_walker,
                   resolver);
 
-    const auto template_exhasutive{sourcemeta::blaze::compile(
+    const auto template_exhaustive{sourcemeta::blaze::compile(
         bundled_schema, sourcemeta::core::schema_official_walker, resolver,
         sourcemeta::blaze::default_schema_compiler, frame,
         sourcemeta::blaze::Mode::Exhaustive)};
-    output.write_schema_template_exhaustive(
-        schema.second.relative_path.string() + ".blaze-exhaustive",
-        template_exhasutive);
-    write_file_metadata(
+    output.write_json(
         std::filesystem::path{"schemas"} /
             (schema.second.relative_path.string() + ".blaze-exhaustive"),
-        output, sourcemeta::registry::Output::Category::Explorer,
-        "application/json");
+        sourcemeta::blaze::to_json(template_exhaustive));
+    output.write_json(
+        std::filesystem::path{"schemas"} /
+            (schema.second.relative_path.string() + ".blaze-exhaustive.meta"),
+        generate_meta(
+            output.path() / std::filesystem::path{"schemas"} /
+                (schema.second.relative_path.string() + ".blaze-exhaustive"),
+            "application/schema+json", dialect_identifier.value()));
 
     // TODO: Can we re-use the frame here?
     sourcemeta::core::unidentify(
         bundled_schema, sourcemeta::core::schema_official_walker, resolver);
-    output.write_schema_bundle_unidentified(
-        schema.second.relative_path.string() + ".unidentified", bundled_schema);
-    write_schema_metadata(
+    output.write_jsonschema(
         std::filesystem::path{"schemas"} /
             (schema.second.relative_path.string() + ".unidentified"),
-        resolver, schema.second, output,
-        sourcemeta::registry::Output::Category::Explorer, schema.first,
-        subresult.value());
+        bundled_schema);
+    output.write_json(
+        std::filesystem::path{"schemas"} /
+            (schema.second.relative_path.string() + ".unidentified.meta"),
+        generate_meta(
+            output.path() / std::filesystem::path{"schemas"} /
+                (schema.second.relative_path.string() + ".unidentified"),
+            "application/schema+json", dialect_identifier.value()));
   }
 
   // --------------------------------------------
@@ -303,35 +310,35 @@ static auto index_main(const std::string_view &program,
     // TODO: Put breadcrumb inside this metadata
     const auto metadata{get_resolver_metadata(
         resolver, schema.first, subresult.value(), schema.second)};
-    output.internal_write_json(schema_nav_path, metadata);
-    write_file_metadata(schema_nav_path, output,
-                        sourcemeta::registry::Output::Category::Explorer,
-                        "application/json");
+    output.write_json(schema_nav_path, metadata);
+    output.write_json(schema_nav_path.string() + ".meta",
+                      generate_meta(output.path() / schema_nav_path,
+                                    "application/json", std::nullopt));
   }
 
-  const auto base{
-      output.absolute_path(sourcemeta::registry::Output::Category::Explorer) /
-      "schemas"};
-  const auto navigation_base{
-      output.absolute_path(sourcemeta::registry::Output::Category::Navigation)};
-  output.write_explorer_json(
-      "pages.nav",
+  const auto base{output.path() / "schemas"};
+  const auto navigation_base{output.path() / "explorer"};
+  output.write_json(
+      std::filesystem::path{"explorer"} / "pages.nav",
       sourcemeta::registry::toc(configuration, navigation_base, base, base));
-  write_file_metadata("pages.nav", output,
-                      sourcemeta::registry::Output::Category::Navigation,
-                      "application/json");
+  output.write_json(
+      std::filesystem::path{"explorer"} / "pages.nav.meta",
+      generate_meta(output.path() / std::filesystem::path{"explorer"} /
+                        "pages.nav",
+                    "application/json", std::nullopt));
+
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
     if (entry.is_directory()) {
       auto toc{sourcemeta::registry::toc(configuration, navigation_base, base,
                                          entry.path())};
       auto relative_path{
-          std::filesystem::path{"pages"} /
+          std::filesystem::path{"explorer"} / std::filesystem::path{"pages"} /
           (std::filesystem::relative(entry.path(), base).string() + ".nav")};
-      output.write_explorer_json(relative_path, std::move(toc));
-      write_file_metadata(relative_path, output,
-                          sourcemeta::registry::Output::Category::Navigation,
-                          "application/json");
+      output.write_json(relative_path, std::move(toc));
+      output.write_json(relative_path.string() + ".meta",
+                        generate_meta(output.path() / relative_path,
+                                      "application/json", std::nullopt));
     }
   }
 
@@ -344,8 +351,7 @@ static auto index_main(const std::string_view &program,
     auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
                          schema.second.relative_path};
     schema_nav_path.replace_extension("nav");
-    const auto metadata{output.read_metadata(
-        sourcemeta::registry::Output::Category::Navigation, schema_nav_path)};
+    const auto metadata{output.read_json(schema_nav_path)};
     auto entry{sourcemeta::core::JSON::make_array()};
     entry.push_back(metadata.at("url"));
     entry.push_back(metadata.at_or("title", sourcemeta::core::JSON{""}));
@@ -355,10 +361,13 @@ static auto index_main(const std::string_view &program,
 
   // Make sure more relevant entries get prioritised
   std::sort(search_index.begin(), search_index.end(), search_index_comparator);
-  output.write_search(search_index.cbegin(), search_index.cend());
-  write_file_metadata("search.jsonl", output,
-                      sourcemeta::registry::Output::Category::Navigation,
-                      "application/jsonl");
+  output.write_jsonl(std::filesystem::path{"explorer"} / "search.jsonl",
+                     search_index.cbegin(), search_index.cend());
+  output.write_json(
+      std::filesystem::path{"explorer"} / "search.jsonl.meta",
+      generate_meta(output.path() / std::filesystem::path{"explorer"} /
+                        "search.jsonl",
+                    "application/jsonl", std::nullopt));
 
   // --------------------------------------------
   // (6) Generate schema explorer
@@ -367,9 +376,8 @@ static auto index_main(const std::string_view &program,
   std::cerr << "Generating registry explorer...\n";
 
   // TODO: Make the explorer generator use the Output class to writing files
-  sourcemeta::registry::explorer(
-      configuration.get(),
-      output.absolute_path(sourcemeta::registry::Output::Category::Navigation));
+  sourcemeta::registry::explorer(configuration.get(),
+                                 output.path() / "explorer");
 
   return EXIT_SUCCESS;
 }

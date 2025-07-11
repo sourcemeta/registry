@@ -1,18 +1,13 @@
-#ifndef SOURCEMETA_REGISTRY_GENERATOR_OUTPUT_H_
-#define SOURCEMETA_REGISTRY_GENERATOR_OUTPUT_H_
+#ifndef SOURCEMETA_REGISTRY_INDEX_OUTPUT_H_
+#define SOURCEMETA_REGISTRY_INDEX_OUTPUT_H_
 
-#include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
-#include <sourcemeta/core/md5.h>
 
-#include "configuration.h"
-
-#include <cassert>    // assert
-#include <chrono>     // std::chrono::system_clock::time_point
-#include <filesystem> // std::filesystem
-#include <fstream>    // std::ofstream
-#include <sstream>    // ostringstream
+#include <cassert>       // assert
+#include <filesystem>    // std::filesystem
+#include <fstream>       // std::ofstream
+#include <unordered_map> // std::unordered_map
 
 namespace sourcemeta::registry {
 
@@ -20,8 +15,8 @@ class Output {
 public:
   Output(std::filesystem::path path)
       : path_{std::filesystem::weakly_canonical(path)} {
-    // TODO: Index files in output first!
     std::filesystem::create_directories(this->path_);
+    this->index();
   }
 
   // Just to prevent mistakes
@@ -30,174 +25,79 @@ public:
   Output(Output &&) = delete;
   Output &operator=(Output &&) = delete;
 
-  enum class Category {
-    Schemas,
-    Bundles,
-    Explorer,
-    Navigation,
-    Unidentified,
-    TemplateExhaustive
-  };
+  auto path() const -> const std::filesystem::path & { return this->path_; }
 
-  auto relative_path(const Category category) const -> std::filesystem::path {
-    switch (category) {
-      case Category::Schemas:
-        return "schemas";
-      case Category::Bundles:
-        return "bundles";
-      case Category::Explorer:
-        return "";
-      case Category::Navigation:
-        return "explorer";
-      case Category::Unidentified:
-        return "unidentified";
-      case Category::TemplateExhaustive:
-        return "blaze/exhaustive";
-      default:
-        assert(false);
-        return "";
+  // TODO: Have a counter part method that will remove any non-marked file
+  auto index() -> void {
+    assert(std::filesystem::exists(this->path_));
+    for (const auto &entry :
+         std::filesystem::recursive_directory_iterator(this->path_)) {
+      if (!entry.is_directory()) {
+        this->tracker.emplace(entry.path(), false);
+      }
     }
   }
 
-  auto absolute_path(const Category category) const -> std::filesystem::path {
-    return this->resolve(this->relative_path(category));
+  auto write_json(const std::filesystem::path &path,
+                  const sourcemeta::core::JSON &document)
+      -> const std::filesystem::path & {
+    const auto absolute_path{this->resolve(path)};
+    std::filesystem::create_directories(absolute_path.parent_path());
+    auto stream{this->open(absolute_path)};
+    sourcemeta::core::stringify(document, stream);
+    return this->tracker.insert_or_assign(absolute_path, true).first->first;
   }
 
-  auto write_configuration(const Configuration &configuration) -> void {
-    this->internal_write_json("configuration.json", configuration.summary());
-  }
-
-  auto write_schema_single(const std::filesystem::path &output,
-                           const sourcemeta::core::JSON &schema) const
-      -> std::filesystem::path {
-    return this->internal_write_jsonschema("schemas" / output, schema);
-  }
-
-  auto write_schema_bundle(const std::filesystem::path &output,
-                           const sourcemeta::core::JSON &schema) const
-      -> std::filesystem::path {
-    return this->internal_write_jsonschema("schemas" / output, schema);
-  }
-
-  auto
-  write_schema_bundle_unidentified(const std::filesystem::path &output,
-                                   const sourcemeta::core::JSON &schema) const
-      -> std::filesystem::path {
-    return this->internal_write_jsonschema("schemas" / output, schema);
-  }
-
-  auto write_schema_template_exhaustive(
-      const std::filesystem::path &output,
-      const sourcemeta::blaze::Template &compiled_schema) const
-      -> std::filesystem::path {
-    return this->internal_write_json(
-        this->relative_path(Category::Explorer) / "schemas" / output,
-        sourcemeta::blaze::to_json(compiled_schema));
+  auto write_jsonschema(const std::filesystem::path &path,
+                        const sourcemeta::core::JSON &schema)
+      -> const std::filesystem::path & {
+    const auto absolute_path{this->resolve(path)};
+    std::filesystem::create_directories(absolute_path.parent_path());
+    auto stream{this->open(absolute_path)};
+    sourcemeta::core::prettify(schema, stream,
+                               sourcemeta::core::schema_format_compare);
+    return this->tracker.insert_or_assign(absolute_path, true).first->first;
   }
 
   template <typename Iterator>
-  auto write_search(Iterator begin, Iterator end) const -> void {
-    this->internal_write_jsonl(
-        std::filesystem::path{"explorer"} / "search.jsonl", begin, end);
+  auto write_jsonl(const std::filesystem::path &path, Iterator begin,
+                   Iterator end) -> const std::filesystem::path & {
+    const auto absolute_path{this->resolve(path)};
+    std::filesystem::create_directories(absolute_path.parent_path());
+    auto stream{this->open(absolute_path)};
+    for (auto iterator = begin; iterator != end; ++iterator) {
+      sourcemeta::core::stringify(*iterator, stream);
+      stream << "\n";
+    }
+
+    return this->tracker.insert_or_assign(absolute_path, true).first->first;
   }
 
-  auto write_explorer_json(const std::filesystem::path &output,
-                           const sourcemeta::core::JSON &document) const
-      -> void {
-    this->internal_write_json(
-        this->relative_path(Category::Navigation) / output, document);
-  }
-
-  auto write_metadata(const Category category,
-                      const std::filesystem::path &output,
-                      const sourcemeta::core::JSON &metadata) const
-      -> std::filesystem::path {
-    return this->internal_write_json(
-        (this->relative_path(category) / output).string() + ".meta", metadata);
-  }
-
-  auto read_metadata(const Category, const std::filesystem::path &output) const
+  auto read_json(const std::filesystem::path &path) const
       -> sourcemeta::core::JSON {
-    const std::filesystem::path absolute_path{this->resolve(output)};
+    const auto absolute_path{this->resolve(path)};
     assert(std::filesystem::exists(absolute_path));
     return sourcemeta::core::read_json(absolute_path);
   }
 
-  auto md5(const Category category, const std::filesystem::path &output) const
-      -> std::string {
-    const std::filesystem::path absolute_path{
-        this->resolve(this->relative_path(category) / output)};
-    std::ifstream stream{absolute_path};
-    stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    assert(!stream.fail());
-    assert(stream.is_open());
-    std::ostringstream contents;
-    contents << stream.rdbuf();
-    std::ostringstream md5;
-    sourcemeta::core::md5(contents.str(), md5);
-    return md5.str();
-  }
-
-  auto last_modified(const Category category,
-                     const std::filesystem::path &output) const
-      -> std::chrono::system_clock::time_point {
-    const std::filesystem::path absolute_path{
-        this->resolve(this->relative_path(category) / output)};
-    const auto last_write_time{std::filesystem::last_write_time(absolute_path)};
-    return std::chrono::time_point_cast<std::chrono::system_clock::duration>(
-        last_write_time - std::filesystem::file_time_type::clock::now() +
-        std::chrono::system_clock::now());
-  }
-
-  auto internal_write_json(const std::filesystem::path &output,
-                           const sourcemeta::core::JSON &document) const
+private:
+  auto resolve(const std::filesystem::path &relative_path) const
       -> std::filesystem::path {
-    const auto destination{this->resolve(output)};
-    std::filesystem::create_directories(destination.parent_path());
-    auto stream{this->open(destination)};
-    sourcemeta::core::stringify(document, stream);
-    return destination;
-  }
-
-  auto internal_write_jsonschema(const std::filesystem::path &output,
-                                 const sourcemeta::core::JSON &schema) const
-      -> std::filesystem::path {
-    const auto destination{this->resolve(output)};
-    std::filesystem::create_directories(destination.parent_path());
-    auto stream{this->open(destination)};
-    sourcemeta::core::prettify(schema, stream,
-                               sourcemeta::core::schema_format_compare);
-    return destination;
-  }
-
-  // TODO: Move this up as a writing mechanism of sourcemeta::core::JSONL
-  template <typename Iterator>
-  auto internal_write_jsonl(const std::filesystem::path &output, Iterator begin,
-                            Iterator end) const -> void {
-    const auto destination{this->resolve(output)};
-    std::filesystem::create_directories(destination.parent_path());
-    auto stream{this->open(destination)};
-    for (auto iterator = begin; iterator != end; iterator++) {
-      sourcemeta::core::stringify(*iterator, stream);
-      stream << "\n";
-    }
-  }
-
-  auto resolve(const std::filesystem::path &path) const
-      -> std::filesystem::path {
-    assert(path.is_relative());
+    assert(relative_path.is_relative());
     // TODO: We need to have a "safe" path concat function that does not allow
     // the path to escape the parent. Make it part of Core
-    return this->path_ / path;
+    return this->path_ / relative_path;
   }
 
-  auto open(const std::filesystem::path &output) const -> std::ofstream {
-    std::ofstream stream{output};
+  auto open(const std::filesystem::path &absolute_path) const -> std::ofstream {
+    assert(absolute_path.is_absolute());
+    std::ofstream stream{absolute_path};
     assert(!stream.fail());
     return stream;
   }
 
   const std::filesystem::path path_;
+  std::unordered_map<std::filesystem::path, bool> tracker;
 };
 
 } // namespace sourcemeta::registry
