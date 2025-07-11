@@ -5,12 +5,12 @@
 #include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/time.h>
 
-#include <sourcemeta/registry/html.h>
-
 #include <optional> // std::optional
 #include <string>   // std::string
 
 #include "configure.h"
+#include "html_partials.h"
+#include "html_safe.h"
 
 namespace sourcemeta::registry {
 
