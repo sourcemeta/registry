@@ -36,7 +36,6 @@ if(REGISTRY_INDEX OR REGISTRY_SERVER)
 endif()
 
 if(REGISTRY_INDEX)
-  add_subdirectory(src/generator)
   add_subdirectory(src/resolver)
   add_subdirectory(src/index)
 endif()

@@ -36,7 +36,7 @@
     RESOLVER_EXPECT(resolver, (result.second), (expected_schema));             \
   }
 
-TEST(Generator_Resolver, idempotent) {
+TEST(Resolver, idempotent) {
   RESOLVER_INIT(resolver);
 
   RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
@@ -64,7 +64,7 @@ TEST(Generator_Resolver, idempotent) {
   })JSON");
 }
 
-TEST(Generator_Resolver, iterators) {
+TEST(Resolver, iterators) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
                "https://example.com/schemas/2020-12-with-id",
@@ -84,7 +84,7 @@ TEST(Generator_Resolver, iterators) {
             "http://localhost:8000/example/2020-12-with-id.json");
 }
 
-TEST(Generator_Resolver, duplicate_id) {
+TEST(Resolver, duplicate_id) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-with-id-json.json",
                "https://example.com/schemas/2020-12-with-id-json.json",
@@ -100,7 +100,7 @@ TEST(Generator_Resolver, duplicate_id) {
                sourcemeta::core::SchemaError);
 }
 
-TEST(Generator_Resolver, case_insensitive_lookup) {
+TEST(Resolver, case_insensitive_lookup) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
                "https://example.com/schemas/2020-12-with-id",
@@ -129,7 +129,7 @@ TEST(Generator_Resolver, case_insensitive_lookup) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_official_2020_12_meta) {
+TEST(Resolver, example_official_2020_12_meta) {
   RESOLVER_INIT(resolver);
   EXPECT_TRUE(
       resolver("https://json-schema.org/draft/2020-12/schema").has_value());
@@ -138,7 +138,7 @@ TEST(Generator_Resolver, example_official_2020_12_meta) {
                 "https://json-schema.org/draft/2020-12/schema"));
 }
 
-TEST(Generator_Resolver, example_2020_12_with_id) {
+TEST(Resolver, example_2020_12_with_id) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-with-id.json",
                "https://example.com/schemas/2020-12-with-id",
@@ -149,7 +149,7 @@ TEST(Generator_Resolver, example_2020_12_with_id) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_2020_12_with_id_json) {
+TEST(Resolver, example_2020_12_with_id_json) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-with-id-json.json",
                "https://example.com/schemas/2020-12-with-id-json.json",
@@ -160,7 +160,7 @@ TEST(Generator_Resolver, example_2020_12_with_id_json) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_only_id) {
+TEST(Resolver, example_only_id) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "only-id.json",
                "https://example.com/schemas/only-id.json",
@@ -171,7 +171,7 @@ TEST(Generator_Resolver, example_only_id) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_2020_12_anonymous) {
+TEST(Resolver, example_2020_12_anonymous) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-anonymous.json",
                "https://example.com/schemas/2020-12-anonymous.json",
@@ -182,7 +182,7 @@ TEST(Generator_Resolver, example_2020_12_anonymous) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_2020_12_embedded_resource) {
+TEST(Resolver, example_2020_12_embedded_resource) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-embedded-resource.json",
                "https://example.com/schemas/2020-12-embedded-resource.json",
@@ -204,7 +204,7 @@ TEST(Generator_Resolver, example_2020_12_embedded_resource) {
       resolver("http://localhost:8000/example/string.json").has_value());
 }
 
-TEST(Generator_Resolver, example_2020_12_absolute_ref) {
+TEST(Resolver, example_2020_12_absolute_ref) {
   RESOLVER_INIT(resolver);
 
   // We expect absolute references to be made relative
@@ -218,7 +218,7 @@ TEST(Generator_Resolver, example_2020_12_absolute_ref) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_2020_12_ref_with_casing) {
+TEST(Resolver, example_2020_12_ref_with_casing) {
   RESOLVER_INIT(resolver);
 
   RESOLVER_ADD(resolver, "example", "2020-12-ref-with-casing.json",
@@ -231,7 +231,7 @@ TEST(Generator_Resolver, example_2020_12_ref_with_casing) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_2020_12_id_with_casing) {
+TEST(Resolver, example_2020_12_id_with_casing) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-id-with-casing.json",
                "https://example.com/schemas/2020-12-id-with-casing.json",
@@ -256,7 +256,7 @@ TEST(Generator_Resolver, example_2020_12_id_with_casing) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_2020_12_ref_needs_rebase) {
+TEST(Resolver, example_2020_12_ref_needs_rebase) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-ref-needs-rebase.json",
                "https://example.com/schemas/2020-12-ref-needs-rebase.json",
@@ -268,7 +268,7 @@ TEST(Generator_Resolver, example_2020_12_ref_needs_rebase) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_2020_12_meta) {
+TEST(Resolver, example_2020_12_meta) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2020-12-meta.json",
                "https://example.com/schemas/2020-12-meta.json",
@@ -282,7 +282,7 @@ TEST(Generator_Resolver, example_2020_12_meta) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_2020_12_meta_schema) {
+TEST(Resolver, example_2020_12_meta_schema) {
   RESOLVER_INIT(resolver);
   RESOLVER_COLLECTION_INIT(collection, "example");
   const auto schema_result{
@@ -301,7 +301,7 @@ TEST(Generator_Resolver, example_2020_12_meta_schema) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_2019_09_recursive_ref) {
+TEST(Resolver, example_2019_09_recursive_ref) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2019-09-recursive-ref.json",
                "https://example.com/schemas/2019-09-recursive-ref.json",
@@ -316,7 +316,7 @@ TEST(Generator_Resolver, example_2019_09_recursive_ref) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_draft4_internal_ref) {
+TEST(Resolver, example_draft4_internal_ref) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "draft4-internal-ref.json",
                "https://example.com/schemas/draft4-internal-ref.json",
@@ -333,7 +333,7 @@ TEST(Generator_Resolver, example_draft4_internal_ref) {
   })JSON");
 }
 
-TEST(Generator_Resolver, example_draft4_trailing_hash_with_ref) {
+TEST(Resolver, example_draft4_trailing_hash_with_ref) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(
       resolver, "example", "draft4-trailing-hash-with-ref.json",
@@ -349,7 +349,7 @@ TEST(Generator_Resolver, example_draft4_trailing_hash_with_ref) {
   })JSON");
 }
 
-TEST(Generator_Resolver, meta_draft4_override) {
+TEST(Resolver, meta_draft4_override) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "meta-draft4", "draft4-override.json",
                "http://json-schema.org/draft-04/schema",
