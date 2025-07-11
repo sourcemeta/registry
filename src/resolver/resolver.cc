@@ -1,4 +1,4 @@
-#include <sourcemeta/registry/generator_resolver.h>
+#include <sourcemeta/registry/resolver.h>
 
 #include <sourcemeta/core/yaml.h>
 
@@ -26,24 +26,6 @@ static auto internal_schema_reader(const std::filesystem::path &path)
     -> sourcemeta::core::JSON {
   return is_yaml(path) ? sourcemeta::core::read_yaml(path)
                        : sourcemeta::core::read_json(path);
-}
-
-// The idea is to match the URLs from https://www.learnjsonschema.com
-// so we can provide links to it
-static auto base_dialect_id(const std::string &base_dialect) -> std::string {
-  static const std::regex MODERN(
-      R"(^https://json-schema\.org/draft/(\d{4}-\d{2})/)");
-  static const std::regex LEGACY(R"(^http://json-schema\.org/draft-0?(\d+)/)");
-  std::smatch match;
-  if (std::regex_search(base_dialect, match, MODERN)) {
-    return match[1].str();
-  } else if (std::regex_search(base_dialect, match, LEGACY)) {
-    return "draft" + match[1].str();
-  } else {
-    // We should never get here
-    assert(false);
-    return "unknown";
-  }
 }
 
 namespace sourcemeta::registry {
@@ -114,7 +96,7 @@ auto Resolver::operator()(std::string_view identifier) const
 }
 
 auto Resolver::add(const sourcemeta::core::URI &server_url,
-                   const Collection &collection,
+                   const ResolverCollection &collection,
                    const std::filesystem::path &path)
     -> std::pair<std::string, std::string> {
   const auto default_identifier{collection.default_identifier(path)};
@@ -257,34 +239,6 @@ auto Resolver::materialise(const std::string &uri,
   entry->second.path = std::nullopt;
   entry->second.dialect = std::nullopt;
   entry->second.reference_visitor = nullptr;
-}
-
-auto Resolver::metadata(const std::string &identifier,
-                        const sourcemeta::core::JSON &schema,
-                        const Entry &entry) const -> sourcemeta::core::JSON {
-  auto result{sourcemeta::core::JSON::make_object()};
-  result.assign("id", sourcemeta::core::JSON{identifier});
-  result.assign("url",
-                sourcemeta::core::JSON{"/" + entry.relative_path.string()});
-  const auto base_dialect{sourcemeta::core::base_dialect(schema, *this)};
-  assert(base_dialect.has_value());
-  result.assign("baseDialect",
-                sourcemeta::core::JSON{base_dialect_id(base_dialect.value())});
-  const auto dialect{sourcemeta::core::dialect(schema, base_dialect)};
-  assert(dialect.has_value());
-  result.assign("dialect", sourcemeta::core::JSON{dialect.value()});
-  if (schema.is_object()) {
-    const auto title{schema.try_at("title")};
-    if (title && title->is_string()) {
-      result.assign("title", sourcemeta::core::JSON{title->trim()});
-    }
-    const auto description{schema.try_at("description")};
-    if (description && description->is_string()) {
-      result.assign("description", sourcemeta::core::JSON{description->trim()});
-    }
-  }
-
-  return result;
 }
 
 } // namespace sourcemeta::registry

@@ -2,14 +2,14 @@
 
 #include <vector>
 
-#include <sourcemeta/registry/generator.h>
+#include <sourcemeta/registry/resolver.h>
 
 #define RESOLVER_INIT(name)                                                    \
   sourcemeta::registry::Resolver name;                                         \
   const auto configuration{sourcemeta::core::read_json(CONFIGURATION_PATH)};
 
 #define RESOLVER_COLLECTION_INIT(name, collection_name)                        \
-  const sourcemeta::registry::Collection name{                                 \
+  const sourcemeta::registry::ResolverCollection name{                         \
       std::filesystem::path{CONFIGURATION_PATH}.parent_path(),                 \
       (collection_name), configuration.at("schemas").at(collection_name)};
 

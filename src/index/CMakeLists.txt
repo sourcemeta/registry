@@ -4,7 +4,10 @@ sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index
     "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
+
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::generator)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::resolver)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
 
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::uri)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::json)
@@ -14,7 +17,6 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evaluator)
-target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
   target_compile_definitions(sourcemeta_registry_index 

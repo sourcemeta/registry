@@ -37,6 +37,7 @@ endif()
 
 if(REGISTRY_INDEX)
   add_subdirectory(src/generator)
+  add_subdirectory(src/resolver)
   add_subdirectory(src/index)
 endif()
 
@@ -71,7 +72,7 @@ add_custom_target(jsonschema_lint
 if(REGISTRY_TESTS)
   enable_testing()
   if(REGISTRY_INDEX) 
-    add_subdirectory(test/unit/generator)
+    add_subdirectory(test/unit/resolver)
   endif()
   add_subdirectory(test/cli)
   add_subdirectory(test/schemas)

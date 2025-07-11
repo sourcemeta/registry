@@ -1,32 +1,21 @@
-#ifndef SOURCEMETA_REGISTRY_GENERATOR_RESOLVER_H_
-#define SOURCEMETA_REGISTRY_GENERATOR_RESOLVER_H_
+#ifndef SOURCEMETA_REGISTRY_RESOLVER_H_
+#define SOURCEMETA_REGISTRY_RESOLVER_H_
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/uri.h>
 
-#include <sourcemeta/registry/generator_collection.h>
+#include <sourcemeta/registry/resolver_collection.h>
+#include <sourcemeta/registry/resolver_error.h>
 
-#include <exception>     // std::exception
 #include <filesystem>    // std::filesystem
 #include <optional>      // std::optional
+#include <string>        // std::string
 #include <string_view>   // std::string_view
 #include <unordered_map> // std::unordered_map
 #include <utility>       // std::pair
 
 namespace sourcemeta::registry {
-
-class ResolverOutsideBaseError : public std::exception {
-public:
-  ResolverOutsideBaseError(std::string uri, std::string base);
-  [[nodiscard]] auto what() const noexcept -> const char * override;
-  [[nodiscard]] auto uri() const noexcept -> const std::string &;
-  [[nodiscard]] auto base() const noexcept -> const std::string &;
-
-private:
-  const std::string uri_;
-  const std::string base_;
-};
 
 class Resolver {
 public:
@@ -34,7 +23,8 @@ public:
       -> std::optional<sourcemeta::core::JSON>;
 
   auto add(const sourcemeta::core::URI &server_url,
-           const Collection &collection, const std::filesystem::path &path)
+           const ResolverCollection &collection,
+           const std::filesystem::path &path)
       -> std::pair<std::string, std::string>;
 
   auto materialise(const std::string &uri, const std::filesystem::path &path)
@@ -53,10 +43,6 @@ public:
     std::string original_identifier;
     sourcemeta::core::SchemaVisitorReference reference_visitor;
   };
-
-  auto metadata(const std::string &identifier,
-                const sourcemeta::core::JSON &schema, const Entry &entry) const
-      -> sourcemeta::core::JSON;
 
 private:
   std::unordered_map<std::string, Entry> views;
