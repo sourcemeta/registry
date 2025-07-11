@@ -6,7 +6,6 @@
 #include <sourcemeta/core/uri.h>
 
 #include <sourcemeta/registry/generator_collection.h>
-#include <sourcemeta/registry/generator_configuration.h>
 
 #include <exception>     // std::exception
 #include <filesystem>    // std::filesystem
@@ -34,8 +33,8 @@ public:
   auto operator()(std::string_view identifier) const
       -> std::optional<sourcemeta::core::JSON>;
 
-  auto add(const Configuration &configuration, const Collection &collection,
-           const std::filesystem::path &path)
+  auto add(const sourcemeta::core::URI &server_url,
+           const Collection &collection, const std::filesystem::path &path)
       -> std::pair<std::string, std::string>;
 
   auto materialise(const std::string &uri, const std::filesystem::path &path)

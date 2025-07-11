@@ -7,5 +7,3 @@ target_compile_definitions(sourcemeta_registry_generator_unit
   PRIVATE SCHEMAS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/schemas")
 target_compile_definitions(sourcemeta_registry_generator_unit
   PRIVATE CONFIGURATION_PATH="${CMAKE_CURRENT_SOURCE_DIR}/registry.json")
-target_compile_definitions(sourcemeta_registry_generator_unit
-  PRIVATE CONFIGURATION_SCHEMA_PATH="${PROJECT_SOURCE_DIR}/schemas/configuration.json")
