@@ -73,13 +73,6 @@ public:
     return this->tracker.insert_or_assign(absolute_path, true).first->first;
   }
 
-  auto read_json(const std::filesystem::path &path) const
-      -> sourcemeta::core::JSON {
-    const auto absolute_path{this->resolve(path)};
-    assert(std::filesystem::exists(absolute_path));
-    return sourcemeta::core::read_json(absolute_path);
-  }
-
 private:
   auto resolve(const std::filesystem::path &relative_path) const
       -> std::filesystem::path {

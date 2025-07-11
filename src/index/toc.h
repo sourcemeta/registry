@@ -35,7 +35,6 @@ auto toc(const Configuration &configuration,
          const std::filesystem::path &navigation_base,
          const std::filesystem::path &base,
          const std::filesystem::path &directory) -> sourcemeta::core::JSON {
-  const auto server_url_string{configuration.url().recompose()};
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::core::JSON::make_array()};
 
