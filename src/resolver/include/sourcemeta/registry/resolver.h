@@ -37,7 +37,7 @@ public:
   struct Entry {
     std::optional<std::filesystem::path> cache_path;
     std::optional<std::filesystem::path> path;
-    std::optional<std::string> dialect;
+    std::string dialect;
     std::filesystem::path relative_path;
     // TODO: Do we really need this member?
     std::string original_identifier;
