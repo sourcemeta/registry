@@ -39,6 +39,7 @@ Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/test.json (#1)
 Ingesting: https://sourcemeta.com/example/schemas/test.json
+Bundling: https://sourcemeta.com/example/schemas/test.json
 error: Could not resolve schema reference
   https://sourcemeta.com/example/schemas/test.json#foo
     at schema location "/allOf/0/\$ref"
