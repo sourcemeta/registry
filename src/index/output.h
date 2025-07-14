@@ -17,7 +17,20 @@ public:
   Output(std::filesystem::path path)
       : path_{std::filesystem::weakly_canonical(path)} {
     std::filesystem::create_directories(this->path_);
-    this->index();
+    for (const auto &entry :
+         std::filesystem::recursive_directory_iterator(this->path_)) {
+      if (!entry.is_directory()) {
+        this->tracker.emplace(entry.path(), false);
+      }
+    }
+  }
+
+  ~Output() {
+    for (const auto &entry : this->tracker) {
+      if (!entry.second) {
+        std::filesystem::remove(entry.first);
+      }
+    }
   }
 
   // Just to prevent mistakes
@@ -27,17 +40,6 @@ public:
   Output &operator=(Output &&) = delete;
 
   auto path() const -> const std::filesystem::path & { return this->path_; }
-
-  // TODO: Have a counter part method that will remove any non-marked file
-  auto index() -> void {
-    assert(std::filesystem::exists(this->path_));
-    for (const auto &entry :
-         std::filesystem::recursive_directory_iterator(this->path_)) {
-      if (!entry.is_directory()) {
-        this->tracker.emplace(entry.path(), false);
-      }
-    }
-  }
 
   auto write_json(const std::filesystem::path &path,
                   const sourcemeta::core::JSON &document)
