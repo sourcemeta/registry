@@ -180,8 +180,7 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
           "url", sourcemeta::core::JSON{
                      entry.path().string().substr(base.string().size())});
       entries.push_back(std::move(entry_json));
-    } else if (entry.path().extension() == ".schema" &&
-               !entry.path().stem().string().starts_with(".")) {
+    } else if (entry.path().extension() == ".schema") {
       entry_json.assign("name", sourcemeta::core::JSON{
                                     entry.path().stem().replace_extension("")});
 

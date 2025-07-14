@@ -12,6 +12,8 @@
 ./explorer/pages/doc.html.meta
 ./explorer/pages/doc.nav
 ./explorer/pages/doc.nav.meta
+./explorer/pages/doc/.period.nav
+./explorer/pages/doc/.period.nav.meta
 ./explorer/pages/doc/string-1.nav
 ./explorer/pages/doc/string-1.nav.meta
 ./explorer/pages/example
@@ -113,6 +115,14 @@
 ./explorer/search.jsonl.meta
 ./schemas
 ./schemas/doc
+./schemas/doc/.period.json.blaze-exhaustive
+./schemas/doc/.period.json.blaze-exhaustive.meta
+./schemas/doc/.period.json.bundle
+./schemas/doc/.period.json.bundle.meta
+./schemas/doc/.period.json.schema
+./schemas/doc/.period.json.schema.meta
+./schemas/doc/.period.json.unidentified
+./schemas/doc/.period.json.unidentified.meta
 ./schemas/doc/string-1.json.blaze-exhaustive
 ./schemas/doc/string-1.json.blaze-exhaustive.meta
 ./schemas/doc/string-1.json.bundle
