@@ -22,11 +22,51 @@
 #include <utility>     // std::move
 #include <vector>      // std::vector
 
-static auto preindex(const sourcemeta::core::JSON &configuration,
-                     const std::filesystem::path &configuration_path,
-                     sourcemeta::registry::Output &output,
-                     sourcemeta::registry::Resolver &resolver,
-                     sourcemeta::registry::Validator &validator) -> bool {
+static auto index_main(const std::string_view &program,
+                       const std::span<const std::string> &arguments) -> int {
+  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
+#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
+  std::cout << " Enterprise ";
+#elif defined(SOURCEMETA_REGISTRY_PRO)
+  std::cout << " Pro ";
+#else
+  std::cout << " Starter ";
+#endif
+  std::cout << "Edition\n";
+
+  if (arguments.size() < 2) {
+    std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
+              << " <registry.json> <path/to/output/directory>\n";
+    return EXIT_FAILURE;
+  }
+
+  // Prepare the output directory
+  sourcemeta::registry::Output output{arguments[1]};
+  std::cerr << "Writing output to: " << output.path().string() << "\n";
+
+  // --------------------------------------------
+  // (1) Process the configuration file
+  // --------------------------------------------
+
+  // Read and validate the configuration file
+  sourcemeta::registry::Resolver resolver;
+  sourcemeta::registry::Validator validator{resolver};
+  const auto configuration_path{std::filesystem::canonical(arguments[0])};
+  std::cerr << "Using configuration: " << configuration_path.string() << "\n";
+  const auto configuration_schema{sourcemeta::core::parse_json(
+      std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
+  auto configuration{sourcemeta::core::read_json(configuration_path)};
+  validator.validate_or_throw(configuration_schema, configuration,
+                              "Invalid configuration");
+  if (configuration.is_object()) {
+    configuration.assign_if_missing(
+        "title",
+        configuration_schema.at("properties").at("title").at("default"));
+    configuration.assign_if_missing(
+        "description",
+        configuration_schema.at("properties").at("description").at("default"));
+  }
+
   output.write_json(
       "configuration.json",
       sourcemeta::registry::GENERATE_SERVER_CONFIGURATION(configuration));
@@ -58,7 +98,7 @@ static auto preindex(const sourcemeta::core::JSON &configuration,
                   << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO << " schemas\n";
         std::cerr << "Upgrade to the Enterprise edition to waive limits\n";
         std::cerr << "Buy a new license at https://www.sourcemeta.com\n";
-        return false;
+        return EXIT_FAILURE;
       }
 #elif defined(SOURCEMETA_REGISTRY_STARTER)
       constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER{100};
@@ -67,7 +107,7 @@ static auto preindex(const sourcemeta::core::JSON &configuration,
                   << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER << " schemas\n";
         std::cerr << "Buy a Pro or Enterprise license at "
                      "https://www.sourcemeta.com\n";
-        return false;
+        return EXIT_FAILURE;
       }
 #endif
 
@@ -155,59 +195,6 @@ static auto preindex(const sourcemeta::core::JSON &configuration,
                         sourcemeta::registry::GENERATE_META(
                             output.path() / relative_path, "application/json"));
     }
-  }
-
-  return true;
-}
-
-static auto index_main(const std::string_view &program,
-                       const std::span<const std::string> &arguments) -> int {
-  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
-#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
-  std::cout << " Enterprise ";
-#elif defined(SOURCEMETA_REGISTRY_PRO)
-  std::cout << " Pro ";
-#else
-  std::cout << " Starter ";
-#endif
-  std::cout << "Edition\n";
-
-  if (arguments.size() < 2) {
-    std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
-              << " <registry.json> <path/to/output/directory>\n";
-    return EXIT_FAILURE;
-  }
-
-  // Prepare the output directory
-  sourcemeta::registry::Output output{arguments[1]};
-  std::cerr << "Writing output to: " << output.path().string() << "\n";
-
-  // --------------------------------------------
-  // (1) Process the configuration file
-  // --------------------------------------------
-
-  // Read and validate the configuration file
-  sourcemeta::registry::Resolver resolver;
-  sourcemeta::registry::Validator validator{resolver};
-  const auto configuration_path{std::filesystem::canonical(arguments[0])};
-  std::cerr << "Using configuration: " << configuration_path.string() << "\n";
-  const auto configuration_schema{sourcemeta::core::parse_json(
-      std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
-  auto configuration{sourcemeta::core::read_json(configuration_path)};
-  validator.validate_or_throw(configuration_schema, configuration,
-                              "Invalid configuration");
-  if (configuration.is_object()) {
-    configuration.assign_if_missing(
-        "title",
-        configuration_schema.at("properties").at("title").at("default"));
-    configuration.assign_if_missing(
-        "description",
-        configuration_schema.at("properties").at("description").at("default"));
-  }
-
-  if (!preindex(configuration, configuration_path, output, resolver,
-                validator)) {
-    return EXIT_FAILURE;
   }
 
   for (const auto &schema : resolver) {
