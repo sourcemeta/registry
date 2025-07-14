@@ -184,3 +184,11 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/example/schemas/index.html.json"
 }
+
+GET {{base}}/doc/.period.json
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/doc/.period.json",
+  "type": "string"
+}

@@ -40,11 +40,10 @@ static auto preindex(const sourcemeta::core::JSON &configuration,
         schema_entry.second};
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection.path}) {
-      const auto is_schema_file{entry.path().extension() == ".yaml" ||
-                                entry.path().extension() == ".yml" ||
-                                entry.path().extension() == ".json"};
-      if (!entry.is_regular_file() || !is_schema_file ||
-          entry.path().stem().string().starts_with(".")) {
+      const auto extension{entry.path().extension()};
+      const auto is_schema_file{extension == ".yaml" || extension == ".yml" ||
+                                extension == ".json"};
+      if (!entry.is_regular_file() || !is_schema_file) {
         continue;
       }
 
