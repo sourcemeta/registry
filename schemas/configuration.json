@@ -28,18 +28,8 @@
       },
       "additionalProperties": false
     },
-    "analytics": {
-      "type": "object",
-      "minProperties": 1,
-      "properties": {
-        "plausible": {
-          "type": "string"
-        },
-        "telemetrydeck": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false
+    "head": {
+      "type": "string"
     },
     "hero": {
       "type": "string"

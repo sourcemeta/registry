@@ -92,58 +92,6 @@
       }
     },
     {
-      "description": "analytics with plausible",
-      "valid": true,
-      "data": {
-        "url": "https://www.example.com",
-        "port": 8000,
-        "analytics": {
-          "plausible": "example.com"
-        },
-        "schemas": {
-          "example": {
-            "base": "https://schemas.example.com",
-            "path": "./schemas"
-          }
-        }
-      }
-    },
-    {
-      "description": "analytics with telemetrydeck",
-      "valid": true,
-      "data": {
-        "url": "https://www.example.com",
-        "port": 8000,
-        "analytics": {
-          "telemetrydeck": "abcdefgh-abcd-abcd-abcd-abcdefghijkl"
-        },
-        "schemas": {
-          "example": {
-            "base": "https://schemas.example.com",
-            "path": "./schemas"
-          }
-        }
-      }
-    },
-    {
-      "description": "analytics with multiple providers at the same time",
-      "valid": true,
-      "data": {
-        "url": "https://www.example.com",
-        "port": 8000,
-        "analytics": {
-          "plausible": "example.com",
-          "telemetrydeck": "abcdefgh-abcd-abcd-abcd-abcdefghijkl"
-        },
-        "schemas": {
-          "example": {
-            "base": "https://schemas.example.com",
-            "path": "./schemas"
-          }
-        }
-      }
-    },
-    {
       "description": "with default dialect",
       "valid": true,
       "data": {

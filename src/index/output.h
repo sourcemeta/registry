@@ -7,6 +7,7 @@
 #include <cassert>       // assert
 #include <filesystem>    // std::filesystem
 #include <fstream>       // std::ofstream
+#include <string_view>   // std::string_view
 #include <unordered_map> // std::unordered_map
 
 namespace sourcemeta::registry {
@@ -73,11 +74,15 @@ public:
     return this->tracker.insert_or_assign(absolute_path, true).first->first;
   }
 
-  auto read_json(const std::filesystem::path &path) const
-      -> sourcemeta::core::JSON {
+  auto write_text(const std::filesystem::path &path,
+                  const std::string_view contents)
+      -> const std::filesystem::path & {
     const auto absolute_path{this->resolve(path)};
-    assert(std::filesystem::exists(absolute_path));
-    return sourcemeta::core::read_json(absolute_path);
+    std::filesystem::create_directories(absolute_path.parent_path());
+    auto stream{this->open(absolute_path)};
+    stream << contents;
+    stream << "\n";
+    return this->tracker.insert_or_assign(absolute_path, true).first->first;
   }
 
 private:
