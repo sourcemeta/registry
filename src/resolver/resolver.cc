@@ -30,69 +30,45 @@ static auto internal_schema_reader(const std::filesystem::path &path)
 
 namespace sourcemeta::registry {
 
-ResolverOutsideBaseError::ResolverOutsideBaseError(std::string uri,
-                                                   std::string base)
-    : uri_{std::move(uri)}, base_{std::move(base)} {}
-
-auto ResolverOutsideBaseError::what() const noexcept -> const char * {
-  return "The schema identifier is not relative to the corresponding base";
-}
-
-auto ResolverOutsideBaseError::uri() const noexcept -> const std::string & {
-  return this->uri_;
-}
-
-auto ResolverOutsideBaseError::base() const noexcept -> const std::string & {
-  return this->base_;
-}
-
 auto Resolver::operator()(std::string_view identifier) const
     -> std::optional<sourcemeta::core::JSON> {
+  // (1) Locate the schema entry
   const std::string string_identifier{to_lowercase(identifier)};
-
   auto result{this->views.find(string_identifier)};
   if (result == this->views.cend() && !identifier.ends_with(".json")) {
-    sourcemeta::core::URI uri_identifier{string_identifier};
     // Try with a `.json` extension as a fallback, as we do add this
     // extension when a schema doesn't have it by default
-    uri_identifier.extension("json");
-    result = this->views.find(uri_identifier.recompose());
+    result = this->views.find(string_identifier + ".json");
   }
 
-  if (result != this->views.cend()) {
-    if (result->second.cache_path.has_value()) {
-      return sourcemeta::core::read_json(result->second.cache_path.value());
-    } else if (!result->second.path.has_value()) {
-      return std::nullopt;
-    }
-
-    auto schema{internal_schema_reader(result->second.path.value())};
-    assert(sourcemeta::core::is_schema(schema));
-    if (schema.is_object() && result->second.dialect.has_value()) {
-      // Don't modify references to official meta-schemas
-      const auto current{sourcemeta::core::dialect(schema)};
-      if (!current.has_value() ||
-          !sourcemeta::core::schema_official_resolver(current.value())
-               .has_value()) {
-        schema.assign("$schema",
-                      sourcemeta::core::JSON{result->second.dialect.value()});
-      }
-    }
-
-    // TODO: Extract the idea of a reference visitor into this project
-    // Because we allow re-identification, we can get into issues unless we
-    // always try to relativize references
-    sourcemeta::core::reference_visit(
-        schema, sourcemeta::core::schema_official_walker, *this,
-        result->second.reference_visitor, result->second.dialect,
-        result->second.original_identifier);
-    sourcemeta::core::reidentify(schema, result->first, *this,
-                                 result->second.dialect);
-
-    return schema;
+  if (result == this->views.cend()) {
+    return sourcemeta::core::schema_official_resolver(identifier);
+  } else if (result->second.cache_path.has_value()) {
+    return sourcemeta::core::read_json(result->second.cache_path.value());
+  } else if (!result->second.path.has_value()) {
+    return std::nullopt;
   }
 
-  return sourcemeta::core::schema_official_resolver(identifier);
+  // (2) Read the schema file
+  auto schema{internal_schema_reader(result->second.path.value())};
+  assert(sourcemeta::core::is_schema(schema));
+  if (schema.is_object()) {
+    schema.assign("$schema", sourcemeta::core::JSON{result->second.dialect});
+  }
+
+  // (3) Rephrase references
+  // TODO: Extract the idea of a reference visitor into this project
+  // Because we allow re-identification, we can get into issues unless we
+  // always try to relativize references
+  sourcemeta::core::reference_visit(
+      schema, sourcemeta::core::schema_official_walker, *this,
+      result->second.reference_visitor, result->second.dialect,
+      result->second.original_identifier);
+
+  // (4) Add the desired identifier to the schema
+  sourcemeta::core::reidentify(schema, result->first, *this,
+                               result->second.dialect);
+  return schema;
 }
 
 auto Resolver::add(const sourcemeta::core::URI &server_url,
@@ -100,7 +76,6 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
                    const std::filesystem::path &path)
     -> std::pair<std::string, std::string> {
   const auto default_identifier{collection.default_identifier(path)};
-
   const auto canonical{std::filesystem::weakly_canonical(path)};
   const auto schema{internal_schema_reader(canonical)};
   assert(sourcemeta::core::is_schema(schema));
@@ -138,7 +113,8 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
 
   auto result{this->views.emplace(
       effective_identifier,
-      Entry{std::nullopt, canonical, current_dialect, "", effective_identifier,
+      Entry{std::nullopt, canonical, current_dialect.value(), "",
+            effective_identifier,
             // TODO: We should avoid this vector / string copy
             [rebases = collection.rebase](
                 sourcemeta::core::JSON &subschema,
@@ -237,7 +213,6 @@ auto Resolver::materialise(const std::string &uri,
   assert(!entry->second.cache_path.has_value());
   entry->second.cache_path = path;
   entry->second.path = std::nullopt;
-  entry->second.dialect = std::nullopt;
   entry->second.reference_visitor = nullptr;
 }
 
