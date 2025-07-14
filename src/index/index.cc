@@ -22,6 +22,145 @@
 #include <utility>     // std::move
 #include <vector>      // std::vector
 
+static auto preindex(const sourcemeta::core::JSON &configuration,
+                     const std::filesystem::path &configuration_path,
+                     sourcemeta::registry::Output &output,
+                     sourcemeta::registry::Resolver &resolver,
+                     sourcemeta::registry::Validator &validator) -> bool {
+  output.write_json(
+      "configuration.json",
+      sourcemeta::registry::GENERATE_SERVER_CONFIGURATION(configuration));
+
+  const auto server_url{
+      sourcemeta::core::URI{configuration.at("url").to_string()}
+          .canonicalize()};
+  for (const auto &schema_entry : configuration.at("schemas").as_object()) {
+    const sourcemeta::registry::ResolverCollection collection{
+        configuration_path.parent_path(), schema_entry.first,
+        schema_entry.second};
+    for (const auto &entry :
+         std::filesystem::recursive_directory_iterator{collection.path}) {
+      const auto is_schema_file{entry.path().extension() == ".yaml" ||
+                                entry.path().extension() == ".yml" ||
+                                entry.path().extension() == ".json"};
+      if (!entry.is_regular_file() || !is_schema_file ||
+          entry.path().stem().string().starts_with(".")) {
+        continue;
+      }
+
+      std::cerr << "Detecting: " << entry.path().string() << " (#"
+                << resolver.size() + 1 << ")\n";
+
+      // See https://github.com/sourcemeta/registry/blob/main/LICENSE
+#if defined(SOURCEMETA_REGISTRY_PRO)
+      constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO{1000};
+      if (resolver.size() >= SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO) {
+        std::cerr << "error: The Pro edition is restricted to "
+                  << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO << " schemas\n";
+        std::cerr << "Upgrade to the Enterprise edition to waive limits\n";
+        std::cerr << "Buy a new license at https://www.sourcemeta.com\n";
+        return false;
+      }
+#elif defined(SOURCEMETA_REGISTRY_STARTER)
+      constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER{100};
+      if (resolver.size() >= SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER) {
+        std::cerr << "error: The Starter edition is restricted to "
+                  << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER << " schemas\n";
+        std::cerr << "Buy a Pro or Enterprise license at "
+                     "https://www.sourcemeta.com\n";
+        return false;
+      }
+#endif
+
+      resolver.add(server_url, collection, entry.path());
+    }
+  }
+
+  for (const auto &schema : resolver) {
+    std::cerr << "Ingesting: " << schema.first << "\n";
+    const auto subresult{resolver(schema.first)};
+    assert(subresult.has_value());
+    const auto dialect_identifier{sourcemeta::core::dialect(subresult.value())};
+    assert(dialect_identifier.has_value());
+    const auto metaschema{resolver(dialect_identifier.value())};
+    assert(metaschema.has_value());
+    validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
+                                subresult.value(),
+                                "The schema does not adhere to its metaschema");
+    const auto base_path{std::filesystem::path{"schemas"} /
+                         schema.second.relative_path};
+    const auto destination{output.write_jsonschema(
+        base_path.string() + ".schema", subresult.value())};
+    output.write_json(base_path.string() + ".schema.meta",
+                      sourcemeta::registry::GENERATE_SCHEMA_META(
+                          output.path() / (base_path.string() + ".schema"),
+                          output.path() / (base_path.string() + ".schema")));
+    resolver.materialise(schema.first, destination);
+  }
+
+  // TODO: We only need to bundle on the pre-index because we use
+  // this step as a proxy for resolving schema dependencies. We should
+  // instead pre-generate dependencies between schemas as separate JSON files?
+  for (const auto &schema : resolver) {
+    std::cerr << "Bundling: " << schema.first << "\n";
+    const auto base_path{std::filesystem::path{"schemas"} /
+                         schema.second.relative_path};
+    output.write_jsonschema(
+        base_path.string() + ".bundle",
+        sourcemeta::registry::GENERATE_BUNDLE(
+            resolver, output.path() / (base_path.string() + ".schema")));
+    output.write_json(base_path.string() + ".bundle.meta",
+                      sourcemeta::registry::GENERATE_SCHEMA_META(
+                          output.path() / (base_path.string() + ".bundle"),
+                          output.path() / (base_path.string() + ".schema")));
+  }
+
+  for (const auto &schema : resolver) {
+    auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
+                         schema.second.relative_path};
+    schema_nav_path.replace_extension("nav");
+    output.write_json(
+        schema_nav_path,
+        sourcemeta::registry::GENERATE_NAV_SCHEMA(
+            configuration, resolver,
+            output.path() / "schemas" /
+                (schema.second.relative_path.string() + ".schema"),
+            schema.second.relative_path));
+    output.write_json(schema_nav_path.string() + ".meta",
+                      sourcemeta::registry::GENERATE_META(
+                          output.path() / schema_nav_path, "application/json"));
+  }
+
+  const auto base{output.path() / "schemas"};
+  const auto navigation_base{output.path() / "explorer" / "pages"};
+  output.write_json(std::filesystem::path{"explorer"} / "pages.nav",
+                    sourcemeta::registry::GENERATE_NAV_DIRECTORY(
+                        configuration, navigation_base, base, base));
+  output.write_json(
+      std::filesystem::path{"explorer"} / "pages.nav.meta",
+      sourcemeta::registry::GENERATE_META(
+          output.path() / std::filesystem::path{"explorer"} / "pages.nav",
+          "application/json"));
+
+  for (const auto &entry :
+       std::filesystem::recursive_directory_iterator{base}) {
+    if (entry.is_directory()) {
+      auto relative_path{
+          std::filesystem::path{"explorer"} / std::filesystem::path{"pages"} /
+          (std::filesystem::relative(entry.path(), base).string() + ".nav")};
+      output.write_json(
+          relative_path,
+          sourcemeta::registry::GENERATE_NAV_DIRECTORY(
+              configuration, navigation_base, base, entry.path()));
+      output.write_json(relative_path.string() + ".meta",
+                        sourcemeta::registry::GENERATE_META(
+                            output.path() / relative_path, "application/json"));
+    }
+  }
+
+  return true;
+}
+
 static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
@@ -67,95 +206,15 @@ static auto index_main(const std::string_view &program,
         configuration_schema.at("properties").at("description").at("default"));
   }
 
-  output.write_json(
-      "configuration.json",
-      sourcemeta::registry::GENERATE_SERVER_CONFIGURATION(configuration));
-
-  // --------------------------------------------
-  // (2) Populate the schema resolver
-  // --------------------------------------------
-
-  const auto server_url{
-      sourcemeta::core::URI{configuration.at("url").to_string()}
-          .canonicalize()};
-  for (const auto &schema_entry : configuration.at("schemas").as_object()) {
-    const sourcemeta::registry::ResolverCollection collection{
-        configuration_path.parent_path(), schema_entry.first,
-        schema_entry.second};
-    for (const auto &entry :
-         std::filesystem::recursive_directory_iterator{collection.path}) {
-      const auto is_schema_file{entry.path().extension() == ".yaml" ||
-                                entry.path().extension() == ".yml" ||
-                                entry.path().extension() == ".json"};
-      if (!entry.is_regular_file() || !is_schema_file ||
-          entry.path().stem().string().starts_with(".")) {
-        continue;
-      }
-
-      std::cerr << "Detecting: " << entry.path().string() << " (#"
-                << resolver.size() + 1 << ")\n";
-
-      // See https://github.com/sourcemeta/registry/blob/main/LICENSE
-#if defined(SOURCEMETA_REGISTRY_PRO)
-      constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO{1000};
-      if (resolver.size() >= SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO) {
-        std::cerr << "error: The Pro edition is restricted to "
-                  << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO << " schemas\n";
-        std::cerr << "Upgrade to the Enterprise edition to waive limits\n";
-        std::cerr << "Buy a new license at https://www.sourcemeta.com\n";
-        return EXIT_FAILURE;
-      }
-#elif defined(SOURCEMETA_REGISTRY_STARTER)
-      constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER{100};
-      if (resolver.size() >= SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER) {
-        std::cerr << "error: The Starter edition is restricted to "
-                  << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER << " schemas\n";
-        std::cerr << "Buy a Pro or Enterprise license at "
-                     "https://www.sourcemeta.com\n";
-        return EXIT_FAILURE;
-      }
-#endif
-
-      resolver.add(server_url, collection, entry.path());
-    }
+  if (!preindex(configuration, configuration_path, output, resolver,
+                validator)) {
+    return EXIT_FAILURE;
   }
 
-  // --------------------------------------------
-  // (3) Generate schema artefacts
-  // --------------------------------------------
-
-  // TODO: We could parallelize this loop
   for (const auto &schema : resolver) {
-    std::cerr << "Ingesting: " << schema.first << "\n";
-    const auto subresult{resolver(schema.first)};
-    assert(subresult.has_value());
-    const auto dialect_identifier{sourcemeta::core::dialect(subresult.value())};
-    assert(dialect_identifier.has_value());
-    const auto metaschema{resolver(dialect_identifier.value())};
-    assert(metaschema.has_value());
-    validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
-                                subresult.value(),
-                                "The schema does not adhere to its metaschema");
+    std::cerr << "Processing: " << schema.first << "\n";
     const auto base_path{std::filesystem::path{"schemas"} /
                          schema.second.relative_path};
-    const auto destination{output.write_jsonschema(
-        base_path.string() + ".schema", subresult.value())};
-    output.write_json(base_path.string() + ".schema.meta",
-                      sourcemeta::registry::GENERATE_SCHEMA_META(
-                          output.path() / (base_path.string() + ".schema"),
-                          output.path() / (base_path.string() + ".schema")));
-
-    resolver.materialise(schema.first, destination);
-
-    // Storing artefacts
-
-    output.write_jsonschema(
-        base_path.string() + ".bundle",
-        sourcemeta::registry::GENERATE_BUNDLE(resolver, destination));
-    output.write_json(base_path.string() + ".bundle.meta",
-                      sourcemeta::registry::GENERATE_SCHEMA_META(
-                          output.path() / (base_path.string() + ".bundle"),
-                          output.path() / (base_path.string() + ".schema")));
 
     output.write_json(base_path.string() + ".blaze-exhaustive",
                       sourcemeta::registry::GENERATE_BLAZE_TEMPLATE(
@@ -177,53 +236,10 @@ static auto index_main(const std::string_view &program,
         sourcemeta::registry::GENERATE_SCHEMA_META(
             output.path() / (base_path.string() + ".unidentified"),
             output.path() / (base_path.string() + ".schema")));
-
-    auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
-                         schema.second.relative_path};
-    schema_nav_path.replace_extension("nav");
-    output.write_json(
-        schema_nav_path,
-        sourcemeta::registry::GENERATE_NAV_SCHEMA(
-            configuration, resolver,
-            output.path() / "schemas" /
-                (schema.second.relative_path.string() + ".schema"),
-            schema.second.relative_path));
-    output.write_json(schema_nav_path.string() + ".meta",
-                      sourcemeta::registry::GENERATE_META(
-                          output.path() / schema_nav_path, "application/json"));
   }
 
-  std::cerr << "Generating registry navigation...\n";
+  std::cerr << "Generating registry search index\n";
 
-  const auto base{output.path() / "schemas"};
-  const auto navigation_base{output.path() / "explorer" / "pages"};
-
-  output.write_json(std::filesystem::path{"explorer"} / "pages.nav",
-                    sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-                        configuration, navigation_base, base, base));
-  output.write_json(
-      std::filesystem::path{"explorer"} / "pages.nav.meta",
-      sourcemeta::registry::GENERATE_META(
-          output.path() / std::filesystem::path{"explorer"} / "pages.nav",
-          "application/json"));
-
-  for (const auto &entry :
-       std::filesystem::recursive_directory_iterator{base}) {
-    if (entry.is_directory()) {
-      auto relative_path{
-          std::filesystem::path{"explorer"} / std::filesystem::path{"pages"} /
-          (std::filesystem::relative(entry.path(), base).string() + ".nav")};
-      output.write_json(
-          relative_path,
-          sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-              configuration, navigation_base, base, entry.path()));
-      output.write_json(relative_path.string() + ".meta",
-                        sourcemeta::registry::GENERATE_META(
-                            output.path() / relative_path, "application/json"));
-    }
-  }
-
-  std::cerr << "Generating registry search index...\n";
   std::vector<std::filesystem::path> navs;
   navs.reserve(resolver.size());
   for (const auto &schema : resolver) {
@@ -242,7 +258,7 @@ static auto index_main(const std::string_view &program,
           output.path() / std::filesystem::path{"explorer"} / "search.jsonl",
           "application/jsonl"));
 
-  std::cerr << "Generating registry explorer...\n";
+  std::cerr << "Generating registry explorer\n";
 
   const auto explorer_base{output.path() / "explorer" / "pages"};
   for (const auto &entry :
