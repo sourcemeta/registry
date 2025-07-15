@@ -41,6 +41,7 @@ public:
     std::filesystem::path relative_path;
     // TODO: Do we really need this member?
     std::string original_identifier;
+    std::string collection_name;
     sourcemeta::core::SchemaVisitorReference reference_visitor;
   };
 
