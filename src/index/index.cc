@@ -9,6 +9,7 @@
 #include "html_partials.h"
 #include "html_safe.h"
 #include "output.h"
+#include "parallel.h"
 #include "validator.h"
 
 #include <cassert>     // assert
@@ -146,43 +147,53 @@ static auto index_main(const std::string_view &program,
     resolver.materialise(schema.first, destination);
   }
 
-  for (const auto &schema : resolver) {
-    std::cerr << "Analysing: " << schema.first << "\n";
-    const auto base_path{std::filesystem::path{"schemas"} /
-                         schema.second.relative_path};
-    output.write_jsonschema(
-        base_path.string() + ".bundle",
-        sourcemeta::registry::GENERATE_BUNDLE(
-            resolver, output.path() / (base_path.string() + ".schema")));
-    output.write_json(base_path.string() + ".bundle.meta",
-                      sourcemeta::registry::GENERATE_SCHEMA_META(
-                          output.path() / (base_path.string() + ".bundle"),
-                          output.path() / (base_path.string() + ".schema")));
+  sourcemeta::registry::parallel_for_each(
+      resolver.begin(), resolver.end(),
+      [](const auto id, const auto threads, const auto &schema) {
+        std::cerr << "Analysing: " << schema.first << " [" << id << "/"
+                  << threads << "]\n";
+      },
+      [&output, &resolver, &configuration](const auto &schema) {
+        const auto base_path{std::filesystem::path{"schemas"} /
+                             schema.second.relative_path};
+        output.write_jsonschema(
+            base_path.string() + ".bundle",
+            sourcemeta::registry::GENERATE_BUNDLE(
+                resolver, output.path() / (base_path.string() + ".schema")));
+        output.write_json(
+            base_path.string() + ".bundle.meta",
+            sourcemeta::registry::GENERATE_SCHEMA_META(
+                output.path() / (base_path.string() + ".bundle"),
+                output.path() / (base_path.string() + ".schema")));
 
-    if (attribute(configuration, schema.second.collection_name,
-                  "x-sourcemeta-registry:blaze-exhaustive")) {
-      output.write_json(base_path.string() + ".blaze-exhaustive",
-                        sourcemeta::registry::GENERATE_BLAZE_TEMPLATE(
-                            resolver,
-                            output.path() / (base_path.string() + ".bundle"),
-                            sourcemeta::blaze::Mode::Exhaustive));
-      output.write_json(
-          base_path.string() + ".blaze-exhaustive.meta",
-          sourcemeta::registry::GENERATE_SCHEMA_META(
-              output.path() / (base_path.string() + ".blaze-exhaustive"),
-              output.path() / (base_path.string() + ".schema")));
-    }
+        if (attribute(configuration, schema.second.collection_name,
+                      "x-sourcemeta-registry:blaze-exhaustive")) {
+          output.write_json(
+              base_path.string() + ".blaze-exhaustive",
+              sourcemeta::registry::GENERATE_BLAZE_TEMPLATE(
+                  output.path() / (base_path.string() + ".bundle"),
+                  sourcemeta::blaze::Mode::Exhaustive));
+          output.write_json(
+              base_path.string() + ".blaze-exhaustive.meta",
+              sourcemeta::registry::GENERATE_SCHEMA_META(
+                  output.path() / (base_path.string() + ".blaze-exhaustive"),
+                  output.path() / (base_path.string() + ".schema")));
+        }
 
-    output.write_jsonschema(
-        base_path.string() + ".unidentified",
-        sourcemeta::registry::GENERATE_UNIDENTIFIED(
-            resolver, output.path() / (base_path.string() + ".bundle")));
-    output.write_json(
-        base_path.string() + ".unidentified.meta",
-        sourcemeta::registry::GENERATE_SCHEMA_META(
-            output.path() / (base_path.string() + ".unidentified"),
-            output.path() / (base_path.string() + ".schema")));
-  }
+        output.write_jsonschema(
+            base_path.string() + ".unidentified",
+            sourcemeta::registry::GENERATE_UNIDENTIFIED(
+                resolver, output.path() / (base_path.string() + ".bundle")));
+        output.write_json(
+            base_path.string() + ".unidentified.meta",
+            sourcemeta::registry::GENERATE_SCHEMA_META(
+                output.path() / (base_path.string() + ".unidentified"),
+                output.path() / (base_path.string() + ".schema")));
+      },
+
+      // Give it a generous thread stack size, otherwise we might overflow
+      // the small-by-default thread stack with Blaze
+      8 * 1024 * 1024);
 
   std::cerr << "Generating registry explorer\n";
 

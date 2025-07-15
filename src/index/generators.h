@@ -86,18 +86,14 @@ auto GENERATE_UNIDENTIFIED(const sourcemeta::core::SchemaResolver &resolver,
   return schema;
 }
 
-auto GENERATE_BLAZE_TEMPLATE(const sourcemeta::core::SchemaResolver &resolver,
-                             const std::filesystem::path &absolute_path,
+auto GENERATE_BLAZE_TEMPLATE(const std::filesystem::path &absolute_path,
                              const sourcemeta::blaze::Mode mode)
     -> sourcemeta::core::JSON {
   const auto schema{sourcemeta::core::read_json(absolute_path)};
-  // TODO: Ideally we can store the frame and load it back as needed
-  sourcemeta::core::SchemaFrame frame{
-      sourcemeta::core::SchemaFrame::Mode::References};
-  frame.analyse(schema, sourcemeta::core::schema_official_walker, resolver);
   const auto schema_template{sourcemeta::blaze::compile(
-      schema, sourcemeta::core::schema_official_walker, resolver,
-      sourcemeta::blaze::default_schema_compiler, frame, mode)};
+      schema, sourcemeta::core::schema_official_walker,
+      sourcemeta::core::schema_official_resolver,
+      sourcemeta::blaze::default_schema_compiler, mode)};
   return sourcemeta::blaze::to_json(schema_template);
 }
 

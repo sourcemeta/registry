@@ -107,7 +107,7 @@ public-prepare: \
 	$(patsubst vendor/public/geojson-1-0-1/src/schema/%.js,$(OUTPUT)/geojson-1-0-1/%.json,$(wildcard vendor/public/geojson-1-0-1/src/schema/*.js)) \
 	$(patsubst vendor/public/geojson-1-0-0/src/schema/%.js,$(OUTPUT)/geojson-1-0-0/%.json,$(wildcard vendor/public/geojson-1-0-0/src/schema/*.js))
 .PHONY: public
-public:
+public: public-prepare
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-index $(PUBLIC)/registry.json $(OUTPUT)/public
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
