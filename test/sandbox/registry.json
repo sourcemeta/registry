@@ -57,6 +57,11 @@
     "same": {
       "base": "http://localhost:8000/same",
       "path": "./schemas/same"
+    },
+    "no-blaze": {
+      "base": "https://other.com",
+      "path": "./schemas/no-blaze",
+      "x-sourcemeta-registry:blaze-exhaustive": false
     }
   }
 }

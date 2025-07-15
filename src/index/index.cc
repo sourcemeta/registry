@@ -22,6 +22,15 @@
 #include <utility>     // std::move
 #include <vector>      // std::vector
 
+static auto attribute(const sourcemeta::core::JSON &configuration,
+                      const sourcemeta::core::JSON::String &collection,
+                      const sourcemeta::core::JSON::String &name) -> bool {
+  return configuration.at("schemas")
+      .at(collection)
+      .at_or(name, sourcemeta::core::JSON{true})
+      .to_boolean();
+}
+
 static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
@@ -202,16 +211,19 @@ static auto index_main(const std::string_view &program,
     const auto base_path{std::filesystem::path{"schemas"} /
                          schema.second.relative_path};
 
-    output.write_json(base_path.string() + ".blaze-exhaustive",
-                      sourcemeta::registry::GENERATE_BLAZE_TEMPLATE(
-                          resolver,
-                          output.path() / (base_path.string() + ".bundle"),
-                          sourcemeta::blaze::Mode::Exhaustive));
-    output.write_json(
-        base_path.string() + ".blaze-exhaustive.meta",
-        sourcemeta::registry::GENERATE_SCHEMA_META(
-            output.path() / (base_path.string() + ".blaze-exhaustive"),
-            output.path() / (base_path.string() + ".schema")));
+    if (attribute(configuration, schema.second.collection_name,
+                  "x-sourcemeta-registry:blaze-exhaustive")) {
+      output.write_json(base_path.string() + ".blaze-exhaustive",
+                        sourcemeta::registry::GENERATE_BLAZE_TEMPLATE(
+                            resolver,
+                            output.path() / (base_path.string() + ".bundle"),
+                            sourcemeta::blaze::Mode::Exhaustive));
+      output.write_json(
+          base_path.string() + ".blaze-exhaustive.meta",
+          sourcemeta::registry::GENERATE_SCHEMA_META(
+              output.path() / (base_path.string() + ".blaze-exhaustive"),
+              output.path() / (base_path.string() + ".schema")));
+    }
 
     output.write_jsonschema(
         base_path.string() + ".unidentified",

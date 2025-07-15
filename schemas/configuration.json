@@ -109,6 +109,9 @@
               },
               "additionalProperties": false
             }
+          },
+          "x-sourcemeta-registry:blaze-exhaustive": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

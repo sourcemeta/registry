@@ -288,9 +288,18 @@ static auto on_request(const std::filesystem::path &base,
       auto template_path{base / "schemas" /
                          (lowercase_path + ".blaze-exhaustive")};
       if (!std::filesystem::exists(template_path)) {
-        json_error(request->getMethod(), request->getUrl(), response, encoding,
-                   sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
-                   "There is nothing at this URL");
+        template_path.replace_extension(".schema");
+        if (std::filesystem::exists(template_path)) {
+          json_error(request->getMethod(), request->getUrl(), response,
+                     encoding, sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                     "no-template",
+                     "This schema was not precompiled for schema evaluation");
+        } else {
+          json_error(request->getMethod(), request->getUrl(), response,
+                     encoding, sourcemeta::registry::STATUS_NOT_FOUND,
+                     "not-found", "There is nothing at this URL");
+        }
+
         return;
       }
 

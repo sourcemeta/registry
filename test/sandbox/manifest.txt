@@ -104,6 +104,13 @@
 ./explorer/pages/hyper.nav.meta
 ./explorer/pages/hyper/2020-12.nav
 ./explorer/pages/hyper/2020-12.nav.meta
+./explorer/pages/no-blaze
+./explorer/pages/no-blaze.html
+./explorer/pages/no-blaze.html.meta
+./explorer/pages/no-blaze.nav
+./explorer/pages/no-blaze.nav.meta
+./explorer/pages/no-blaze/string.nav
+./explorer/pages/no-blaze/string.nav.meta
 ./explorer/pages/same
 ./explorer/pages/same.html
 ./explorer/pages/same.html.meta
@@ -331,6 +338,13 @@
 ./schemas/hyper/2020-12.json.schema.meta
 ./schemas/hyper/2020-12.json.unidentified
 ./schemas/hyper/2020-12.json.unidentified.meta
+./schemas/no-blaze
+./schemas/no-blaze/string.json.bundle
+./schemas/no-blaze/string.json.bundle.meta
+./schemas/no-blaze/string.json.schema
+./schemas/no-blaze/string.json.schema.meta
+./schemas/no-blaze/string.json.unidentified
+./schemas/no-blaze/string.json.unidentified.meta
 ./schemas/same
 ./schemas/same/schema.json.blaze-exhaustive
 ./schemas/same/schema.json.blaze-exhaustive.meta

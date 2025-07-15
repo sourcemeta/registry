@@ -139,6 +139,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
   auto result{this->views.emplace(
       effective_identifier,
       Entry{std::nullopt, canonical, current_dialect, "", effective_identifier,
+            collection.name,
             // TODO: We should avoid this vector / string copy
             [rebases = collection.rebase](
                 sourcemeta::core::JSON &subschema,

@@ -44,3 +44,12 @@ jsonpath "$.steps[1].instanceLocation" == ""
 jsonpath "$.steps[1].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
 jsonpath "$.steps[1].name" == "AssertionTypeStrict"
 jsonpath "$.steps[1].type" == "pass"
+
+POST {{base}}/no-blaze/string.json
+Content-Type: application/json
+"Hello World"
+HTTP 405
+[Asserts]  
+jsonpath "$.code" == 405
+jsonpath "$.error" == "no-template"
+jsonpath "$.message" == "This schema was not precompiled for schema evaluation"
