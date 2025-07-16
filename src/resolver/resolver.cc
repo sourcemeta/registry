@@ -5,6 +5,7 @@
 #include <algorithm> // std::transform
 #include <cassert>   // assert
 #include <cctype>    // std::tolower
+#include <mutex>     // std::mutex, std::lock_guard
 #include <regex>     // std::regex, std::smatch, std::regex_search
 #include <sstream>   // std::ostringstream
 
@@ -83,11 +84,18 @@ auto Resolver::operator()(std::string_view identifier) const
     // Because we allow re-identification, we can get into issues unless we
     // always try to relativize references
     sourcemeta::core::reference_visit(
-        schema, sourcemeta::core::schema_official_walker, *this,
+        schema, sourcemeta::core::schema_official_walker,
+        [this](const auto subidentifier) {
+          return this->operator()(subidentifier);
+        },
         result->second.reference_visitor, result->second.dialect,
         result->second.original_identifier);
-    sourcemeta::core::reidentify(schema, result->first, *this,
-                                 result->second.dialect);
+    sourcemeta::core::reidentify(
+        schema, result->first,
+        [this](const auto subidentifier) {
+          return this->operator()(subidentifier);
+        },
+        result->second.dialect);
 
     return schema;
   }
@@ -105,7 +113,11 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
   const auto schema{internal_schema_reader(canonical)};
   assert(sourcemeta::core::is_schema(schema));
   const auto identifier{sourcemeta::core::identify(
-      schema, *this, sourcemeta::core::SchemaIdentificationStrategy::Loose,
+      schema,
+      [this](const auto subidentifier) {
+        return this->operator()(subidentifier);
+      },
+      sourcemeta::core::SchemaIdentificationStrategy::Loose,
       collection.default_dialect, default_identifier)};
 
   // Filesystems behave differently with regards to casing. To unify
@@ -232,6 +244,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
 
 auto Resolver::materialise(const std::string &uri,
                            const std::filesystem::path &path) -> void {
+  std::lock_guard<std::mutex> lock(this->mutex);
   assert(std::filesystem::exists(path));
   auto entry{this->views.find(uri)};
   assert(entry != this->views.cend());

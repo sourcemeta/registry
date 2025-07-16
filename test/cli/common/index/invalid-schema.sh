@@ -34,6 +34,14 @@ export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 "$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt" && CODE="$?" || CODE="$?"
 test "$CODE" = "1" || exit 1
 
+# Remove thread information
+if [ "$(uname)" = "Darwin" ]
+then
+  sed -i '' 's/ \[.*\]//g' "$TMP/output.txt"
+else
+  sed -i 's/ \[.*\]//g' "$TMP/output.txt"
+fi
+
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json

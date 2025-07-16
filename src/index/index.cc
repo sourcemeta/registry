@@ -125,27 +125,39 @@ static auto index_main(const std::string_view &program,
     }
   }
 
-  for (const auto &schema : resolver) {
-    std::cerr << "Ingesting: " << schema.first << "\n";
-    const auto subresult{resolver(schema.first)};
-    assert(subresult.has_value());
-    const auto dialect_identifier{sourcemeta::core::dialect(subresult.value())};
-    assert(dialect_identifier.has_value());
-    const auto metaschema{resolver(dialect_identifier.value())};
-    assert(metaschema.has_value());
-    validator.validate_or_throw(dialect_identifier.value(), metaschema.value(),
-                                subresult.value(),
-                                "The schema does not adhere to its metaschema");
-    const auto base_path{std::filesystem::path{"schemas"} /
-                         schema.second.relative_path};
-    const auto destination{output.write_jsonschema(
-        base_path.string() + ".schema", subresult.value())};
-    output.write_json(base_path.string() + ".schema.meta",
-                      sourcemeta::registry::GENERATE_SCHEMA_META(
-                          output.path() / (base_path.string() + ".schema"),
-                          output.path() / (base_path.string() + ".schema")));
-    resolver.materialise(schema.first, destination);
-  }
+  // Give it a generous thread stack size, otherwise we might overflow
+  // the small-by-default thread stack with Blaze
+  constexpr auto THREAD_STACK_SIZE{8 * 1024 * 1024};
+
+  sourcemeta::registry::parallel_for_each(
+      resolver.begin(), resolver.end(),
+      [](const auto id, const auto threads, const auto &schema) {
+        std::cerr << "Ingesting: " << schema.first << " [" << id << "/"
+                  << threads << "]\n";
+      },
+      [&output, &resolver, &validator](const auto &schema) {
+        const auto subresult{resolver(schema.first)};
+        assert(subresult.has_value());
+        const auto dialect_identifier{
+            sourcemeta::core::dialect(subresult.value())};
+        assert(dialect_identifier.has_value());
+        const auto metaschema{resolver(dialect_identifier.value())};
+        assert(metaschema.has_value());
+        validator.validate_or_throw(
+            dialect_identifier.value(), metaschema.value(), subresult.value(),
+            "The schema does not adhere to its metaschema");
+        const auto base_path{std::filesystem::path{"schemas"} /
+                             schema.second.relative_path};
+        const auto destination{output.write_jsonschema(
+            base_path.string() + ".schema", subresult.value())};
+        output.write_json(
+            base_path.string() + ".schema.meta",
+            sourcemeta::registry::GENERATE_SCHEMA_META(
+                output.path() / (base_path.string() + ".schema"),
+                output.path() / (base_path.string() + ".schema")));
+        resolver.materialise(schema.first, destination);
+      },
+      THREAD_STACK_SIZE);
 
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
@@ -190,10 +202,7 @@ static auto index_main(const std::string_view &program,
                 output.path() / (base_path.string() + ".unidentified"),
                 output.path() / (base_path.string() + ".schema")));
       },
-
-      // Give it a generous thread stack size, otherwise we might overflow
-      // the small-by-default thread stack with Blaze
-      8 * 1024 * 1024);
+      THREAD_STACK_SIZE);
 
   std::cerr << "Generating registry explorer\n";
 

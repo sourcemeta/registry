@@ -7,7 +7,6 @@
 #include <cassert>       // assert
 #include <filesystem>    // std::filesystem
 #include <fstream>       // std::ofstream
-#include <mutex>         // std::mutex, std::lock_guard
 #include <string_view>   // std::string_view
 #include <unordered_map> // std::unordered_map
 
