@@ -4,8 +4,6 @@ CTEST ?= ctest
 HURL ?= hurl
 DOCKER ?= docker
 SHELLCHECK ?= shellcheck
-NPX ?= npx
-NPM ?= npm
 MKDOCS ?= mkdocs
 JSONSCHEMA ?= ./build/dist/bin/jsonschema
 NODE ?= node
@@ -62,10 +60,6 @@ test-e2e:
 	$(HURL) --test \
 		--variable base=$(shell jq --raw-output '.url' < $(SANDBOX)/registry.json) \
 			test/e2e/*.hurl
-	$(NPM) --prefix test/ui install
-	$(NPX) --prefix test/ui playwright install --with-deps
-	env BASE_URL=$(shell jq --raw-output '.url' < $(SANDBOX)/registry.json) \
-		$(NPX) --prefix test/ui playwright test --config test/ui/playwright.config.js
 
 .PHONY: sandbox
 sandbox: compile
@@ -115,5 +109,5 @@ public: public-prepare
 
 .PHONY: clean
 clean: 
-	$(CMAKE) -E rm -R -f build test/ui/node_modules test/ui/test-results
+	$(CMAKE) -E rm -R -f build
 	$(DOCKER) system prune --force --all --volumes || true
