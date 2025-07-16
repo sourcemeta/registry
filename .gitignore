@@ -11,8 +11,3 @@ _deps
 /build
 Brewfile.lock.json
 .DS_Store
-test/ui/node_modules/
-test/ui/test-results/
-test/ui/playwright-report/
-test/ui/blob-report/
-test/ui/playwright/.cache/
