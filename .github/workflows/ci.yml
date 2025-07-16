@@ -43,7 +43,7 @@ jobs:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
 
       # Public instance
-      - run: docker build --tag registry-public . --file public/Dockerfile.base --progress plain --build-arg SOURCEMETA_REGISTRY=registry-enterprise
+      - run: docker build . --file public/Dockerfile --progress plain --build-arg SOURCEMETA_REGISTRY=registry-${{ matrix.edition.name }}
         if: matrix.edition.name == 'enterprise'
 
   website:
