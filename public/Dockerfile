@@ -13,7 +13,7 @@ COPY Makefile /app/Makefile
 RUN make -C /app public-prepare
 RUN ldd /usr/bin/sourcemeta-registry-index
 RUN ldd /usr/bin/sourcemeta-registry-server
-ENV SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE 1
+ENV SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 RUN /usr/bin/sourcemeta-registry-index /app/public/registry.json /app/index
 
 FROM ${SOURCEMETA_REGISTRY}
