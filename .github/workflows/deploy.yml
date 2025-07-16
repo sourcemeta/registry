@@ -20,27 +20,21 @@ jobs:
           - name: starter
             package: registry
             os: ubuntu-24.04
-            platform: linux/amd64
           - name: starter
             package: registry
             os: ubuntu-24.04-arm
-            platform: linux/arm64
           - name: pro
             package: registry-pro
             os: ubuntu-24.04
-            platform: linux/amd64
           - name: pro
             package: registry-pro
             os: ubuntu-24.04-arm
-            platform: linux/arm64
           - name: enterprise
             package: registry-enterprise
             os: ubuntu-24.04
-            platform: linux/amd64
           - name: enterprise
             package: registry-enterprise
             os: ubuntu-24.04-arm
-            platform: linux/arm64
 
     permissions:
       packages: write
@@ -69,7 +63,6 @@ jobs:
           file: Dockerfile
           build-args: "SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }}"
           push: true
-          platforms: ${{ matrix.edition.platform }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -118,7 +111,6 @@ jobs:
           file: public/Dockerfile
           build-args: "SOURCEMETA_REGISTRY=ghcr.io/sourcemeta/registry-enterprise:main"
           push: true
-          platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
