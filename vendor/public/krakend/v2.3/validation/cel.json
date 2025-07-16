@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/validation/cel.json",
+  "title": "Common Expression Language (CEL) validations",
+  "description": "The Common Expression Language (CEL) middleware enables expression evaluation, when an expression returns false, KrakenD does not return the content as the condition has failed. Otherwise, if all expressions returned true, the content is served.\n\nSee: https://www.krakend.io/docs/endpoints/common-expression-language-cel/",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "$id": "#root/validation/cel/items",
+    "title": "Object in array",
+    "type": "object",
+    "required": [
+      "check_expr"
+    ],
+    "properties": {
+      "check_expr": {
+        "$id": "#validation/cel/items/check_expr",
+        "title": "Check expression",
+        "description": "The expression that evaluates as a boolean, you can write here any conditional. If the result of the expression is `true`, the execution continues. See in the docs how to use additional variables to retrieve data from requests, responses, and tokens.\n\nSee: https://www.krakend.io/docs/endpoints/common-expression-language-cel/",
+        "examples": [
+          "int(req_params.Id) % 3 == 0"
+        ],
+        "type": "string"
+      }
+    },
+    "patternProperties": {
+      "^[@$_#]": {}
+    },
+    "additionalProperties": false
+  }
+}

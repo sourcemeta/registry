@@ -1,0 +1,47 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "ProcessHistory",
+    "description": "This schema is for describing the processing history of a material.",
+    "required": [
+        "@id",
+        "@context",
+        "@type"
+    ],
+    "allOf": [
+        {
+            "@context": {
+                "type": "array",
+                "default": [
+                    "http://schema.org/",
+                    {
+                        "mat": "https://pages.nist.gov/material-schema/",
+                        "measurementTechnique": "mat:measurementTechnique",
+                        "parameterControlled": "mat:parameterControlled",
+                        "variableMeasured": "mat:variableMeasured",
+                        "@vocab": "https://pages.nist.gov/material-schema/user-defined/"
+                    }
+                ]
+            },
+            "@type": {
+                "type": "array",
+                "default": [
+                    "HowTo",
+                    "mat:ProcessHistory"
+                ]
+            }
+        },
+        {
+            "$ref": "definition-schemas/CordraObjectID.json#/definitions/CordraObjectID"
+        },
+        {
+            "$ref": "definition-schemas/Thing.json#/definitions/Thing"
+        },
+        {
+            "$ref": "definition-schemas/CreativeWork.json#/definitions/CreativeWork"
+        },
+        {
+            "$ref": "definition-schemas/Process.json#/definitions/Process"
+        }
+    ]
+}

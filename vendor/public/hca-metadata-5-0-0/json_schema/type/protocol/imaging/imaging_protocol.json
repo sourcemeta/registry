@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/protocol/imaging/5.0.0/imaging_protocol",
+    "description": "Information about the imaging protocol",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type",
+        "protocol_core"
+    ],
+    "title": "imaging_protocol",
+    "type": "object",
+    "properties": {
+         "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/protocol/imaging/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/imaging_protocol"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "protocol"
+            ]
+        },
+        "protocol_core" : {
+	        "description": "Core protocol-level information.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/protocol/5.0.0/protocol_core"
+        },
+        "protocol_type": {
+            "description": "The type of protocol. Must be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FOBI_0000272.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/protocol_type_ontology",
+            "user_friendly": "Protocol type"
+        }
+    }
+}

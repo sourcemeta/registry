@@ -1,0 +1,42 @@
+{
+  "id": "https://w3id.org/dats/schema/date_info_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS date information schema.",
+  "description": "Information about a calendar date or timestamp indicating day, month, year and time of an event.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Date" ]
+    },
+    "date": {
+      "description": "A date following the ISO8601 standard.",
+      "type" :  "string",
+      "format": "date-time"
+    },
+    "type": {
+      "description": "The type of date, used to specify the process which is being timestamped by the date attribute value, ideally comes from a controlled terminology.",
+      "$ref" : "annotation_schema.json#"
+    }
+  },
+  "additionalProperties": false,
+  "required": ["date","type"]
+}

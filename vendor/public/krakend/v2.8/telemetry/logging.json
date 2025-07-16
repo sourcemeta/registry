@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.8/telemetry/logging.json",
+  "title": "Improved logging",
+  "description": "Enables the extended logging capabilities.\n\nSee: https://www.krakend.io/docs/logging/",
+  "type": "object",
+  "required": [
+    "level"
+  ],
+  "properties": {
+    "format": {
+      "$id": "#format",
+      "title": "Application log format",
+      "description": "Specify the format of the application logs: default, logstash, or custom.\nThe custom format needs an additional key \"custom_format\".\nThe \"logstash\" format needs the \"telemetry/logstash\" component added too.\n\nSee: https://www.krakend.io/docs/logging/",
+      "examples": [
+        "default",
+        "logstash",
+        "custom"
+      ],
+      "default": "default",
+      "type": "string"
+    },
+    "access_log_custom_format": {
+      "$id": "#access_log_custom_format",
+      "title": "Access log custom format",
+      "description": "Enterprise only. You can write the access log pattern you would like to use. Add a newline `\\n` at the end of the pattern. See the variables you can use.\n\nSee: https://www.krakend.io/docs/logging/",
+      "examples": [
+        "%{prefix} %{time} [AccessLog] |%{statusCode}| %{latencyMs} | %{clientIP} | %{method} %{path}\n"
+      ],
+      "default": "",
+      "type": "string"
+    },
+    "access_log_format": {
+      "$id": "#access_log_format",
+      "title": "Access log format",
+      "description": "Enterprise only. Enable a formatter for the access log. You can write your own pattern using the `custom` value, or you can use one of the predefined ones.\n\nSee: https://www.krakend.io/docs/logging/",
+      "default": "",
+      "enum": [
+        "default",
+        "httpdCommon",
+        "httpdCombine",
+        "json",
+        "custom"
+      ]
+    },
+    "access_log_missing_key_marker": {
+      "$id": "#access_log_missing_key_marker",
+      "title": "Access log format missing key",
+      "description": "Enterprise only. When you use a custom access log format, the variable you are trying to print could be empty. For instance, you have added in the format `%{header.Authorization}` but the header is missing in the request. In this case, the printed value is what you configure here. If the string is set to an empty value, a dash `-` is printed. \n\nSee: https://www.krakend.io/docs/logging/",
+      "examples": [
+        "%{default}",
+        "%{httpdCommon}",
+        "%{prefix} %{time} [AccessLog] |%{statusCode}| %{latencyMs} | %{clientIP} | %{method} %{path}\n"
+      ],
+      "default": "-",
+      "type": "string"
+    },
+    "custom_format": {
+      "$id": "#custom_format",
+      "title": "Custom format",
+      "description": "Lets you write a custom logging pattern using variables, e.g: `%{message}`.\n\nSee: https://www.krakend.io/docs/logging/",
+      "type": "string"
+    },
+    "level": {
+      "$id": "#level",
+      "title": "Log Level",
+      "description": "What type of **reporting level** do you expect from the application? The options below go from more verbose to least. Use the `DEBUG` level in the development stages but not in production. Some components can add extra verbosity while in DEBUG mode and send **multiline content**, which is not always suitable for automated log parsing.\n\nSee: https://www.krakend.io/docs/logging/",
+      "enum": [
+        "DEBUG",
+        "INFO",
+        "WARNING",
+        "ERROR",
+        "CRITICAL"
+      ]
+    },
+    "prefix": {
+      "$id": "#prefix",
+      "title": "Prefix",
+      "description": "Adds the defined string at the beginning of every logged line, so you can quickly filter messages with external tools later on. It's recommended to always add a prefix `[INSIDE BRACKETS]` to make use of predefined dashboards.\n\nSee: https://www.krakend.io/docs/logging/",
+      "type": "string"
+    },
+    "stdout": {
+      "$id": "#stdout",
+      "title": "Logs to stdout",
+      "description": "Set to true to send logs to stdout.\n\nSee: https://www.krakend.io/docs/logging/",
+      "default": false,
+      "type": "boolean"
+    },
+    "syslog": {
+      "$id": "#syslog",
+      "title": "Logs to syslog",
+      "description": "Set to true to send logs to syslog.\n\nSee: https://www.krakend.io/docs/logging/",
+      "default": false,
+      "type": "boolean"
+    },
+    "syslog_facility": {
+      "$id": "#syslog_facility",
+      "title": "Syslog facility",
+      "description": "When using syslog, the facility tells KrakenD where to send the messages as set by the locals of the [syslog standard](https://www.rfc-editor.org/rfc/rfc5424.html).\n\nSee: https://www.krakend.io/docs/logging/",
+      "default": "local3",
+      "enum": [
+        "local0",
+        "local1",
+        "local2",
+        "local3",
+        "local4",
+        "local5",
+        "local6",
+        "local7"
+      ]
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/backend/http_client.json",
+  "title": "HTTP Client options",
+  "description": "Enterprise only. Allows you to set the different HTTP client options with the backend, like TLS, no redirect or connect via a proxy.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-client/",
+  "type": "object",
+  "properties": {
+    "client_tls": {
+      "title": "TLS Client settings",
+      "description": "Allows to set specific transport settings when using TLS in your upstream services. See the global [Client TLS options](https://www.krakend.io/docs/service-settings/tls/) for the list of all supported options.",
+      "$ref": "../client_tls.json"
+    },
+    "no_redirect": {
+      "title": "No redirect",
+      "description": "Set `no_redirect` to true if you don't want KrakenD to follow redirects and let the consuming user to receive the `30x` status code.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-client/",
+      "default": false,
+      "type": "boolean"
+    },
+    "proxy_address": {
+      "title": "Proxy address",
+      "description": "The proxy address used to forward the traffic. The address must contain the protocol and the port.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-client/",
+      "examples": [
+        "http://proxy.corp:9099"
+      ]
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

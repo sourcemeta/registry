@@ -1,0 +1,73 @@
+{
+  "id": "https://w3id.org/dats/schema/consent_info_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS consent information schema",
+  "description": "Information about a consent code. Consent information schema can refer to one or more License object(s) and can be used to annotate DATS.Material, for fine grained control, or DATS.StudyGroup for coarser annotation",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri" },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "ConsentInfo" ]},
+    "identifier": {
+      "description": "The identifier of the consent information.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the consent information, including a label and ideally an ontology term from resources such as DUO, ADA-M.",
+      "$ref" :  "annotation_schema.json#"
+    },
+    "abbreviation": {
+      "description": "An abbreviation of the consent information.",
+      "type" :  "string"
+    },
+    "description": {
+      "description": "A description of the consent information.",
+      "type" :  "string"
+    },
+    "incorporatedIn": {
+      "description": "A list of references to licences/ legal documents used as basis for extracting consent information summary and assigning one or more consent codes.",
+      "type" :  "array",
+      "items": {
+         "$ref": "license_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "name"]
+}

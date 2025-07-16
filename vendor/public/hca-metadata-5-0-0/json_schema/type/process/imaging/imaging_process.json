@@ -1,0 +1,101 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/process/imaging/5.0.0/imaging_process",
+    "description": "Process by which images are captured.",
+    "additionalProperties": false, 
+    "required": [
+      "describedBy",
+      "schema_type",
+      "process_core",
+      "field_counts",
+      "field_resolution",
+      "probes"
+    ],
+    "title": "imaging_process",
+    "type": "object",
+    "properties": {
+         "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/process/imaging/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/imaging_process"
+         },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "process"
+            ]
+        },
+         "process_core" : {
+            "description": "Core process-level information.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/process/5.0.0/process_core"
+         },
+         "embedding": {
+            "description": "Description of embedding conditions.", 
+            "type": "string",
+            "user_friendly": "Embedding conditions"
+         }, 
+         "exposure_time": {
+            "description": "Exposure time - as a floating point number - in seconds.",
+            "type": "number",
+            "maximum": 1000,
+            "minimum": 1e-9,
+            "user_friendly": "Exposure time"
+         }, 
+         "field_counts": {
+            "description": "Number of fields in x and y dimensions.", 
+            "type": "array",
+            "items": {
+                "type": "integer"
+            },
+            "user_friendly": "Field count"
+         }, 
+         "field_microns": {
+            "description": "Microns covered by a field in x, y, and z. Z includes all focal planes in a single file.", 
+            "type": "array",
+            "items": {
+                "type": "integer"
+            },
+            "user_friendly": "Field microns"
+         }, 
+         "field_resolution": {
+            "description": "x, y, and z (number of focal planes) resolution of an individual field.", 
+            "type": "array",
+            "items": {
+                "type": "integer"
+            },
+            "user_friendly": "Field resolution"
+         }, 
+         "fixation": {
+            "description": "Description of fixation conditions.", 
+            "type": "string",
+            "user_friendly": "Fixation"
+         }, 
+         "microscope": {
+            "description": "Microscope used for imaging.", 
+            "enum": [
+                "generic confocal", 
+                "generic two photon"
+            ],
+            "user_friendly": "Microscope"
+         }, 
+         "probes": {
+            "description": "A file containing information on probe sequence, genes they cover, and colors.",
+            "type": "string",
+            "user_friendly": "Probes"
+         },
+         "process_type": {
+            "description": "The type of process. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0002694.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/process_type_ontology",
+            "user_friendly": "Process type"
+        }
+    }
+}

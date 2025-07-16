@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/backend/lambda.json",
+  "title": "AWS Lambda functions",
+  "description": "Invoke Amazon Lambda functions on a KrakenD endpoint call.\n\nSee: https://www.krakend.io/docs/backends/lambda/",
+  "type": "object",
+  "properties": {
+    "endpoint": {
+      "$id": "#backend_extra_config/backend/lambda/endpoint",
+      "title": "Endpoint",
+      "description": "An optional parameter to customize the Lambda endpoint to call. Useful when Localstack is used for testing instead of direct AWS usage.\n\nSee: https://www.krakend.io/docs/backends/",
+      "type": "string"
+    },
+    "function_name": {
+      "$id": "#backend_extra_config/backend/lambda/function_name",
+      "title": "Function name",
+      "description": "Name of the lambda function as saved in the AWS service. You have to choose between function_name and function_param_name but not both.\n\nSee: https://www.krakend.io/docs/backends/",
+      "type": "string"
+    },
+    "function_param_name": {
+      "$id": "#backend_extra_config/backend/lambda/function_param_name",
+      "title": "Function_param_name",
+      "description": "The endpoint {placeholder} that sets the function name, with the **first letter uppercased**. You have to choose between `function_name` and `function_param_name` but not both. If your endpoint defines the route `/foo/{bar}` the value of `function_param_name` must be `Bar` with the uppercased B.\n\nSee: https://www.krakend.io/docs/backends/",
+      "type": "string"
+    },
+    "max_retries": {
+      "$id": "#backend_extra_config/backend/lambda/max_retries",
+      "title": "Max retries",
+      "description": "Maximum times you want to execute the function until you have a successful response. The value -1 defers the max retry setting to the service specific configuration.\n\nSee: https://www.krakend.io/docs/backends/",
+      "default": 0,
+      "type": "integer"
+    },
+    "region": {
+      "$id": "#backend_extra_config/backend/lambda/region",
+      "title": "AWS Region",
+      "description": "The AWS identifier region\n\nSee: https://www.krakend.io/docs/backends/",
+      "examples": [
+        "us-east-1",
+        "eu-west-2"
+      ],
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

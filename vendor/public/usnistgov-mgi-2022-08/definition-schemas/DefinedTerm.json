@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "DefinedTerm",
+    "definitions": {"DefinedTerm": {
+        "type": "object",
+        "properties": {
+            "termCode": {
+                "type": "string",
+                "title": "Term Code"
+            },
+            "inDefinedTermSet": {
+                "type": "array",
+                "title": "In Defined Term Sets",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "In Defined Term Set",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTermSet"]}}}
+                }
+            },
+            "broader": {
+                "type": "array",
+                "title": "Broader Terms",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Broader Term",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                }
+            },
+            "narrower": {
+                "type": "array",
+                "title": "Narrower Terms",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Narrower Term",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                }
+            },
+            "related": {
+                "type": "array",
+                "title": "Related Terms",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Related Term",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                }
+            },
+            "exactMatch": {
+                "type": "array",
+                "title": "Exactly Matching Terms",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Exactly Matching Term",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                }
+            },
+            "closeMatch": {
+                "type": "array",
+                "title": "Closely Matching Terms",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Closely Matching Term",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                }
+            },
+            "isPartOf": {
+                "type": "array",
+                "title": "Is Part Of",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Is Part Of",
+                    "cordra": {"type": {"handleReference": {"types": ["Collection"]}}}
+                }
+            }
+        }
+    }}
+}

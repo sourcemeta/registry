@@ -1,0 +1,7 @@
+test/
+package-lock.json
+bin/transform-package-json.js
+Makefile
+package-lock.json
+package.json
+readme.md

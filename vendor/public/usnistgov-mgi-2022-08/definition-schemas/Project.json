@@ -1,0 +1,112 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Project",
+    "definitions": {"Project": {
+        "type": "object",
+        "properties": {
+            "about": {
+                "type": "array",
+                "title": "Subjects",
+                "description": "This is for controlled vocabulary terms.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Subject",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                }
+            },
+            "keywords": {
+                "type": "array",
+                "title": "Keywords",
+                "description": "This is for user-defined terms.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Keyword"
+                }
+            },
+            "foundingDate": {
+                "title": "Starting Date",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            },
+            "dissolutionDate": {
+                "title": "Ending Date",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            },
+            "contactPoint": {
+                "type": "array",
+                "title": "Contact Points",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Contact Point",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "Person",
+                        "User"
+                    ]}}}
+                }
+            },
+            "email": {
+                "type": "string",
+                "title": "E-Mail Address"
+            },
+            "subOrganization": {
+                "type": "array",
+                "title": "Child Projects",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Child Project",
+                    "cordra": {"type": {"handleReference": {"types": ["Project"]}}}
+                }
+            },
+            "parentOrganization": {
+                "type": "array",
+                "title": "Parent Projects",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Parent Project",
+                    "cordra": {"type": {"handleReference": {"types": ["Project"]}}}
+                }
+            },
+            "member": {
+                "type": "array",
+                "title": "Participating Organizations/Persons",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Participating Organization/Person",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "Organization",
+                        "User",
+                        "Person"
+                    ]}}}
+                }
+            },
+            "memberOf": {
+                "type": "array",
+                "title": "Host Organizations",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Host Organization",
+                    "cordra": {"type": {"handleReference": {"types": ["Organization"]}}}
+                }
+            },
+            "isPartOf": {
+                "type": "array",
+                "title": "Is Part Of",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Is Part Of",
+                    "cordra": {"type": {"handleReference": {"types": ["Collection"]}}}
+                }
+            }
+        }
+    }}
+}

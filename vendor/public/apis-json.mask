@@ -1,0 +1,13 @@
+README.md
+spec/apisjson_0.11.txt
+spec/apisjson_0.12.txt
+spec/apisjson_0.13.txt
+spec/apisjson_0.14.txt
+spec/apisjson_0.15.txt
+spec/apisjson_0.16.txt
+spec/apisjson_0.17.txt
+spec/apisjson_0.18.txt
+spec/apisjson_0.19.txt
+spec/schema_0.14.json
+spec/schema_0.17.json
+spec/schema_0.18.json

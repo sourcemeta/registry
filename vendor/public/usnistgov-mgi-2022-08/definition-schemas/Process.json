@@ -1,0 +1,183 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Process",
+    "definitions": {"Process": {
+        "type": "object",
+        "properties": {
+            "@type": {
+                "type": "array",
+                "default": [
+                    "HowToStep",
+                    "mat:Process"
+                ]
+            },
+            "name": {
+                "type": "string",
+                "title": "Name",
+                "cordra": {"preview": {
+                    "showInPreview": true,
+                    "isPrimary": true
+                }}
+            },
+            "about": {
+                "type": "array",
+                "title": "About",
+                "description": "The subject matter of this thing (e.g., DefinedTerm, Project, Material, Experiment, Study, etc.)",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Referenced Item",
+                    "cordra": {"type": {"handleReference": {"types": []}}}
+                }
+            },
+            "keywords": {
+                "type": "array",
+                "title": "Keywords",
+                "description": "This is for user-defined terms.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Keyword"
+                }
+            },
+            "text": {
+                "title": "Process/Step Text",
+                "type": "string",
+                "format": "textarea"
+            },
+            "isBasedOn": {
+                "type": "array",
+                "title": "Process is based on",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Process",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "ProcessProtocol",
+                        "ProcessHistory"
+                    ]}}}
+                }
+            },
+            "hasPart": {
+                "type": "array",
+                "title": "Subprocess",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Subprocess",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "ProcessProtocol",
+                        "ProcessHistory"
+                    ]}}}
+                }
+            },
+            "isPartOf": {
+                "type": "array",
+                "title": "Parent Process and Collections",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Parent Process or Collection",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "Collection",
+                        "ProcessProtocol",
+                        "ProcessHistory"
+                    ]}}}
+                }
+            },
+            "supply": {"$ref": "processLinked.json#/definitions/supply"},
+            "variableMeasured": {
+                "type": "array",
+                "title": "Variables Measured",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Variable Measured",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "parameterControlled": {
+                "type": "array",
+                "title": "Parameters Controlled",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Parameter Controlled",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "conditionObserved": {
+                "type": "array",
+                "title": "Conditions Observed",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Condition Observed",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "workExample": {"$ref": "processLinked.json#/definitions/workExample"},
+            "measurementTechnique": {"$ref": "measurementTechnique.json#/definitions/measurementTechnique"},
+            "tool": {
+                "type": "array",
+                "title": "Tools used to perform the process",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Tools used to perform the process",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "DefinedTerm",
+                        "Instrument",
+                        "SoftwareApplication",
+                        "SoftwareSourceCode"
+                    ]}}}
+                }
+            },
+            "estimatedCost": {
+                "type": "object",
+                "title": "MonetaryAmount",
+                "properties": {
+                    "@type": {
+                        "type": "string",
+                        "default": "MonetaryAmount"
+                    },
+                    "currency": {"type": "string"},
+                    "value": {"type": "number"}
+                }
+            },
+            "performTime": {"type": "string"},
+            "prepTime": {"type": "string"},
+            "totalTime": {"type": "string"},
+            "yield": {"$ref": "QuantitativeValue.json#/definitions/QuantitativeValue"},
+            "position": {
+                "title": "Step Number",
+                "type": "number"
+            },
+            "image": {
+                "type": "array",
+                "title": "Image URLs",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Image URL"
+                }
+            },
+            "thumbnailUrl": {
+                "type": "array",
+                "title": "Thumbnail URLs",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Thumbnail URL"
+                }
+            },
+            "step": {
+                "type": "array",
+                "title": "Process Steps",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Process Step",
+                    "$ref": "#/definitions/Process"
+                }
+            }
+        }
+    }}
+}

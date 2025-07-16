@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.8/grpc.json",
+  "title": "gRPC server",
+  "description": "Enterprise only. gRPC server integration",
+  "type": "object",
+  "required": [
+    "catalog"
+  ],
+  "properties": {
+    "catalog": {
+      "title": "Catalog definition",
+      "description": "The paths to the different `.pb` files you want to load, or the paths to directories containing `.pb` files. All content is scanned in the order of the list, and after fetching all files it resolves the dependencies of their imports. The order you use here is not important to resolve imports, but it matters when there are conflicts (different files using the same namespace and package type).\n\nSee: https://www.krakend.io/docs/enterprise/grpc/server/",
+      "examples": [
+        "./grpc/flights.pb",
+        "./grpc/definitions",
+        "/etc/krakend/grpc"
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "server": {
+      "title": "gRPC Server",
+      "description": "Defines the gRPC server properties.\n\nSee: https://www.krakend.io/docs/enterprise/grpc/server/",
+      "type": "object",
+      "properties": {
+        "opentelemetry": {
+          "title": "OpenTelemetry settings",
+          "description": "Overrides [OpenTelemetry settings](https://www.krakend.io/docs/enterprise/telemetry/opentelemetry-layers-metrics/) for the gRPC server.",
+          "type": "object",
+          "properties": {
+            "disable_metrics": {
+              "title": "Disable metrics",
+              "description": "Whether you want to disable all metrics happening in the gRPC server.\n\nSee: https://www.krakend.io/docs/enterprise/grpc/server/",
+              "default": false,
+              "type": "boolean"
+            },
+            "disable_traces": {
+              "title": "Disable trace",
+              "description": "Whether you want to disable all traces happening in the gRPC server.\n\nSee: https://www.krakend.io/docs/enterprise/grpc/server/",
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "patternProperties": {
+            "^[@$_#]": {}
+          },
+          "additionalProperties": false
+        },
+        "services": {
+          "title": "gRPC services",
+          "description": "Defines one object per available gRPC service.\n\nSee: https://www.krakend.io/docs/enterprise/grpc/server/",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "methods": {
+                "title": "Methods",
+                "description": "The gRPC methods available for this service. The `methods` entry is the gRPC equivalent of the HTTP `endpoints`, meaning that the `backend` object under `methods` can use the same configuration as HTTP, including all its `extra_config` parameters.\n\nSee: https://www.krakend.io/docs/enterprise/grpc/server/",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "backend": {
+                      "title": "Backend",
+                      "description": "An array with all the [backend objects](https://www.krakend.io/docs/backends/) mapped to this method",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "backend.json",
+                        "type": "object"
+                      }
+                    },
+                    "extra_config": {
+                      "title": "Extra configuration",
+                      "description": "Extra configuration for this method",
+                      "type": "object",
+                      "properties": {
+                        "auth/validator": {
+                          "title": "JWT validation",
+                          "description": "The JWT validation for this method. The configuration underneath is exactly as in the [JWT validator](https://www.krakend.io/docs/enterprise/authorization/jwt-validation/)",
+                          "$ref": "auth/validator.json",
+                          "type": "object"
+                        }
+                      },
+                      "patternProperties": {
+                        "^[@$_#]": {}
+                      },
+                      "additionalProperties": false
+                    },
+                    "input_headers": {
+                      "title": "Allowed Headers In",
+                      "description": "Defines the list of all client headers that you can use as gRPC metadata.\nBy default, KrakenD won't pass any header from the client to the backend. This list is **case-insensitive**. You can declare headers in lowercase, uppercase, or mixed.\nAn entry `[\"X-Something\"]` forwards a single `X-Something` header to the backend, ignoring everything else. A single star element `[\"*\"]` as value forwards everything to the backend (**it's safer to avoid this option**).",
+                      "examples": [
+                        "X-Custom-Trace",
+                        "*"
+                      ],
+                      "default": [],
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "name": {
+                      "title": "Method name",
+                      "description": "The name of the published gRPC method.\n\nSee: https://www.krakend.io/docs/enterprise/grpc/server/",
+                      "examples": [
+                        "FindFlight"
+                      ],
+                      "type": "string"
+                    },
+                    "payload_params": {
+                      "description": "Maps a property of the gRPC incoming payload to a `{parameter}` that you can inject and reuse in a `url_pattern`. It supports dot nation to access nested objects.\n\nSee: https://www.krakend.io/docs/enterprise/grpc/server/",
+                      "examples": [
+                        {
+                          "some.grpc.object": "param1"
+                        }
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "patternProperties": {
+                    "^[@$_#]": {}
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "name": {
+                "title": "gRPC name",
+                "description": "The name of the published gRPC service.\n\nSee: https://www.krakend.io/docs/enterprise/grpc/server/",
+                "examples": [
+                  "flight_finder.Flights"
+                ],
+                "type": "string"
+              }
+            },
+            "patternProperties": {
+              "^[@$_#]": {}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,54 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "MaterialProperty",
+    "definitions": {"MaterialProperty": {
+        "type": "object",
+        "properties": {
+            "includedInDataCatalog": {"$ref": "includedInDataCatalog.json#/definitions/includedInDataCatalog"},
+            "material": {
+                "title": "Material",
+                "$ref": "materialLinked.json#/definitions/materialLinked"
+            },
+            "materialExtent": {
+                "title": "Material Quantity",
+                "$ref": "QuantitativeValue.json#/definitions/QuantitativeValue"
+            },
+            "materialReference": {
+                "title": "Reference Material",
+                "$ref": "materialLinked.json#/definitions/materialLinked"
+            },
+            "materialReferenceExtent": {
+                "title": "Reference Material Quantity",
+                "$ref": "QuantitativeValue.json#/definitions/QuantitativeValue"
+            },
+            "measurementTechnique": {"$ref": "measurementTechnique.json#/definitions/measurementTechnique"},
+            "variableMeasured": {
+                "title": "Material Property",
+                "$ref": "PropertyValue.json#/definitions/PropertyValue"
+            },
+            "parameterControlled": {
+                "type": "array",
+                "title": "Parameters Controlled",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Parameter Controlled",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "conditionObserved": {
+                "type": "array",
+                "title": "Conditions Observed",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Condition Observed",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "hasPart": {"$ref": "datasetLinked.json#/definitions/hasPart"},
+            "isPartOf": {"$ref": "datasetLinked.json#/definitions/isPartOf"},
+            "isBasedOn": {"$ref": "datasetLinked.json#/definitions/isBasedOn"},
+            "exampleOfWork": {"$ref": "processLinked.json#/definitions/exampleOfWork"}
+        }
+    }}
+}

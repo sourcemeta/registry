@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.9/validation/response-json-schema.json",
+  "title": "Response Schema Validator",
+  "description": "Enterprise only. The response schema validator adds a schema validation before the gateway returns the response to the end-user or before it’s merged in the endpoint with the rest of the backends.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/response-schema-validator/",
+  "type": "object",
+  "required": [
+    "schema"
+  ],
+  "properties": {
+    "error": {
+      "title": "Error definition",
+      "description": "In case the validation fails, the error definition containing body and status.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/response-schema-validator/",
+      "examples": [
+        {
+          "body": "We couldn't process you request, try again later.",
+          "status": 401
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "body": {
+          "title": "Error body",
+          "description": "The error message you want to show when the validation fails. Set it to an empty string `\"\"` to show the JSON-schema validation error.",
+          "default": "",
+          "type": "string"
+        },
+        "content_type": {
+          "title": "Content-Type",
+          "description": "The Content-Type header you want to set back in the response when you are setting a custom `body`",
+          "examples": [
+            "application/json"
+          ],
+          "default": "text/plain",
+          "type": "string"
+        },
+        "status": {
+          "title": "Error code",
+          "description": "The HTTP status code you want to set back in the response.",
+          "default": 500,
+          "type": "integer"
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "schema": {
+      "title": "JSON Schema",
+      "description": "Write your JSON schema directly in this field, with any number of fields or validations you need.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/response-schema-validator/",
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.9/modifier/response-headers.json",
+  "title": "Response headers modifier",
+  "description": "Enterprise only. Allows you to transform response headers declaratively.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/response-headers-modifier/",
+  "type": "object",
+  "minProperties": 1,
+  "properties": {
+    "add": {
+      "title": "Headers to add",
+      "description": "The headers you want to add. Every key under `add` is the header name, and the values are declared in an array with all those you want to set. If the header didn't exist previously, it is created with the values you passed. If the header existed, then the new values are appended.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/response-headers-modifier/",
+      "examples": [
+        {
+          "X-Hello": [
+            "World"
+          ]
+        }
+      ],
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "(.+)": {
+          "description": "Header name you want to add",
+          "type": "array",
+          "items": {
+            "description": "Header value you want to add",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "delete": {
+      "title": "Headers to delete",
+      "description": "The list of headers you want to delete. All headers listed will be missing in the response.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/response-headers-modifier/",
+      "examples": [
+        [
+          "X-Krakend",
+          "X-Krakend-Completed"
+        ]
+      ],
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "description": "Header you want to delete",
+        "type": "string"
+      }
+    },
+    "rename": {
+      "title": "Headers to rename",
+      "description": "The headers you want to rename. The key used under `rename` is the original header name, and the value the new header name. This operation is destructive, meaning that if you rename to a header name that already existed it will be replaced with the new header and value.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/response-headers-modifier/",
+      "examples": [
+        {
+          "Header-A": "Header-A-New-Name"
+        }
+      ],
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "(.+)": {
+          "description": "Header you want to rename",
+          "type": "string"
+        }
+      }
+    },
+    "replace": {
+      "title": "Headers to replace",
+      "description": "The headers you want to replace. The key used under `replace` is the header name, and the value an array with all the header values you want to set. The replacement overwrites any other value that could exist in this header.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/response-headers-modifier/",
+      "examples": [
+        {
+          "Cache-Control": [
+            "no-store"
+          ],
+          "Vary": [
+            "foo",
+            "bar",
+            "foobar"
+          ]
+        }
+      ],
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "(.+)": {
+          "type": "array",
+          "items": {
+            "description": "Header value you want to replace",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "./flexible_config.json",
+  "@comment": "Makes sure that the debug endpoint returns a status ok",
+  "settings": {
+    "paths": [
+      "settings"
+    ],
+    "allow_overwrite": true,
+    "dir_field_prefix": "",
+    "allowed_suffixes": [
+      ".yaml",
+      ".json"
+    ]
+  },
+  "partials": {
+    "paths": [
+      "partials"
+    ]
+  },
+  "templates": {
+    "paths": [
+      "templates"
+    ]
+  },
+  "meta_key": "meta",
+  "out": "result.json",
+  "debug": true
+}

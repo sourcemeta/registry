@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/backend/pubsub/publisher.json",
+  "title": "Pubsub publisher",
+  "description": "Publishes to a topic using the desired driver.\n\nSee: https://www.krakend.io/docs/backends/pubsub/",
+  "type": "object",
+  "required": [
+    "topic_url"
+  ],
+  "properties": {
+    "topic_url": {
+      "$id": "#backend/pubsub/publisher",
+      "title": "Topic URL",
+      "description": "Topic URL according to the selected driver\n\nSee: https://www.krakend.io/docs/backends/pubsub/",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

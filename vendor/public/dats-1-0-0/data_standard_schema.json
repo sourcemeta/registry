@@ -1,0 +1,80 @@
+{
+  "id": "https://w3id.org/dats/schema/data_standard_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS data standard schema",
+  "description": "A format, reporting guideline, terminology. It is used to indicate whether the dataset conforms to a particular community norm or specification.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "DataStandard" ]},
+    "identifier": {
+      "description": "The identifier of the data standard.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the standard.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the standard.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the standard (e.g. FASTQ, CDISC STDM, ISO8601).",
+      "type" :  "string"
+    },
+    "description" : {
+      "description": "A textual narrative comprised of one or more statements describing the data standard.",
+      "type" : "string"
+    },
+    "type" : {
+      "description": "The nature of the information resource, ideally specified with a controlled vocabulary or ontology (.e.g model or format, vocabulary, reporting guideline).",
+      "$ref" : "annotation_schema.json#"
+    },
+    "licenses" : {
+      "description": "The terms of use of the data standard.",
+      "type" : "array",
+      "items" : {
+        "$ref" : "license_schema.json#"
+      }
+    },
+    "version" : {
+      "description": "A release point for the repository when applicable.",
+      "type" : "string"
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required":["name", "type"]
+}

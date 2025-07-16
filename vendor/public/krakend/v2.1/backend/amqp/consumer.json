@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.1/backend/amqp/consumer.json",
+  "title": "AMQP Consumer",
+  "description": "The AMQP component allows to send and receive messages to and from a queue through the API Gateway.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+  "type": "object",
+  "required": [
+    "name",
+    "exchange",
+    "durable",
+    "delete",
+    "no_wait",
+    "routing_key"
+  ],
+  "properties": {
+    "auto_ack": {
+      "$id": "#backend/amqp/consumer/auto_ack",
+      "title": "Auto ACK",
+      "description": "When KrakenD retrieves the messages, regardless of the success or failure of the operation, it marks them as `ACK`nowledge.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "delete": {
+      "$id": "#backend/amqp/consumer/delete",
+      "title": "Delete",
+      "description": "Setting to `false` is recommended to avoid deletions when the consumer is disconnected.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "durable": {
+      "$id": "#backend/amqp/consumer/durable",
+      "title": "Durable",
+      "description": "Durable queues will survive server restarts and remain when there are no remaining consumers or bindings. `true` is recommended, but depends on the use case. \n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "exchange": {
+      "$id": "#backend/amqp/consumer/exchange",
+      "title": "Exchange",
+      "description": "The exchange name (must have a **topic** type if already exists).\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "examples": [
+        "some-exchange"
+      ],
+      "type": "string"
+    },
+    "name": {
+      "$id": "#backend/amqp/consumer/name",
+      "title": "Name",
+      "description": "Queue name.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "type": "string"
+    },
+    "no_local": {
+      "$id": "#backend/amqp/consumer/no_local",
+      "title": "No local",
+      "description": "The no_local flag is not supported by RabbitMQ.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "type": "boolean"
+    },
+    "no_wait": {
+      "$id": "#backend/amqp/consumer/no_wait",
+      "title": "No wait",
+      "description": "When true, do not wait for the server to confirm the request and immediately begin deliveries. If it is not possible to consume, a channel exception will be raised and the channel will be closed.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "type": "boolean"
+    },
+    "prefetch_count": {
+      "$id": "#backend/amqp/consumer/prefetch_count",
+      "title": "Prefetch count",
+      "description": "The number of messages you want to prefetch prior to consume them.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": 10,
+      "type": "integer"
+    },
+    "prefetch_size": {
+      "$id": "#backend/amqp/consumer/prefetch_size",
+      "title": "Prefetch size",
+      "description": "The number of bytes you want to use to prefetch messages.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": 1024,
+      "type": "integer"
+    },
+    "routing_key": {
+      "$id": "#backend/amqp/consumer/routing_key",
+      "title": "Routing keys",
+      "description": "The list of routing keys you will use to consume messages.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "examples": [
+        "#"
+      ],
+      "type": "array"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

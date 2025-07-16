@@ -1,0 +1,849 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.8/modifier/martian.json",
+  "title": "Martian modifiers",
+  "description": "The Martian component allows you to modify requests and responses with static data through a simple DSL definition in the configuration file.\n\nSee: https://www.krakend.io/docs/endpoints/martian/",
+  "type": "object",
+  "maxProperties": 1,
+  "properties": {
+    "body.Modifier": {
+      "title": "Body Modifier",
+      "description": "The body.Modifier changes or sets the body of a request or response. The body must be uncompressed and Base64 encoded.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "body"
+      ],
+      "properties": {
+        "body": {
+          "title": "Body in base64",
+          "description": "The body you want to set, formatted in base64.",
+          "type": "string"
+        },
+        "contentType": {
+          "title": "Content Type",
+          "description": "The content-type representing the body you are setting",
+          "examples": [
+            "application/x-www-form-urlencoded",
+            "text/plain"
+          ],
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        }
+      }
+    },
+    "cookie.Filter": {
+      "title": "Cookie Filter",
+      "description": "The cookie.Filter executes the contained modifier when a cookie is provided under the name.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "modifier",
+        "name"
+      ],
+      "properties": {
+        "else": {
+          "description": "The modifier you want to execute when the condition does not match",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "modifier": {
+          "description": "The modifier you want to execute when the cookie name (and value if provided) matches",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "name": {
+          "description": "The name of the Cookie you want to check. Notice that the `input_headers` must contain `Cookie` in the list when you want to check cookies sent by the client.",
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "const": [
+            "request"
+          ]
+        },
+        "value": {
+          "description": "If besides the cookie name, you set this value, it ensures the cookie has a literal match."
+        }
+      }
+    },
+    "cookie.Modifier": {
+      "title": "Cookie Modifier",
+      "description": "Adds a cookie to a request or a response. If you set cookies in a response, the cookies are only set to the client when you use no-op encoding.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "name",
+        "value"
+      ],
+      "properties": {
+        "domain": {
+          "description": "Domain of the Cookie you want to set",
+          "examples": [
+            "example.com"
+          ],
+          "type": "string"
+        },
+        "expires": {
+          "description": "Date in RFC 3339 format and is absolute, not relative to the current time.",
+          "examples": [
+            "2025-04-12T23:20:50.52Z"
+          ],
+          "type": "string"
+        },
+        "httpOnly": {
+          "description": "Create the Cookie with the httpOnly flag. When `true`, mitigates the risk of client side script accessing the protected cookie (if the browser supports it), mitigating the Most Common XSS",
+          "default": false,
+          "type": "boolean"
+        },
+        "maxAge": {
+          "description": "For how long this Cookie is valid, in seconds. `0` means that the attribute is not set. `maxAge<0` means delete cookie now",
+          "default": 0,
+          "type": "integer"
+        },
+        "name": {
+          "description": "Name of the Cookie you want to set",
+          "type": "string"
+        },
+        "path": {
+          "description": "Path of the Cookie you want to set",
+          "examples": [
+            "/path/to"
+          ],
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        },
+        "secure": {
+          "description": "Cookie secure flag. When `true`, the user agent will include the cookie in the request when using https only",
+          "default": false,
+          "type": "boolean"
+        },
+        "value": {
+          "description": "Value of the Cookie you want to set",
+          "type": "string"
+        }
+      }
+    },
+    "fifo.Group": {
+      "title": "FIFO group",
+      "description": "The fifo.Group holds a list of modifiers executed in first-in, first-out order.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "modifiers"
+      ],
+      "properties": {
+        "aggregateErrors": {
+          "description": "When true, the group will continue to execute consecutive modifiers when a modifier in the group encounters an error. The Group will then return all errors returned by each modifier after all modifiers have been executed.  When false, if an error is returned by a modifier, the error is returned by ModifyRequest/Response and no further modifiers are run.",
+          "default": false,
+          "type": "boolean"
+        },
+        "modifiers": {
+          "description": "The list of modifiers you want to execute in the declared order",
+          "type": "array",
+          "items": {
+            "$ref": "./martian.json"
+          }
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        }
+      }
+    },
+    "header.Append": {
+      "title": "Append a header",
+      "description": "\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of the header you want to append a value. Add the same name under the `input_headers` list to append more values to an existing header passed by the client. In addition, to see the header in the response, you must use `no-op`.",
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        },
+        "value": {
+          "description": "The value you want to add or append.",
+          "type": "string"
+        }
+      }
+    },
+    "header.Blacklist": {
+      "title": "Blacklist headers",
+      "description": "The header.Blacklist removes the listed headers under names in the request and response of the backend.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "names"
+      ],
+      "properties": {
+        "names": {
+          "description": "List of all the headers you want to supress from the request or the response. If you want to see the headers in the client, you must use the `output_encoding: no-op`, and if you want the client headers to propagate to the backend, you need to use `input_headers` too.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        }
+      }
+    },
+    "header.Copy": {
+      "title": "Header Copy",
+      "description": "The header.Copy lets you duplicate a header using another name\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "from": {
+          "description": "The origin header you want to copy. When the header is provided by the user it must be included in the `input_headers` list.",
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        },
+        "to": {
+          "description": "The destination header you want to create. If this header is returned to the end-user you must use `no-op` in the `output_encoding` of the endpoint.",
+          "type": "string"
+        }
+      }
+    },
+    "header.Filter": {
+      "title": "Header Filter",
+      "description": "The header.Filter executes its contained modifier if the request or response contain a header that matches the defined name and value. The value is optional, and only the header’s existence evaluates when undefined.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "modifier",
+        "name"
+      ],
+      "properties": {
+        "else": {
+          "description": "The modifier you want to execute when the condition does not match",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "modifier": {
+          "description": "The modifier you want to execute when the condition matches",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "name": {
+          "description": "Name of the header you want to check. You must add under `input_headers` the `name` included in the filter.",
+          "examples": [
+            "X-Some",
+            "Content-Type"
+          ],
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        },
+        "value": {
+          "description": "Value of the header you want to check",
+          "type": "string"
+        }
+      }
+    },
+    "header.Id": {
+      "title": "Header Id",
+      "description": "\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope"
+      ],
+      "properties": {
+        "header": {
+          "title": "Header",
+          "description": "The header name you want to use to save the ID. In the case the header is already set, the header is unmodified.",
+          "default": "X-Krakend-Id",
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "const": [
+            "request"
+          ]
+        }
+      }
+    },
+    "header.Modifier": {
+      "title": "Header Modifier",
+      "description": "The header.Modifier adds a new header or changes the value of an existing one.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of the header you want to set",
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        },
+        "value": {
+          "description": "Value of the header you want to set",
+          "type": "string"
+        }
+      }
+    },
+    "header.RegexFilter": {
+      "title": "Header RegexFilter",
+      "description": "The header.RegexFilter checks that a regular expression (RE2 syntax) passes on the target header and, if it does, executes the modifier.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "modifier",
+        "header",
+        "regex"
+      ],
+      "properties": {
+        "header": {
+          "description": "Name of the header you want to check. You must add under `input_headers` the `name` included in the filter.",
+          "examples": [
+            "X-Some",
+            "Content-Type"
+          ],
+          "type": "string"
+        },
+        "modifier": {
+          "description": "The modifier you want to execute when the condition matches",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "regex": {
+          "description": "The regular expression you want to check against the header value",
+          "examples": [
+            ".*localhost.*",
+            "^foo-[a-z]+$"
+          ],
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        }
+      }
+    },
+    "port.Filter": {
+      "title": "Port Filter",
+      "description": "The port.Filter executes its modifier only when the port matches the one used in the request. It does not support else.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "modifier",
+        "port"
+      ],
+      "properties": {
+        "else": {
+          "description": "The modifier you want to execute when the condition does not match",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "modifier": {
+          "description": "The modifier you want to execute when the condition matches",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "port": {
+          "description": "The port number you want to check",
+          "type": "integer"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "const": [
+            "request"
+          ]
+        }
+      }
+    },
+    "port.Modifier": {
+      "title": "Port Modifier",
+      "description": "The port.Modifier alters the request URL and Host header to use the provided port.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "oneOf": [
+        {
+          "required": [
+            "scope",
+            "port"
+          ]
+        },
+        {
+          "required": [
+            "scope",
+            "defaultForScheme"
+          ]
+        },
+        {
+          "required": [
+            "scope",
+            "remove"
+          ]
+        }
+      ],
+      "properties": {
+        "defaultForScheme": {
+          "description": "Uses the default port of the schema. `80` for `http://` or `443` for `https://`. Other schemas are ignored.",
+          "type": "boolean"
+        },
+        "port": {
+          "description": "Defines which port will be used.",
+          "type": "integer"
+        },
+        "remove": {
+          "description": "Removes the port from the host string when `true`.",
+          "type": "boolean"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "const": [
+            "request"
+          ]
+        }
+      }
+    },
+    "priority.Group": {
+      "title": "Priority group",
+      "description": "The priority.Group contains the modifiers you want to execute, but the order in which they are declared is unimportant. Instead, each modifier adds a priority attribute that defines the order in which they are run.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "modifiers"
+      ],
+      "properties": {
+        "modifiers": {
+          "description": "The list of modifiers you want to execute, order specified in the items using `priority`.",
+          "type": "array",
+          "items": {
+            "required": [
+              "priority",
+              "modifier"
+            ],
+            "properties": {
+              "modifier": {
+                "description": "The modifier definition you want to execute",
+                "$ref": "./martian.json"
+              },
+              "priority": {
+                "description": "The assigned priority number",
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        }
+      }
+    },
+    "querystring.Filter": {
+      "title": "QueryString Filter",
+      "description": "The querystring.Filter executes the modifier if the request or response contains a query string parameter that matches the defined name and value in the filter.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "modifier",
+        "name"
+      ],
+      "properties": {
+        "else": {
+          "description": "The modifier you want to execute when the condition does not match",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "modifier": {
+          "description": "The modifier you want to execute when the condition matches",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "name": {
+          "description": "Name of the query string you want to check",
+          "examples": [
+            "page",
+            "limit"
+          ],
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        },
+        "value": {
+          "description": "Value of the query string you want to check",
+          "type": "string"
+        }
+      }
+    },
+    "querystring.Modifier": {
+      "title": "Querystring Modifier",
+      "description": "The querystring.Modifier adds a new query string or modifies existing ones in the request.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of the query string you want to set",
+          "examples": [
+            "page",
+            "limit"
+          ],
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "const": [
+            "request"
+          ]
+        },
+        "value": {
+          "description": "The value of the query string you want to set",
+          "type": "string"
+        }
+      }
+    },
+    "stash.Modifier": {
+      "title": "Stash Modifier",
+      "description": "The stash.Modifier creates a new header (or replaces an existing one with a matching name) containing the value of the original URL and all its query string parameters.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "headerName"
+      ],
+      "properties": {
+        "headerName": {
+          "description": "The header you want to create. If this header is returned to the end-user you must use `no-op` in the `output_encoding` of the endpoint.",
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        }
+      }
+    },
+    "url.Filter": {
+      "title": "URL Filter",
+      "description": "The url.Filter executes its contained modifier if the request URL matches all of the provided parameters.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "modifier"
+      ],
+      "properties": {
+        "else": {
+          "description": "The modifier you want to execute when the condition does not match",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "host": {
+          "description": "The literal hostname that must match, including the port",
+          "examples": [
+            "localhost:8080"
+          ],
+          "type": "string"
+        },
+        "modifier": {
+          "description": "The modifier you want to execute when the condition matches",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "path": {
+          "description": "The `/path` of the URL, without query strings.",
+          "examples": [
+            "/path/to"
+          ],
+          "type": "string"
+        },
+        "query": {
+          "description": "The query strings you want to check. Use `key1=value1&key2=value2` to check that the request has exactly these keys and values (order is irrelevant, but content not). Suppose the request has more query strings than declared here because the `input_query_strings` allowed them to pass. In that case, the evaluation will be `false`, and the `else` modifier will be executed.",
+          "examples": [
+            "/path/to"
+          ],
+          "type": "string"
+        },
+        "scheme": {
+          "description": "The literal scheme it must match",
+          "examples": [
+            "http",
+            "https"
+          ],
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "enum": [
+            [
+              "request",
+              "response"
+            ],
+            [
+              "request"
+            ],
+            [
+              "response"
+            ]
+          ]
+        }
+      }
+    },
+    "url.Modifier": {
+      "title": "URL Modifier",
+      "description": "The url.Modifier allows you to change the URL despite what is set in the host and url_pattern combination.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope"
+      ],
+      "properties": {
+        "host": {
+          "description": "The hostname part of the URL including the port",
+          "examples": [
+            "example.com",
+            "localhost:8080"
+          ],
+          "type": "string"
+        },
+        "path": {
+          "description": "The path part of the URL",
+          "examples": [
+            "/path/to"
+          ],
+          "type": "string"
+        },
+        "query": {
+          "description": "Sets the query string parameters you want to pass, overwriting anything passed in the request. Notice that if you set a `query`, if the user passes other query string parameters listed under `input_query_strings`, they will be lost, and only the values passed in the modifier will be sent. For such uses, see the `querystring.Modifier`",
+          "examples": [
+            "param=1",
+            "key1=val&key2=val"
+          ],
+          "type": "string"
+        },
+        "scheme": {
+          "description": "The scheme to apply",
+          "examples": [
+            "http",
+            "https"
+          ],
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "const": [
+            "request"
+          ]
+        }
+      }
+    },
+    "url.RegexFilter": {
+      "title": "URL RegexFilter",
+      "description": "The url.RegexFilter evaluates a regular expression (RE2 syntax) and executes the modifier desired when it matches, and the modifier declared under else when it does not.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "type": "object",
+      "required": [
+        "scope",
+        "modifier",
+        "regex"
+      ],
+      "properties": {
+        "else": {
+          "description": "The modifier you want to execute when the condition does not match",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "modifier": {
+          "description": "The modifier you want to execute when the condition matches",
+          "$ref": "./martian.json",
+          "type": "object"
+        },
+        "regex": {
+          "description": "The regular expression you want to check against the URL",
+          "type": "string"
+        },
+        "scope": {
+          "title": "Scope",
+          "description": "Scopes in which this modifier acts",
+          "const": [
+            "request"
+          ]
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

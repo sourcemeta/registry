@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/telemetry/logging.json",
+  "title": "Improved logging",
+  "description": "Enables the extended logging capabilities.\n\nSee: https://www.krakend.io/docs/logging/",
+  "type": "object",
+  "required": [
+    "level"
+  ],
+  "properties": {
+    "format": {
+      "$id": "#format",
+      "title": "Log format",
+      "description": "Specify the format of the logs: default, logstash, or custom.\nThe custom format needs an additional key \"custom_format\".\nThe \"logstash\" format needs the \"telemetry/logstash\" component added too.\n\nSee: https://www.krakend.io/docs/logging/",
+      "examples": [
+        "default",
+        "logstash",
+        "custom"
+      ],
+      "default": "default",
+      "type": "string"
+    },
+    "custom_format": {
+      "$id": "#custom_format",
+      "title": "Custom format",
+      "description": "Lets you write a custom logging pattern using variables, e.g: `%{message}`.\n\nSee: https://www.krakend.io/docs/logging/",
+      "type": "string"
+    },
+    "level": {
+      "$id": "#level",
+      "title": "Log Level",
+      "description": "What type of **reporting level** do you expect from the application? The options below go from more verbose to least. Use the `DEBUG` level in the development stages but not in production. Some components can add extra verbosity while in DEBUG mode and send **multiline content**, which is not always suitable for automated log parsing.\n\nSee: https://www.krakend.io/docs/logging/",
+      "enum": [
+        "DEBUG",
+        "INFO",
+        "WARNING",
+        "ERROR",
+        "CRITICAL"
+      ]
+    },
+    "prefix": {
+      "$id": "#prefix",
+      "title": "Prefix",
+      "description": "Adds the defined string at the beginning of every logged line, so you can quickly filter messages with external tools later on. It's recommended to always add a prefix `[INSIDE BRACKETS]` to make use of predefined dashboards.\n\nSee: https://www.krakend.io/docs/logging/",
+      "type": "string"
+    },
+    "stdout": {
+      "$id": "#stdout",
+      "title": "Logs to stdout",
+      "description": "Set to true to send logs to stdout.\n\nSee: https://www.krakend.io/docs/logging/",
+      "default": false,
+      "type": "boolean"
+    },
+    "syslog": {
+      "$id": "#syslog",
+      "title": "Logs to syslog",
+      "description": "Set to true to send logs to syslog.\n\nSee: https://www.krakend.io/docs/logging/",
+      "default": false,
+      "type": "boolean"
+    },
+    "syslog_facility": {
+      "$id": "#syslog_facility",
+      "title": "Syslog facility",
+      "description": "When using syslog, the facility tells KrakenD where to send the messages as set by the locals of the [syslog standard](https://www.rfc-editor.org/rfc/rfc5424.html).\n\nSee: https://www.krakend.io/docs/logging/",
+      "default": "local3",
+      "enum": [
+        "local0",
+        "local1",
+        "local2",
+        "local3",
+        "local4",
+        "local5",
+        "local6",
+        "local7"
+      ]
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

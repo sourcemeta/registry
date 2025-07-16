@@ -1,0 +1,46 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.2.0/gcn/circulars.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "GCN Circular",
+  "description": "GCN Circulars are rapid astronomical bulletins submitted by and distributed to community members worldwide. They are used to share discoveries, observations, quantitative near-term predictions, requests for follow-up observations, or future observing plans related to high-energy, multi-messenger, and variable or transient astrophysical events. An archive of all GCN Circulars can be found at https://gcn.nasa.gov/circulars",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "description": "Event name, automatically inferred from the subject"
+    },
+    "submitter": {
+      "type": "string",
+      "description": "Name, affiliation, and email address of the person who submitted the Circular, in the form `A. E. Einstein at IAS <albert.einstein@example.edu>`"
+    },
+    "submittedHow": {
+      "enum": ["web", "email", "email-legacy", "api"],
+      "description": "Specifies the method by which the user submitted the Circular"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Subject line of the Circular"
+    },
+    "circularId": {
+      "type": "number",
+      "description": "Circular ID assigned to the Circular in the GCN Circulars archive. This value is unique to each published Circular and increments by 1"
+    },
+    "format": {
+      "enum": ["text/plain", "text/markdown"],
+      "description": "Format of the body text as a MIME type. See https://gcn.nasa.gov/docs/circulars/markdown for documentation on using Markdown in Circulars"
+    },
+    "body": { "type": "string", "description": "Body text" },
+    "createdOn": {
+      "type": "number",
+      "description": "Date and time the Circular is accepted and published onto the GCN Circulars archive, formatted as a UNIX timestamp (milliseconds since the UNIX epoch)"
+    }
+  },
+  "required": [
+    "eventId",
+    "submitter",
+    "subject",
+    "circularId",
+    "body",
+    "createdOn"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.1.0/gcn/notices/core/Alert.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Alert",
+  "description": "Alert Information description properties of this notice",
+  "type": "object",
+  "properties": {
+    "alert_datetime": {
+      "type": "string",
+      "description": "Date and time of notice creation [UTC, ISO 8601], ex YYYY-MM-DDTHH:MM:SS.ssssssZ"
+    },
+    "alert_tense": {
+      "enum": [
+        "current",
+        "archival",
+        "planned",
+        "injection",
+        "commanded",
+        "test"
+      ],
+      "description": "Indication of whether this alert refers to a recent observation (current), re-analysis of archival data (archival), a planned observation in the future (planned), a signal injection (injection), commanded trigger (commanded) or a test trigger (test)."
+    },
+    "alert_type": {
+      "enum": ["initial", "update", "retraction"],
+      "description": "Indication of alert sequence if multiple of same type sent"
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "id": "https://w3id.org/dats/schema/person_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS person schema",
+  "description": "A human being",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Person" ]},
+    "identifier": {
+      "description": "Primary identifier for the person.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the person.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the person.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "fullName": {
+      "description": "The first name, any middle names, and surname of a person.",
+      "type" :  "string"
+    },
+    "firstName": {
+      "description": "The given name of the person.",
+      "type" :  "string"
+    },
+    "middleInitial": {
+      "description": "The first letter of the person's middle name.",
+      "type" :  "string"
+    },
+    "lastName": {
+      "description": "The person's family name.",
+      "type" :  "string"
+    },
+    "email": {
+      "description": "An electronic mail address for the person.",
+      "type" :  "string",
+      "format": "email"
+    },
+    "affiliations" : {
+      "description": "The organizations to which the person is associated with.",
+      "type" : "array",
+      "items" : {
+        "$ref" : "organization_schema.json#"
+      }
+    },
+    "roles" : {
+      "description": "The roles assumed by a person, ideally from a controlled vocabulary/ontology.",
+      "type" : "array",
+      "items" : {
+        "$ref" : "annotation_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false
+}

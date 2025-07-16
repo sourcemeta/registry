@@ -1,0 +1,42 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v2.0.0/gcn/notices/core/spectral/models/Band.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Band",
+  "description": "Spectral model Band smoothly broken powerlaw (Band et al. 1993)",
+  "properties": {
+    "amplitude": {
+      "type": "number",
+      "description": "amplitude of spectral model fit at pivot_energy [ph/cm2/s/keV]"
+    },
+    "amplitude_error": {
+      "type": "number",
+      "description": "1-sigma uncertainty of amplitude [ph/cm2/s/keV]"
+    },
+    "pivot_energy": { "type": "number", "description": "pivot energy [keV]" },
+    "alpha": {
+      "type": "number",
+      "description": "power-law index of spectral model"
+    },
+    "alpha_error": {
+      "type": "number",
+      "description": "1-sigma uncertainty of alpha"
+    },
+    "epeak": {
+      "type": "number",
+      "description": "e-folding energy of exponential rolloff [keV]"
+    },
+    "epeak_error": {
+      "type": "number",
+      "description": "1-sigma uncertainty of Epeak [keV]"
+    },
+    "beta": {
+      "type": "number",
+      "description": "high-energy power-law index of Band parameterization"
+    },
+    "beta_error": {
+      "type": "number",
+      "description": "1-sigma uncertainty of beta"
+    }
+  }
+}

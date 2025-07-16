@@ -1,0 +1,58 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/medical_history",
+    "description": "Information about the medical history of an organism.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy"
+    ],
+    "title": "medical_history",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/biomaterial/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/medical_history"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "alcohol_history": {
+            "description": "Number of drinks consumed on a typical day.",
+            "type": "string",
+            "user_friendly": "Alcohol history"
+        },
+        "medication": {
+           "description": "List of medications the organism was currently taking at time of biomaterial donation.",
+           "type": "string",
+            "user_friendly": "Medications"
+        },
+        "nutritional_state": {
+            "description": "Should be one of normal, fasting, or feeding tube removed.",
+            "enum": [
+                "normal",
+                "fasting",
+                "feeding tube removed"
+            ],
+            "user_friendly": "Nutritional state"
+        },
+        "smoking_history": {
+            "description": "Estimated number of cigarettes smoked per day and for how many years.",
+            "type": "string",
+            "user_friendly": "Smoking history"
+        },
+        "test_results": {
+            "description": "Results from any medical tests performed on the individual.",
+            "type": "string",
+            "user_friendly": "Test results"
+        },
+        "treatment": {
+            "description": "Any treatments the individual has undergone.",
+            "type": "string",
+            "user_friendly": "Treatments"
+        }
+    }
+}

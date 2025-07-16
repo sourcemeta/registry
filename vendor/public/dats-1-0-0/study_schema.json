@@ -1,0 +1,197 @@
+{
+  "id": "https://w3id.org/dats/schema/study_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS study schema",
+  "description": "Process to acquire data on a sample and attempt to draw conclusions about the population the sample has been selected from, executing a plan and design.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Study" ]},
+    "identifier": {
+      "description": "The identifier of the study.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the activity.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the activity.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the activity, usually one sentece or short description of the study.",
+      "type": "string"
+    },
+    "description" : {
+      "description": "A textual narrative comprised of one or more statements describing the study.",
+      "type" : "string"
+    },
+    "types": {
+      "description": "The types of study (e.g. intervention or observation or meta-analysis or clinical trials, or behavioural study, or the study design).",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },
+    "startDate": {
+      "description": "A timestamp to record the starting point of the activity.",
+      "$ref": "date_info_schema.json#"
+    },
+    "endDate": {
+      "description": "A timestamp to record the end point of the activity.",
+      "$ref": "date_info_schema.json#"
+    },
+    "dates" : {
+      "description": "Relevant dates for the datasets, a date must be added, e.g. creation date or last modification date should be added.",
+      "type" : "array",
+      "items" : {
+        "$ref" : "date_info_schema.json#"
+      }
+    },
+    "duration": {
+      "description": "The time during which the activity takes place.",
+      "type": "string"
+    },
+    "location": {
+      "description": "The location where the activity takes place.",
+      "$ref": "place_schema.json#"
+    },
+    "performedBy": {
+      "description": "The person(s) or organisation(s) responsible for executing the process.",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "person_schema.json#"
+          },
+          {
+            "$ref": "organization_schema.json#"
+          }
+        ]
+      }
+    },
+    "keywords": {
+      "description": "Tags associated with the activity, which will help in its discovery.",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },
+    "input": {
+      "description": "The entities used as input.",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "dataset_schema.json#"
+          },
+          {
+            "$ref": "material_schema.json#"
+          }
+        ]
+      }
+    },
+    "output": {
+      "description": "The entities resulting from applying the activity.",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "dataset_schema.json#"
+          },
+          {
+            "$ref": "material_schema.json#"
+          }
+        ]
+      }
+    },
+    "schedulesActivity": {
+      "description": "The activities scheduled by the study.",
+      "type": "array",
+      "items": {
+        "anyOf":[
+          {"$ref": "activity_schema.json#"},
+          {"$ref": "data_acquisition_schema.json#"},
+          {"$ref": "data_analysis_schema.json#"}
+        ]
+      }
+    },
+    "schedulesDataAcquisition": {
+      "description": "The kind of techniques and response variables used during a study for acquiring data.",
+      "type": "array",
+      "items": {
+        "$ref": "data_acquisition_schema.json#"
+      },
+      "minItems": 1
+    },
+    "selectionCriteria": {
+      "description": "The attributes and values that the material should meet in order to be part of the group.",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          { "$ref": "annotation_schema.json#"},
+          { "$ref": "category_values_pair_schema.json#"}
+        ]
+      }
+    },
+    "studyGroups": {
+      "description": "The different study groups associated with a study.",
+      "type": "array",
+      "items": {
+        "$ref": "study_group_schema.json#"
+      }
+    },
+    "usesReagent": {
+      "description": "The materials that are used as reagents (but not subjects) of the study.",
+      "type": "array",
+      "items": {
+        "$ref": "material_schema.json#"
+      }
+    },
+    "isAboutBiologicalEntity": {
+      "description": "The biological entities relevant to the study, ideally from a controlled vocabulary/ontology such as Gene Ontology.",
+      "type": "array",
+      "items": {
+        "$ref": "biological_entity_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "name"
+  ]
+
+}

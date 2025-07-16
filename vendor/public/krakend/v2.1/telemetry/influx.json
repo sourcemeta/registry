@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.1/telemetry/influx.json",
+  "title": "Telemetry via influx",
+  "description": "Enables the extended logging capabilities.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+  "type": "object",
+  "required": [
+    "address",
+    "ttl"
+  ],
+  "properties": {
+    "address": {
+      "$id": "#telemetry/influx/address",
+      "title": "Address",
+      "description": "The complete url of the influxdb including the port if different from defaults in http/https.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "type": "string"
+    },
+    "buffer_size": {
+      "$id": "#telemetry/influx/buffer_size",
+      "title": "Points in buffer",
+      "description": "How many points you want to store in a memory buffer before pushing them to InfluxDB. Use `0` to send events immediately or set the number of points that should be sent together.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "type": "integer",
+      "minimum": 0
+    },
+    "db": {
+      "$id": "#telemetry/influx/db",
+      "title": "DB name",
+      "description": "Name of the InfluxDB database.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "default": "krakend",
+      "type": "string"
+    },
+    "password": {
+      "$id": "#telemetry/influx/password",
+      "title": "Password",
+      "description": "Password to authenticate to InfluxDB.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "type": "string"
+    },
+    "ttl": {
+      "$id": "#telemetry/influx/ttl",
+      "title": "TTL",
+      "description": "TTL against Influx.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "$ref": "../timeunits.json#/$defs/timeunit"
+    },
+    "username": {
+      "$id": "#telemetry/influx/username",
+      "title": "Username",
+      "description": "Username to authenticate to InfluxDB.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

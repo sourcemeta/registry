@@ -1,0 +1,168 @@
+{
+  "id": "https://w3id.org/dats/schema/molecular_entity_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS molecular entity schema",
+  "description": "A physical entity of molecular scales such as proteins, nucleic acids, chemical materials. They can be abiotic, biological or synthetic origin.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "MolecularEntity" ]},
+    "identifier": {
+      "description": "The identifier of the molecular entity.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the molecular entity.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the molecular entity.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the molecular entity.",
+      "type" :  "string"
+    },
+    "description": {
+      "description": "A textual narrative comprised of one or more statements describing the molecular entity.",
+      "type": "string"
+    },
+    "taxonomy" : {
+      "description": "The taxonomic information for this material (ideally specified from a controlled vocabulary/ontology).",
+      "type": "array",
+      "items": {
+        "$ref": "taxonomic_info_schema.json#"
+      }
+    },
+    "characteristics" : {
+      "description": "The characteristic information or attributes denoting the material.",
+      "type" : "array",
+      "items" : {
+        "oneOf": [
+          {"$ref": "dimension_schema.json#"},
+          {"$ref": "material_schema.json#"}
+        ]
+      }
+    },
+    "genomeLocations" : {
+      "description": "The set of location information of a genetic element in a genome.",
+      "type" : "array",
+      "items" : {
+        "$ref": "genome_location_schema.json#"
+      }
+    },
+    "structure": {
+      "description": "The primary sequence of the molecular entity (e.g. inchi code;DNA sequence in FASTA format)",
+      "type" :  "string"
+    },
+    "roles" : {
+      "description": "The roles played by the molecular entity.",
+      "type" : "array",
+      "items" : {
+        "$ref": "annotation_schema.json#"
+      }
+    },
+    "involvedInProcess" : {
+      "description": "The molecular processes where the molecular entity is known to be involved in.",
+      "type": "array",
+      "items":{
+        "$ref" : "activity_schema.json#"
+      }
+    },
+    "relatedEntities": {
+      "description": "Entities that are related to this molecular entity.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "description": "The object of the relationship, i.e. the representation or identifier of the related enttity",
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "relation": {
+            "description": "The type of the relationship corresponding to this molecular entity.",
+            "$ref": "annotation_schema.json#"
+          },
+          "resultingFrom": {
+            "description": "The activity (or process) that gave origin at the relationship between this molecular entity and the external entity.",
+            "$ref": "activity_schema.json#"
+          },
+          "relationEvidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "evidenceCodes": {
+                  "description": "An array of labels and ideally an ontology term IRI (e.g. for the Evidence & Conclusion Ontology - ECO) indicating the evidence for the relationship between the molecular entity and the external entity",
+                  "type": "array",
+                  "items": {
+                    "$ref": "annotation_schema.json#"
+                  }
+                },
+                "publications": {
+                  "description": "The list of publications providing evidence of the relationship.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "publication_schema.json#"
+                  }
+                },
+                "dateEstablished": {
+                  "description": "The date in which the evidence of the relationship was established.",
+                  "$ref": "date_info_schema.json#"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "dates" : {
+      "description": "Relevant dates for the molecular entity, a date must be added, e.g. creation date, annotation date or last modification date should be added. a type should always be provided",
+      "type" : "array",
+      "items" : {
+        "$ref" : "date_info_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "name" ]
+}

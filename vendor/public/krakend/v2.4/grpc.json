@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.4/grpc.json",
+  "title": "gRPC catalog definition",
+  "type": "object",
+  "required": [
+    "catalog"
+  ],
+  "properties": {
+    "catalog": {
+      "title": "Catalog definition",
+      "description": "The paths to the different `.pb` files you want to load, or the paths to directories containing `.pb` files. All content is scanned in the order of the list, and after fetching all files it resolves the dependencies of their imports. The order you use here is not important to resolve imports, but it matters when there are conflicts (different files using the same namespace and package type).\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "examples": [
+        "./grpc/flights.pb",
+        "./grpc/definitions",
+        "/etc/krakend/grpc"
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

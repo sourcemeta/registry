@@ -1,0 +1,213 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "CreativeWork",
+    "definitions": {"CreativeWork": {
+        "type": "object",
+        "properties": {
+            "about": {
+                "type": "array",
+                "title": "About",
+                "description": "The subject matter of this thing (e.g., DefinedTerm, Project, Material, Experiment, Study, etc.)",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Referenced Item",
+                    "cordra": {"type": {"handleReference": {"types": []}}}
+                }
+            },
+            "keywords": {
+                "type": "array",
+                "title": "Keywords",
+                "description": "This is for user-defined terms.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Keyword"
+                }
+            },
+            "citation": {
+                "type": "array",
+                "title": "Citations",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Citation",
+                    "cordra": {"type": {"handleReference": {"types": []}}}
+                }
+            },
+            "funder": {
+                "type": "array",
+                "title": "Funders",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Funder",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "accountablePerson": {
+                "type": "array",
+                "title": "Accountable Persons",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Accountable Person",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person"
+                    ]}}}
+                }
+            },
+            "author": {
+                "type": "array",
+                "title": "Authors",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Author",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "editor": {
+                "type": "array",
+                "title": "Editors",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Editor",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person"
+                    ]}}}
+                }
+            },
+            "creator": {
+                "type": "array",
+                "title": "Creators",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Creator",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "contributor": {
+                "type": "array",
+                "title": "Contributors",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Contributor",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "provider": {
+                "type": "array",
+                "title": "Providers",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Provider",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "publisher": {
+                "type": "array",
+                "title": "Publishers",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Publisher",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "copyrightHolder": {
+                "type": "array",
+                "title": "Copyright Holders",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Copyright Holder",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "license": {
+                "type": "string",
+                "title": "License"
+            },
+            "thumbnailUrl": {
+                "type": "array",
+                "title": "Thumbnail URLs",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Thumbnail URL"
+                }
+            },
+            "dateCreated": {
+                "title": "Date Created",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            },
+            "dateModified": {
+                "title": "Date Modified",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            },
+            "datePublished": {
+                "title": "Date Published",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            },
+            "comment": {
+                "type": "array",
+                "title": "Comments",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Comment",
+                    "cordra": {"type": {"handleReference": {"types": ["Comment"]}}}
+                }
+            },
+            "spatial": {
+                "type": "array",
+                "title": "Specific Spatial Location",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Place",
+                    "cordra": {"type": {"handleReference": {"types": ["Place"]}}}
+                }
+            }
+        }
+    }}
+}

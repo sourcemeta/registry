@@ -1,0 +1,70 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Instrument",
+    "definitions": {"Instrument": {
+        "type": "object",
+        "properties": {
+            "isPartOf": {
+                "title": "Has Parent Instruments and Collections",
+                "type": "array",
+                "items": {
+                    "title": "Has Parent Instrument or Collection",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "Collection",
+                        "Instrument"
+                    ]}}}
+                }
+            },
+            "hasPart": {
+                "title": "Has Parts",
+                "type": "array",
+                "items": {
+                    "title": "Has Child Part",
+                    "cordra": {"type": {"handleReference": {"types": ["Instrument"]}}}
+                }
+            },
+            "address": {
+                "type": "string",
+                "title": "Physical Address or Building Location",
+                "format": "textarea"
+            },
+            "isBasedOn": {
+                "title": "Is Based On",
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Product",
+                    "$ref": "Product.json#/definitions/Product"
+                }
+            },
+            "variableMeasured": {
+                "type": "array",
+                "title": "Variables Measured",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Variable Measured",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "parameterControlled": {
+                "type": "array",
+                "title": "Parameters Controlled",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Parameter Controlled",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "conditionObserved": {
+                "type": "array",
+                "title": "Conditions Observed",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Condition Observed",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            }
+        }
+    }}
+}

@@ -1,0 +1,64 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "datasetLinked",
+    "definitions": {
+        "isPartOf": {
+            "type": "array",
+            "title": "Is Part Of",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "title": "Referenced Item",
+                "cordra": {"type": {"handleReference": {"types": [
+                    "Collection",
+                    "Dataset",
+                    "File",
+                    "MaterialStructure",
+                    "MaterialProperty",
+                    "MaterialPerformance",
+                    "TabularData",
+                    "TabularDataPackage"
+                ]}}}
+            }
+        },
+        "hasPart": {
+            "type": "array",
+            "title": "Supporting Dataset Parts",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "title": "Referenced Item",
+                "cordra": {"type": {"handleReference": {"types": [
+                    "Dataset",
+                    "File",
+                    "MaterialStructure",
+                    "MaterialProperty",
+                    "MaterialPerformance",
+                    "TabularData",
+                    "TabularDataPackage"
+                ]}}}
+            }
+        },
+        "isBasedOn": {
+            "type": "array",
+            "title": "Item is derived from",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "title": "Referenced Item",
+                "cordra": {"type": {"handleReference": {"types": [
+                    "Dataset",
+                    "File",
+                    "MaterialStructure",
+                    "MaterialProperty",
+                    "MaterialPerformance",
+                    "TabularData",
+                    "TabularDataPackage",
+                    "SoftwareApplication",
+                    "SoftwareSourceCode"
+                ]}}}
+            }
+        }
+    }
+}

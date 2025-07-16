@@ -1,0 +1,14 @@
+.circleci/
+documentation/
+examples/
+generator/
+graphql/
+protobufs/
+tools/
+validation/
+README.md
+specification/ninjs-schema-dev_0.1_v2.0.json
+specification/ninjs-schema-dev_0.1_v2.1.json
+specification/ninjs-schema-dev_0.2_v1.4.json
+specification/ninjs-schema-dev_0.2_v1.5.json
+specification/ninjs-schema_1.0.json

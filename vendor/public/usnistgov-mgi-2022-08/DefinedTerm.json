@@ -1,0 +1,47 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "DefinedTerm",
+    "description": "This schema is for describing a Defined Term in Cordra.",
+    "required": [
+        "@id",
+        "@context",
+        "@type"
+    ],
+    "allOf": [
+        {
+            "@context": {
+                "type": "array",
+                "default": [
+                    "http://schema.org/",
+                    {
+                        "mat": "https://pages.nist.gov/material-schema/",
+                        "skos": "http://www.w3.org/2004/02/skos/core#",
+                        "broader": "skos:broader",
+                        "narrower": "skos:narrower",
+                        "related": "skos:related",
+                        "exactMatch": "skos:exactMatch",
+                        "closeMatch": "skos:closeMatch",
+                        "@vocab": "https://pages.nist.gov/material-schema/user-defined/"
+                    }
+                ]
+            },
+            "@type": {
+                "type": "array",
+                "default": [
+                    "DefinedTerm",
+                    "mat:DefinedTerm"
+                ]
+            }
+        },
+        {
+            "$ref": "definition-schemas/CordraObjectID.json#/definitions/CordraObjectID"
+        },
+        {
+            "$ref": "definition-schemas/Thing.json#/definitions/Thing"
+        },
+        {
+            "$ref": "definition-schemas/DefinedTerm.json#/definitions/DefinedTerm"
+        }
+    ]
+}

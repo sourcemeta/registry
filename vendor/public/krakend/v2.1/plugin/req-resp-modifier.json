@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.1/plugin/req-resp-modifier.json",
+  "title": "Request-Response modifier plugins",
+  "type": "object",
+  "properties": {
+    "content-replacer": {
+      "$ref": "content-replacer.json"
+    },
+    "ip-filter": {
+      "$ref": "ip-filter.json"
+    },
+    "name": {
+      "$id": "#plugin/req-resp-modifier",
+      "title": "Plugin name",
+      "description": "An array with the names of plugins to load. The names are defined inside your plugin.\n\nSee: https://www.krakend.io/docs/extending/plugin-modifiers/",
+      "examples": [
+        "myplugin"
+      ],
+      "default": [],
+      "type": "array"
+    },
+    "response-schema-validator": {
+      "$ref": "response-schema-validator.json"
+    }
+  }
+}

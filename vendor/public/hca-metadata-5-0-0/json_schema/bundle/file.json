@@ -1,0 +1,62 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/bundle/1.0.0/file",
+    "description": "A schema for a file bundle.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type"
+    ],
+    "title": "file",
+    "type": "object",
+    "definitions": {
+        "file_ingest": {
+            "required": [
+                "hca_ingest",
+                "content"
+            ],
+            "type": "object",
+            "properties": {
+                "hca_ingest": {
+                    "description": "Core fields added by HCA ingest service",
+                    "type": "object",
+                    "$ref": "https://schema.humancellatlas.org/bundle/5.0.0/ingest_audit"
+                },
+                "content": {
+                    "description": "Content for any file type entity.",
+                    "type": "object",
+                    "oneOf": [
+                        { "$ref": "https://schema.humancellatlas.org/type/file/5.0.0/sequence_file" },
+                        { "$ref": "https://schema.humancellatlas.org/type/file/5.0.0/analysis_file" }
+                    ]
+                }
+            }
+        }
+    },
+    "properties": {
+        "describedBy" : {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/bundle/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/file"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "file_bundle"
+            ]
+        },
+        "files": {
+            "description": "An array of files.",
+            "type": "array",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/bundle/1.0.0/file#/definitions/file_ingest"
+            }
+        }
+    }
+}

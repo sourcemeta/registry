@@ -1,0 +1,28 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.2.0/gcn/notices/core/Duration.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Duration",
+  "properties": {
+    "t90": {
+      "type": "number",
+      "description": "Time duration of central 90% of integrated fluence [s]"
+    },
+    "t90_error": {
+      "type": "array",
+      "items": { "type": "number" },
+      "maxItems": 2,
+      "description": "1-sigma uncertainty of the T90 duration [s], with asymmetric statistical errors taken into account"
+    },
+    "t50": {
+      "type": "number",
+      "description": "Time duration of central 50% of integrated fluence [s]"
+    },
+    "t50_error": {
+      "type": "array",
+      "items": { "type": "number" },
+      "maxItems": 2,
+      "description": "1-sigma uncertainty of the T50 duration [s], with asymmetric statistical errors taken into account"
+    }
+  }
+}

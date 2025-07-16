@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/state_of_specimen",
+    "description": "State of body part at collection and how it was preserved after removal and/or cell enrichment",
+    "additionalProperties": false,
+    "required": [
+        "describedBy"
+    ],
+    "title": "state_of_specimen",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/biomaterial/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/state_of_specimen"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "autolysis_score": {
+            "description": "State of tissue breakdown due to self-digestion. Must be one of: none, mild, moderate.",
+            "type": "string",
+            "enum": [
+                "none", 
+                "mild", 
+                "moderate"
+            ],
+            "user_friendly": "Autolysis score"
+        }, 
+        "gross_description": {
+            "description": "Color, size, and other aspects of specimen as visible to naked eye.",
+            "type": "string",
+            "user_friendly": "Gross description"
+        }, 
+        "gross_image": {
+            "description": "List of filenames of photographs of body part without magnification. Must be of format JPEG, TIFF, or PNG.",
+            "type": "array",
+            "items": {
+                "pattern": "^.*.jpg$|^.*.jpeg$|^.*.tiff$|^.*.png$", 
+                "type": "string"
+            },
+            "user_friendly": "Gross image"
+        }, 
+        "ischemic_temperature": {
+            "description": "Whether warm or cold ischemia.",
+            "type": "string",
+            "enum": [
+                "warm",
+                "cold"
+            ],
+            "user_friendly": "Ischemic temperature"
+        }, 
+        "ischemic_time": {
+            "description": "Duration of time, in seconds, that the body part had insufficient blood supply.",
+            "type": "integer",
+            "maximum": 1000000,
+            "minimum": 0,
+            "user_friendly": "Ischemic time"
+        }, 
+        "microscopic_description": {
+            "description": "How the biomaterial looks under the microscope and how it compares with normal cells.",
+            "type": "string",
+            "user_friendly": "Microscopic description"
+        }, 
+        "microscopic_image": {
+            "description": "List of filenames of photographs of body part under microscope. Must be of format JPEG, TIFF, or PNG.",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "^.*.jpg$|^.*.jpeg$|^.*.tiff$|^.*.png$"
+            },
+            "user_friendly": "Microscopic image"
+        }, 
+        "postmortem_interval": {
+            "description": "Duration of time, in seconds, between when death is declared and when the tissue is preserved or processed.",
+            "type": "integer",
+            "minimum": 0,
+            "user_friendly": "Post-mortem interval"
+        }
+    }
+}

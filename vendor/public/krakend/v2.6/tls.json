@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.6/tls.json",
+  "title": "TLS/SSL",
+  "description": "Enabling TLS for HTTPS and HTTP/2.\n\nSee: https://www.krakend.io/docs/service-settings/tls/",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "public_key",
+        "private_key"
+      ]
+    },
+    {
+      "type": "null"
+    }
+  ],
+  "properties": {
+    "ca_certs": {
+      "$id": "#service/tls/ca_certs",
+      "title": "CA certificates (for mTLS)",
+      "description": "An array with all the CA certificates you would like to load to KrakenD **when using mTLS**, in addition to the certificates present in the system's CA. Each certificate in the list is a relative or absolute path to the PEM file. If you have a format other than PEM, you must convert the certificate to PEM using a conversion tool. See also `disable_system_ca_pool` to avoid system's CA.\n\nSee: https://www.krakend.io/docs/authorization/mutual-authentication/",
+      "examples": [
+        [
+          "ca.pem"
+        ]
+      ],
+      "default": [],
+      "type": "array"
+    },
+    "cipher_suites": {
+      "$id": "#service/tls/cipher_suites",
+      "title": "Cipher Suites",
+      "description": "The list of cipher suites as defined in the documentation.\n\nSee: https://www.krakend.io/docs/service-settings/tls/",
+      "default": [
+        4865,
+        4866,
+        4867
+      ],
+      "type": "array",
+      "uniqueItems": true
+    },
+    "curve_preferences": {
+      "$id": "#service/tls/curve_preferences",
+      "title": "Curve identifiers",
+      "description": "The list of all the identifiers for the curve preferences. Use `23` for CurveP256, `24` for CurveP384 or `25` for CurveP521.\n\nSee: https://www.krakend.io/docs/service-settings/tls/",
+      "default": [
+        23,
+        24,
+        25
+      ],
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          23,
+          24,
+          25
+        ]
+      }
+    },
+    "disable_system_ca_pool": {
+      "$id": "#service/tls/disable_system_ca_pool",
+      "title": "Disable system's CA",
+      "description": "Ignore any certificate in the system's CA. The only certificates loaded will be the ones in the `ca_certs` list when true.\n\nSee: https://www.krakend.io/docs/service-settings/http-server-settings/",
+      "default": false,
+      "type": "boolean"
+    },
+    "disabled": {
+      "$id": "#service/tls/disabled",
+      "title": "Disable TLS",
+      "description": "A flag to disable TLS (useful while in development).\n\nSee: https://www.krakend.io/docs/service-settings/tls/",
+      "default": false,
+      "type": "boolean"
+    },
+    "enable_mtls": {
+      "$id": "#service/tls/enable_mtls",
+      "title": "Enable Mutual Authentication",
+      "description": "Whether to enable or not Mutual Authentication. When mTLS is enabled, **all KrakenD endpoints** require clients to provide a known client-side X.509 authentication certificate. KrakenD relies on the system’s CA to validate certificates.\n\nSee: https://www.krakend.io/docs/authorization/mutual-authentication/",
+      "default": false,
+      "type": "boolean"
+    },
+    "max_version": {
+      "$id": "#service/tls/max_version",
+      "title": "Maximum TLS version",
+      "description": "Maximum TLS version supported.\n\nSee: https://www.krakend.io/docs/service-settings/tls/",
+      "default": "TLS13",
+      "enum": [
+        "SSL3.0",
+        "TLS10",
+        "TLS11",
+        "TLS12",
+        "TLS13"
+      ]
+    },
+    "min_version": {
+      "$id": "#service/tls/min_version",
+      "title": "Minimum TLS version",
+      "description": "Minimum TLS version supported. When specifiying very old and insecure versions under TLS12 you must provide the `ciphers_list`.\n\nSee: https://www.krakend.io/docs/service-settings/tls/",
+      "default": "TLS13",
+      "enum": [
+        "SSL3.0",
+        "TLS10",
+        "TLS11",
+        "TLS12",
+        "TLS13"
+      ]
+    },
+    "private_key": {
+      "$id": "#service/tls/private_key",
+      "title": "Private key",
+      "description": "Absolute path to the private key, or relative to the current [working directory](https://www.krakend.io/docs/configuration/working-directory/).\n\nSee: https://www.krakend.io/docs/service-settings/tls/",
+      "examples": [
+        "/path/to/key.pem",
+        "./certs/key.pem"
+      ],
+      "default": "./certs/key.pem",
+      "type": "string"
+    },
+    "public_key": {
+      "$id": "#service/tls/public_key",
+      "title": "Public key",
+      "description": "Absolute path to the public key, or relative to the current [working directory](https://www.krakend.io/docs/configuration/working-directory/).\n\nSee: https://www.krakend.io/docs/service-settings/tls/",
+      "examples": [
+        "/path/to/cert.pem",
+        "./certs/cert.pem"
+      ],
+      "default": "./certs/cert.pem",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

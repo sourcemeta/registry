@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/async_agent.json",
+  "title": "Async Agents",
+  "description": "Async agents are routines listening to queues or PubSub systems that react to new events and push data to your backends. Through async agents, you can start a lot of consumers to process your events autonomously.\n\nSee: https://www.krakend.io/docs/async/",
+  "type": "array",
+  "items": {
+    "required": [
+      "name",
+      "consumer",
+      "backend",
+      "extra_config"
+    ],
+    "properties": {
+      "backend": {
+        "title": "Backend definition",
+        "description": "The [backend definition](https://www.krakend.io/docs/backends/) (as you might have in any endpoint) indicating where the event data is sent. It is a full backend object definition, with all its possible options, transformations, filters, validations, etc.",
+        "type": "array",
+        "items": {
+          "$ref": "backend.json"
+        }
+      },
+      "connection": {
+        "$id": "#async_agent/connection",
+        "title": "Connection",
+        "description": "A key defining all the connection settings between the agent and your messaging system.\n\nSee: https://www.krakend.io/docs/async/",
+        "type": "object",
+        "properties": {
+          "backoff_strategy": {
+            "title": "Backoff strategy",
+            "description": "When the connection to your event source gets interrupted for whatever reason, KrakenD keeps trying to reconnect until it succeeds or until it reaches the `max_retries`. The backoff strategy defines the delay in seconds in between consecutive failed retries.\n\nSee: https://www.krakend.io/docs/async/",
+            "default": "fallback",
+            "enum": [
+              "linear",
+              "linear-jitter",
+              "exponential",
+              "exponential-jitter",
+              "fallback"
+            ]
+          },
+          "health_interval": {
+            "title": "Health interval",
+            "description": "The time between pings checking that the agent is connected to the queue and alive. Regardless of the health interval, if an agent fails, KrakenD will restart it again immediately as defined by `max_retries`and `backoff_strategy`.\n\nSee: https://www.krakend.io/docs/async/",
+            "default": "1s",
+            "$ref": "timeunits.json#/$defs/timeunit"
+          },
+          "max_retries": {
+            "title": "Max retries",
+            "description": "The maximum number of times you will allow KrakenD to retry reconnecting to a broken messaging system. Use 0 for unlimited retries.\n\nSee: https://www.krakend.io/docs/async/",
+            "default": 0,
+            "type": "integer"
+          }
+        },
+        "patternProperties": {
+          "^[@$_#]": {}
+        },
+        "additionalProperties": false
+      },
+      "consumer": {
+        "$id": "#async_agent/consumer",
+        "title": "Consumer",
+        "description": "Defines all the settings for each agent consuming messages.\n\nSee: https://www.krakend.io/docs/async/",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "max_rate": {
+            "title": "Max Rate",
+            "description": "The maximum number of messages you allow each worker to consume per second. Use any of `0` or `-1` for unlimited speed.\n\nSee: https://www.krakend.io/docs/async/",
+            "default": 0,
+            "type": "number"
+          },
+          "timeout": {
+            "title": "Timeout",
+            "description": "The maximum time the agent will wait to process an event sent to the backend. If the backend fails to process it, the message is reinserted for later consumption. Defaults to the timeout in the root level, or to `2s` if no value is declared.\n\nSee: https://www.krakend.io/docs/async/",
+            "$ref": "timeunits.json#/$defs/timeunit"
+          },
+          "topic": {
+            "title": "Topic",
+            "description": "The topic name you want to consume. The syntax depends on the driver. Examples for AMQP: `*`, `mytopic`, `lazy.#`, `*`, `foo.*`.\n\nSee: https://www.krakend.io/docs/async/",
+            "type": "string"
+          },
+          "workers": {
+            "title": "Workers",
+            "description": "The number of workers (consuming processes) you want to start simultaneously for this agent.\n\nSee: https://www.krakend.io/docs/async/",
+            "default": 1,
+            "type": "integer"
+          }
+        }
+      },
+      "encoding": {
+        "$id": "#backend/encoding",
+        "title": "Backend Encoding",
+        "description": "Informs KrakenD how to parse the responses of your services.\n\nSee: https://www.krakend.io/docs/backends/supported-encodings/",
+        "default": "json",
+        "enum": [
+          "json",
+          "safejson",
+          "xml",
+          "rss",
+          "string",
+          "no-op"
+        ]
+      },
+      "extra_config": {
+        "description": "Defines the driver that connects to your queue or PubSub system. In addition, you can place other middlewares to modify the request (message) or the response, apply logic or any other endpoint middleware, but adding the driver is mandatory.\n\nSee: https://www.krakend.io/docs/async/",
+        "required": [
+          "async/amqp"
+        ],
+        "properties": {
+          "async/amqp": {
+            "title": "Async Agent extra configuration",
+            "description": "See the configuration for async/amqp",
+            "$ref": "async/amqp.json"
+          }
+        }
+      },
+      "name": {
+        "$id": "#async_agent/name",
+        "title": "Name",
+        "description": "A unique name for this agent. KrakenD shows it in the health endpoint and logs and metrics. KrakenD does not check collision names, so make sure each agent has a different name.\n\nSee: https://www.krakend.io/docs/async/",
+        "type": "string"
+      }
+    },
+    "patternProperties": {
+      "^[@$_#]": {}
+    },
+    "additionalProperties": false
+  }
+}

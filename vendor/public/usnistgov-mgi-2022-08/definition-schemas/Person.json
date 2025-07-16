@@ -1,0 +1,59 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Person",
+    "definitions": {"Person": {
+        "type": "object",
+        "properties": {
+            "familyName": {
+                "type": "string",
+                "title": "Family Name"
+            },
+            "givenName": {
+                "type": "string",
+                "title": "Given Name"
+            },
+            "additionalName": {
+                "type": "string",
+                "title": "Middle Name(s)"
+            },
+            "email": {
+                "type": "string",
+                "title": "E-Mail Address",
+                "cordra": {"preview": {
+                    "showInPreview": true
+                }}
+            },
+            "telephone": {
+                "type": "string",
+                "title": "Telephone"
+            },
+            "address": {
+                "type": "string",
+                "title": "Physical Address",
+                "format": "textarea"
+            },
+            "affiliation": {
+                "type": "array",
+                "title": "Affiliations",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Affiliation",
+                    "cordra": {"type": {"handleReference": {"types": ["Organization"]}}}
+                }
+            },
+            "workLocation": {
+                "type": "array",
+                "title": "Work Location",
+                "description": "A location where a person performs work (e.g., office, laboratory).",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Place",
+                    "cordra": {"type": {"handleReference": {"types": ["Place"]}}}
+                }
+            }
+        }
+    }}
+}

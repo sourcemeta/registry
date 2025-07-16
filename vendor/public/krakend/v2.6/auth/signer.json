@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.6/auth/signer.json",
+  "title": "JWT signer",
+  "description": "creates a wrapper for your login endpoint that signs with your secret key the selected fields of the backend payload right before returning the content to the end-user.\n\nSee: https://www.krakend.io/docs/authorization/jwt-signing/",
+  "type": "object",
+  "oneOf": [
+    {
+      "required": [
+        "alg",
+        "jwk_local_path",
+        "disable_jwk_security"
+      ]
+    },
+    {
+      "required": [
+        "alg",
+        "jwk_url"
+      ]
+    }
+  ],
+  "required": [
+    "alg",
+    "kid",
+    "keys_to_sign"
+  ],
+  "properties": {
+    "alg": {
+      "$id": "#auth/signer/alg",
+      "title": "Algorithm",
+      "description": "The hashing algorithm used by the issuer. Usually `RS256`. The algorithm you choose directly affects the CPU consumption.\n\nSee: https://www.krakend.io/docs/authorization/jwt-validation/",
+      "enum": [
+        "EdDSA",
+        "HS256",
+        "HS384",
+        "HS512",
+        "RS256",
+        "RS384",
+        "RS512",
+        "ES256",
+        "ES384",
+        "ES512",
+        "PS256",
+        "PS384",
+        "PS512"
+      ]
+    },
+    "cipher_suites": {
+      "$id": "#auth/signer/cipher_suites",
+      "title": "Cipher suites",
+      "description": "Override the default cipher suites (see [JWT validation](https://www.krakend.io/docs/authorization/jwt-validation/)). Unless you have a legacy JWK, **you don't need to set this value**.",
+      "default": [
+        49199,
+        49195,
+        49200,
+        49196,
+        52392,
+        52393
+      ],
+      "type": "array",
+      "items": {
+        "title": "Object in array",
+        "description": "\n\nSee: https://www.krakend.io/docs/authorization/jwt-validation/",
+        "enum": [
+          5,
+          10,
+          47,
+          53,
+          60,
+          156,
+          157,
+          49159,
+          49161,
+          49162,
+          49169,
+          49170,
+          49171,
+          49172,
+          49187,
+          49191,
+          49199,
+          49195,
+          49200,
+          49196,
+          52392,
+          52393
+        ]
+      }
+    },
+    "cypher_key": {
+      "$id": "#auth/validator/cypher_key",
+      "title": "Cypher key",
+      "description": "The cyphering key.\n\nSee: https://www.krakend.io/docs/authorization/jwt-validation/",
+      "type": "string"
+    },
+    "disable_jwk_security": {
+      "$id": "#auth/signer/disable_jwk_security",
+      "title": "Disable_jwk_security",
+      "description": "Disables HTTP security of the JWK client and allows insecure connections (plain HTTP) to download the keys. The flag should be `false` when you use HTTPS, and `true` when using plain HTTP or loading the key from a local file.\n\nSee: https://www.krakend.io/docs/enterprise/authorization/jwt-validation/",
+      "default": false,
+      "type": "boolean"
+    },
+    "full": {
+      "$id": "#auth/signer/full",
+      "title": "Full format",
+      "description": "Use JSON format instead of the compact form JWT provides.\n\nSee: https://www.krakend.io/docs/enterprise/authorization/jwt-validation/",
+      "default": false,
+      "type": "boolean"
+    },
+    "jwk_fingerprints": {
+      "$id": "#auth/signer/jwk_fingerprints",
+      "title": "JWK Fingerprints",
+      "description": "A list of fingerprints (the unique identifier of the certificate) for certificate pinning and avoid man in the middle attacks. Add fingerprints in base64 format.\n\nSee: https://www.krakend.io/docs/authorization/jwt-signing/",
+      "type": "array"
+    },
+    "jwk_local_ca": {
+      "$id": "#auth/signer/jwk_local_ca",
+      "title": "Local CA",
+      "description": "Path to the CA’s certificate verifying a secure connection when downloading the JWK. Use when not recognized by the system (e.g., self-signed certificates).\n\nSee: https://www.krakend.io/docs/authorization/jwt-validation/",
+      "type": "string"
+    },
+    "jwk_local_path": {
+      "$id": "#auth/validator/jwk_local_path",
+      "title": "JWK local path",
+      "description": "Local path to the JWK public keys, has preference over `jwk_url`. Instead of pointing to an external URL (with `jwk_url`), public keys are kept locally, in a plain JWK file (security alert!), or encrypted. When encrypted, also add `secret_url` and `cypher_key`.\n\nSee: https://www.krakend.io/docs/authorization/jwt-validation/",
+      "examples": [
+        "./jwk.txt"
+      ],
+      "type": "string"
+    },
+    "jwk_url": {
+      "$id": "#auth/signer/jwk_url",
+      "title": "JWK URL",
+      "description": " The URL to the JWK endpoint with the private keys used to sign the token.\n\nSee: https://www.krakend.io/docs/authorization/jwt-signing/",
+      "examples": [
+        "http://your-backend/jwk/symmetric.json"
+      ],
+      "type": "string"
+    },
+    "keys_to_sign": {
+      "$id": "#auth/signer/keys_to_sign",
+      "title": "Keys to sign",
+      "description": "List of all the specific keys that need signing (e.g., `refresh_token` and `access_token`).\n\nSee: https://www.krakend.io/docs/authorization/jwt-signing/",
+      "examples": [
+        "access_token",
+        "refresh_token"
+      ],
+      "type": "array"
+    },
+    "kid": {
+      "$id": "#auth/signer/kid",
+      "title": "Kid",
+      "description": "The key ID purpose is to match a specific key, as the jwk_url might contain several keys.\n\nSee: https://www.krakend.io/docs/enterprise/authorization/jwt-validation/",
+      "examples": [
+        "sim2"
+      ],
+      "type": "string"
+    },
+    "secret_url": {
+      "$id": "#auth/validator/secret_url",
+      "title": "Secret's URL",
+      "description": "An URL with a custom scheme using one of the supported providers (e.g.: `awskms://keyID`) ([see providers](https://www.krakend.io/docs/authorization/jwt-validation/#accepted-providers-for-encrypting-payloads)).\n\nSee: https://www.krakend.io/docs/authorization/jwt-validation/",
+      "examples": [
+        "base64key://smGbjm71Nxd1Ig5FS0wj9SlbzAIrnolCz9bQQ6uAhl4=",
+        "awskms://keyID",
+        "azurekeyvault://keyID",
+        "gcpkms://projects/[PROJECT_ID]/locations/[LOCATION]/keyRings/[KEY_RING]/cryptoKeys/[KEY]",
+        "hashivault://keyID"
+      ],
+      "type": "string",
+      "pattern": "(base64key|awskms|azurekeyvault|gcpkms|hashivault)://(.*)"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

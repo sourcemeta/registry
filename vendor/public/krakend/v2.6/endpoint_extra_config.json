@@ -1,0 +1,182 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.6/endpoint_extra_config.json",
+  "title": "Schema definition for extra_config of endpoints",
+  "type": "object",
+  "properties": {
+    "auth/api-keys": {
+      "title": "API-key validation",
+      "description": "Enterprise only. Validates that users of this endpoint pass a valid API-key containing one of the declared roles.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+      "type": "object",
+      "required": [
+        "roles"
+      ],
+      "properties": {
+        "client_max_rate": {
+          "title": "Max rate",
+          "description": "If you want to limit the endpoint usage to this specific user at a number of requests per second. Exceeding the number of requests per second will give the client a `429 Too Many Requests` HTTP status code.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+          "type": "number"
+        },
+        "identifier": {
+          "title": "Override Identifier",
+          "description": "The header name or the query string name that contains the API key. By default uses any value declared in the `auth/api-keys` component in the service level.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+          "type": "string"
+        },
+        "roles": {
+          "title": "",
+          "description": "The list of roles allowed to access the endpoint. Values must match (case sensitive) definitions in the `keys` section at the service level of `auth/api-keys`. API Keys not having the right role, or unauthenticated requests, will receive a `401 Unauthorized`.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "strategy": {
+          "$id": "#auth/api-keys/strategy",
+          "title": "Strategy",
+          "description": "Specifies where to expect the user API key, whether inside a header or as part of the query string. When you change the strategy at the endpoint level, **you should also set the identifier**, otherwise you could have for instance, a query string strategy expecting to have a URL like `/foo?Authorization=YOUR-KEY`.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+          "enum": [
+            "header",
+            "query_string"
+          ]
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "auth/basic": {
+      "$ref": "auth/basic.json"
+    },
+    "auth/signer": {
+      "$ref": "auth/signer.json"
+    },
+    "auth/validator": {
+      "$ref": "auth/validator.json"
+    },
+    "documentation/openapi": {
+      "$ref": "documentation/openapi.json"
+    },
+    "modifier/jmespath": {
+      "$ref": "modifier/jmespath.json"
+    },
+    "modifier/lua-endpoint": {
+      "$ref": "modifier/lua.json"
+    },
+    "modifier/lua-proxy": {
+      "$ref": "modifier/lua.json"
+    },
+    "modifier/request-body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "modifier/response-body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "plugin/req-resp-modifier": {
+      "$ref": "plugin/req-resp-modifier.json"
+    },
+    "proxy": {
+      "$id": "#endpoint_extra_config/proxy",
+      "title": "Proxy",
+      "type": "object",
+      "properties": {
+        "combiner": {
+          "$id": "#endpoint_extra_config/proxy/combiner",
+          "title": "Custom combiner",
+          "description": "For custom builds of KrakenD only",
+          "examples": [
+            "combiner_name"
+          ],
+          "type": "string"
+        },
+        "flatmap_filter": {
+          "$id": "#proxy/flatmap_filter",
+          "title": "Flatmap (Array manipulation)",
+          "description": "The list of operations to **execute sequentially** (top down). Every operation is defined with an object containing two properties:\n\nSee: https://www.krakend.io/docs/backends/flatmap/",
+          "$ref": "proxy/flatmap.json",
+          "type": "array"
+        },
+        "sequential": {
+          "$id": "#endpoint_extra_config/proxy/sequential",
+          "title": "Sequential proxy",
+          "description": "The sequential proxy allows you to chain backend requests, making calls dependent one of each other.\n\nSee: https://www.krakend.io/docs/endpoints/sequential-proxy/",
+          "default": true,
+          "type": "boolean"
+        },
+        "static": {
+          "$id": "#endpoint_extra_config/proxy/static",
+          "title": "Static response",
+          "description": "The static proxy injects static data in the final response when the selected strategy matches.\n\nSee: https://www.krakend.io/docs/endpoints/static-proxy/",
+          "type": "object",
+          "required": [
+            "data",
+            "strategy"
+          ],
+          "properties": {
+            "data": {
+              "$id": "#endpoint_extra_config/proxy/static/data",
+              "title": "Data",
+              "description": "The static data (as a JSON object) that you will return.\n\nSee: https://www.krakend.io/docs/endpoints/static-proxy/",
+              "type": "object"
+            },
+            "strategy": {
+              "$id": "#endpoint_extra_config/proxy/static/strategy",
+              "title": "Strategy",
+              "description": "One of the supported strategies\n\nSee: https://www.krakend.io/docs/endpoints/static-proxy/",
+              "enum": [
+                "always",
+                "success",
+                "complete",
+                "errored",
+                "incomplete"
+              ]
+            }
+          },
+          "patternProperties": {
+            "^[@$_#]": {}
+          },
+          "additionalProperties": false
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "qos/ratelimit/router": {
+      "title": "Router Rate-limiting",
+      "description": "The router rate limit feature allows you to set a number of maximum requests per second a KrakenD endpoint will accept.\n\nSee: https://www.krakend.io/docs/endpoints/rate-limit/",
+      "$ref": "qos/ratelimit/router.json"
+    },
+    "security/bot-detector": {
+      "$ref": "security/bot-detector.json"
+    },
+    "security/cors": {
+      "$ref": "security/cors.json"
+    },
+    "security/http": {
+      "$ref": "security/http.json"
+    },
+    "security/policies": {
+      "$ref": "security/policies.json"
+    },
+    "telemetry/opentelemetry": {
+      "$ref": "telemetry/opentelemetry-endpoint.json"
+    },
+    "validation/cel": {
+      "$ref": "validation/cel.json"
+    },
+    "validation/json-schema": {
+      "title": "Validating the body with the JSON Schema",
+      "description": "apply automatic validations using the JSON Schema vocabulary before the content passes to the backends. The json schema component allows you to define validation rules on the body, type definition, or even validate the fields' values.\n\nSee: https://www.krakend.io/docs/endpoints/json-schema/",
+      "type": "object"
+    },
+    "websocket": {
+      "$ref": "websocket.json"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

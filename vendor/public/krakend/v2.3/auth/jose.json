@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/auth/jose.json",
+  "description": "Enables global configurations for the HTTP client responsible of downloading and caching the JWK URLs for token validation and signing.",
+  "type": "object",
+  "required": [
+    "shared_cache_duration"
+  ],
+  "properties": {
+    "shared_cache_duration": {
+      "title": "Shared cache duration",
+      "description": "The cache duration in seconds for the JWK client retrieving the `jwk_url`. The endpoint must enable the `cache` option in order to use this second level cache.\n\nSee: https://www.krakend.io/docs/authorization/jwk-caching/",
+      "type": "integer"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

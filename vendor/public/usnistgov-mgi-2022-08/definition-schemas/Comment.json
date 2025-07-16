@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Comment",
+    "definitions": {"Comment": {
+        "type": "object",
+        "properties": {
+            "downvoteCount": {
+                "title": "Down Vote Count",
+                "type": "number"
+            },
+            "upvoteCount": {
+                "title": "Up Vote Count",
+                "type": "number"
+            },
+            "parentItem": {
+                "type": "string",
+                "title": "Parent Item",
+                "cordra": {"type": {"handleReference": {"types": []}}}
+            },
+            "text": {
+                "type": "string",
+                "title": "Text of the Comment",
+                "format": "textarea"
+            }
+        }
+    }}
+}

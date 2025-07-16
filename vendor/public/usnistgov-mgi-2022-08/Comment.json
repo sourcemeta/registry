@@ -1,0 +1,40 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Comment",
+    "description": "This schema is for representing a Comment in Cordra.",
+    "required": [
+        "@id",
+        "@context",
+        "@type"
+    ],
+    "allOf": [
+        {
+            "@context": {
+                "type": "string",
+                "default": [
+                    "https://schema.org/",
+                    {
+                        "@vocab": "https://pages.nist.gov/material-schema/user-defined"
+                    }
+                ]
+            },
+            "@type": {
+                "type": "string",
+                "default": "Comment"
+            }
+        },
+        {
+            "$ref": "definition-schemas/CordraObjectID.json#/definitions/CordraObjectID"
+        },
+        {
+            "$ref": "definition-schemas/Thing.json#/definitions/Thing"
+        },
+        {
+            "$ref": "definition-schemas/CreativeWork.json#/definitions/CreativeWork"
+        },
+        {
+            "$ref": "definition-schemas/Comment.json#/definitions/Comment"
+        }
+    ]
+}

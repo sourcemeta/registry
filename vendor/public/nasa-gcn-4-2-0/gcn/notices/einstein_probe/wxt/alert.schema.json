@@ -1,0 +1,15 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.2.0/gcn/notices/einstein_probe/wxt/alert.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EP/WXT Alert",
+  "description": "Candidate X-ray transient reported from the EP/WXT on board trigger",
+  "type": "object",
+  "allOf": [
+    { "$ref": "../../core/DateTime.schema.json" },
+    { "$ref": "../../core/Event.schema.json" },
+    { "$ref": "../../core/Localization.schema.json" },
+    { "$ref": "../../core/Reporter.schema.json" },
+    { "$ref": "../../core/Statistics.schema.json" },
+    { "$ref": "../../core/AdditionalInfo.schema.json" }
+  ]
+}

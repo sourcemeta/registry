@@ -1,0 +1,52 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v2.0.0/gcn/notices/glowbug/alert.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Glowbug Alert Notice",
+  "description": "Information about a Glowbug trigger.  All fields optional; omitted if not available or not applicable.",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "../core/Reporter.schema.json",
+      "description": "mission=GLOWBUG"
+    },
+    {
+      "$ref": "../core/AdditionalInfo.schema.json",
+      "description": "Complementary info in text form."
+    },
+    { "$ref": "../core/Alert.schema.json" },
+    {
+      "$ref": "../core/Event.schema.json",
+      "description": "event_id=[ 'BUGyymmdd.fff', seqnum ], where fff is in millidays with trailing zeros. id_source=GLOWBUG for both."
+    },
+    {
+      "$ref": "../core/DateTime.schema.json",
+      "description": "Trigger_time with seconds fraction."
+    },
+    {
+      "$ref": "../core/Statistics.schema.json",
+      "description": "rate_duration is the integration time (a.k.a. trigger time scale), over which the rate_snr was measured."
+    }
+  ],
+  "properties": {
+    "detector_status": {
+      "type": "object",
+      "properties": {
+        "CsI0": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI1": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI2": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI3": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI4": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI5": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI6": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI7": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI8": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI9": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI10": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI11": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CLLB0": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CLLB1": { "$ref": "../core/DetectorStatus.schema.json" },
+        "SSA": { "$ref": "../core/DetectorStatus.schema.json" }
+      }
+    }
+  }
+}

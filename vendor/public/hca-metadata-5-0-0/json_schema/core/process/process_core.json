@@ -1,0 +1,63 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/core/process/5.0.0/process_core",
+    "description": "A process entity contains information relevant to how a biomaterial/file entity was converted into another biomaterial/file entity.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "process_id"
+    ],
+    "title": "process_core",
+    "type": "object",
+    "properties": {
+        "describedBy": {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/core/process/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/process_core"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "process_id": {
+            "description": "A unique ID for this process.",
+            "type": "string",
+            "user_friendly": "Process ID"
+        },
+        "process_name": {
+            "description": "A short, descriptive name for the process that need not be unique.",
+            "type": "string",
+            "user_friendly": "Process name"
+        },
+        "process_description": {
+            "description": "A general description of the process.",
+            "type": "string",
+            "user_friendly": "Process description"
+        },
+         "start_time": {
+            "description": "When the process started, in date-time format, yyyy-mm-ddThh:mm:ssZ.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2018-01-31T08:30:00Z",
+            "user_friendly": "Start time"
+         },
+         "process_location": {
+            "description": "Where the process took place.",
+            "type": "string",
+            "example": "Wellcome Sanger Institute, Teichman Lab.",
+            "user_friendly": "Location"
+         },
+         "operator_identity": {
+           "description": "Identifier for individual(s) who executed this process.",
+           "type": "array",
+           "example": "Technician 1",
+           "items":{
+                "type": "string"
+           },
+           "user_friendly": "Operator identity"
+         }
+    }
+}
+

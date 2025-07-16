@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.2/websocket.json",
+  "title": "Schema definition for Websockets",
+  "description": "Enterprise only. Enables websocket communication.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+  "type": "object",
+  "properties": {
+    "backoff_strategy": {
+      "title": "Backoff strategy",
+      "description": "When the connection to your event source gets interrupted for whatever reason, KrakenD keeps trying to reconnect until it succeeds or until it reaches the max_retries. The backoff strategy defines the delay in seconds in between consecutive failed retries. Defaults to 'fallback'\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": "fallback",
+      "enum": [
+        "linear",
+        "linear-jitter",
+        "exponential",
+        "exponential-jitter",
+        "fallback"
+      ]
+    },
+    "connect_event": {
+      "$id": "#websocket/connect_event",
+      "title": "Connect event",
+      "description": "Notifies in the log when there is the client connect event.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "type": "boolean"
+    },
+    "disconnect_event": {
+      "$id": "#websocket/disconnect_event",
+      "title": "Allowed Headers In",
+      "description": "Notifies in the log when there is a client disconnect event.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "type": "boolean"
+    },
+    "input_headers": {
+      "$id": "#websocket/input_headers",
+      "title": "Allowed Headers In",
+      "description": "Defines which input headers are allowed to pass to the backend. Notice that you need to declare the `input_headers` at the endpoint level too.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": [],
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$id": "#websocket/input_headers/items",
+        "examples": [
+          "User-Agent",
+          "Accept",
+          "*"
+        ],
+        "type": "string"
+      }
+    },
+    "max_message_size": {
+      "title": "Maximum message size",
+      "description": "Sets the maximum size of client messages (in bytes).\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 512,
+      "type": "integer"
+    },
+    "max_retries": {
+      "title": "Max retries",
+      "description": "The maximum number of times you will allow KrakenD to retry reconnecting to a broken messaging system. Use a value `<= 0` for unlimited retries.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 0,
+      "type": "integer"
+    },
+    "message_buffer_size": {
+      "title": "Message buffer size",
+      "description": "Sets the maximum buffer size for messages (in bytes).\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 256,
+      "type": "integer"
+    },
+    "ping_period": {
+      "title": "Ping frequency",
+      "description": "Sets the time between pings checking the health of the system.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": "54s",
+      "$ref": "./timeunits.json#/$defs/timeunit"
+    },
+    "pong_wait": {
+      "title": "Pong timeout",
+      "description": "Sets the maximum time KrakenD will until the pong times out.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": "60s",
+      "$ref": "./timeunits.json#/$defs/timeunit"
+    },
+    "read_buffer_size": {
+      "$id": "#websocket/read_buffer_size",
+      "title": "Read buffer size",
+      "description": "Connections buffer network input and output to reduce the number of system calls when reading messages. You can set the maximum buffer size for reading in bytes.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 4096,
+      "type": "integer"
+    },
+    "return_error_details": {
+      "title": "Return error details",
+      "description": "Provides an error `{'error':'reason here'}` to the client when KrakenD was unable to send the message to the backend.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": false,
+      "type": "boolean"
+    },
+    "write_buffer_size": {
+      "title": "Write buffer size",
+      "description": "Connections buffer network input and output to reduce the number of system calls when writing messages. You can set the maximum buffer size for writing in bytes.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 1024,
+      "type": "integer"
+    },
+    "write_wait": {
+      "title": "Write timeout",
+      "description": "Sets the maximum time KrakenD will wait until the write times out.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": "10s",
+      "$ref": "./timeunits.json#/$defs/timeunit"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

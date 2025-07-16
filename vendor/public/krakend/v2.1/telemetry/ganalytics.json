@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.1/telemetry/ganalytics.json",
+  "title": "telemetry/ganalytics",
+  "description": "Enterprise only. Generate API Analytics from your API activity, using Google’s Analytics platform as the storage backend.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/google-analytics/",
+  "type": "object",
+  "required": [
+    "url",
+    "track_id"
+  ],
+  "properties": {
+    "buffer_size": {
+      "$id": "#telemetry/ganalytics/buffer_size",
+      "title": "Buffer size",
+      "description": "The size of the buffer determines how much data can be stored in memory. The default value is twice the number of workers. It must be at least twice the number of workers, otherwise it is automatically changed to the double.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/google-analytics/",
+      "type": "integer"
+    },
+    "tags": {
+      "$id": "#telemetry/ganalytics/tags",
+      "title": "Tags",
+      "description": "An object with key-values describing the tags you want to include when sending reports and their values. These tags are static.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/google-analytics/",
+      "type": "object"
+    },
+    "timeout": {
+      "$id": "#telemetry/ganalytics/timeout",
+      "title": "Timeout",
+      "description": "The time you will wait for the internal buffer to be avaiable before discarding a report.",
+      "default": "100ms",
+      "$ref": "../timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "track_id": {
+      "$id": "#telemetry/ganalytics/track_id",
+      "title": "Tracking ID",
+      "description": "The tracking ID as provided by Google. It is recommended to create a new property in Google Analytics to track the activity. It usually looks like UA-1234567.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/google-analytics/",
+      "examples": [
+        "UA-1234567"
+      ],
+      "type": "string"
+    },
+    "url": {
+      "$id": "#telemetry/ganalytics/url",
+      "title": "Reporting URL",
+      "description": " The reporting URL where KrakenD sends the batches. Unless you need a custom backend endpoint, use `https://www.google-analytics.com/batch`.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/google-analytics/",
+      "type": "string"
+    },
+    "workers": {
+      "$id": "#telemetry/ganalytics/workers",
+      "title": "Number of workers",
+      "description": "The number of internal workers that send the reports in batch.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/google-analytics/",
+      "default": 2,
+      "type": "integer"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

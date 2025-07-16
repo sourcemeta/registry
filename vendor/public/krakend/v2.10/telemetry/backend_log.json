@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/telemetry/backend_log.json",
+  "title": "Enterprise only. Improved logging",
+  "description": "Enables the Backend Log capabilities.\n\nSee: https://www.krakend.io/enterprise/docs/logging/",
+  "type": "object",
+  "minProperties": 1,
+  "properties": {
+    "custom_format": {
+      "title": "Backend Log Format",
+      "description": "Specify the custom format of the Backend Logs.\n\nSee: https://www.krakend.io/enterprise/docs/logging/",
+      "examples": [
+        "%{time:kitchen} | (╯°□°)╯( ┻━┻ %{statusCode} | %{method} %{host} %{path}\n"
+      ],
+      "default": "%{prefix}%{time} |%{statusCode}| %{latencyMs} | %{method} %{host} %{path}\n",
+      "type": "string"
+    },
+    "log_with_level": {
+      "title": "Backend Log Level",
+      "description": "What type of **reporting level** do you want to set at the backends? The options below go from more verbose to least. Use the `DEBUG` level in the development stages but not in production. Some components can add extra verbosity while in DEBUG mode and send **multiline content**, which is not always suitable for automated log parsing.\n\nSee: https://www.krakend.io/enterprise/docs/logging/",
+      "enum": [
+        "DEBUG",
+        "INFO",
+        "WARNING",
+        "ERROR",
+        "CRITICAL"
+      ]
+    },
+    "no_value": {
+      "title": "Backend Log No Value",
+      "description": "When the variable does not resolve to any value, the string you want to write in the log. If the string is set to an empty value, a dash `-` is printed.\n\nSee: https://www.krakend.io/enterprise/docs/logging/",
+      "examples": [
+        "-",
+        "null",
+        "no_value",
+        "<empty>"
+      ],
+      "default": "-",
+      "type": "string"
+    },
+    "prefix": {
+      "title": "Backend Log Prefix",
+      "description": "Adds the defined string at the beginning of every logged line, so you can quickly filter messages with external tools later on.\n\nSee: https://www.krakend.io/enterprise/docs/logging/",
+      "examples": [
+        ">>> "
+      ],
+      "default": "",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

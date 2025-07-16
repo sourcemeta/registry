@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/plugin/content-replacer.json",
+  "title": "Content Replacer",
+  "description": "Enterprise only. The content replacer plugin allows you to modify the response of your services by doing literal replacements or more sophisticated replacements with regular expressions.\n\nSee: See: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+  "deprecated": true,
+  "type": "object",
+  "minProperties": 1,
+  "additionalProperties": {
+    "type": "object",
+    "required": [
+      "find",
+      "replace"
+    ],
+    "properties": {
+      "find": {
+        "title": "Find",
+        "description": "The find expression or literal you want to use.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+        "type": "string"
+      },
+      "regexp": {
+        "title": "Is a regexp?",
+        "description": "When you are passing regular expressions instead of literal values, set it to true.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+        "default": false,
+        "type": "boolean"
+      },
+      "replace": {
+        "title": "Find",
+        "description": "The literal string or expression you want to use as a replacement.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+        "type": "string"
+      }
+    },
+    "patternProperties": {
+      "^[@$_#]": {}
+    },
+    "additionalProperties": false
+  }
+}

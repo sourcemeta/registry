@@ -1,0 +1,85 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/project/5.0.0/project",
+    "description": "A project contains information about the overall project.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type"
+    ],
+    "title": "project",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/project/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/project"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "project"
+            ]
+        },
+        "project_core" : {
+            "description": "Core project-level information.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/project/5.0.0/project_core"
+        },
+        "contributors": {
+            "description": "List of people contributing to any aspect of the project.",
+            "type": "array",
+            "example": "List of authors for a publication resulting from this project.",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/module/project/5.0.0/contact"
+            }
+        },
+        "supplementary_files": {
+            "description": "Project-level supplementary files.",
+            "type": "array",
+            "example": "Experimental design documents, electronic notebook files, manuscripts in preparation, etc.",
+	        "items": {
+                "type": "string"
+            },
+            "user_friendly": "Supplementary files"
+        },
+        "publications": {
+    	    "description": "A list of publications resulting from this project.",
+            "type": "array",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/module/project/5.0.0/publication"
+            }
+        },
+        "insdc_project": {
+            "description": "An INSDC (International Nucleotide Sequence Database Collaboration) project accession. Can be from the DDBJ, EMBL-EBI, or NCBI. Accession must start with DRP, ERP, or SRP.",
+            "type": "string",
+            "pattern": "^[D|E|S]RP[0-9]+$",
+            "user_friendly": "INSDC project accession"
+        },
+        "geo_series": {
+            "description": "An NCBI GEO series accession.",
+            "type": "string",
+            "pattern": "^GSE.*$",
+            "user_friendly": "GEO series accession"
+        },
+        "array_express_investigation": {
+            "description": "An EBI ArrayExpress investigation accession.",
+            "type": "string",
+            "pattern": "^E-....-.*$",
+            "user_friendly": "ArrayExpress accession"
+        },
+        "insdc_study": {
+            "description": "An INSDC (International Nucleotide Sequence Database Collaboration) study accession. Can be from the DDBJ, EMBL-EBI, or NCBI. Accession must start with PRJE, PRJN, or PRJD.",
+            "type": "string",
+            "pattern": "^PRJ[E|N|D][a-zA-Z][0-9]+$",
+            "user_friendly": "INSDC study accession"
+        }
+    }
+}

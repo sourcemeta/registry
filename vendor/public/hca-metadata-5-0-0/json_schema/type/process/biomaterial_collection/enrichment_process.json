@@ -1,0 +1,79 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/process/biomaterial_collection/5.0.0/enrichment_process",
+    "description": "Process by which one biomaterial was produced from another biomaterial to favor a feature or characteristic of interest.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type",
+        "process_core",
+        "enrichment_method"
+    ],
+    "title": "enrichment_process",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/process/biomaterial_collection/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/enrichment_process"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "process"
+            ]
+        },
+         "process_core" : {
+            "description": "Core process-level information.",
+             "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/process/5.0.0/process_core"
+        },
+        "enrichment_method": {
+            "description": "The method by which enrichment was achieved.",
+            "type": "string",
+            "example": "FACS",
+            "enum": [
+                "FACS",
+                "MACS",
+                "Ficoll gradient",
+                "laser capture microdissection",
+                "density gradient"
+            ],
+            "comment": "This will become an ontology.",
+            "user_friendly": "Enrichment method"
+        },
+        "markers": {
+            "description": "A space-delimited list of markers with +/-.",
+            "type": "string",
+            "example": "CD4+ CD8-",
+            "user_friendly": "Markers"
+        },
+        "min_size_selected": {
+            "description": "Minimum cell or organelle size passing selection, in microns.",
+            "type": "number",
+            "maximum": 10000,
+            "minimum": 0.01,
+            "user_friendly": "Minimum size selected"
+        },
+        "max_size_selected": {
+            "description": "Maximum cell or organelle size passing selection, in microns.",
+            "type": "number",
+            "maximum": 10000,
+            "minimum": 0.01,
+            "user_friendly": "Maximum size selected"
+        },
+         "process_type": {
+            "description": "The type of process. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0002694.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/process_type_ontology",
+            "user_friendly": "Process type"
+        }
+    }
+}

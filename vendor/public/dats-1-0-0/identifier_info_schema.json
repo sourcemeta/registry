@@ -1,0 +1,39 @@
+{
+  "id": "https://w3id.org/dats/schema/identifier_info_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS identifier information schema",
+  "description": "Information about the primary identifier.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Identifier" ]},
+    "identifier": {
+      "description": "A code uniquely identifying an entity locally to a system or globally.",
+      "type" : "string"
+    },
+    "identifierSource": {
+      "description": "The identifier source represents information about the organisation/namespace responsible for minting the identifiers. It must be provided if the identifier is provided.",
+      "type" : "string"
+    }
+  },
+  "additionalProperties": false
+}

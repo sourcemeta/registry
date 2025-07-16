@@ -1,0 +1,80 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Organization",
+    "definitions": {"Organization": {
+        "type": "object",
+        "properties": {
+            "address": {
+                "type": "string",
+                "title": "Physical Address",
+                "format": "textarea"
+            },
+            "contactPoint": {
+                "type": "array",
+                "title": "Contact Points",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Contact Point",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "Person",
+                        "User"
+                    ]}}}
+                }
+            },
+            "email": {
+                "type": "string",
+                "title": "E-Mail Address"
+            },
+            "telephone": {
+                "type": "string",
+                "title": "Telephone"
+            },
+            "subOrganization": {
+                "type": "array",
+                "title": "Child Organizations",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Child Organization",
+                    "cordra": {"type": {"handleReference": {"types": ["Organization"]}}}
+                }
+            },
+            "parentOrganization": {
+                "type": "array",
+                "title": "Parent Organizations",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Parent Organization",
+                    "cordra": {"type": {"handleReference": {"types": ["Organization"]}}}
+                }
+            },
+            "member": {
+                "type": "array",
+                "title": "Member Organizations/Persons",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Member Organization/Person",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "Organization",
+                        "User",
+                        "Person"
+                    ]}}}
+                }
+            },
+            "memberOf": {
+                "type": "array",
+                "title": "Member of Organizations",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Member of Organization",
+                    "cordra": {"type": {"handleReference": {"types": ["Organization"]}}}
+                }
+            }
+        }
+    }}
+}

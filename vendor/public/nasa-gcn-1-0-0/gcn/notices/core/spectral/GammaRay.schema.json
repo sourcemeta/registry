@@ -1,0 +1,86 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v1.0.0/gcn/notices/core/spectral/GammaRay.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "spectral.GammaRay",
+  "description": "Spectral properties from gamma-ray data",
+  "properties": {
+    "best_fit_model": {
+      "enum": ["POWERLAW", "CUTOFFPOWERLAW", "BAND"],
+      "description": "Name of model corresponding to best statistical fit of spectrum"
+    },
+    "power_law": {
+      "$ref": "./models/PowerLaw.schema.json",
+      "description": "Fit parameters for PowerLaw model"
+    },
+    "cutoff_power_law": {
+      "$ref": "./models/CutOffPowerLaw.schema.json",
+      "description": "Fit parameters for Cutoff PowerLaw model"
+    },
+    "band": {
+      "$ref": "./models/Band.schema.json",
+      "description": "Fit parameters for Band model"
+    },
+    "spectral_energy_range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Low and High energy bounds used in spectral fit, if not parsed in Reporter.schema.json, default unit is keV"
+    },
+    "hardness_ratio": {
+      "type": "number",
+      "description": "ratio of flux between high and low energy bands"
+    },
+    "hardness_ratio_energy_range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Low and High energy bounds used for hardness ratio, if not parsed in Reporter.schema.json, default unit is keV"
+    },
+    "photon_flux": {
+      "type": "number",
+      "description": "Photon Flux [ph/cm2/s]"
+    },
+    "photon_flux_error": {
+      "type": "number",
+      "description": "1-sigma uncertainty in Photon Flux [ph/cm2/s]"
+    },
+    "energy_flux": {
+      "type": "number",
+      "description": "Energy Flux [erg/cm2/s]"
+    },
+    "energy_flux_error": {
+      "type": "number",
+      "description": "1-sigma uncertainty in Energy Flux [erg/cm2/s]"
+    },
+    "flux_energy_range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Low and High energy bounds used in flux calculation, if not parsed in Reporter.schema.json, default unit is keV"
+    },
+    "flux_time_range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Start and stop time stamps in array as used in flux calculation, measured since trigger [s]"
+    },
+    "fluence": { "type": "number", "description": "Fluence [erg/cm2]" },
+    "fluence_error": {
+      "type": "number",
+      "description": "Fluence Error [erg/cm2]"
+    },
+    "fluence_energy_range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Low and High energy bounds used in fluence calculation, if not parsed in Reporter.schema.json, default unit is keV"
+    },
+    "fluence_time_range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Start and stop time stamps in array as used in fluence calculation, measured since trigger [s]"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.1.0/gcn/notices/heasarc/archive_alert.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "HEASARC - Data in Archive",
+  "description": "Data Archived at HEASARC",
+  "allOf": [
+    { "$ref": "../core/Alert.schema.json" },
+    { "$ref": "../core/DateTime.schema.json" },
+    { "$ref": "../core/Event.schema.json" },
+    { "$ref": "../core/Reporter.schema.json" }
+  ],
+  "properties": {
+    "obs_id": {
+      "type": "string",
+      "description": "The observation identifier of the sequence. Also called the observation id, sequence number, and seqnum, it is a series of numerical digits, each signifying different aspects for the observation, such as AO year, proposal number, and target number. Each mission has their own specification for how the obsid is defined. Every observation by an observatory is identified by the obsid. The data set identified by the obsid contains the level one and level 2 data created by that mission's processing pipeline. [Fields to align with IVOA ObsCore]"
+    },
+    "target_name": {
+      "type": "string",
+      "description": "Name of the target object for the observation [IVOA ObsCore]"
+    },
+    "mission_page": {
+      "type": "string",
+      "description": "Web page of the creator mission at HEASARC"
+    },
+    "facility_name": {
+      "type": "string",
+      "description": "Name of the creator of the data [IVOA ObsCore]"
+    }
+  }
+}

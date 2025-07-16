@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/plugin/basic-auth.json",
+  "title": "DEPRECATED. Please upgrade to basic auth middleware without plugin.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/basic-authentication/#upgrade-from-plugin-based-basic-auth",
+  "deprecated": true,
+  "type": "object",
+  "required": [
+    "endpoints",
+    "htpasswd_path"
+  ],
+  "properties": {
+    "endpoints": {
+      "title": "Endpoints",
+      "description": "An array to restrict which endpoints are protected with basic authentication. The `endpoints` values must match with the declaration of endpoints in your configuration, including any `{placeholders}` in the path. Use `[\"*\"]` or delete this property to protect all endpoints.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/basic-authentication/",
+      "examples": [
+        [
+          "*"
+        ],
+        [
+          "/user/{id}",
+          "/checkout"
+        ]
+      ],
+      "type": "array"
+    },
+    "htpasswd_path": {
+      "title": "Path to htpasswd file",
+      "description": "Absolute Path to the `htpasswd` filename (recommended) or relative `./` to the workdir (less secure).\n\nSee: https://www.krakend.io/docs/enterprise/authentication/basic-authentication/",
+      "examples": [
+        "/path/to/.htpasswd"
+      ],
+      "type": "string"
+    },
+    "users": {
+      "title": "Additional users",
+      "description": "**Additional** users to the `htpasswd` file can be declared directly inside the configuration. The content of both places will be merged (and this list will overwrite users already defined in the htpasswd file).\n\nSee: https://www.krakend.io/docs/enterprise/authentication/basic-authentication/",
+      "examples": [
+        {
+          "admin": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ...",
+          "user2": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ..."
+        }
+      ],
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

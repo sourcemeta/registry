@@ -1,0 +1,26 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.0.0/gcn/notices/core/spectral/models/PowerLaw.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "PowerLaw",
+  "description": "Spectral model powerlaw with N(E)=amplitude*energy^{-alpha}",
+  "properties": {
+    "amplitude": {
+      "type": "number",
+      "description": "amplitude of spectral model fit at pivot_energy [ph/cm2/s/keV]"
+    },
+    "amplitude_error": {
+      "type": "number",
+      "description": "1-sigma uncertainty of amplitude [ph/cm2/s/keV]"
+    },
+    "pivot_energy": { "type": "number", "description": "pivot energy [keV]" },
+    "alpha": {
+      "type": "number",
+      "description": "power-law index of spectral model"
+    },
+    "alpha_error": {
+      "type": "number",
+      "description": "1-sigma uncertainty of alpha"
+    }
+  }
+}

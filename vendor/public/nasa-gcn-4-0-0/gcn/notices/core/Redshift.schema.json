@@ -1,0 +1,21 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.0.0/gcn/notices/core/Redshift.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Redshift",
+  "description": "Redshift measure of transient",
+  "properties": {
+    "redshift": {
+      "type": "number",
+      "description": "Displacement of spectral lines toward longer wavelengths [sigma]"
+    },
+    "redshift_error": {
+      "type": "array",
+      "items": { "type": "number" },
+      "maxItems": 2,
+      "description": "Error in redshift, array for asymmetric statistical errors"
+    },
+    "redshift_measure": { "enum": ["spectroscopic", "photometric"] },
+    "redshift_type": { "enum": ["emission", "absorption", "host"] }
+  }
+}

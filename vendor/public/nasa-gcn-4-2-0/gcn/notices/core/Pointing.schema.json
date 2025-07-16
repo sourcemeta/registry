@@ -1,0 +1,43 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.2.0/gcn/notices/core/Pointing.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Instrument Pointing",
+  "description": "Instrument pointing and rotational rates.",
+  "type": "object",
+  "properties": {
+    "ra_pointing": {
+      "type": "number",
+      "description": "RA pointing of the instrument Z axis. ICRS declination [deg], utilizes the J2000 epoch and an equatorial coordinate system."
+    },
+    "dec_pointing": {
+      "type": "number",
+      "description": "Dec pointing of the instrument Z axis. ICRS declination [deg], utilizes the J2000 epoch and an equatorial coordinate system."
+    },
+    "roll": {
+      "type": "number",
+      "description": "Roll [deg] of the instrument about its Z axis"
+    },
+    "position_angle": {
+      "type": "number",
+      "description": "Rotation angle [deg] between the spacecraft X-Z plane and the plane defined by the spacecraft X-axis and celestial North"
+    },
+    "attitude_quarternion": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "Representing attitude state of a spacecraft, using four element vector [q1, q2, q3, q4], composed of a scalar and 3 element unit vector."
+    },
+    "rotation_rate": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "Rotational rate [rad/s] about the X, Y, and Z axes respectively"
+    },
+    "time": {
+      "type": "string",
+      "description": "Time [UTC, ISO 8601] of this data, if different than the trigger time."
+    }
+  }
+}

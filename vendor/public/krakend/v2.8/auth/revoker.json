@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.8/auth/revoker.json",
+  "title": "Revoke Server",
+  "description": "The API Gateway authorizes users that provide valid tokens according to your criteria, but at some point, you might want to change your mind and decide to revoke JWT tokens that are still valid.",
+  "type": "object",
+  "required": [
+    "N",
+    "P",
+    "hash_name",
+    "TTL",
+    "port",
+    "token_keys"
+  ],
+  "properties": {
+    "N": {
+      "$id": "#auth/revoker/N",
+      "title": "Number of elements",
+      "description": "The maximum `N`umber of elements you want to keep in the bloom filter. Tens of millions work fine on machines with low resources.\n\nSee: https://www.krakend.io/docs/authorization/revoking-tokens/",
+      "examples": [
+        10000000
+      ],
+      "type": "integer"
+    },
+    "P": {
+      "$id": "#auth/revoker/P",
+      "title": "Probability",
+      "description": "The `P`robability of returning a false positive. E.g.,`1e-7` for one false positive every 10 million different tokens. The values `N` and `P` determine the size of the resulting bloom filter to fulfill your expectations. E.g: 0.0000001\n\nSee: https://www.krakend.io/docs/authorization/revoking-tokens/",
+      "examples": [
+        1e-07,
+        1e-07
+      ],
+      "type": "number"
+    },
+    "TTL": {
+      "$id": "#auth/revoker/TTL",
+      "title": "Time To Live",
+      "description": "The lifespan of the JWT you are generating in seconds. The value must match the expiration you are setting in the identity provider when creating the tokens.\n\nSee: https://www.krakend.io/docs/authorization/revoking-tokens/",
+      "type": "integer"
+    },
+    "hash_name": {
+      "$id": "#auth/revoker/hash_name",
+      "title": "Hash function name",
+      "description": "Either `optimal` (recommended) or `default`. The `optimal` consumes less CPU but has less entropy when generating the hash, although the loss is negligible.\n\nSee: https://www.krakend.io/docs/authorization/revoking-tokens/",
+      "enum": [
+        "optimal",
+        "default"
+      ]
+    },
+    "port": {
+      "$id": "#auth/revoker/port",
+      "title": "Port",
+      "description": "The port number exposed on each KrakenD instance for the RPC service to interact with the bloomfilter. This port is allocated only to the clients (running KrakenDs).\n\nSee: https://www.krakend.io/docs/authorization/revoking-tokens/",
+      "type": "integer"
+    },
+    "revoke_server_api_key": {
+      "$id": "#auth/revoker/revoke_server_api_key",
+      "title": "Revoke Server Ping URL",
+      "description": "A string used as an exchange API key to secure the communication between the Revoke Server and the KrakenD instances and to consume the REST API of the Revoker Server as well. E.g., a string generated with `uuidgen`.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/revoke-server/",
+      "examples": [
+        "639ee23f-f4c5-40c4-855c-912bf01fae87"
+      ],
+      "type": "string"
+    },
+    "revoke_server_max_retries": {
+      "$id": "#auth/revoker/revoke_server_max_retries",
+      "title": "Revoke Server Max Retries",
+      "description": "Maximum number of retries after a connection fails. When the value is less than zero it is changed automatically to zero.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/revoke-server/",
+      "default": 0,
+      "type": "integer"
+    },
+    "revoke_server_max_workers": {
+      "$id": "#auth/revoker/revoke_server_max_workers",
+      "title": "Max workers",
+      "description": "How many workers are used concurrently to execute an action (e.g., push a token) to all registered instances, allowing you to limit the amount of memory consumed by the server. For example, if you have 100 KrakenD servers and need to push 5MB of data each, you need to send 500MB in total. A max_workers=5 will consume a maximum of `5MB x 5 workers = 25MB` of memory in a given instant. Defaults to the same number of CPUs available.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/revoke-server/",
+      "default": 5,
+      "type": "integer"
+    },
+    "revoke_server_ping_interval": {
+      "$id": "#auth/revoker/revoke_server_ping_interval",
+      "title": "Revoke Server ping interval",
+      "description": "Time the server and the client wait to verify they are alive with each other (health check). Defaults to `30s`. Do not lower this value a lot; otherwise, you will have a lot of internal traffic.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/revoke-server/",
+      "examples": [
+        "30s"
+      ],
+      "$ref": "../timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "revoke_server_ping_url": {
+      "$id": "#auth/revoker/revoke_server_ping_url",
+      "title": "Revoke Server Ping URL",
+      "description": "The address to the `/instances` endpoint in the Revoke Server.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/revoke-server/",
+      "examples": [
+        "http://revoke-server:8081/instances"
+      ],
+      "type": "string"
+    },
+    "token_keys": {
+      "$id": "#auth/revoker/token_keys",
+      "title": "Token keys",
+      "description": "The list with all the claims in your JWT payload that need watching. These fields establish the criteria to revoke accesses in the future. The Revoker does not use this value, only the clients.\n\nSee: https://www.krakend.io/docs/authorization/revoking-tokens/",
+      "examples": [
+        "jti"
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

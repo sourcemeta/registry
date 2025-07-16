@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/ontology/5.0.0/instrument_ontology",
+    "description": "A term that may be associated with a instrument-related ontology term",
+    "additionalProperties": false,
+    "required": [
+        "text"
+    ],
+    "title": "instrument_ontology",
+    "properties": {
+        "describedBy":  {
+            "pattern" : "https://schema.humancellatlas.org/module/ontology/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/instrument_ontology",
+            "type": "string"
+        },
+        "text": {
+            "description": "The full name of the instrument used.",
+            "type": "string"
+        },
+        "schema_version": {
+            "description": "Version number in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "ontology": {
+            "description": "An ontology term identifier in the form prefix:accession",
+            "type": "string",
+            "graph_restriction":  {
+                "ontologies" : ["obo:efo"],
+                "classes": ["EFO:0000548"],
+                "relations": ["rdfs:subClassOf"],
+                "direct": false,
+                "include_self": false
+            }
+        }
+    },
+    "type": "object"
+}

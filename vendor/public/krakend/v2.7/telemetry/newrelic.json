@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/telemetry/newrelic.json",
+  "title": "NewRelic exporter",
+  "description": "The New Relic integration lets you push KrakenD metrics and distributed traces to your New Relic dashboard. It uses internally the official New Relic SDK and brings its features to your APM dashboard.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/newrelic/",
+  "type": "object",
+  "required": [
+    "license"
+  ],
+  "properties": {
+    "debug": {
+      "$id": "#telemetry/newrelic/debug",
+      "title": "Enable debug",
+      "description": "Set to true when configuring New Relic for the first time while in development, to see the activity in the logs. Set to false in production.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/newrelic/",
+      "default": false,
+      "type": "boolean"
+    },
+    "headers_to_pass": {
+      "$id": "#telemetry/newrelic/headers_to_pass",
+      "title": "Headers to pass",
+      "description": "Defines an explicit list of headers sent during the client request that will be reported to NewRelic, in addition to the default headers NewRelic sets. Setting the `[\"*\"]` value will send all headers sent by the client to NewRelic. Whether you declare this setting or not, you will usually receive from the NewRelic SDK the `Accept`, `Content-Type`, `User-Agent`, and `Referer` headers.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/newrelic/",
+      "examples": [
+        [
+          "*"
+        ]
+      ],
+      "type": "array"
+    },
+    "license": {
+      "$id": "#telemetry/newrelic/url",
+      "title": "License key",
+      "description": "The API key provided by New Relic to push data into your account.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/newrelic/",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

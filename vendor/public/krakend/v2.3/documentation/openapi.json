@@ -1,0 +1,213 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/documentation/openapi.json",
+  "title": "Generate documentation using OpenAPI",
+  "description": "Enterprise only. Generates OpenAPI documentation automatically through `krakend openapi export` command.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+  "type": "object",
+  "properties": {
+    "description": {
+      "$id": "#documentation/openapi/description",
+      "title": "API Description",
+      "description": "An introductory, optionally verbose, explanation supporting [CommonMark](http://commonmark.org/help/) syntax. If you'd like to load an **external markdown file**, you can use flexible configuration, for instance `\"description\": {{include \"openapi/intro.md\" | toJson }}`\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "Hi there, I am [OpenAPI](https://www.krakend.io/docs/enterprise/endpoints/openapi/)"
+      ],
+      "type": "string"
+    },
+    "audience": {
+      "$id": "#documentation/openapi/audience",
+      "title": "Audience",
+      "description": "The list of audiences that will consume this endpoint. These values **do not define the gateway logic** in any way. They are a way to group endpoints and filter them out when generating the OpenAPI documentation. Use `*` to indicate an endpoint will be present in any audience generated.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        [
+          "gold",
+          "silver",
+          "*"
+        ]
+      ],
+      "type": "array"
+    },
+    "base_path": {
+      "$id": "#documentation/openapi/base_path",
+      "title": "Base path",
+      "description": "A starting path that is appended to any endpoint.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "/v1"
+      ],
+      "type": "string"
+    },
+    "contact_email": {
+      "$id": "#documentation/openapi/contact_email",
+      "title": "Contact email",
+      "description": "Email where users of your API can write to.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "/v1"
+      ],
+      "type": "string"
+    },
+    "contact_name": {
+      "$id": "#documentation/openapi/contact_name",
+      "title": "Contact name",
+      "description": "Contact name.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "/v1"
+      ],
+      "type": "string"
+    },
+    "contact_url": {
+      "$id": "#documentation/openapi/contact_url",
+      "title": "Contact URL",
+      "description": "Contact URL that users of your API can read.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "/v1"
+      ],
+      "type": "string"
+    },
+    "example": {
+      "$id": "#documentation/openapi/example",
+      "title": "Example",
+      "description": "**Deprecated in OAS3** (use `response_definition` instead). A free form JSON object or a string you would like to show as a sample response of the endpoint. The examples assume they are JSON content types except when using the `output_encoding=string`.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "type": [
+        "object",
+        "string"
+      ]
+    },
+    "host": {
+      "$id": "#documentation/openapi/host",
+      "title": "Host",
+      "description": "The hostname where you will publish your API.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "my.api.com"
+      ],
+      "type": "string"
+    },
+    "license_name": {
+      "$id": "#documentation/openapi/license_name",
+      "title": "License name",
+      "description": "The license name (e.g.: Apache License)\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "/v1"
+      ],
+      "type": "string"
+    },
+    "license_url": {
+      "$id": "#documentation/openapi/license_url",
+      "title": "License URL",
+      "description": "The URL where the license is hosted\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "/v1"
+      ],
+      "type": "string"
+    },
+    "response_definition": {
+      "$id": "#documentation/openapi/error_definition",
+      "title": "Definition of errors (OAS3 only)",
+      "description": "Describes the different status codes returned by this endpoint. Each key is the definition of the status code, represented by a string. E.g., `200` (success), `500` (internal error), etc.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        {
+          "404": {
+            "description": "Page not found",
+            "@comment": "Some comment",
+            "content_type": "application/json",
+            "example": {
+              "status": "KO"
+            }
+          }
+        }
+      ],
+      "type": "object",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "required": [
+            "content_type"
+          ],
+          "properties": {
+            "description": {
+              "title": "Description",
+              "description": "The description of this error code, e.g., `Page not found`.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+              "type": "string"
+            },
+            "content_type": {
+              "title": "Content Type",
+              "description": "The content type returned by this error, e.g., `application/json`",
+              "type": "string"
+            },
+            "example": {
+              "title": "Content Type",
+              "description": "A free form JSON object or a string you would like to show as a sample response of the endpoint. The examples assume they are JSON content types except when using the `output_encoding=string`.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+              "type": [
+                "string",
+                "object",
+                "array",
+                "boolean",
+                "integer",
+                "null",
+                "number"
+              ]
+            },
+            "example_schema": {
+              "description": "A JSON schema that describes the response format for the selected status code, encoded as a base64 string. Use either example or example_schema, but not both.",
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9+/=_-]+$"
+            }
+          },
+          "patternProperties": {
+            "^[@$_#]": {}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "schemes": {
+      "$id": "#documentation/openapi/schemes",
+      "title": "Supported schemes",
+      "description": "The list of schemes supported by the API, e.g. `http` or `https`\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        [
+          "https",
+          "http"
+        ]
+      ],
+      "default": [
+        "http"
+      ],
+      "type": "array"
+    },
+    "summary": {
+      "$id": "#documentation/openapi/summary",
+      "title": "Summary",
+      "description": "A short summary for the endpoint. Use the description field for the longest explanation.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "type": "string"
+    },
+    "tags": {
+      "$id": "#documentation/openapi/tags",
+      "title": "Tags",
+      "description": "You can assign a list of tags to each API operation. Tagged operations may be handled differently by tools and libraries. For example, Swagger UI uses tags to group the displayed operations.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "type": "array"
+    },
+    "terms_of_service": {
+      "$id": "#documentation/openapi/terms_of_service",
+      "title": "Terms of Service",
+      "description": "The URL to the terms of service for using this API.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "/v1"
+      ],
+      "type": "string"
+    },
+    "version": {
+      "$id": "#documentation/openapi/version",
+      "title": "Version",
+      "description": "The version numbering you want to apply to this release of API., e.g.: `1.0`.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        "1.0"
+      ],
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

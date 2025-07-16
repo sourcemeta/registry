@@ -1,0 +1,7 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v2.0.0/gcn/notices/core/DetectorStatus.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DetectorStatus",
+  "enum": ["on", "off", "triggered"],
+  "description": "Status of a specified detector at the time of the alert"
+}

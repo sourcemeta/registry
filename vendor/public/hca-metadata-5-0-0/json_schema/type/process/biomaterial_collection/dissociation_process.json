@@ -1,0 +1,81 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/process/biomaterial_collection/5.0.0/dissociation_process",
+    "description": "Contains information on the dissociation process used to separate the cells in a specimen.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type",
+        "process_core",
+        "dissociation_method"
+    ],
+    "title": "dissociation_process",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/process/biomaterial_collection/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/dissociation_process"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "process"
+            ]
+        },
+        "process_core" : {
+            "description": "Core process-level information.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/process/5.0.0/process_core"
+        },
+        "dissociation_method": {
+            "description": "How cells or organelles were dissociated.",
+            "type": "string",
+            "enum": [
+                "10x_v2", 
+                "FACS", 
+                "Fluidigm C1", 
+                "drop-seq", 
+                "inDrop", 
+                "mouth pipette", 
+                "bulk",
+                "enzymatic",
+                "mechanical",
+                "none"
+            ],
+            "user_friendly": "Dissociation method"
+        },
+        "nucleic_acid_source": {
+            "description": "Source cells or organelles from which nucleic acid molecules were collected.",
+            "type": "string",
+            "enum": [
+                "bulk cell",
+                "single cell",
+                "single nucleus",
+                "bulk nuclei",
+                "mitochondria"
+            ],
+            "user_friendly": "Nucleic acid source"
+        },
+        "process_type": {
+            "description": "The type of process. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0002694.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/process_type_ontology",
+            "user_friendly": "Process type"
+        },
+        "process_reagents": {
+            "description": "A list of purchased reagents used in this process.",
+            "type": "array",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/module/process/5.0.0/purchased_reagents"
+            }
+        }
+    }
+}

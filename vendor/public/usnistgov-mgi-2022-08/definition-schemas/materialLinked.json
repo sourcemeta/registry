@@ -1,0 +1,16 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "materialLinked",
+    "definitions": {"materialLinked": {
+        "type": "array",
+        "title": "Materials",
+        "description": "This field is for linking to any substance (e.g., sample, specimen, material, chemical, etc.), or a specific sup-sample (e.g., location on a larger artifact, sub-portion of a larger artifact, item within a collection of specimens, etc.).",
+        "uniqueItems": true,
+        "items": {
+            "type": "string",
+            "title": "Material",
+            "cordra": {"type": {"handleReference": {"types": ["Material"]}}}
+        }
+    }}
+}

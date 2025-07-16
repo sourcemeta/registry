@@ -1,0 +1,15 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "includedInDataCatalog",
+    "definitions": {"includedInDataCatalog": {
+        "type": "array",
+        "title": "Included In Data Catalogs",
+        "uniqueItems": true,
+        "items": {
+            "type": "string",
+            "title": "Included In Data Catalog",
+            "cordra": {"type": {"handleReference": {"types": ["DataCatalog"]}}}
+        }
+    }}
+}

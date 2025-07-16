@@ -1,0 +1,23 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.1.0/gcn/notices/core/Event.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Event Information",
+  "description": "Name or names of the event",
+  "properties": {
+    "event_name": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Name of the event (ex: GRB 170817A, GW170817, AT2017gfo, SSS 17a)"
+    },
+    "id": {
+      "type": "array",
+      "items": { "oneOf": [{ "type": "string" }, { "type": "number" }] },
+      "description": "Instrument-specific trigger ID (ex: bn230313485 (Fermi), 1159327 (Swift)) or alternate ID"
+    },
+    "data_archive_page": {
+      "type": "string",
+      "description": "URL of archived data files"
+    }
+  }
+}

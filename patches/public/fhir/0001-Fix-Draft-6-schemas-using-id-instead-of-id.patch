@@ -1,0 +1,51 @@
+From 410b497ba1a76a31c92eca13a00ee1e2a1c9a0fc Mon Sep 17 00:00:00 2001
+From: Juan Cruz Viotti <jv@jviotti.com>
+Date: Thu, 30 Jan 2025 15:12:19 -0400
+Subject: [PATCH] Fix Draft 6 schemas using `id` instead of `$id`
+
+Signed-off-by: Juan Cruz Viotti <jv@jviotti.com>
+---
+ hl7.fhir.rX/hl7.fhir.r4.core/package/openapi/fhir.schema.json  | 2 +-
+ hl7.fhir.rX/hl7.fhir.r4b.core/package/openapi/fhir.schema.json | 2 +-
+ hl7.fhir.rX/hl7.fhir.r5.core/package/openapi/fhir.schema.json  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/hl7.fhir.rX/hl7.fhir.r4.core/package/openapi/fhir.schema.json b/hl7.fhir.rX/hl7.fhir.r4.core/package/openapi/fhir.schema.json
+index 6688301a20..a0a52cbcbd 100644
+--- a/hl7.fhir.rX/hl7.fhir.r4.core/package/openapi/fhir.schema.json
++++ b/hl7.fhir.rX/hl7.fhir.r4.core/package/openapi/fhir.schema.json
+@@ -1,6 +1,6 @@
+ {
+   "$schema": "http://json-schema.org/draft-06/schema#",
+-  "id": "http://hl7.org/fhir/json-schema/4.0",
++  "$id": "http://hl7.org/fhir/json-schema/4.0",
+   "description": "see http://hl7.org/fhir/json.html#schema for information about the FHIR Json Schemas",
+   "discriminator": {
+     "propertyName": "resourceType",
+diff --git a/hl7.fhir.rX/hl7.fhir.r4b.core/package/openapi/fhir.schema.json b/hl7.fhir.rX/hl7.fhir.r4b.core/package/openapi/fhir.schema.json
+index 45062a3e7d..9fa58541f7 100644
+--- a/hl7.fhir.rX/hl7.fhir.r4b.core/package/openapi/fhir.schema.json
++++ b/hl7.fhir.rX/hl7.fhir.r4b.core/package/openapi/fhir.schema.json
+@@ -1,6 +1,6 @@
+ {
+   "$schema": "http://json-schema.org/draft-06/schema#",
+-  "id": "http://hl7.org/fhir/json-schema/4.3",
++  "$id": "http://hl7.org/fhir/json-schema/4.3",
+   "description": "see http://hl7.org/fhir/json.html#schema for information about the FHIR Json Schemas",
+   "discriminator": {
+     "propertyName": "resourceType",
+diff --git a/hl7.fhir.rX/hl7.fhir.r5.core/package/openapi/fhir.schema.json b/hl7.fhir.rX/hl7.fhir.r5.core/package/openapi/fhir.schema.json
+index 0a03b0b668..8ece572590 100644
+--- a/hl7.fhir.rX/hl7.fhir.r5.core/package/openapi/fhir.schema.json
++++ b/hl7.fhir.rX/hl7.fhir.r5.core/package/openapi/fhir.schema.json
+@@ -1,6 +1,6 @@
+ {
+   "$schema": "http://json-schema.org/draft-06/schema#",
+-  "id": "http://hl7.org/fhir/json-schema/4.6",
++  "$id": "http://hl7.org/fhir/json-schema/4.6",
+   "description": "see http://hl7.org/fhir/json.html#schema for information about the FHIR Json Schemas",
+   "discriminator": {
+     "propertyName": "resourceType",
+-- 
+2.48.1
+

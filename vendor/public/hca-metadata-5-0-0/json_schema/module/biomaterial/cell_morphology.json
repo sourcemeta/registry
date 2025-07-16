@@ -1,0 +1,55 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/cell_morphology",
+    "description": "Information relating to pathological features of cells.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy"
+    ],
+    "title": "cell_pathology",
+    "type": "object",
+    "properties": {
+        "describedBy": {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/biomaterial/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/cell_morphology"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "cell_morphology": {
+            "description": "General description of the morphology of the cells in the cell suspension.",
+            "type": "string",
+            "user_friendly": "Cell morphology"
+        },
+        "cell_size": {
+            "description": "The size of the cells. Average cell size is acceptable.",
+            "type": "number",
+            "user_friendly": "Cell size number"
+        },
+        "cell_size_unit": {
+            "description": "The unit in which the cell size is expressed. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/uo/terms?iri=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FUO_0000001.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/length_unit_ontology",
+            "user_friendly": "Cell size unit"
+        },
+        "cell_viability": {
+            "description": "Percent of cells determined to be viable.",
+            "type": "number",
+            "user_friendly": "Percent cell viability"
+        },
+        "cell_viability_method": {
+            "description": "The method by which cell viability was determined.",
+            "type": "string",
+            "user_friendly": "Cell viability method"
+        },
+        "percent_necrosis": {
+            "description" : "Percent of cells identified to be necrotic.",
+            "type": "number",
+            "user_friendly": "Percent necrosis"
+        }
+    }
+}

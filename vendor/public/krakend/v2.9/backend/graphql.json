@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.9/backend/graphql.json",
+  "title": "GraphQL",
+  "description": "Convert REST endpoints to GraphQL calls (adapter/transformer)",
+  "type": "object",
+  "oneOf": [
+    {
+      "required": [
+        "type",
+        "query"
+      ]
+    },
+    {
+      "required": [
+        "type",
+        "query_path"
+      ]
+    }
+  ],
+  "properties": {
+    "type": {
+      "title": "Query type",
+      "description": "The type of query you are declaring, `query` (read), or `mutation` (write).\n\nSee: https://www.krakend.io/docs/backends/graphql/",
+      "enum": [
+        "query",
+        "mutation"
+      ]
+    },
+    "operationName": {
+      "title": "Operation name",
+      "description": "A meaningful and explicit name for your operation, required in multi-operation documents and for helpful debugging and server-side logging.\n\nSee: https://www.krakend.io/docs/backends/graphql/",
+      "examples": [
+        "addMktPreferencesForUser"
+      ],
+      "type": "string"
+    },
+    "query": {
+      "title": "Query",
+      "description": "An inline GraphQL query you want to send to the server. Use this attribute for simple and inline queries, use `query_path` instead for larger queries. Use escaping when needed.\n\nSee: https://www.krakend.io/docs/backends/graphql/",
+      "examples": [
+        "{ \n find_follower(func: uid(\"0x3\")) {\n name \n }\n }"
+      ],
+      "type": "string"
+    },
+    "query_path": {
+      "title": "Query path",
+      "description": "Path to the file containing the query. This file is loaded during startup and never checked again, if it changes KrakenD will be unaware of it.\n\nSee: https://www.krakend.io/docs/backends/graphql/",
+      "examples": [
+        "./graphql/mutations/marketing.graphql"
+      ],
+      "type": "string"
+    },
+    "variables": {
+      "title": "Variables",
+      "description": "A dictionary defining all the variables sent to the GraphQL server. You can use `{placeholders}` to inject parameters from the endpoint URL.\n\nSee: https://www.krakend.io/docs/backends/graphql/",
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

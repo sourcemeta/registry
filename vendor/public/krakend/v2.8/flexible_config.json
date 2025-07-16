@@ -1,0 +1,181 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.8/flexible_config.json",
+  "title": "Schema validation for Extended Flexible Configuration.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+  "type": "object",
+  "properties": {
+    "debug": {
+      "title": "Debug",
+      "description": "Whether to enable the debug mode or not. The debug shows the hierarchy of the settings tree in the console. You can also enable this flag during runtime passing an environment variable `FC_DEBUG=true`.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+      "type": "boolean"
+    },
+    "keys_naming_rules": {
+      "title": "Key naming",
+      "description": "Allows you to apply configuration inheritance using `freeform` keys, or alphanumeric characters (`strict`).\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+      "enum": [
+        "strict",
+        "freeform"
+      ]
+    },
+    "meta_key": {
+      "title": "Metadata key",
+      "description": "The name of the variable you have available on templates containing the tree of files involved in the configuration (except partials). You can access to this variable with a starting dot, e.g., `{{ .meta }}`.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+      "default": "meta",
+      "type": "string"
+    },
+    "out": {
+      "title": "Output file",
+      "description": "It specifies a filename where the result of compiling the templates is stored. The directory and the filename you use must be writeable by the KrakenD process. It has no other purpose than debugging the resulting template.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+      "default": "",
+      "type": "string"
+    },
+    "partials": {
+      "title": "Partials",
+      "description": "When needed, the partials are treated as raw text files, and they are inserted in the placeholder 'as is', and no template evaluation of its content is performed.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+      "type": "object",
+      "properties": {
+        "paths": {
+          "title": "Paths to partials dirs",
+          "description": "The [relative](https://www.krakend.io/docs/enterprise/configuration/working-directory/) or absolute paths to the partials directories, each entry is a different path. Contents are scanned **recursively**.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+          "examples": [
+            [
+              "partials"
+            ]
+          ],
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "ref_key": {
+      "title": "$ref key",
+      "description": "Instead of using the keyword `$ref` to replace configuration blocks, use another keyword. This is useful when you want to use OpenAPI's `$ref` and Flexible Config's `$ref` together and avoid crossed behavior.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+      "examples": [
+        "$replace"
+      ],
+      "default": "$ref",
+      "type": "string"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Settings are files expressed in JSON, YAML, ENV, TOML, INI or properties (Java) formats that are parsed and available as a tree like `.filename` inside the templates.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+      "examples": [
+        [
+          "settings/production",
+          "settings/common"
+        ]
+      ],
+      "type": "object",
+      "properties": {
+        "allow_overwrite": {
+          "title": "Allow overwrite",
+          "description": "When the settings tree is converted to a traversable variable, whether to accept that another path that resolves to the same tree path can override a previous one or not.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+          "default": false,
+          "type": "boolean"
+        },
+        "allowed_suffixes": {
+          "title": "Allowed suffixes",
+          "description": "The list of file suffixes you want the parser to take into account. Non-matching files are ignored and unavailable in the templates.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+          "examples": [
+            [
+              ".yaml",
+              ".json",
+              "krakend.env"
+            ]
+          ],
+          "default": [
+            ".yaml",
+            ".yml",
+            ".json",
+            ".toml",
+            ".tml",
+            ".ini",
+            ".dotenv",
+            ".env",
+            ".properties",
+            ".prop",
+            ".props"
+          ],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dir_field_prefix": {
+          "title": "Directory prefix",
+          "description": "When converting the settings tree into a traversable variable, add a prefix to directory names.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+          "examples": [
+            "dir_"
+          ],
+          "default": "",
+          "type": "string"
+        },
+        "paths": {
+          "title": "Paths to settings dirs",
+          "description": "The [relative](https://www.krakend.io/docs/enterprise/configuration/working-directory/) or absolute paths to the settings directories, each entry is a different path. Contents are scanned **recursively**.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+          "examples": [
+            "settings"
+          ],
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "templates": {
+      "title": "Templates",
+      "description": "The location of the Go templates you want to use to express your configuration.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+      "examples": [
+        [
+          "templates"
+        ]
+      ],
+      "type": "object",
+      "properties": {
+        "paths": {
+          "title": "Paths to templates dirs",
+          "description": "The [relative](https://www.krakend.io/docs/enterprise/configuration/working-directory/) or absolute paths to the templates directories, each entry is a different path. You might have multiple directories when you have templates shared across environments or projects, and then you have dedicated templates for the running environment. Defaults to not use any templates directory. Contents are scanned **recursively**.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+          "examples": [
+            "templates"
+          ],
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "undefined_vars": {
+          "title": "Undefined variables behavior",
+          "description": "How to treat access to unexisting variables in the templates. When the value is `error` the template will fail to compile, when `zero` it will set a zero-value (e.g, empty string), and when the value is `invalid` it will replace the content with the string `<no value>`.\n\nSee: https://www.krakend.io/docs/enterprise/configuration/flexible-config/",
+          "default": "error",
+          "enum": [
+            "error",
+            "zero",
+            "invalid"
+          ]
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

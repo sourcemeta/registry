@@ -1,0 +1,20 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "measurementTechnique",
+    "definitions": {"measurementTechnique": {
+        "type": "array",
+        "title": "Synthesis/Measurement/Computational Technique or Instrument/Software Used",
+        "uniqueItems": true,
+        "items": {
+            "type": "string",
+            "title": "Referenced Item",
+            "cordra": {"type": {"handleReference": {"types": [
+                "DefinedTerm",
+                "Instrument",
+                "SoftwareApplication",
+                "SoftwareSourceCode"
+            ]}}}
+        }
+    }}
+}

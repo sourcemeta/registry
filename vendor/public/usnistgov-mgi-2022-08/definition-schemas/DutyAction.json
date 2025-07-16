@@ -1,0 +1,122 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "DutyAction",
+    "definitions": {"DutyAction": {
+        "type": "object",
+        "properties": {
+            "about": {
+                "type": "array",
+                "title": "About",
+                "description": "This is for linking controlled vocabulary terms and parent projects.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Subject/Project",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "DefinedTerm",
+                        "Project",
+                        "Collection"
+                    ]}}}
+                }
+            },
+            "keywords": {
+                "type": "array",
+                "title": "Keywords",
+                "description": "This is for user-defined terms.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Keyword"
+                }
+            },
+            "actionStatus": {
+                "type": "array",
+                "title": "Action Status",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Defined Term",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                }
+            },
+            "agent": {
+                "type": "array",
+                "title": "Agents",
+                "description": "The direct performer or driver of the action (animate or inanimate).",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Agent",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "participant": {
+                "type": "array",
+                "title": "Participants",
+                "description": "Other co-agents that participated in the action indirectly.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Participant",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "location": {
+                "type": "array",
+                "title": "Location",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Place",
+                    "cordra": {"type": {"handleReference": {"types": ["Place"]}}}
+                }
+            },
+            "material": {
+                "title": "Material",
+                "description": "The material upon which the action is carried out",
+                "$ref": "materialLinked.json#/definitions/materialLinked"
+            },
+            "materialExtent": {
+                "title": "Material Quantity",
+                "$ref": "QuantitativeValue.json#/definitions/QuantitativeValue"
+            },
+            "materialReference": {
+                "title": "Reference Material",
+                "$ref": "materialLinked.json#/definitions/materialLinked"
+            },
+            "materialReferenceExtent": {
+                "title": "Reference Material Quantity",
+                "$ref": "QuantitativeValue.json#/definitions/QuantitativeValue"
+            },
+            "instrument": {
+                "title": "Helping Instrument",
+                "description": "The instrument or tool that helped the agent perform the action (e.g., instrument used to perform the measurement).",
+                "$ref": "measurementTechnique.json#/definitions/measurementTechnique"
+            },
+            "object": {
+                "title": "Object/Instrument",
+                "description": "The non-material object or object instrrument upon which the action is carried out",
+                "$ref": "measurementTechnique.json#/definitions/measurementTechnique"
+            },
+            "startTime": {
+                "title": "Start Time",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            },
+            "endTime": {
+                "title": "End Time",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            }
+        }
+    }}
+}

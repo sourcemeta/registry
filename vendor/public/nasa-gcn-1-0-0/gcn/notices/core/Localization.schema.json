@@ -1,0 +1,69 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v1.0.0/gcn/notices/core/Localization.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Localization",
+  "description": "Localization of transient",
+  "properties": {
+    "ra": {
+      "type": "number",
+      "description": "ICRS right ascension [deg], utilizes the J2000 epoch and an equatorial coordinate system"
+    },
+    "dec": {
+      "type": "number",
+      "description": "ICRS declination [deg], utilizes the J2000 epoch and an equatorial coordinate system"
+    },
+    "uncertainty_shape": {
+      "enum": ["circle", "ellipse", "rectangle"],
+      "description": "In what manner are the errors in RA and Dec defined - as circular, elliptical, or rectangular shapes",
+      "default": "circle"
+    },
+    "ra_uncertainty": {
+      "type": "array",
+      "maxItems": 2,
+      "description": "Uncertainty in RA [deg] with optional asymmetric errors, measured from the RA in the schema; respective ex: [r], [r1], [l1-, l1+]. For ellipse, ra axis is r1 or semi-major axis."
+    },
+    "dec_uncertainty": {
+      "type": "array",
+      "maxItems": 2,
+      "description": "Uncertainty in Dec [deg] with optional asymmetric errors, measured from the Dec in the schema; respective ex: [r2], [l2-, l2+]. Not reported if circular and Dec axis is r2 or semi-minor axis for ellipse."
+    },
+    "position_angle": {
+      "type": "number",
+      "description": "Anti-clockwise position angle from RA axis [deg]. Used if uncertainty_shape ellipse or rectangle is tilted w.r.t. standard (RA, Dec) coordinate.",
+      "default": 0
+    },
+    "containment_probability": {
+      "type": "number",
+      "description": "Containment probability [dimensionless, 0-1], if not parsed, default is 0.9",
+      "default": 0.9
+    },
+    "systematic_included": {
+      "type": "boolean",
+      "description": "Contains true when the systematic error is included and false when the systematic error is not included",
+      "default": false
+    },
+    "instrument_phi": {
+      "type": "number",
+      "description": "Instrument phi [deg]"
+    },
+    "instrument_theta": {
+      "type": "number",
+      "description": "Instrument theta [deg]"
+    },
+    "instrument_semimajor_angle": {
+      "type": "number",
+      "description": "Position angle of semi-major axis in instrument coordinates [deg]"
+    },
+    "healpix_url": {
+      "type": "string",
+      "description": "URL of HEALPix localization probability file"
+    },
+    "healpix_file": {
+      "type": "string",
+      "contentEncoding": "base64",
+      "contentMediaType": "image/fits",
+      "description": "Base 64 encoded content of a FITS file"
+    }
+  }
+}

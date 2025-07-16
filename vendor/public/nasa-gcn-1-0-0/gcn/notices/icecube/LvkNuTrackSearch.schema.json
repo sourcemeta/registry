@@ -1,0 +1,83 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v1.0.0/gcn/notices/icecube/LvkNuTrackSearch.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "IceCube LVK Alert Nu Track Search",
+  "description": "IceCube LVK Coincident Neutrino Track Search",
+  "allOf": [
+    {
+      "$ref": "../core/Alert.schema.json",
+      "description": "Alert information (alert_datetime and alert_type) from LVK alert notices"
+    },
+    {
+      "$ref": "../core/FollowUp.schema.json",
+      "description": "ID (ref_ID) of LVK alert notice"
+    },
+    { "$ref": "../core/AdditionalInfo.schema.json" },
+    {
+      "$ref": "../core/Reporter.schema.json",
+      "description": "Record/Sequence number of LVK alerts"
+    },
+    { "$ref": "../core/DateTime.schema.json" }
+  ],
+  "properties": {
+    "pval_generic": {
+      "description": "P-value from generic transient search; consistency with background expectations [0-1]",
+      "type": "number"
+    },
+    "pval_bayesian": {
+      "description": "P-value from LLAMA Bayesian search; consistency with background expectations [0-1]",
+      "type": "number"
+    },
+    "n_events_coincident": {
+      "description": "Number of IceCube events in spatial and temporal coincidence with the GW map",
+      "type": "number"
+    },
+    "coincident_events": {
+      "type": "array",
+      "description": "An array of summary of information for each coincident neutrino track event",
+      "items": { "$ref": "#/$defs/coincevent" }
+    },
+    "most_probable_direction": {
+      "description": "Most likely source direction based on all coincident events and GW localizations",
+      "$ref": "../core/Localization.schema.json"
+    },
+    "neutrino_flux_sensitivity_range": {
+      "description": "Time integrated flux sensitivity ranges assuming an E^-2 spectrum (E^2 dN/dE) within the GW map localization",
+      "$ref": "#/$defs/fluxlimits"
+    }
+  },
+  "$defs": {
+    "fluxlimits": {
+      "type": "object",
+      "properties": {
+        "flux_sensitivity": {
+          "description": "Time integrated flux sensitivity range (min, max) [GeV cm^-2] assuming an E^-2 spectrum (E^2 dN/dE) found within the 90% region of GW map localization",
+          "type": "array"
+        },
+        "sensitive_energy_range": {
+          "description": "Energy sensitivity range (lower, upper) [GeV] assuming an E^-2 spectrum (E^2 dN/dE)",
+          "type": "array"
+        }
+      }
+    },
+    "coincevent": {
+      "type": "object",
+      "allOf": [{ "$ref": "../core/Localization.schema.json" }],
+      "properties": {
+        "event_dt": {
+          "description": "Time difference between LVK alert time and neutrino candidate [sec]",
+          "type": "number"
+        },
+        "event_pval_generic": {
+          "description": "Per-event P-value from generic transient search; consistency with background expectations [0-1]",
+          "type": "number"
+        },
+        "event_pval_bayesian": {
+          "description": "Per-event P-value from LLAMA Bayesian search; consistency with background expectations [0-1]",
+          "type": "number"
+        }
+      }
+    }
+  }
+}

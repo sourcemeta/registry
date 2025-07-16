@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "DataFormat",
+    "definitions": {"DataFormat": {
+        "type": "object",
+        "properties": {
+            "isBasedOn": {
+                "type": "array",
+                "title": "Is Based On",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "DataFormat",
+                    "cordra": {"type": {"handleReference": {"types": ["DataFormat"]}}}
+                }
+            },
+            "isPartOf": {
+                "type": "array",
+                "title": "Is Part Of",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Is Part Of",
+                    "cordra": {"type": {"handleReference": {"types": ["Collection"]}}}
+                }
+            }
+        }
+    }}
+}
