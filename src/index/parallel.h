@@ -9,9 +9,7 @@
 #include <utility>    // std::declval
 #include <vector>     // std::vector
 
-#if defined(__APPLE__) || defined(__linux__)
 #include <pthread.h>
-#endif
 
 namespace sourcemeta::registry {
 
@@ -47,7 +45,8 @@ auto parallel_for_each(Iterator first, Iterator last,
   workers.reserve(parallelism);
 
   for (std::size_t index = 0; index < parallelism; ++index) {
-#if defined(__APPLE__) || defined(__linux__)
+    // We can't use std::thread, as it doesn't let
+    // us tweak the thread stack size
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     assert(stack_size_bytes > 0);
@@ -88,32 +87,6 @@ auto parallel_for_each(Iterator first, Iterator last,
         }));
     workers.emplace_back([handle] { pthread_join(handle, nullptr); });
     pthread_attr_destroy(&attr);
-#else
-    workers.emplace_back([&tasks, &queue_mutex, &log_mutex, &log_callback,
-                          &work_callback, &handle_exception, parallelism] {
-      const auto thread_id{std::this_thread::get_id()};
-      try {
-        while (true) {
-          Iterator iterator;
-          {
-            std::lock_guard<std::mutex> lock(queue_mutex);
-            if (tasks.empty()) {
-              return;
-            }
-            iterator = tasks.front();
-            tasks.pop();
-          }
-          {
-            std::lock_guard<std::mutex> lock(log_mutex);
-            log_callback(thread_id, parallelism, *iterator);
-          }
-          work_callback(*iterator);
-        }
-      } catch (...) {
-        handle_exception(std::current_exception());
-      }
-    });
-#endif
   }
 
   for (auto &thread : workers) {
