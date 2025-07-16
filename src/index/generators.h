@@ -1,6 +1,8 @@
 #ifndef SOURCEMETA_REGISTRY_INDEX_GENERATORS_H_
 #define SOURCEMETA_REGISTRY_INDEX_GENERATORS_H_
 
+#include <sourcemeta/registry/resolver.h>
+
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/md5.h>
@@ -69,20 +71,22 @@ auto GENERATE_SCHEMA_META(const std::filesystem::path &absolute_path,
   return metadata;
 }
 
-auto GENERATE_BUNDLE(const sourcemeta::core::SchemaResolver &resolver,
+auto GENERATE_BUNDLE(const sourcemeta::registry::Resolver &resolver,
                      const std::filesystem::path &absolute_path)
     -> sourcemeta::core::JSON {
   const auto schema{sourcemeta::core::read_json(absolute_path)};
   return sourcemeta::core::bundle(
-      schema, sourcemeta::core::schema_official_walker, resolver);
+      schema, sourcemeta::core::schema_official_walker,
+      [&resolver](const auto identifier) { return resolver(identifier); });
 }
 
-auto GENERATE_UNIDENTIFIED(const sourcemeta::core::SchemaResolver &resolver,
+auto GENERATE_UNIDENTIFIED(const sourcemeta::registry::Resolver &resolver,
                            const std::filesystem::path &absolute_path)
     -> sourcemeta::core::JSON {
   auto schema{sourcemeta::core::read_json(absolute_path)};
-  sourcemeta::core::unidentify(schema, sourcemeta::core::schema_official_walker,
-                               resolver);
+  sourcemeta::core::unidentify(
+      schema, sourcemeta::core::schema_official_walker,
+      [&resolver](const auto identifier) { return resolver(identifier); });
   return schema;
 }
 
@@ -99,13 +103,16 @@ auto GENERATE_BLAZE_TEMPLATE(const std::filesystem::path &absolute_path,
 
 // TODO: Put breadcrumb inside this metadata
 auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
-                         const sourcemeta::core::SchemaResolver &resolver,
+                         const sourcemeta::registry::Resolver &resolver,
                          const std::filesystem::path &absolute_path,
                          // TODO: Compute this argument instead
                          const std::filesystem::path &relative_path)
     -> sourcemeta::core::JSON {
   const auto schema{sourcemeta::core::read_json(absolute_path)};
-  auto id{sourcemeta::core::identify(schema, resolver)};
+  auto id{
+      sourcemeta::core::identify(schema, [&resolver](const auto identifier) {
+        return resolver(identifier);
+      })};
   assert(id.has_value());
   auto result{sourcemeta::core::JSON::make_object()};
   result.assign("id", sourcemeta::core::JSON{std::move(id).value()});
@@ -113,7 +120,9 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
   result.assign("canonical",
                 sourcemeta::core::JSON{configuration.at("url").to_string() +
                                        "/" + relative_path.string()});
-  const auto base_dialect{sourcemeta::core::base_dialect(schema, resolver)};
+  const auto base_dialect{sourcemeta::core::base_dialect(
+      schema,
+      [&resolver](const auto identifier) { return resolver(identifier); })};
   assert(base_dialect.has_value());
   // The idea is to match the URLs from https://www.learnjsonschema.com
   // so we can provide links to it

@@ -9,6 +9,7 @@
 #include <sourcemeta/registry/resolver_error.h>
 
 #include <filesystem>    // std::filesystem
+#include <mutex>         // std::mutex, std::lock_guard
 #include <optional>      // std::optional
 #include <string>        // std::string
 #include <string_view>   // std::string_view
@@ -19,6 +20,13 @@ namespace sourcemeta::registry {
 
 class Resolver {
 public:
+  Resolver() = default;
+  // Just to prevent mistakes
+  Resolver(const Resolver &) = delete;
+  Resolver &operator=(const Resolver &) = delete;
+  Resolver(Resolver &&) = delete;
+  Resolver &operator=(Resolver &&) = delete;
+
   auto operator()(std::string_view identifier) const
       -> std::optional<sourcemeta::core::JSON>;
 
@@ -48,6 +56,7 @@ public:
 private:
   std::unordered_map<std::string, Entry> views;
   std::size_t count_{0};
+  std::mutex mutex;
 };
 
 } // namespace sourcemeta::registry
