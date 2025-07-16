@@ -7,6 +7,7 @@
 #include <cassert>       // assert
 #include <filesystem>    // std::filesystem
 #include <fstream>       // std::ofstream
+#include <mutex>         // std::mutex, std::lock_guard
 #include <string_view>   // std::string_view
 #include <unordered_map> // std::unordered_map
 
@@ -48,7 +49,7 @@ public:
     std::filesystem::create_directories(absolute_path.parent_path());
     auto stream{this->open(absolute_path)};
     sourcemeta::core::stringify(document, stream);
-    return this->tracker.insert_or_assign(absolute_path, true).first->first;
+    return this->track(absolute_path);
   }
 
   auto write_jsonschema(const std::filesystem::path &path,
@@ -59,7 +60,7 @@ public:
     auto stream{this->open(absolute_path)};
     sourcemeta::core::prettify(schema, stream,
                                sourcemeta::core::schema_format_compare);
-    return this->tracker.insert_or_assign(absolute_path, true).first->first;
+    return this->track(absolute_path);
   }
 
   template <typename Iterator>
@@ -73,7 +74,7 @@ public:
       stream << "\n";
     }
 
-    return this->tracker.insert_or_assign(absolute_path, true).first->first;
+    return this->track(absolute_path);
   }
 
   auto write_text(const std::filesystem::path &path,
@@ -84,7 +85,7 @@ public:
     auto stream{this->open(absolute_path)};
     stream << contents;
     stream << "\n";
-    return this->tracker.insert_or_assign(absolute_path, true).first->first;
+    return this->track(absolute_path);
   }
 
 private:
@@ -103,8 +104,15 @@ private:
     return stream;
   }
 
+  auto track(const std::filesystem::path &path)
+      -> const std::filesystem::path & {
+    std::lock_guard<std::mutex> lock(this->tracker_mutex);
+    return this->tracker.insert_or_assign(path, true).first->first;
+  }
+
   const std::filesystem::path path_;
   std::unordered_map<std::filesystem::path, bool> tracker;
+  std::mutex tracker_mutex;
 };
 
 } // namespace sourcemeta::registry
