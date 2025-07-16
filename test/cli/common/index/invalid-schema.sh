@@ -46,7 +46,7 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/test.json (#1)
-Ingesting: https://sourcemeta.com/example/schemas/test.json
+(100%) Ingesting: https://sourcemeta.com/example/schemas/test.json
 error: The schema does not adhere to its metaschema
 The integer value was expected to validate against at least one of the 2 given subschemas
   at instance location "/type"

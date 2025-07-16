@@ -44,6 +44,7 @@ auto parallel_for_each(Iterator first, Iterator last,
   std::vector<std::thread> workers;
   workers.reserve(parallelism);
 
+  const auto total{tasks.size()};
   for (std::size_t index = 0; index < parallelism; ++index) {
     // We can't use std::thread, as it doesn't let
     // us tweak the thread stack size
@@ -62,22 +63,25 @@ auto parallel_for_each(Iterator first, Iterator last,
         },
         new std::function<void()>([&tasks, &queue_mutex, &log_mutex,
                                    &log_callback, &work_callback,
-                                   &handle_exception, parallelism] {
+                                   &handle_exception, parallelism, total] {
           const auto thread_id{std::this_thread::get_id()};
           try {
             while (true) {
               Iterator iterator;
+              std::size_t cursor{0};
               {
                 std::lock_guard<std::mutex> lock(queue_mutex);
                 if (tasks.empty()) {
                   return;
                 }
                 iterator = tasks.front();
+                cursor = total - tasks.size() + 1;
                 tasks.pop();
               }
               {
                 std::lock_guard<std::mutex> lock(log_mutex);
-                log_callback(thread_id, parallelism, *iterator);
+                const auto percentage{cursor * 100 / total};
+                log_callback(thread_id, parallelism, percentage, *iterator);
               }
               work_callback(*iterator);
             }
