@@ -43,26 +43,8 @@ jobs:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
 
       # Public instance
-      - run: >
-          ./scripts/benchmark-command.sh 
-          "Sourcemeta Schemas (Indexing)"
-          docker build . --file public/Dockerfile --progress plain --build-arg SOURCEMETA_REGISTRY=registry-${{ matrix.edition.name }}
-          > benchmark-public.json
+      - run: docker build . --file public/Dockerfile --progress plain --build-arg SOURCEMETA_REGISTRY=registry-${{ matrix.edition.name }}
         if: matrix.edition.name == 'enterprise'
-      - uses: benchmark-action/github-action-benchmark@v1
-        # Avoid posting messages on forks until we figure out how to make it work
-        # See https://github.com/benchmark-action/github-action-benchmark/issues/279
-        if: matrix.edition.name == 'enterprise' && github.event.pull_request.head.repo.fork == false
-        with:
-          name: Benchmark (Public)
-          tool: customSmallerIsBetter
-          output-file-path: benchmark-public.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: ${{ github.event_name != 'pull_request' }}
-          benchmark-data-dir-path: benchmark/public
-          alert-threshold: '5%'
-          comment-always: true
-          fail-on-alert: false
 
   website:
     runs-on: ubuntu-latest
