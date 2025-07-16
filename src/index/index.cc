@@ -16,6 +16,7 @@
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>   // std::exception
 #include <filesystem>  // std::filesystem
+#include <iomanip>     // std::setw, std::setfill
 #include <iostream>    // std::cerr, std::cout
 #include <span>        // std::span
 #include <string>      // std::string
@@ -131,8 +132,11 @@ static auto index_main(const std::string_view &program,
 
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [](const auto id, const auto threads, const auto &schema) {
-        std::cerr << "Ingesting: " << schema.first << " [" << id << "/"
+      [](const auto id, const auto threads, const auto percentage,
+         const auto &schema) {
+        std::cerr << "(" << std::setfill(' ') << std::setw(3)
+                  << static_cast<int>(percentage) << "%) "
+                  << "Ingesting: " << schema.first << " [" << id << "/"
                   << threads << "]\n";
       },
       [&output, &resolver, &validator](const auto &schema) {
@@ -161,8 +165,11 @@ static auto index_main(const std::string_view &program,
 
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [](const auto id, const auto threads, const auto &schema) {
-        std::cerr << "Analysing: " << schema.first << " [" << id << "/"
+      [](const auto id, const auto threads, const auto percentage,
+         const auto &schema) {
+        std::cerr << "(" << std::setfill(' ') << std::setw(3)
+                  << static_cast<int>(percentage) << "%) "
+                  << "Analysing: " << schema.first << " [" << id << "/"
                   << threads << "]\n";
       },
       [&output, &resolver, &configuration](const auto &schema) {
