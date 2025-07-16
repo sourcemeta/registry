@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/modifier/lua.json",
+  "title": "Lua modifier",
+  "description": "Scripting with Lua is an additional choice to extend your business logic, and is compatible with the rest of options such as CEL, Martian, or other Go plugins and middlewares.\n\nSee: https://www.krakend.io/docs/endpoints/lua/",
+  "type": "object",
+  "properties": {
+    "allow_open_libs": {
+      "title": "Open external libs",
+      "description": "As an efficiency point the Lua component does not load the standard libraries by default. If you need to import Lua libraries (e.g, the I/O, String, etc.), then you must set this flag to true.\n\nSee: https://www.krakend.io/docs/endpoints/lua/",
+      "default": false,
+      "type": "boolean"
+    },
+    "live": {
+      "title": "Live reload",
+      "description": "For security and efficiency, the Lua script is loaded once into memory and not reloaded even if the file contents change. Set this flag to `true` if you want to modify the Lua script while KrakenD is running and apply the changes live (mostly during development to avoid the snippet being cached).\n\nSee: https://www.krakend.io/docs/endpoints/lua/",
+      "default": false,
+      "type": "boolean"
+    },
+    "md5": {
+      "title": "MD5 Checksum",
+      "description": "The md5sum is an extra security feature to make sure that once you have coded the Lua script, the MD5 of what is loaded into memory matches what you expect and has not been tampered by a malicious 3rd party. The key of the object must match **exactly** the filename under sources, **including all the path**.\n\nSee: https://www.krakend.io/docs/endpoints/lua/",
+      "examples": [
+        {
+          "./path/to/file1.lua": "49ae50f58e35f4821ad4550e1a4d1de0"
+        }
+      ],
+      "type": "object"
+    },
+    "post": {
+      "title": "post-execution code",
+      "description": "The Lua code that is executed **after** performing the request. Available when used in the `backend` section. You can write all the Lua code inline (e.g., `print('Hi'); print('there!')` but you can also call functions that live inside one of the files under `sources` (e.g., `my_function()`).\n\nSee: https://www.krakend.io/docs/endpoints/lua/",
+      "examples": [
+        "local r = response.load(); r:headers('Set-Cookie', 'key1='.. r:data('response'));"
+      ],
+      "type": "string"
+    },
+    "pre": {
+      "title": "Pre-execution code",
+      "description": "The Lua code that is executed **before** performing the request. Unlike `post`, it's available in all sections. You can write all the Lua code inline (e.g., `print('Hi'); print('there!')` but you can also call functions that live inside one of the files under `sources` (e.g., `my_function()`).\n\nSee: https://www.krakend.io/docs/endpoints/lua/",
+      "examples": [
+        "print('Backend response, pre-logic:'); local r = request.load(); print(r:body());"
+      ],
+      "type": "string"
+    },
+    "skip_next": {
+      "title": "Skip next",
+      "description": "Available on the `backend` section only. Instead of connecting to next backend in the pipe, returns an empty response and executes the `post` lua function.\n\nSee: https://www.krakend.io/docs/endpoints/lua/",
+      "default": false,
+      "type": "boolean"
+    },
+    "sources": {
+      "title": "Sources",
+      "description": "An array with all the Lua files that will be processed. If no path is provided (e.g., `myfile.lua`) the file loads from the [working directory](https://www.krakend.io/docs/configuration/working-directory/).\n\nSee: https://www.krakend.io/docs/endpoints/lua/",
+      "type": "array"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

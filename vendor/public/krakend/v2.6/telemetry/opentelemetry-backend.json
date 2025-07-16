@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.6/telemetry/opentelemetry-backend.json",
+  "title": "OpenTelemetry Backend Override",
+  "description": "Enterprise only. Overrides metrics and traces declared by the OpenTelemetry service.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry-by-endpoint/",
+  "type": "object",
+  "properties": {
+    "backend": {
+      "title": "Report backend activity",
+      "description": "Reports the activity between KrakenD and each of your backend services. This is the more granular layer.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry/",
+      "type": "object",
+      "properties": {
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "disable_stage": {
+              "title": "Disable this stage",
+              "description": "Whether to turn off the metrics or not. Setting this to `true` means stop reporting any data.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry/",
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "patternProperties": {
+            "^[@$_#]": {}
+          },
+          "additionalProperties": false
+        },
+        "traces": {
+          "type": "object",
+          "properties": {
+            "disable_stage": {
+              "title": "Disable this stage",
+              "description": "Whether to turn off the traces or not. Setting this to `true` means stop reporting any data.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry/",
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "patternProperties": {
+            "^[@$_#]": {}
+          },
+          "additionalProperties": false
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "proxy": {
+      "title": "Report proxy activity",
+      "description": "Reports the activity at the beginning of the proxy layer, including spawning the required requests to multiple backends, merging, endpoint transformation and any other internals of the proxy between the request processing and the backend communication\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry-by-endpoint/",
+      "type": "object",
+      "properties": {
+        "disable_metrics": {
+          "title": "Disable metrics",
+          "description": "Whether you want to disable all metrics in this endpoint or not.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry-by-endpoint/",
+          "default": false,
+          "type": "boolean"
+        },
+        "disable_traces": {
+          "title": "Disable traces",
+          "description": "Whether you want to disable all traces in this endpoint or not.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry-by-endpoint/",
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

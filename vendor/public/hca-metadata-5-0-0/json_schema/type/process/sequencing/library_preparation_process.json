@@ -1,0 +1,143 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/process/sequencing/5.0.0/library_preparation_process",
+    "description": "Information about how a sequencing library was created.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type",
+        "process_core",
+        "end_bias",
+        "library_construction_approach",
+        "strand",
+        "input_nucleic_acid_molecule"
+    ],
+    "title": "library_preparation_process",
+    "type": "object",
+    "properties": {
+         "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/process/sequencing/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/library_preparation_process"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "process"
+            ]
+        },
+        "process_core" : {
+            "description": "Core process-level information.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/process/5.0.0/process_core"
+        },
+        "cell_barcode": {
+            "description": "Information about cell identifier barcode.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/process/sequencing/5.0.0/barcode"
+        },
+        "input_nucleic_acid_molecule": {
+            "description": "Starting nucleic acid molecule isolated for sequencing. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0004446.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/biological_macromolecule_ontology",
+            "user_friendly": "Input nucleic acid molecule"
+        },
+        "library_construction_approach": {
+            "description": "The general approach for sequencing library construction.",
+            "type": "string",
+            "example": "Smart-seq2",
+            "enum": [
+                "10x",
+                "10X",
+                "10x_v2",
+                "CEL-seq",
+		        "Drop-Seq",
+		        "inDrop",
+                "modified Nextera XT",
+                "modified smart-seq2",
+                "Nextera XT",
+		        "QUARTZ-Seq",
+                "SMARTer Ultra Low RNA Kit",
+                "smart-seq2",
+                "Smart-seq2",
+                "TruSeq",
+                "unknown"
+            ],
+            "comment": "This should become an ontology.",
+            "user_friendly": "Library construction approach"
+        },
+        "library_construction_kit": {
+            "description": "Name of kit used to construct the sequencing library.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/process/5.0.0/purchased_reagents"
+        },
+        "nucleic_acid_conversion_kit": {
+            "description": "Name of kit used to convert RNA to DNA for sequencing.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/process/5.0.0/purchased_reagents"
+        },
+        "end_bias": {
+            "description": "The type of tag or end bias the library has. Must be one of 3 prime tag, 3 prime end bias, 5 prime tag, 5 prime end bias, or full length.",
+            "type": "string",
+            "example": "3_prime_tag",
+            "enum": [
+                "3 prime tag",
+                "3 prime end bias",
+                "5 prime tag",
+                "5 prime end bias",
+                "full length"
+            ],
+            "user_friendly": "End bias"
+        },
+        "primer": {
+            "description": "Primer used for cDNA synthesis from RNA. Must be either poly-dT or random.",
+            "type": "string",
+            "enum": [
+                "poly-dT",
+                "random"
+            ],
+            "user_friendly": "Primer"
+        },
+        "strand": {
+            "description": "Library strandedness. Must be one of first, second, or unstranded.",
+            "type": "string",
+            "enum": [
+                "first",
+                "second",
+                "unstranded"
+            ],
+            "example": "unstranded",
+            "user_friendly": "Strand"
+        },
+        "spike_in_kit": {
+            "description": "Name of spike-in kit.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/process/5.0.0/purchased_reagents"
+        },
+        "spike_in_dilution": {
+            "description": "Dilution of spike-in.",
+            "type": "integer",
+            "maximum": 1000000,
+            "minimum": 1,
+            "user_friendly": "Spike-in dilution"
+        },
+        "umi_barcode": {
+            "description": "Information about unique molecular identifier (UMI) barcode sequences.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/process/sequencing/5.0.0/barcode"
+        },
+        "process_type": {
+            "description": "The type of process. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0002694.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/process_type_ontology",
+            "user_friendly": "Process type"
+        }
+    }
+}

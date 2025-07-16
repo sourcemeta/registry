@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/proxy/flatmap.json",
+  "title": "Flatmap (Array manipulation)",
+  "description": "The flatmap middleware allows you to manipulate collections (or arrays, or lists, you name it) from the backend response. While the basic manipulation operations allow you to work directly with objects, the collections require a different approach: the flatmap component.\n\nSee: https://www.krakend.io/docs/backend/flatmap/",
+  "examples": [
+    {
+      "type": "move",
+      "args": [
+        "a.*.b1.*.c",
+        "a.*.b1.*.d"
+      ]
+    }
+  ],
+  "type": "array",
+  "items": {
+    "$id": "#proxy/flatmap/items",
+    "title": "Flatmap operation",
+    "type": "object",
+    "required": [
+      "type",
+      "args"
+    ],
+    "properties": {
+      "type": {
+        "title": "Type",
+        "description": "The types of operations are defined as follows.\n\nSee: https://www.krakend.io/docs/backends/flatmap/",
+        "enum": [
+          "move",
+          "del",
+          "append"
+        ]
+      },
+      "args": {
+        "title": "Args",
+        "description": "The arguments passed to the operation.\n\nSee: https://www.krakend.io/docs/backends/flatmap/",
+        "type": "array"
+      }
+    },
+    "patternProperties": {
+      "^[@$_#]": {}
+    },
+    "additionalProperties": false
+  }
+}

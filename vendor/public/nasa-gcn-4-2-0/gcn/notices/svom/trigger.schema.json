@@ -1,0 +1,33 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.2.0/gcn/notices/svom/trigger.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "title": "SVOM trigger alerts",
+  "description": "ECLAIRs or GRM trigger parameters computed onboard",
+  "allOf": [
+    { "$ref": "../core/AdditionalInfo.schema.json" },
+    { "$ref": "../core/Alert.schema.json" },
+    { "$ref": "../core/DateTime.schema.json" },
+    { "$ref": "../core/Event.schema.json" },
+    { "$ref": "../core/Localization.schema.json" },
+    { "$ref": "../core/Reporter.schema.json" },
+    { "$ref": "../core/Statistics.schema.json" },
+    { "$ref": "../core/Pointing.schema.json" },
+    { "$ref": "../core/GeoLocBase.schema.json" }
+  ],
+  "properties": {
+    "$schema": true,
+    "slew_status": {
+      "enum": ["accepted", "rejected", "not_requested"],
+      "description": "Spacecraft slew status"
+    },
+    "triggered_GRDs": {
+      "type": "array",
+      "items": { "type": "boolean" },
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "In case of a GRM trigger, trigger status the 3 GRDs. Each item correspond to one of the 3 GRDs: true means the GRD triggers, false not"
+    }
+  }
+}

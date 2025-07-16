@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/bundle/5.0.0/process",
+    "description": "A schema for a process bundle.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type"
+    ],
+    "title": "process",
+    "type": "object",
+    "definitions": {
+        "process_ingest": {
+            "required": [
+                "hca_ingest",
+                "content"
+            ],
+            "type": "object",
+            "properties": {
+                "hca_ingest": {
+                    "description": "Core fields added by HCA ingest service",
+                    "type": "object",
+                    "$ref": "https://schema.humancellatlas.org/bundle/5.0.0/ingest_audit"
+                },
+                "content": {
+                    "description": "Content for any process type entity.",
+                    "type": "object",
+                    "oneOf": [
+                        { "$ref": "https://schema.humancellatlas.org/type/process/analysis/5.0.0/analysis_process" },
+                        { "$ref": "https://schema.humancellatlas.org/type/process/biomaterial_collection/5.0.0/collection_process" },
+                        { "$ref": "https://schema.humancellatlas.org/type/process/biomaterial_collection/5.0.0/dissociation_process" },
+                        { "$ref": "https://schema.humancellatlas.org/type/process/biomaterial_collection/5.0.0/enrichment_process" },
+                        { "$ref": "https://schema.humancellatlas.org/type/process/imaging/5.0.0/imaging_process" },
+                        { "$ref": "https://schema.humancellatlas.org/type/process/sequencing/5.0.0/library_preparation_process" },
+                        { "$ref": "https://schema.humancellatlas.org/type/process/sequencing/5.0.0/sequencing_process" }
+                    ]
+                }
+            }
+        }
+    },
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/bundle/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/process"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "process_bundle"
+            ]
+        },
+        "processes": {
+            "description": "An array of processes.",
+            "type": "array",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/bundle/5.0.0/process#/definitions/process_ingest"
+            }
+        }
+    }
+}

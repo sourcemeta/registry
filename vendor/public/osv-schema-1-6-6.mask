@@ -1,0 +1,8 @@
+.bundle
+docs
+tools
+CHANGELOG.md
+README.md
+schema.md
+validation/README.md
+CHARTER.md

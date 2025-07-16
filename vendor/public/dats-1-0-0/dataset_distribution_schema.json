@@ -1,0 +1,130 @@
+{
+  "id": "https://w3id.org/dats/schema/dataset_distribution_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS dataset distribution schema",
+  "description": "(From DCAT) Represents a specific available form of a dataset. Each dataset might be available in different forms, these forms might represent different formats of the dataset or different endpoints. Examples of distributions include a downloadable CSV file, an API or an RSS feed.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "DatasetDistribution" ]},
+    "identifier": {
+      "description": "The identifier of the dataset distribution.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the dataset distribution.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the dataset distribution.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "title" : {
+      "description" : "The name of the dataset, usually one sentece or short description of the dataset.",
+      "type" : "string"
+    },
+    "description" : {
+      "description": "A textual narrative comprised of one or more statements describing the dataset distribution.",
+      "type" : "string"
+    },
+    "storedIn" : {
+      "description": "The data repository hosting the dataset distribution.",
+      "$ref": "data_repository_schema.json#"
+    },
+    "dates" : {
+      "description": "Relevant dates for the datasets, e.g. creation date or last modification date may be added.",
+      "type" : "array",
+      "items" : {
+        "$ref" : "date_info_schema.json#"
+      }
+    },
+    "version" : {
+      "description": "A release point for the dataset when applicable.",
+      "type" : "string"
+    },
+    "licenses": {
+      "description": "The terms of use of the dataset distribution.",
+      "type": "array",
+      "items": {
+        "$ref": "license_schema.json#"
+      }
+    },
+    "access" : {
+      "description": "The information about access modality for the dataset distribution.",
+      "$ref" : "access_schema.json#"
+    },
+    "curationStatus": {
+      "description": "The level of curation of the dataset distribution.",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },
+    "conformsTo" : {
+      "description": "A data standard whose requirements and constraints are met by the dataset.",
+      "type" : "array",
+      "items" : {
+        "$ref": "data_standard_schema.json#"
+      }
+    },
+    "qualifiers": {
+      "description": "One or more characteristics of the dataset distribution (e.g. how it relates to other distributions, if the data is raw or processed, compressed or encrypted).",
+      "type" : "array",
+      "items" : {
+        "anyOf": [
+          { "$ref": "annotation_schema.json#"},
+          { "$ref": "category_values_pair_schema.json#"}
+        ]
+      }
+    },
+    "formats" : {
+      "description": "The technical format of the dataset distribution. Use the file extension or MIME type when possible. (Definition adapted from DataCite)",
+      "type" : "array",
+      "items" : {
+        "type": "string"
+      }
+    },
+    "size": {
+      "description": "The size of the dataset.",
+      "type": "number"
+    },
+    "unit": {
+      "description": "The unit of measurement used to estimate the size of the dataset (e.g, petabyte). Ideally, the unit should be coming from a reference controlled terminology.",
+      "$ref": "annotation_schema.json#"
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "access" ]
+}

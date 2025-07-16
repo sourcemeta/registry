@@ -1,0 +1,51 @@
+{
+  "id": "https://w3id.org/dats/schema/related_identifier_info_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS related identifier information schema",
+  "description": "Information about an idenfier of related resources.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "RelatedIdentifier" ]},
+    "identifier": {
+      "description": "An identifier of a related resource.",
+      "type" : "string"
+    },
+    "identifierSource": {
+      "description": "The identifier source represents information about the organisation/namespace responsible for minting the identifiers. It must be provided if the identifier is provided.",
+      "type" : "string"
+    },
+    "relationType": {
+      "description": "The type of the relationship corresponding to this identifier.",
+      "anyOf": [
+        { "type" : "string" },
+        { "type": "string",
+          "format": "uri"
+        },
+        {
+          "$ref": "annotation_schema.json#"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

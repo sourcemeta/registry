@@ -1,0 +1,208 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/modifier/response-body.json",
+  "title": "Response values modifier",
+  "description": "Enterprise only. The content replacer plugin allows you to modify the response of your services by doing literal replacements or more sophisticated replacements with regular expressions.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+  "type": "object",
+  "properties": {
+    "modifiers": {
+      "title": "Operations",
+      "description": "A list of modifiers you would like to apply to specific fields. The modifiers are evaluated and applied in sequential order.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "maxProperties": 1,
+        "properties": {
+          "literal": {
+            "title": "Literal replacement",
+            "description": "A literal replacement of strings (case sensitive).\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+            "examples": [
+              {
+                "field": "data.example",
+                "find": "findme",
+                "replace": "replaceme"
+              }
+            ],
+            "type": "object",
+            "required": [
+              "field",
+              "find",
+              "replace"
+            ],
+            "properties": {
+              "field": {
+                "title": "Field to modify",
+                "description": "The field you want to modify. The field supports dot notation to access nested objects (it does not work with nested arrays).\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "examples": [
+                  "data.credit_card"
+                ],
+                "type": "string"
+              },
+              "find": {
+                "title": "Find",
+                "description": "The exact string you want to replace.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "type": "string"
+              },
+              "replace": {
+                "title": "Replace",
+                "description": "The replacement string you want to use for all matching results. \n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "type": "string"
+              }
+            },
+            "patternProperties": {
+              "^[@$_#]": {}
+            },
+            "additionalProperties": false
+          },
+          "lower": {
+            "title": "Lowercase",
+            "description": "Converts a given string to lowercase.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+            "examples": [
+              {
+                "field": "surname"
+              }
+            ],
+            "type": "object",
+            "required": [
+              "field"
+            ],
+            "properties": {
+              "field": {
+                "title": "Field to modify",
+                "description": "The field you want to modify. The field supports dot notation to access nested objects (it does not work with nested arrays).\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "examples": [
+                  "user.surname"
+                ],
+                "type": "string"
+              }
+            },
+            "patternProperties": {
+              "^[@$_#]": {}
+            },
+            "additionalProperties": false
+          },
+          "regexp": {
+            "title": "Regular expression modifier",
+            "description": "A list of regular expressions you would like to apply to specific fields. The expressions are evaluated and applied in sequential order.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+            "examples": [
+              {
+                "field": "data.credit_card",
+                "find": "(^\\d{4})(.*)",
+                "replace": "${1}-XXXX"
+              }
+            ],
+            "type": "object",
+            "required": [
+              "field",
+              "find",
+              "replace"
+            ],
+            "properties": {
+              "field": {
+                "title": "Field to modify",
+                "description": "The field you want to modify. The field supports dot notation to access nested objects (it does not work with nested arrays).\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "examples": [
+                  "data.credit_card"
+                ],
+                "type": "string"
+              },
+              "find": {
+                "title": "Find",
+                "description": "The find expression or literal you want to use. The syntax of the regular expressions accepted is the same general syntax used by Perl, Python, and other languages. More precisely, it is the syntax accepted by RE2 and described at [https://golang.org/s/re2syntax](https://golang.org/s/re2syntax)\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "type": "string"
+              },
+              "replace": {
+                "title": "Replace",
+                "description": "The literal string or expression you want to use as a replacement. Use `$` signs to replace captured groups. \n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "examples": [
+                  "${1}-XXXX"
+                ],
+                "type": "string"
+              }
+            },
+            "patternProperties": {
+              "^[@$_#]": {}
+            },
+            "additionalProperties": false
+          },
+          "trim": {
+            "title": "Trims by character",
+            "description": "Removes a specific set of characters from the beginning and the end of the string.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+            "examples": [
+              {
+                "field": "description",
+                "find": "\n"
+              }
+            ],
+            "type": "object",
+            "required": [
+              "field",
+              "find"
+            ],
+            "properties": {
+              "field": {
+                "title": "Field to modify",
+                "description": "The field you want to modify. The field supports dot notation to access nested objects (it does not work with nested arrays).\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "examples": [
+                  "description"
+                ],
+                "type": "string"
+              },
+              "find": {
+                "title": "Find",
+                "description": "The sequence of characters you want to trim in the response.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "examples": [
+                  "\r\n",
+                  "\n",
+                  "\t",
+                  " "
+                ],
+                "type": "string"
+              }
+            },
+            "patternProperties": {
+              "^[@$_#]": {}
+            },
+            "additionalProperties": false
+          },
+          "upper": {
+            "title": "Uppercase",
+            "description": "Converts a given string to uppercase.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+            "examples": [
+              {
+                "field": "surname"
+              }
+            ],
+            "type": "object",
+            "required": [
+              "field"
+            ],
+            "properties": {
+              "field": {
+                "title": "Field to modify",
+                "description": "The field you want to modify. The field supports dot notation to access nested objects (it does not work with nested arrays).\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/content-replacer/",
+                "examples": [
+                  "user.surname"
+                ],
+                "type": "string"
+              }
+            },
+            "patternProperties": {
+              "^[@$_#]": {}
+            },
+            "additionalProperties": false
+          }
+        },
+        "patternProperties": {
+          "^[@$_#]": {}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

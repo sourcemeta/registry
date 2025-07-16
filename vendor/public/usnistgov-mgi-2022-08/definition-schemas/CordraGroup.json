@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "CordraGroup",
+    "definitions": {"CordraGroup": {
+        "type": "object",
+        "properties": {"users": {
+            "type": "array",
+            "format": "table",
+            "title": "Users",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "title": "User",
+                "cordra": {"type": {"handleReference": {"types": [
+                    "User",
+                    "Group"
+                ]}}}
+            },
+            "cordra": {"auth": "usersList"}
+        }}
+    }}
+}

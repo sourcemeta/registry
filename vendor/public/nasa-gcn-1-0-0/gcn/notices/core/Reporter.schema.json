@@ -1,0 +1,41 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v1.0.0/gcn/notices/core/Reporter.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Reporter",
+  "description": "Alert Reporter instrument",
+  "type": "object",
+  "properties": {
+    "mission": {
+      "type": "string",
+      "description": "Name of Mission or Telescope reporting the event"
+    },
+    "instrument": {
+      "type": "string",
+      "description": "Name of the Instrument reporting the event"
+    },
+    "record_number": {
+      "type": "number",
+      "description": "Incremental number for messages from the instrument during a given trigger (ex: 1, 2, 3)"
+    },
+    "messenger": {
+      "enum": ["EM", "GW", "Neutrino"],
+      "description": "Messenger of report; EM, GW or Neutrino"
+    },
+    "spectrum": {
+      "enum": ["energy", "wavelength", "frequency"],
+      "description": "high-energy or optical or radio observations, if not parsed, then default band is energy",
+      "type": "string",
+      "default": "energy"
+    },
+    "units": {
+      "enum": ["keV", "nm", "Hz"],
+      "description": "Units of band range, if not parsed, then default energy is keV",
+      "type": "string",
+      "default": "keV"
+    },
+    "filter": {
+      "type": "array",
+      "description": "Optional filter name, as used in optical observations"
+    }
+  }
+}

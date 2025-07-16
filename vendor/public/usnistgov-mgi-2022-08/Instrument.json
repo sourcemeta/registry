@@ -1,0 +1,48 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Instrument",
+    "description": "This form is for describing an instrument and components/parts of an instrument. Instruments and parts are linked by their identifier.",
+    "required": [
+        "@id",
+        "@context",
+        "@type"
+    ],
+    "allOf": [
+        {
+            "@context": {
+                "type": "array",
+                "default": [
+                    "http://schema.org/",
+                    {
+                        "mat": "https://pages.nist.gov/material-schema/",
+                        "@vocab": "https://pages.nist.gov/material-schema/user-defined/"
+                    }
+                ]
+            },
+            "@type": {
+                "type": "array",
+                "default": [
+                    "CreativeWork",
+                    "IndividualProduct",
+                    "mat:Instrument"
+                ]
+            }
+        },
+        {
+            "$ref": "definition-schemas/CordraObjectID.json#/definitions/CordraObjectID"
+        },
+        {
+            "$ref": "definition-schemas/Thing.json#/definitions/Thing"
+        },
+        {
+            "$ref": "definition-schemas/CreativeWork.json#/definitions/CreativeWork"
+        },
+        {
+            "$ref": "definition-schemas/Instrument.json#/definitions/Instrument"
+        },
+        {
+            "$ref": "definition-schemas/Product.json#/definitions/Product"
+        }
+    ]
+}

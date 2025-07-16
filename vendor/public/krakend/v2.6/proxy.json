@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.6/proxy.json",
+  "title": "Proxy option",
+  "type": "object",
+  "properties": {
+    "decompress_gzip": {
+      "title": "Decompress Gzip",
+      "description": "Enterprise Only. Decompresses any Gzipped content before sending it to the backend when the `Content-Encoding` has `gzip` in the first position. You can also set this value globally at the [service level](https://www.krakend.io/docs/enterprise/service-settings/router-options/#max_payload).\n\nSee: https://www.krakend.io/docs/service-settings/router-options/",
+      "default": false,
+      "type": "boolean"
+    },
+    "flatmap_filter": {
+      "$id": "#proxy/flatmap_filter",
+      "title": "Flatmap (Array manipulation)",
+      "description": "The list of operations to **execute sequentially** (top down). Every operation is defined with an object containing two properties:\n\nSee: https://www.krakend.io/docs/backends/flatmap/",
+      "$ref": "proxy/flatmap.json",
+      "type": "array"
+    },
+    "max_payload": {
+      "title": "Maximum Payload",
+      "description": "Enterprise Only. Limits the maximum number of bytes a user can send to the endpoint. `0` means no limit. You can also set this value globally at the [service level](https://www.krakend.io/docs/enterprise/service-settings/router-options/#max_payload).\n\nSee: https://www.krakend.io/docs/service-settings/router-options/",
+      "default": 0,
+      "type": "integer"
+    },
+    "shadow": {
+      "$id": "#proxy/shadow",
+      "title": "Traffic shadowing or mirroring",
+      "description": "Mark this backend as a shadow backend. Sending copies of the traffic but ignore its responses.\n\nSee: https://www.krakend.io/docs/backends/shadow-backends/",
+      "default": true,
+      "type": "boolean"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

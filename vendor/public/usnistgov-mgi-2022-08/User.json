@@ -1,0 +1,42 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Person",
+    "description": "This schema is for describing a registered User in Cordra.",
+    "required": [
+        "@id",
+        "@context",
+        "@type",
+        "username",
+        "password"
+    ],
+    "allOf": [
+        {
+            "@context": {
+                "type": "string",
+                "default": [
+                    "https://schema.org/",
+                    {
+                        "@vocab": "https://pages.nist.gov/material-schema/user-defined"
+                    }
+                ]
+            },
+            "@type": {
+                "type": "string",
+                "default": "Person"
+            }
+        },
+        {
+            "$ref": "definition-schemas/CordraObjectID.json#/definitions/CordraObjectID"
+        },
+        {
+            "$ref": "definition-schemas/CordraUser.json#/definitions/CordraUser"
+        },
+        {
+            "$ref": "definition-schemas/Thing.json#/definitions/Thing"
+        },
+        {
+            "$ref": "definition-schemas/Person.json#/definitions/Person"
+        }
+    ]
+}

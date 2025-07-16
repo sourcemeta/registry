@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.4/plugin/ip-filter.json",
+  "title": "IP filter",
+  "description": "Enterprise only. The IP filtering plugin allows you to restrict the traffic to your API gateway based on the IP address. It works in two different modes (allow or deny) where you define the list of IPs (CIDR blocks) that are authorized to use the API, or that are denied from using the API.\n\nSee: https://www.krakend.io/docs/enterprise/throttling/ipfilter/",
+  "type": "object",
+  "required": [
+    "CIDR",
+    "allow"
+  ],
+  "properties": {
+    "CIDR": {
+      "title": "CIDR",
+      "description": "The CIDR blocks (list of IPs) you want to allow or deny.\n\nSee: https://www.krakend.io/docs/enterprise/throttling/ipfilter/",
+      "examples": [
+        [
+          "192.168.0.0/24",
+          "172.17.2.56/32"
+        ]
+      ],
+      "type": "array"
+    },
+    "allow": {
+      "title": "Allow or deny mode",
+      "description": "When true, only the matching IPs are able to access the content. When false, all matching IPs are discarded.\n\nSee: https://www.krakend.io/docs/enterprise/throttling/ipfilter/",
+      "default": false,
+      "type": "boolean"
+    },
+    "client_ip_headers": {
+      "title": "Client IP Headers",
+      "description": "A custom list of all headers that might contain the real IP of the client. The first matching IP in the list will be used. Default headers are (in order of checking): X-Forwarded-For, X-Real-IP, and X-Appengine-Remote-Addr.\n\nSee: https://www.krakend.io/docs/enterprise/throttling/ipfilter/",
+      "examples": [
+        [
+          "X-Forwarded-For",
+          "X-Real-IP",
+          "X-Appengine-Remote-Addr"
+        ]
+      ],
+      "type": "array"
+    },
+    "trusted_proxies": {
+      "title": "Trusted proxies",
+      "description": "A custom list of all the recognized machines/balancers that proxy the client to your application. This list is used to avoid spoofing when trying to get the real IP of the client.\n\nSee: https://www.krakend.io/docs/enterprise/throttling/ipfilter/",
+      "examples": [
+        [
+          "10.0.0.0/16"
+        ]
+      ],
+      "type": "array"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

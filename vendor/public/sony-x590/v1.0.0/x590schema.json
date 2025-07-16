@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "x590schema.json",
+  "title": "JSON Signature Scheme (JSS) Schema",
+  "description": "This schema defines the JSON Signature Scheme (JSS) signature object. The JSS signature object is a JSON object that contains a signature of a JSON object. The JSS signature object is used to sign a JSON object and is defined in the JSON Signature Scheme (JSS) specification, X.590, available at https://www.itu.int/rec/T-REC-X.590-202310-I/en",
+  "properties": {
+    "signatures": {
+      "description": "An array of JSS signature objects.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/signature"
+      }
+    }
+  },
+  "$defs": {
+    "signature": {
+      "type": "object",
+      "required": [
+        "hash_algorithm",
+        "algorithm",
+        "value"
+      ],
+      "oneOf": [
+        {
+          "required": [
+            "public_key"
+          ]
+        },
+        {
+          "required": [
+            "public_cert_chain"
+          ]
+        },
+        {
+          "required": [
+            "cert_url"
+          ]
+        },
+        {
+          "required": [
+            "thumbprint"
+          ]
+        }
+      ],
+      "properties": {
+        "id": {
+          "description": "A value that uniquely identifies the signature. All signatures with the same ID are considered different versions of the same signature and the version of the signature is identified by its modified property.",
+          "examples": [
+            "123e4567-e89b-12d3-a456-426614174000"
+          ],
+          "$ref": "#/$defs/identifier"
+        },
+        "type": {
+          "description": "The value of this property MUST be jss.",
+          "const": "x590"
+        },
+        "algorithm": {
+          "description": "This property identifies the algorithm that was used to sign the JSON data and is a case-sensitive ASCII string. The value for this property SHOULD come from the signature-algorithm-type-ov vocabulary (see clause 6.2.2) and SHOULD be a current and widely accepted quantum safe algorithm, but MAY use any currently accepted safe algorithm. NOTE – At the time of this writing quantum safe algorithms could come from those defined in XMSS [IETF RFC 8391] section 5.3 or LMS [IETF RFC 8554] section 5.1 and other algorithms could come from those defined in JWA [IETF RFC 7518] section 3.1 or [IETF RFC 8037] section 3.1 (see the table below for a list of values from those RFCs). [para] While JWA [IETF RFC 7518] section 3.1 defines the following symmetric algorithms: HS256, HS384, and HS512, these algorithms SHOULD NOT be used. If one of these three symmetric algorithms is used, the sharing and transmission of those keys is out of scope for this Recommendation.",
+          "examples": [
+            "XMSS-SHA2_10_256",
+            "XMSS-SHA2_16_256",
+            "XMSS-SHA2_20_256",
+            "LMS_SHA256_M32_H5",
+            "LMS_SHA256_M32_H10",
+            "LMS_SHA256_M32_H15",
+            "LMS_SHA256_M32_H20",
+            "LMS_SHA256_M32_H25",
+            "RS256",
+            "RS384",
+            "RS512",
+            "ES256",
+            "ES384",
+            "ES512",
+            "PS256",
+            "PS384",
+            "PS512",
+            "Ed25519",
+            "Ed448"
+          ],
+          "type": "string"
+        },
+        "cert_url": {
+          "description": "This property contains a uniform resource identifier (URI) [IETF RFC 3986] that refers to a resource for an X.509 public key certificate or certificate chain [IETF RFC 5280] for the algorithm selected in the algorithm property and MUST follow the requirements defined in section 4.6 of [IETF RFC 7517] as quoted here. \"The identified resource MUST provide a representation of the certificate or certificate chain that conforms to RFC 5280 [IETF RFC 5280] in PEM-encoded form, with each certificate delimited as specified in section 6.1 of RFC 4945 [IETF RFC 4945]. The key in the first certificate MUST match the public key. The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the certificate MUST use TLS [IETF RFC 2818] [IETF RFC 5246]; the identity of the server MUST be validated, as per section 6 of RFC 6125 [IETF RFC 6125].\" This property is called \"x5u\" in section 4.6 of [IETF RFC 7517].",
+          "examples": [
+            ""
+          ],
+          "type": "string",
+          "format": "uri"
+        },
+        "created": {
+          "description": "The time at which this signature was originally created. The creator can use any time it deems most appropriate as the time the signature was created, but it MUST be precise to the nearest millisecond (exactly three digits after the decimal place in seconds). The created property MUST NOT be changed when creating a new version of the signature.",
+          "$ref": "#/$defs/timestamp"
+        },
+        "hash_algorithm": {
+          "description": "This property identifies the hashing algorithm, as defined by the Internet Assigned Numbers Authority (IANA)…, that was used to hash the JCS version of the full JSON object (JSON Object + JSS Signature) and is a case-sensitive ASCII string. Implementations MAY use any current and widely accepted hashing algorithm (e.g., sha-256, sha-512) that is defined in the IANA registry. The actual signing process, defined in the algorithm property, sometimes uses an internal hashing algorithm inside the signing process itself, this property MAY identify the same hashing algorithm as the signing process or MAY identify a different hashing algorithm.",
+          "examples": [
+            "sha-256",
+            "sha-512"
+          ],
+          "type": "string"
+        },
+        "modified": {
+          "description": "The time that this particular version of the signature was last modified. The creator can use any time it deems most appropriate as the time that this version of the signature was modified, but it MUST be precise to the nearest millisecond (exactly three digits after the decimal place in seconds). The modified property MUST be later than or equal to the value of the created property. If the created and modified properties are the same, then this is the first version of the signature.",
+          "$ref": "#/$defs/timestamp"
+        },
+        "public_cert_chain": {
+          "description": "This property contains a public key certificate for the algorithm selected in the algorithm property and MUST follow the requirements defined in section 4.7 of [IETF RFC 7517] as quoted here. This property \"contains a chain (X.509 certificate chain) of one or more PKIX certificates [IETF RFC 5280]. The certificate chain is represented as a JSON array of certificate value strings. Each string in the array is a base64-encoded (section 4 of [IETF RFC 4648] – not base64URL.encoded) DER [b-ITU-T X.690] PKIX certificate value. The PKIX certificate containing the key value MUST be the first certificate. This MAY be followed by additional certificates, with each subsequent certificate being the one used to certify the previous one. The key in the first certificate MUST match the public key.\" This property is called \"x5c\" in section 4.7 of [IETF RFC 7517].",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "contentEncoding": "base64url"
+          }
+        },
+        "public_key": {
+          "description": "This property contains a privacy enhanced mail (PEM) encoded public key without the header and footer for the algorithm selected in the algorithm property.",
+          "type": "string",
+          "contentEncoding": "base64url"
+        },
+        "related_to": {
+          "description": "A value that can identify the original JSON object that was signed with this signature. If the signature is detached from the original JSON object this property SHOULD be populated.",
+          "type": "string"
+        },
+        "related_version": {
+          "description": "A value that can identify the version of the original JSON object that was signed with this signature. If the signature is detached from the original JSON object this property SHOULD be populated.",
+          "type": "string"
+        },
+        "revoked": {
+          "description": "A boolean that identifies if the signature creator deems that this signature is no longer valid. The default value is false.",
+          "default": false,
+          "type": "boolean"
+        },
+        "signatures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/signature"
+          }
+        },
+        "signee": {
+          "description": "An unstructured string value for the name of the entity or organization that produced this signature.",
+          "type": "string"
+        },
+        "thumbprint": {
+          "description": "This property contains a fingerprint of a public key or public key certificate for the algorithm selected in the algorithm property and MUST follow the requirements defined in section 4.9 of [IETF RFC 7517] as quoted here. This property \"is a base64URL.encoded SHA-256 thumbprint (a.k.a. digest, X.509 certificate SHA-256 thumbprint) of the DER encoding of an X.509 certificate [IETF RFC 5280]. Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate MUST match the public key.\" This property is called \"x5t#S256\" in section 4.9 of [IETF RFC 7517].",
+          "examples": [
+            ""
+          ],
+          "type": "string",
+          "contentEncoding": "base64url"
+        },
+        "valid_from": {
+          "description": "The time from which this signature is considered valid. If omitted, the signature is valid at all times or until the timestamp defined by valid_until. If the revoked property is true then this property MUST be ignored.",
+          "$ref": "#/$defs/timestamp"
+        },
+        "valid_until": {
+          "description": "The time at which this signature is no longer considered valid. If the valid_until property is omitted, then there is no constraint on the latest time for which the signature is valid. This property MUST be greater than the timestamp in the valid_from property if the valid_from property is defined. If the revoked property is true then this property MUST be ignored.",
+          "$ref": "#/$defs/timestamp"
+        },
+        "value": {
+          "description": "A base64URL.encoded signature that was created using the signature algorithm defined in the algorithm property and a key. In pseudo code it is defined as: base64URL.encode(sign(algorithm, key, hash(jcs(<JSONObject with Signature Object>)))).",
+          "examples": [
+            ""
+          ],
+          "type": "string",
+          "contentEncoding": "base64url"
+        }
+      }
+    },
+    "identifier": {
+      "description": "The identifier data type represents an RFC 4122-compliant universally unique identifier (UUID) [IETF RFC 4122] and uses the JSON string type [IETF RFC 8259] for serialization.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "timestamp": {
+      "description": "The timestamp data type represents dates and times and uses the JSON string type [IETF RFC 8259] for serialization. The timestamp data MUST be a valid RFC 3339-formatted timestamp [IETF RFC 3339] using the format yyyy-mm-ddThh:mm:ss[.s+]Z where the \"s+\" represents 1 or more sub-second values. The brackets denote that sub-second precision is optional, and that if no digits are provided, the decimal place MUST NOT be present. The timestamp MUST be represented in the UTC+0 time zone and MUST use the \"Z\" designation to indicate this. Additional requirements may be defined where this data type is used.",
+      "type": "string",
+      "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])T([01]\\d|2[0-3]):([0-5]\\d):([0-5]\\d)(\\.\\d+)?Z$"
+    }
+  }
+}

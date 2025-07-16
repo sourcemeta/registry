@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.1/telemetry/instana.json",
+  "title": "Telemetry via Instana by IBM",
+  "description": "Enterprise only. Send metrics and traces to your Instana dashboard.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+  "type": "object",
+  "required": [
+    "AgentHost",
+    "AgentPort"
+  ],
+  "properties": {
+    "AgentHost": {
+      "$id": "#telemetry/opencensus/AgentHost",
+      "title": "Agent Host",
+      "description": "By default Instana uses localhost.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+      "default": "localhost",
+      "type": "string"
+    },
+    "AgentPort": {
+      "$id": "#telemetry/opencensus/AgentPort",
+      "title": "Agent Port",
+      "description": "By default instana uses 46999.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+      "default": 46999,
+      "type": "integer"
+    },
+    "EnableAutoProfile": {
+      "$id": "#telemetry/opencensus/EnableAutoProfile",
+      "title": "Enable auto profile",
+      "description": "Enables automatic continuous process profiling when true.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+      "type": "boolean"
+    },
+    "ForceTransmissionStartingAt": {
+      "$id": "#telemetry/opencensus/ForceTransmissionStartingAt",
+      "title": "Force transmission starting at",
+      "description": "The number of spans to collect before flushing the buffer to the agent.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+      "type": "integer"
+    },
+    "IncludeProfilerFrames": {
+      "$id": "#telemetry/opencensus/IncludeProfilerFrames",
+      "title": "Include profiler frames",
+      "description": "Whether to include profiler calls into the profile or not.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+      "type": "boolean"
+    },
+    "LogLevel": {
+      "$id": "#telemetry/opencensus/LogLevel",
+      "title": "Log level",
+      "description": "One of Error 0, Warn 1, Info 2 or Debug 3.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "MaxBufferedProfiles": {
+      "$id": "#telemetry/opencensus/MaxBufferedProfiles",
+      "title": "Max buffered profiles",
+      "description": "The maximum number of profiles to buffer.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+      "type": "integer"
+    },
+    "MaxBufferedSpans": {
+      "$id": "#telemetry/opencensus/MaxBufferedSpans",
+      "title": "Max buffered spans",
+      "description": "The maximum number of spans to buffer.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+      "type": "integer"
+    },
+    "Service": {
+      "$id": "#telemetry/opencensus/Service",
+      "title": "Service",
+      "description": "The global service name that will be used to identify the program in the Instana backend. The service name is set to the name of current executable by default.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+      "type": "string"
+    },
+    "Tracer": {
+      "title": "Tracer",
+      "description": "Tracer-specific configuration used by all tracers",
+      "type": "object",
+      "properties": {
+        "CollectableHTTPHeaders": {
+          "title": "Collectable HTTP headers",
+          "description": "Case-insensitive list of [HTTP headers to be collected](https://www.instana.com/docs/setup_and_manage/host_agent/configuration/#capture-custom-http-headers) from HTTP requests and sent to the agent.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+          "type": "array"
+        },
+        "DropAllLogs": {
+          "title": "Drop all logs",
+          "description": "Turns log events on all spans into no-ops.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+          "type": "boolean"
+        },
+        "MaxLogsPerSpan": {
+          "title": "Max logs per span",
+          "description": "MaxLogsPerSpan limits the number of log records in a span (if set to a non-zero value). If a span has more logs than this value, logs are dropped as necessary.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+          "type": "integer"
+        },
+        "Secrets": {
+          "title": "Secrets",
+          "description": "A secrets matcher used to filter out sensitive data from HTTP requests, database connection strings, etc. By default tracer does not filter any values. [More info on secrets](https://www.instana.com/docs/setup_and_manage/host_agent/configuration/#secrets)\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/instana/",
+          "type": "object"
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

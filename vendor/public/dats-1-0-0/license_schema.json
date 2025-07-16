@@ -1,0 +1,104 @@
+{
+  "id": "https://w3id.org/dats/schema/license_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS license schema",
+  "description": "A legal document giving official permission to do something with a Resource. It is assumed that an external vocabulary will describe with sufficient granularity the permission for redistribution, modification, derivation, reuse, etc. and conditions for citation/acknowledgment.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "License" ]},
+    "identifier": {
+      "description": "The identifier of the license.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the license.",
+      "type" :  "string"
+    },
+    "version": {
+      "description": "The version of the license.",
+      "type" :  "string"
+    },
+    "dates" : {
+      "description": "Relevant dates, such as the date of the license was issued, may be provided.",
+      "type" : "array",
+      "items": {
+        "$ref" : "date_info_schema.json#"
+      }
+    },
+    "licensingAuthority": {
+      "description": "The person(s) or organization(s) responsible for granting access to the data by approving the license.",
+      "type" : "array",
+      "items" : {
+        "oneOf": [
+          {"$ref" : "person_schema.json#"},
+          {"$ref" : "organization_schema.json#"}
+        ]
+      }
+    },
+    "creators" : {
+      "description": "The person(s) or organization(s) responsible for writing the license.",
+      "type" : "array",
+      "items" : {
+        "oneOf": [
+          {"$ref" : "person_schema.json#"},
+          {"$ref" : "organization_schema.json#"}
+        ]
+      }
+    },
+    "consentInformation": {
+      "description": "Types of consent given by study participant extracted from the terms of use documents. Ideally specified from a controlled vocabulary or ontology, such as GA4GH Data Use Ontology (DUO: http://www.obofoundry.org/ontology/duo.html) or ADA-M matrix (https://github.com/ga4gh/ADA-M).",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },    
+    "dataUseConditions": {
+      "description": "Types of data use conditions extracted from the license documents. Data Use Conditions may refer to restrictions, prohibition, research topics as granted by the dataset, dimension, software license. Ideally specified from a controlled vocabulary or ontology, such as GA4GH Data Use Ontology (DUO: http://www.obofoundry.org/ontology/duo.html) or ADA-M matrix (https://github.com/ga4gh/ADA-M).",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },       
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "name"]
+}

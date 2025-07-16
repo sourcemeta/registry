@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/plugin/static-filesystem.json",
+  "title": "Static Filesystem",
+  "description": "Enterprise only. Allows you to fetch and serve static content in two different use cases. When the plugin is used as an http server handler, the static content is for your end-users, giving them CSS, JS, images, or JSON files, to name a few examples. On the other side, when the plugin is used as an http client executor, the KrakenD endpoints use static content as if it were a backend.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/serve-static-content/",
+  "type": "object",
+  "required": [
+    "prefix",
+    "path"
+  ],
+  "properties": {
+    "path": {
+      "title": "Path",
+      "description": "The folder in the filesystem containing the static files. Relative to the working dir where KrakenD config is (e.g.: `./assets`) or absolute (e.g.: `/var/www/assets`).\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/serve-static-content/",
+      "examples": [
+        "./static/"
+      ],
+      "type": "string"
+    },
+    "prefix": {
+      "title": "Prefix",
+      "description": "This is the beginning (prefix) of all URLs that are resolved using this plugin. All matching URLs won't be passed to the router, meaning that they are not considered endpoints. Make sure you are not overwriting valid endpoints. When the `prefix` is `/`, then **all traffic is served as static** and you must declare a prefix under `skip` (e.g.: `/api`) to match endpoints.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/serve-static-content/",
+      "examples": [
+        "/media/assets"
+      ],
+      "type": "string"
+    },
+    "skip": {
+      "title": "Skip paths",
+      "description": "An array with all the prefix URLs that despite they could match with the `prefix`, you don't want to treat them as static content and pass them to the router.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/serve-static-content/",
+      "examples": [
+        [
+          "/media/ignore/this/directory",
+          "/media/file.json"
+        ]
+      ],
+      "type": "array"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

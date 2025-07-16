@@ -1,0 +1,1153 @@
+{
+    "$schema": "./krakend.json",
+    "@comment": "This configuration is not valid from a functionality point of view, it's only used to test the schema.",
+    "_comment": "Attribute not in schema, but ignored as it starts with _",
+    "$comment": "Attribute not in schema, but ignored as it starts with $",
+    "#comment": "Attribute not in schema, but ignored as it starts with #",
+    "version": 3,
+    "name": "KrakenD configuration at MyCompany",
+    "port": 8080,
+    "host": [
+        "http://localhost:8080"
+    ],
+    "sequential_start": false,
+    "timeout": "2s",
+    "output_encoding": "fast-json",
+    "read_timeout": "10s",
+    "write_timeout": "10s",
+    "dialer_timeout": "10s",
+    "dialer_keep_alive": "15s",
+    "dialer_fallback_delay": "300ms",
+    "disable_compression": false,
+    "disable_keep_alives": true,
+    "max_idle_connections": 0,
+    "max_idle_connections_per_host": 2,
+    "idle_connection_timeout": "10s",
+    "response_header_timeout": "10s",
+    "expect_continue_timeout": "0s",
+    "disable_rest": false,
+    "allow_insecure_connections": false,
+    "cache_ttl": "300s",
+    "idle_timeout": "10s",
+    "read_header_timeout": "10s",
+    "tls": {
+        "public_key": "./cert.pem",
+        "private_key": "./certs/key.pem",
+        "disabled": false,
+        "min_version": "TLS12",
+        "max_version": "SSL3.0",
+        "enable_mtls": false,
+        "curve_preferences": [
+            23,
+            24,
+            25
+        ],
+        "prefer_server_cipher_suites": false,
+        "cipher_suites": [
+            4865
+        ],
+        "disable_system_ca_pool": false,
+        "ca_certs": [
+            "ca.pem"
+        ]
+    },
+    "plugin": {
+        "folder": "/opt/krakend/plugins/",
+        "pattern": ".so"
+    },
+    "async_agent": [
+        {
+            "name": "cool-agent",
+            "connection": {
+                "max_retries": 10,
+                "backoff_strategy": "exponential-jitter",
+                "health_interval": "10s"
+            },
+            "consumer": {
+                "topic": "*",
+                "workers": 1,
+                "timeout": "150ms",
+                "max_rate": 0.5
+            },
+            "encoding": "json",
+            "backend": [
+                {
+                    "host": [
+                        "http://127.0.0.1:8080"
+                    ],
+                    "url_pattern": "/__debug/",
+                    "extra_config": {
+                        "backend/http": {
+                            "return_error_code": true,
+                            "@extra_comment": "here"
+                        },
+                        "backend/soap": {
+                            "path": "./path/to.xml",
+                            "content_type": "application/xml",
+                            "debug": false
+                        },
+                        "modifier/body-generator": {
+                            "content_type": "application/json",
+                            "debug": false,
+                            "template": "abcdef"
+                        }
+                    }
+                }
+            ],
+            "extra_config": {
+                "async/amqp": {
+                    "name": "krakend",
+                    "host": "amqp://guest:guest@localhost:5672/",
+                    "exchange": "foo",
+                    "durable": true,
+                    "delete": false,
+                    "exclusive": false,
+                    "no_wait": true,
+                    "prefetch_count": 5,
+                    "auto_ack": false,
+                    "no_local": true
+                }
+            }
+        }
+    ],
+    "endpoints": [
+        {
+            "endpoint": "/fhir/unrestful${translate}",
+            "backend": [
+                {
+                    "url_pattern": "/user/{translate}"
+                }
+            ]
+        },
+        {
+            "endpoint": "/ws/{room}",
+            "input_query_strings": [
+                "*"
+            ],
+            "input_headers": [
+                "*"
+            ],
+            "backend": [
+                {
+                    "extra_config": {
+                        "security/policies": {
+                            "resp": {
+                                "policies": [],
+                                "error": {
+                                    "body": "",
+                                    "content_type": "text/plain",
+                                    "status": 500
+                                }
+                            }
+                        }
+                    },
+                    "url_pattern": "/ws",
+                    "disable_host_sanitize": true,
+                    "host": [
+                        "ws://localhost:8081"
+                    ]
+                }
+            ],
+            "extra_config": {
+                "security/policies": {
+                    "jwt": {
+                        "policies": [
+                            "has(JWT.user_id)"
+                        ]
+                    },
+                    "req": {
+                        "policies": [],
+                        "error": {
+                            "body": "",
+                            "content_type": "text/plain",
+                            "status": 500
+                        }
+                    },
+                    "resp": {
+                        "policies": [],
+                        "error": {
+                            "body": "",
+                            "content_type": "text/plain",
+                            "status": 500
+                        }
+                    }
+                },
+                "auth/basic": {
+                    "@comment": "Override",
+                    "htpasswd_path": "/path/to/.htpasswd",
+                    "users": {
+                        "admin": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ...",
+                        "user2": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ..."
+                    }
+                },
+                "plugin/req-resp-modifier": {
+                    "content-replacer": {
+                        "key.a": {
+                            "find": "",
+                            "regexp": false,
+                            "replace": ""
+                        }
+                    }
+                },
+                "websocket": {
+                    "input_headers": [
+                        "Cookie",
+                        "Authorization"
+                    ],
+                    "connect_event": true,
+                    "disconnect_event": true,
+                    "read_buffer_size": 4096,
+                    "write_buffer_size": 4096,
+                    "message_buffer_size": 4096,
+                    "max_message_size": 3200000,
+                    "write_wait": "10s",
+                    "pong_wait": "60s",
+                    "ping_period": "54s",
+                    "max_retries": 0,
+                    "backoff_strategy": "exponential"
+                }
+            }
+        },
+        {
+            "@endpoint_comment": "here",
+            "endpoint": "/cel/req-resp/{id}",
+            "input_headers": [
+                "X-Header"
+            ],
+            "backend": [
+                {
+                    "@backend_comment": "here",
+                    "host": [
+                        "http://127.0.0.1:8080"
+                    ],
+                    "url_pattern": "/__debug/1/{id}",
+                    "group": "backend1",
+                    "extra_config": {
+                        "validation/cel": [
+                            {
+                                "@cel_comment": "here",
+                                "check_expr": "int(req_params.Id) % 3 == 0"
+                            }
+                        ],
+                        "modifier/jmespath": {
+                            "expr": "students[?age > `18` ].name"
+                        }
+                    }
+                },
+                {
+                    "host": [
+                        "http://127.0.0.1:8080"
+                    ],
+                    "url_pattern": "/__debug/2/{id}",
+                    "group": "backend2",
+                    "extra_config": {
+                        "validation/cel": [
+                            {
+                                "check_expr": "int(req_params.Id) % 5 == 0"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "extra_config": {
+                "auth/validator": {
+                    "@comment": "The validator can match 2 different schemas, with local path and with jwk_url",
+                    "jwk_local_path": "./jwk.txt",
+                    "alg": "EdDSA"
+                },
+                "auth/api-keys": {
+                    "@comment": "here",
+                    "roles": [
+                        "admin"
+                    ],
+                    "client_max_rate": 0.3
+                },
+                "documentation/openapi": {
+                    "description": "Very long description of what this endpoint does",
+                    "summary": "Get my favourite foo",
+                    "tags": [
+                        "foo",
+                        "bar",
+                        "baz"
+                    ],
+                    "audience": [
+                        "gold",
+                        "silver"
+                    ],
+                    "example": {
+                        "response": "ok"
+                    },
+                    "response_definition": {
+                        "404": {
+                            "@comment": "Some comment",
+                            "description": "Page not found",
+                            "example_schema": "eyJpdGVtcyI6eyJhbGxPZiI6W3sicHJvcGVydGllcyI6eyJ2ZXJzaW9uIjp7InR5cGUiOiJzdHJpbmcifX0sInJlcXVpcmVkIjpbInZlcnNpb24iXSwidHlwZSI6Im9iamVjdCJ9LHsicHJvcGVydGllcyI6eyJkaXJlY3RvcmllcyI6eyJpdGVtcyI6eyJ0eXBlIjoic3RyaW5nIiwieC1nby10eXBlIjoiRGlyZWN0b3J5SUQifSwidHlwZSI6ImFycmF5In19LCJyZXF1aXJlZCI6WyJkaXJlY3RvcmllcyJdLCJ0eXBlIjoib2JqZWN0In1dfSwidHlwZSI6ImFycmF5In0",
+                            "content_type": "application/json",
+                            "example": {
+                                "foo": "bar"
+                            }
+                        }
+                    }
+                },
+                "validation/cel": [
+                    {
+                        "@cel_comment": "here",
+                        "check_expr": "'something' in req_headers['X-Header']"
+                    },
+                    {
+                        "check_expr": "int(req_params.Id) % 2 == 0"
+                    }
+                ],
+                "modifier/jmespath": {
+                    "expr": "students[?age > `18` ].name"
+                }
+            }
+        },
+        {
+            "endpoint": "/foo/{var}",
+            "method": "GET",
+            "output_encoding": "json-collection",
+            "input_query_strings": [
+                "*"
+            ],
+            "input_headers": [
+                "User-Agent"
+            ],
+            "concurrent_calls": 4,
+            "timeout": "1500ms",
+            "cache_ttl": "300s",
+            "backend": [
+                {
+                    "url_pattern": "/foo/{var}",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "GET",
+                    "disable_host_sanitize": false,
+                    "host": [
+                        "http://some_host"
+                    ],
+                    "target": "data",
+                    "deny": [
+                        "a"
+                    ],
+                    "allow": [
+                        "b"
+                    ],
+                    "group": "backend1",
+                    "mapping": {
+                        "from": "to"
+                    },
+                    "is_collection": true,
+                    "extra_config": {
+                        "plugin/req-resp-modifier": {
+                            "name": [
+                                "krakend-debugger"
+                            ],
+                            "ip-filter": {
+                                "allow": false,
+                                "CIDR": [
+                                    "192.168.0.0/24",
+                                    "172.17.2.56/32"
+                                ],
+                                "client_ip_headers": [
+                                    "X-Forwarded-For",
+                                    "X-Real-IP",
+                                    "X-Appengine-Remote-Addr"
+                                ],
+                                "trusted_proxies": [
+                                    "10.0.0.0/16"
+                                ]
+                            },
+                            "content-replacer": {
+                                "data.credit_card": {
+                                    "@comment": "Ridiculous card masking. Take 4 digits and remove the rest. Credit card is inside a data object.",
+                                    "find": "(^\\d{4})(.*)",
+                                    "replace": "${1}-XXXX",
+                                    "regexp": true
+                                },
+                                "message": {
+                                    "@comment": "Replace '6 items left' with '6' on the message field",
+                                    "find": " items left",
+                                    "replace": ""
+                                }
+                            },
+                            "response-schema-validator": {
+                                "schema": {
+                                    "$schema": "http://json-schema.org/draft-07/schema#",
+                                    "type": "object",
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "properties": {
+                                                "username": {
+                                                    "type": "string"
+                                                },
+                                                "user_id": {
+                                                    "type": "number"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "registered",
+                                                        "banned"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "username",
+                                                "user_id"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "user"
+                                    ]
+                                },
+                                "error": {
+                                    "body": "We couldn't process you request, try again later.",
+                                    "status": 401
+                                }
+                            }
+                        },
+                        "plugin/http-client": {
+                            "name": "static-filesystem",
+                            "path": "/var/log/application/"
+                        },
+                        "backend/pubsub/publisher": {
+                            "topic_url": "",
+                            "@extra_comment": "here"
+                        },
+                        "backend/pubsub/subscriber": {
+                            "subscription_url": "",
+                            "@extra_comment": "here"
+                        },
+                        "backend/amqp/consumer": {
+                            "auto_ack": false,
+                            "delete": false,
+                            "durable": true,
+                            "exchange": "some-exchange",
+                            "name": "queue1",
+                            "no_local": false,
+                            "no_wait": false,
+                            "prefetch_count": 10,
+                            "prefetch_size": 1024,
+                            "routing_key": [
+                                "#"
+                            ],
+                            "@extra_comment": "here"
+                        },
+                        "backend/amqp/producer": {
+                            "name": "queue-1",
+                            "exchange": "some-exchange",
+                            "durable": true,
+                            "delete": false,
+                            "no_wait": true,
+                            "no_local": false,
+                            "routing_key": "#",
+                            "prefetch_count": 10,
+                            "prefetch_size": 1024,
+                            "mandatory": false,
+                            "immediate": false,
+                            "@extra_comment": "here"
+                        },
+                        "backend/lambda": {
+                            "endpoint": "",
+                            "function_name": "",
+                            "function_param_name": "",
+                            "max_retries": 1,
+                            "region": "",
+                            "@extra_comment": "here"
+                        },
+                        "auth/client-credentials": {
+                            "client_id": "ID1",
+                            "client_secret": "mys3cr3t",
+                            "endpoint_params": {
+                                "audience": [
+                                    "YOUR-AUDIENCE"
+                                ]
+                            },
+                            "scopes": "scope1, scope2",
+                            "token_url": "https://your.custom.identity.service.tld/token_endpoint",
+                            "@extra_comment": "here"
+                        },
+                        "modifier/lua-backend": {
+                            "allow_open_libs": true,
+                            "live": true,
+                            "md5": {
+                                "file1.lua": "49ae50f58e35f4821ad4550e1a4d1de0"
+                            },
+                            "post": "print('Backend response, pre-logic:'); local r = request.load(); print(r:body());",
+                            "pre": "print('Backend response, pre-logic:'); local r = request.load(); print(r:body());",
+                            "skip_next": true,
+                            "sources": [
+                                "file1.lua"
+                            ],
+                            "@extra_comment": "here"
+                        },
+                        "modifier/martian": {
+                            "header.Modifier": {
+                                "scope": [
+                                    "request",
+                                    "response"
+                                ],
+                                "name": "X-Martian",
+                                "value": "true"
+                            }
+                        },
+                        "qos/http-cache": {
+                            "shared": true,
+                            "@extra_comment": "here"
+                        },
+                        "qos/circuit-breaker": {
+                            "interval": 60,
+                            "log_status_change": true,
+                            "max_errors": 10,
+                            "name": "cb-backend-1",
+                            "timeout": 10,
+                            "@extra_comment": "here"
+                        },
+                        "qos/ratelimit/proxy": {
+                            "capacity": 1,
+                            "max_rate": 1.1,
+                            "@extra_comment": "here"
+                        },
+                        "proxy": {
+                            "flatmap_filter": [
+                                {
+                                    "type": "move",
+                                    "args": [
+                                        "collection",
+                                        "coins"
+                                    ]
+                                },
+                                {
+                                    "type": "del",
+                                    "args": [
+                                        "coins.*.ath_change_percentage",
+                                        "coins.*.ath_date",
+                                        "coins.*.atl",
+                                        "coins.*.atl_change_percentage"
+                                    ]
+                                }
+                            ],
+                            "shadow": true
+                        },
+                        "backend/graphql": {
+                            "operationName": "addMktPreferencesForUser",
+                            "query_path": "./graphql/mutations/marketing.graphql",
+                            "type": "mutation",
+                            "variables": {
+                                "user": "{user_id}",
+                                "other_static_variables": {
+                                    "foo": false,
+                                    "bar": true
+                                }
+                            },
+                            "@extra_comment": "here"
+                        },
+                        "backend/http": {
+                            "return_error_details": "backend_alias",
+                            "@extra_comment": "here"
+                        }
+                    }
+                }
+            ],
+            "extra_config": {
+                "validation/json-schema": {
+                    "type": "object",
+                    "properties": {
+                        "number": {
+                            "type": "number"
+                        },
+                        "street_name": {
+                            "type": "string"
+                        }
+                    },
+                    "@extra_comment": "here"
+                },
+                "security/cors": {
+                    "allow_origins": [
+                        "*"
+                    ],
+                    "allow_methods": [
+                        "GET",
+                        "HEAD",
+                        "POST",
+                        "HEAD",
+                        "OPTIONS"
+                    ],
+                    "expose_headers": [
+                        "Content-Length",
+                        "Content-Type"
+                    ],
+                    "max_age": "12h",
+                    "allow_headers": [
+                        "Accept-Language"
+                    ],
+                    "allow_credentials": false,
+                    "debug": false,
+                    "@extra_comment": "here"
+                },
+                "modifier/lua-endpoint": {
+                    "allow_open_libs": true,
+                    "live": true,
+                    "md5": {
+                        "file1.lua": "49ae50f58e35f4821ad4550e1a4d1de0"
+                    },
+                    "pre": "print('Backend response, pre-logic:'); local r = request.load(); print(r:body());",
+                    "sources": [
+                        "file1.lua"
+                    ],
+                    "@extra_comment": "here"
+                },
+                "modifier/lua-proxy": {
+                    "pre": "print('Backend response, pre-logic:'); local r = request.load(); print(r:body());",
+                    "@extra_comment": "here"
+                },
+                "qos/ratelimit/router": {
+                    "client_max_rate": 10.2,
+                    "key": "X-TOKEN",
+                    "max_rate": 100.5,
+                    "strategy": "ip",
+                    "@extra_comment": "here"
+                },
+                "proxy": {
+                    "combiner": "combiner_name",
+                    "sequential": true,
+                    "static": {
+                        "data": {
+                            "foo": 1
+                        },
+                        "strategy": "always",
+                        "@extra_comment": "here"
+                    },
+                    "flatmap_filter": [
+                        {
+                            "type": "move",
+                            "args": [
+                                "collection",
+                                "coins"
+                            ]
+                        },
+                        {
+                            "type": "del",
+                            "args": [
+                                "coins.*.ath_change_percentage",
+                                "coins.*.ath_date",
+                                "coins.*.atl",
+                                "coins.*.atl_change_percentage"
+                            ]
+                        }
+                    ],
+                    "@extra_comment": "here"
+                },
+                "security/http": {
+                    "allowed_hosts": [
+                        "ABC"
+                    ],
+                    "browser_xss_filter": true,
+                    "content_security_policy": "default-src 'self';",
+                    "content_type_nosniff": true,
+                    "custom_frame_options_value": "ALLOW-FROM https://example.com",
+                    "frame_deny": true,
+                    "host_proxy_headers": [
+                        "X-Forwarded-Hosts"
+                    ],
+                    "hpkp_public_key": "pin-sha256=\"base64==\"; max-age=expireTime [; includeSubDomains][; report-uri=\"reportURI\"]",
+                    "is_development": true,
+                    "referrer_policy": "same-origin",
+                    "ssl_host": "ssl.host.domain",
+                    "ssl_proxy_headers": {
+                        "X-Forwarded-Proto": "https"
+                    },
+                    "ssl_redirect": true,
+                    "sts_include_subdomains": true,
+                    "sts_seconds": 300,
+                    "@extra_comment": "here"
+                },
+                "security/bot-detector": {
+                    "allow": [
+                        "MyAndroidClient/1.0"
+                    ],
+                    "@extra_comment": "here"
+                },
+                "auth/validator": {
+                    "alg": "EdDSA",
+                    "jwk_url": "http://KEYCLOAK:8080/auth/realms/master/protocol/openid-connect/certs",
+                    "secret_url": "awskms://keyID",
+                    "cypher_key": "",
+                    "cache": true,
+                    "cache_duration": 900,
+                    "audience": [
+                        "audience1"
+                    ],
+                    "roles_key": "resource_access.myclient.roles",
+                    "roles_key_is_nested": true,
+                    "roles": [
+                        "r1"
+                    ],
+                    "scopes": [
+                        "s1"
+                    ],
+                    "scopes_key": "sk",
+                    "scopes_matcher": "all",
+                    "issuer": "issuer",
+                    "cookie_key": "cookie_jwt",
+                    "disable_jwk_security": true,
+                    "jwk_fingerprints": [],
+                    "cipher_suites": [
+                        49199
+                    ],
+                    "jwk_local_ca": "./ca",
+                    "propagate_claims": [
+                        [
+                            "sub",
+                            "x-user"
+                        ]
+                    ],
+                    "key_identify_strategy": "kid",
+                    "operation_debug": true,
+                    "@extra_comment": "here"
+                },
+                "auth/signer": {
+                    "alg": "EdDSA",
+                    "cipher_suites": [
+                        49199,
+                        49195,
+                        49200,
+                        49196,
+                        52392,
+                        52393
+                    ],
+                    "disable_jwk_security": true,
+                    "full": false,
+                    "jwk_fingerprints": [],
+                    "jwk_local_ca": "",
+                    "keys_to_sign": [
+                        "access_token"
+                    ],
+                    "kid": "sim2",
+                    "cypher_key": "",
+                    "jwk_local_path": "./jwk.txt",
+                    "secret_url": "awskms://keyID",
+                    "@extra_comment": "here"
+                },
+                "plugin/req-resp-modifier": {
+                    "name": [
+                        "krakend-debugger"
+                    ]
+                }
+            }
+        }
+    ],
+    "extra_config": {
+        "auth/basic": {
+            "htpasswd_path": "/path/to/.htpasswd",
+            "users": {
+                "admin": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ...",
+                "user2": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ..."
+            }
+        },
+        "telemetry/newrelic": {
+            "license": "XXXX",
+            "debug": true
+        },
+        "router": {
+            "disable_path_decoding": false,
+            "hide_version_header": false,
+            "error_body": {
+                "404": {
+                    "msg": "Unknown endpoint",
+                    "status": 404
+                },
+                "405": {
+                    "oh-my-god": "What on earth are you requesting?"
+                }
+            },
+            "app_engine": false,
+            "auto_options": false,
+            "disable_handle_method_not_allowed": false,
+            "disable_access_log": true,
+            "disable_health": false,
+            "disable_redirect_fixed_path": false,
+            "disable_redirect_trailing_slash": false,
+            "forwarded_by_client_ip": false,
+            "health_path": "/__health",
+            "logger_skip_paths": [
+                "/__health"
+            ],
+            "max_multipart_memory": 1000,
+            "remote_ip_headers": [],
+            "remove_extra_slash": false,
+            "return_error_msg": false,
+            "trusted_proxies": [],
+            "@extra_comment": "here"
+        },
+        "qos/ratelimit/service": {
+            "client_max_rate": 10,
+            "key": "X-TOKEN",
+            "max_rate": 100,
+            "strategy": "header",
+            "@extra_comment": "here"
+        },
+        "security/bot-detector": {
+            "allow": [
+                "MyAndroidClient/1.0"
+            ],
+            "cache_size": 100,
+            "deny": [
+                "facebookexternalhit/1.1"
+            ],
+            "patterns": [
+                "(facebookexternalhit)/.*"
+            ],
+            "@extra_comment": "here"
+        },
+        "security/cors": {
+            "allow_origins": [
+                "*"
+            ],
+            "allow_methods": [
+                "POST",
+                "GET"
+            ],
+            "allow_headers": [
+                "Accept-Language"
+            ],
+            "expose_headers": [
+                "Header-1"
+            ],
+            "max_age": "15h",
+            "allow_credentials": true,
+            "debug": true,
+            "@extra_comment": "here"
+        },
+        "security/http": {
+            "allowed_hosts": [
+                "host.known.com:443"
+            ],
+            "ssl_proxy_headers": {
+                "X-Forwarded-Proto": "https"
+            },
+            "host_proxy_headers": [
+                "X-Forwarded-Hosts"
+            ],
+            "ssl_redirect": true,
+            "ssl_host": "ssl.host.domain",
+            "sts_seconds": 300,
+            "sts_include_subdomains": true,
+            "frame_deny": true,
+            "referrer_policy": "same-origin",
+            "custom_frame_options_value": "ALLOW-FROM https://example.com",
+            "hpkp_public_key": "pin-sha256=\"base64==\"; max-age=expireTime [; includeSubDomains][; report-uri=\"reportURI\"]",
+            "content_type_nosniff": true,
+            "browser_xss_filter": true,
+            "content_security_policy": "default-src 'self';",
+            "is_development": true,
+            "@extra_comment": "here"
+        },
+        "telemetry/logging": {
+            "level": "CRITICAL",
+            "prefix": "[KRAKEND]",
+            "stdout": true,
+            "syslog": false,
+            "format": "custom",
+            "syslog_facility": "local3",
+            "custom_format": "%{message}",
+            "@extra_comment": "here"
+        },
+        "telemetry/logstash": {
+            "enabled": false,
+            "@extra_comment": "here"
+        },
+        "telemetry/gelf": {
+            "address": "myGraylogInstance:12201",
+            "enable_tcp": false,
+            "@extra_comment": "here"
+        },
+        "telemetry/influx": {
+            "address": "http://192.168.99.9:8086",
+            "ttl": "25s",
+            "buffer_size": 0,
+            "db": "krakend",
+            "username": "your-influxdb-user",
+            "password": "your-influxdb-password",
+            "@extra_comment": "here"
+        },
+        "github_com/letgoapp/krakend-influx": {
+            "address": "http://192.168.99.9:8086",
+            "ttl": "25s",
+            "buffer_size": 0,
+            "db": "krakend",
+            "username": "your-influxdb-user",
+            "password": "your-influxdb-password",
+            "@extra_comment": "here"
+        },
+        "telemetry/metrics": {
+            "backend_disabled": false,
+            "collection_time": "60s",
+            "endpoint_disabled": false,
+            "listen_address": ":8090",
+            "proxy_disabled": false,
+            "router_disabled": false,
+            "@extra_comment": "here"
+        },
+        "telemetry/opencensus": {
+            "sample_rate": 100,
+            "reporting_period": 2,
+            "@extra_comment": "here",
+            "enabled_layers": {
+                "backend": false,
+                "pipe": true,
+                "router": false,
+                "@extra_comment": "here"
+            },
+            "exporters": {
+                "logger": {
+                    "spans": false,
+                    "stats": false,
+                    "@extra_comment": "here"
+                },
+                "zipkin": {
+                    "collector_url": "http://192.168.99.100:9411/api/v2/spans",
+                    "service_name": "krakend",
+                    "@extra_comment": "here"
+                },
+                "jaeger": {
+                    "endpoint": "http://192.168.99.100:14268/api/traces",
+                    "service_name": "krakend",
+                    "@extra_comment": "here",
+                    "buffer_max_count": 1000
+                },
+                "influxdb": {
+                    "address": "http://192.168.99.100:8086",
+                    "db": "krakend",
+                    "timeout": "1s",
+                    "password": "kr4k3nd",
+                    "username": "krakend",
+                    "@extra_comment": "here"
+                },
+                "prometheus": {
+                    "namespace": "krakend",
+                    "port": 9091,
+                    "tag_host": false,
+                    "tag_method": false,
+                    "tag_path": false,
+                    "tag_statuscode": false,
+                    "@extra_comment": "here"
+                },
+                "xray": {
+                    "access_key_id": "dasdasdas",
+                    "secret_access_key": "dadasdasd",
+                    "region": "eu-west-1",
+                    "version": "latest",
+                    "@extra_comment": "here"
+                },
+                "stackdriver": {
+                    "default_labels": {
+                        "env": "production"
+                    },
+                    "metric_prefix": "krakend",
+                    "project_id": "1234",
+                    "@extra_comment": "here"
+                },
+                "datadog": {
+                    "disable_count_per_buckets": false,
+                    "global_tags": {
+                        "env": "prod"
+                    },
+                    "namespace": "krakend",
+                    "service": "gateway",
+                    "stats_address": "localhost:8125",
+                    "tags": [
+                        "A"
+                    ],
+                    "trace_address": "localhost:8126",
+                    "@extra_comment": "here"
+                },
+                "ocagent": {
+                    "address": "localhost:55678",
+                    "enable_compression": false,
+                    "headers": {
+                        "header1": "value1"
+                    },
+                    "insecure": true,
+                    "reconnection": "2s",
+                    "service_name": "krakend",
+                    "@extra_comment": "here"
+                }
+            }
+        },
+        "telemetry/instana": {
+            "AgentHost": "localhost",
+            "AgentPort": 46999,
+            "EnableAutoProfile": false,
+            "Service": "krakend",
+            "MaxBufferedSpans": 15,
+            "ForceTransmissionStartingAt": 10,
+            "LogLevel": 0,
+            "MaxBufferedProfiles": 0,
+            "IncludeProfilerFrames": false,
+            "Tracer": {
+                "CollectableHTTPHeaders": [],
+                "DropAllLogs": false,
+                "MaxLogsPerSpan": 0,
+                "Secrets": {}
+            }
+        },
+        "telemetry/ganalytics": {
+            "buffer_size": 0,
+            "tags": {
+                "cd1": "my custom dimension"
+            },
+            "timeout": "250ms",
+            "track_id": "UA-1234567",
+            "url": "https://www.google-analytics.com/batch",
+            "workers": 0
+        },
+        "auth/revoker": {
+            "hash_name": "default",
+            "N": 10000000,
+            "P": 1e-7,
+            "port": 1234,
+            "token_keys": [
+                "jti"
+            ],
+            "TTL": 1500,
+            "@extra_comment": "here",
+            "revoke_server_ping_url": "http://localhost:8081/instances",
+            "revoke_server_ping_interval": "30s",
+            "revoke_server_api_key": "639ee23f-f4c5-40c4-855c-912bf01fae87",
+            "revoke_server_max_workers": 5
+        },
+        "documentation/openapi": {
+            "description": "This is a sample server. You can find out more about at [http://blah](http://blah.blah.com)",
+            "version": "1.0.0",
+            "host": "my.api.com",
+            "base_path": "/v1",
+            "terms_of_service": "http://url.to/tos",
+            "contact_name": "The wonderful API department",
+            "contact_email": "contact@example.com",
+            "contact_url": "https://your.company/developers",
+            "license_name": "MIT",
+            "license_url": "https://opensource.org/licenses/MIT",
+            "tags": [
+                "B2B",
+                "Restricted"
+            ],
+            "schemes": [
+                "http",
+                "https"
+            ]
+        },
+        "auth/api-keys": {
+            "strategy": "header",
+            "identifier": "Authorization",
+            "keys": [
+                {
+                    "key": "4d2c61e1-34c4-e96c-9456-15bd983c5019",
+                    "roles": [
+                        "role1",
+                        "role2"
+                    ],
+                    "@description": "ACME Inc."
+                },
+                {
+                    "key": "58427514-be32-0b52-b7c6-d01fada30497",
+                    "roles": [
+                        "role1",
+                        "role3"
+                    ],
+                    "@description": "Administrators Inc."
+                }
+            ]
+        },
+        "plugin/http-server": {
+            "name": [
+                "a-plugin"
+            ],
+            "a_plugin_conf": {},
+            "ip-filter": {
+                "allow": false,
+                "CIDR": [
+                    "192.168.0.0/24",
+                    "172.17.2.56/32"
+                ],
+                "client_ip_headers": [
+                    "X-Forwarded-For",
+                    "X-Real-IP",
+                    "X-Appengine-Remote-Addr"
+                ],
+                "trusted_proxies": [
+                    "10.0.0.0/16"
+                ]
+            },
+            "jwk-aggregator": {
+                "origins": [
+                    "https://jwk1.tld/jwk.json",
+                    "http://foo.bar/public_keys"
+                ],
+                "port": 9876
+            },
+            "url-rewrite": {
+                "literal": {
+                    "/hi-there": "/hello",
+                    "/whatsup": "/hello"
+                },
+                "regexp": [
+                    [
+                        "/hi-there/([.+)/bar",
+                        "/hello/${1}"
+                    ]
+                ]
+            },
+            "static-filesystem": {
+                "prefix": "/media/assets",
+                "path": "./../../",
+                "@comment": "static om",
+                "skip": [
+                    "/media/ignore/this/directory",
+                    "/media/file.json"
+                ]
+            },
+            "basic-auth": {
+                "endpoints": [
+                    "*"
+                ],
+                "users": {
+                    "admin": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ...",
+                    "user2": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ..."
+                },
+                "htpasswd_path": "/path/to/.htpasswd"
+            },
+            "geoip": {
+                "citydb_path": "path/to/GeoIP2-City.mmdb"
+            },
+            "redis-ratelimit": {
+                "Burst": 0,
+                "Host": "redis",
+                "Period": "3s",
+                "Rate": 0,
+                "Tokenizer": "cookie",
+                "TokenizerField": "aaa"
+            },
+            "virtualhost": {
+                "hosts": [
+                    "host-a.tld",
+                    "host-b.tld"
+                ]
+            },
+            "wildcard": {
+                "endpoints": {
+                    "/__wildcard/foo": [
+                        "/foo",
+                        "/aliasfoo"
+                    ]
+                }
+            }
+        },
+        "modifier/lua-endpoint": {
+            "pre": "print('Lua service!'); local c = ctx.load(); c:headers('X-from-lua', '1234');"
+        }
+    }
+}

@@ -1,0 +1,27 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.2.0/gcn/notices/burstcube/alert.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Alert",
+  "description": "BurstCube Trigger Alert",
+  "type": "object",
+  "allOf": [
+    { "$ref": "../core/Alert.schema.json" },
+    { "$ref": "../core/Reporter.schema.json" },
+    { "$ref": "../core/DateTime.schema.json" },
+    { "$ref": "../core/Event.schema.json" },
+    { "$ref": "../core/Localization.schema.json" },
+    { "$ref": "../core/Statistics.schema.json" },
+    { "$ref": "../core/Duration.schema.json" }
+  ],
+  "properties": {
+    "detector_status": {
+      "type": "object",
+      "properties": {
+        "CsI0": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI1": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI2": { "$ref": "../core/DetectorStatus.schema.json" },
+        "CsI3": { "$ref": "../core/DetectorStatus.schema.json" }
+      }
+    }
+  }
+}

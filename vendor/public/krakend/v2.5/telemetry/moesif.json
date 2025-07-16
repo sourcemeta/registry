@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.5/telemetry/moesif.json",
+  "title": "Moesif integration",
+  "description": "The Moesif integration helps you understand and monetize API usage with a robust analytics and billing platform.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+  "type": "object",
+  "required": [
+    "application_id",
+    "user_id_headers"
+  ],
+  "properties": {
+    "application_id": {
+      "$id": "#telemetry/moesif/application_id",
+      "title": "Collector Application ID",
+      "description": "The Collector Application ID is used to send events, actions, users, and companies to Moesif's Collector API. Moesif provides it under the 'API Keys' section.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "type": "string"
+    },
+    "batch_size": {
+      "$id": "#telemetry/moesif/batch_size",
+      "title": "Batch Size",
+      "description": "Number of events you will send on every batch reporting asynchronously to Moesif. For high throughput you will need to increase this value.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "default": 200,
+      "type": "integer"
+    },
+    "debug": {
+      "$id": "#telemetry/moesif/debug",
+      "title": "Enable debug",
+      "description": "Set to true when configuring Moesif for the first time while in development, to see the activity in the logs. Set to false in production.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "default": false,
+      "type": "boolean"
+    },
+    "event_queue_size": {
+      "$id": "#telemetry/moesif/event_queue_size",
+      "title": "Event Queue Size",
+      "description": "Sends the number of events you can hold in-memory to send them asynchronously to Moesif. If the throughput of your API generates more events than the size of the queue, the exceeding events will be discarded and not reported.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "default": 1000000,
+      "type": "integer"
+    },
+    "identify_company": {
+      "$id": "#telemetry/moesif/identify_company",
+      "title": "Identify company",
+      "description": "It sets which strategy you want to use to identify the company. Identifying the company helps you efficiently govern your API. Choose the system you wish to apply (**declare only one property**).\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "type": "object",
+      "maxProperties": 1,
+      "properties": {
+        "header": {
+          "title": "Company in Header",
+          "description": "The company is identified using a header. Provide the header name.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+          "examples": [
+            "X-Tenant"
+          ],
+          "type": "string"
+        },
+        "jwt_claim": {
+          "title": "Company in Claim",
+          "description": "The company is stored in a claim inside the JWT. The claim must return a string.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+          "examples": [
+            "company_id"
+          ],
+          "type": "string"
+        },
+        "query_string": {
+          "title": "Company in Query String",
+          "description": "The company is always passed inside a query string when calling any URL. Provide the query string name.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+          "examples": [
+            "company"
+          ],
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "log_body": {
+      "$id": "#telemetry/moesif/log_body",
+      "title": "Send the body",
+      "description": "Send the body of all endpoints and requests to Moesif.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "default": true,
+      "type": "boolean"
+    },
+    "request_body_masks": {
+      "$id": "#telemetry/moesif/request_body_masks",
+      "title": "Request body masks",
+      "description": "The list of fields in the request body that you want to mask before sending them to Moesif. You can set `log_body` to `false` to prevent any body being sent.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "examples": [
+        [
+          "password",
+          "credit_card"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "request_header_masks": {
+      "$id": "#telemetry/moesif/request_header_masks",
+      "title": "Request header masks",
+      "description": "The list of request headers that you want to mask their values before sending them to Moesif.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "examples": [
+        [
+          "Authorization"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "response_body_masks": {
+      "$id": "#telemetry/moesif/response_body_masks",
+      "title": "Response body masks",
+      "description": "The list of fields in the response body that you want to mask before sending them to Moesif. You can set `log_body` to `false` to prevent any body being sent.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "examples": [
+        [
+          "password",
+          "credit_card"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "response_header_masks": {
+      "$id": "#telemetry/moesif/response_header_masks",
+      "title": "Response header masks",
+      "description": "The list of response headers that you want to mask their values before sending them to Moesif.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "examples": [
+        [
+          "Cookie"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "timer_wake_up_seconds": {
+      "$id": "#telemetry/moesif/timer_wake_up_seconds",
+      "title": "Timer Wake Up",
+      "description": "Specifies how often a background thread runs to send events to Moesif. Value in seconds.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "default": 2,
+      "type": "integer"
+    },
+    "user_id_headers": {
+      "$id": "#telemetry/moesif/user_id_headers",
+      "title": "User ID headers",
+      "description": "Defines the list of possible headers that can identify a user uniquely. When the header is `Authorization`, it automatically extracts the username if it contains an `Authorization: Basic` value with no additional configuration. If, on the other hand, you use tokens and pass an `Authorization: Bearer`, it will extract the user ID from the JWT claim defined under `user_id_jwt_claim`. If there are multiple headers in the list, all of them are tested in the given order, and the first existing header in the list is used to extract the user ID (successfully or not).\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "examples": [
+        [
+          "X-User-ID",
+          "Authorization"
+        ]
+      ],
+      "type": "array"
+    },
+    "user_id_jwt_claim": {
+      "$id": "#telemetry/moesif/user_id_jwt_claim",
+      "title": "User ID JWT claim",
+      "description": "When using JWT tokens, it defines which claim contains the user ID. The field must be a string.\n\nSee: https://www.krakend.io/docs/enterprise/governance/moesif/",
+      "default": "sub",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

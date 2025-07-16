@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/backend/amqp/consumer.json",
+  "title": "AMQP Consumer",
+  "description": "The AMQP component allows to send and receive messages to and from a queue through the API Gateway.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+  "type": "object",
+  "required": [
+    "name",
+    "exchange",
+    "routing_key"
+  ],
+  "properties": {
+    "auto_ack": {
+      "$id": "#backend/amqp/consumer/auto_ack",
+      "title": "Auto ACK",
+      "description": "When KrakenD retrieves the messages, regardless of the success or failure of the operation, it marks them as `ACK`nowledge.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "backoff_strategy": {
+      "title": "Backoff strategy",
+      "description": "When the connection to your event source gets interrupted for whatever reason, KrakenD keeps trying to reconnect until it succeeds or until it reaches the `max_retries`. The backoff strategy defines the delay in seconds in between consecutive failed retries. [Check the meaning of each strategy](https://www.krakend.io/docs/async/#backoff-strategies).\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": "fallback",
+      "enum": [
+        "linear",
+        "linear-jitter",
+        "exponential",
+        "exponential-jitter",
+        "fallback"
+      ]
+    },
+    "delete": {
+      "$id": "#backend/amqp/consumer/delete",
+      "title": "Delete",
+      "description": "When `true`, AMQP deletes the queue when there are no remaining connections. This option is **not recommended** in most of the scenarios. If for instance, the connectivity between KrakenD and AMQP is lost for whatever reason and it's the only client, AMQP will delete the queue no matter the number of messages there are inside, and when KrakenD gets the connection again the queue won't exist and future connections will recreate it again.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "durable": {
+      "$id": "#backend/amqp/consumer/durable",
+      "title": "Durable",
+      "description": "Durable queues will survive server restarts and remain when there are no remaining consumers or bindings. `true` is recommended, but depends on the use case. \n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "exchange": {
+      "$id": "#backend/amqp/consumer/exchange",
+      "title": "Exchange",
+      "description": "The exchange name (must have a **topic** type if already exists).\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "examples": [
+        "some-exchange"
+      ],
+      "type": "string"
+    },
+    "exclusive": {
+      "$id": "#backend/amqp/consumer/exclusive",
+      "title": "Exclusive",
+      "description": "When `true`, AMQP will allow **a single KrakenD instance** to access the queue. This option is **not recommended** in environments where the gateway needs high availability and you have several instances running.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "max_retries": {
+      "title": "Max retries",
+      "description": "The maximum number of times you will allow KrakenD to retry reconnecting to a broken messaging system. During startup KrakenD will wait for a maximum of 3 retries before starting to use this policy. Use 0 for unlimited retries.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": 0,
+      "type": "integer"
+    },
+    "name": {
+      "$id": "#backend/amqp/consumer/name",
+      "title": "Name",
+      "description": "Queue name.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "type": "string"
+    },
+    "no_local": {
+      "$id": "#backend/amqp/consumer/no_local",
+      "title": "No local",
+      "description": "The no_local flag is not supported by RabbitMQ.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "type": "boolean"
+    },
+    "no_wait": {
+      "$id": "#backend/amqp/consumer/no_wait",
+      "title": "No wait",
+      "description": "When true, do not wait for the server to confirm the request and immediately begin deliveries. If it is not possible to consume, a channel exception will be raised and the channel will be closed.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "type": "boolean"
+    },
+    "prefetch_count": {
+      "$id": "#backend/amqp/consumer/prefetch_count",
+      "title": "Prefetch count",
+      "description": "The number of messages you want to prefetch prior to consume them.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "default": 0,
+      "type": "integer"
+    },
+    "routing_key": {
+      "$id": "#backend/amqp/consumer/routing_key",
+      "title": "Routing keys",
+      "description": "The list of routing keys you will use to consume messages.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "examples": [
+        "#"
+      ],
+      "type": "array"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

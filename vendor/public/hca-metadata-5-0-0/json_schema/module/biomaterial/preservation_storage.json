@@ -1,0 +1,71 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/preservation_storage",
+    "description": "Information relating to how a biomaterial was preserved and/or stored over a period of time.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy"
+    ],
+    "title": "preservation_storage",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/biomaterial/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/preservation_storage"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "storage_method": {
+            "description": "The method by which a biomaterial was stored.",
+            "type": "string",
+            "enum": [
+                "ambient temperature",
+                "cut slide",
+                "fresh",
+                "frozen, -70C freezer",
+                "frozen, -150C freezer",
+                "frozen, liquid nitrogen",
+                "frozen, vapor phase",
+                "paraffin block",
+                "RNAlater, frozen",
+                "TRIzol, frozen"
+            ],
+            "comment": "Refers to how a biomaterial was stored after preservation or before another protocol was used.",
+            "user_friendly": "Storage method"
+        },
+        "storage_time": {
+            "description": "Length of time the biomaterial was stored for in Storage time units.",
+            "type": "number",
+            "example": 5,
+            "user_friendly": "Storage time"
+        },
+        "storage_time_unit": {
+            "description": "The unit in which Storage time is expressed.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/time_unit_ontology",
+            "example": "days",
+            "user_friendly": "Storage time unit"
+        },
+        "preservation_method": {
+            "description": "The method by which a biomaterial was preserved or not.",
+            "type": "string",
+            "enum": [
+                "cryopreservation in liquid nitrogen (dead tissue)",
+                "cryopreservation in dry ice (dead tissue)",
+                "cryopreservation of live cells in liquid nitrogen",
+                "cryopreservation, other",
+                "formalin fixed, unbuffered",
+                "formalin fixed, buffered",
+                "formalin fixed and paraffin embedded",
+                "Fresh"
+            ],
+            "comment": "Refers to the use of chemicals, cold, or other means to prevent or retard biological or physical deterioration of a biomaterial.",
+            "user_friendly": "Storage method"
+        }
+    }
+}

@@ -1,0 +1,55 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/growth_conditions",
+    "description": "Information relating to how a biomaterial was grown and/or maintained in a laboratory setting.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy"
+    ],
+    "title": "growth_conditions",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/biomaterial/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/growth_conditions"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "passage_number": {
+            "description": "The number of passages the cell line has been through.",
+            "maximum": 1000,
+            "minimum": 0,
+            "type": "integer",
+            "user_friendly": "Passage number"
+        },
+        "growth_medium": {
+            "description": "The solid, liquid, or semi-solid medium used to support the growth of the biomaterial.",
+            "type": "string",
+            "example": "lysogeny broth (LB) medium",
+            "user_friendly": "Growth medium"
+        },
+        "mycoplasma_testing_method": {
+            "description": "The method used for detecting mycoplasma contamination of a biomaterial culture.",
+            "type": "string",
+            "example": "Indirect DNA stain using Hoechst 33258 with 3T3 indicator cells",
+            "user_friendly": "Mycoplasma testing method"
+        },
+        "mycoplasma_testing_results": {
+            "description": "Results of mycoplasma testing of a biomaterial culture.",
+            "type": "string",
+            "example": "No spots of bright blue stain observed at high magnification",
+            "user_friendly": "Mycoplasma testing results"
+        },
+        "drug_treatment": {
+            "description": "Description of drugs added to the growth medium for this biomaterial.",
+            "type": "string",
+            "example": "100 ug/mL ampicillin",
+            "user_friendly": "Drug treatment"
+        }
+    }
+}

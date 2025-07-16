@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/websocket.json",
+  "title": "Schema definition for Websockets",
+  "description": "Enterprise only. Enables websocket communication.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+  "type": "object",
+  "properties": {
+    "backoff_strategy": {
+      "title": "Backoff strategy",
+      "description": "When the connection to your event source gets interrupted for whatever reason, KrakenD keeps trying to reconnect until it succeeds or until it reaches the max_retries. The backoff strategy defines the delay in seconds in between consecutive failed retries. Defaults to 'fallback'\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": "fallback",
+      "enum": [
+        "linear",
+        "linear-jitter",
+        "exponential",
+        "exponential-jitter",
+        "fallback"
+      ]
+    },
+    "connect_event": {
+      "title": "Notify connections",
+      "description": "Whether to send notification events to the backend or not when a user establishes a new Websockets connection.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": false,
+      "type": "boolean"
+    },
+    "disconnect_event": {
+      "title": "Notify disconnections",
+      "description": "Whether to send notification events to the backend or not when users disconnect from their Websockets connection.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": false,
+      "type": "boolean"
+    },
+    "enable_direct_communication": {
+      "title": "Direct Communication (no multiplexing)",
+      "description": "When the value is set to `true` the communication is set one to one, and disables multiplexing. One client to KrakenD opens one connection to the backend. This mode of operation is sub-optimal in comparison to multiplexing.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": false,
+      "type": "boolean"
+    },
+    "input_headers": {
+      "$id": "#websocket/input_headers",
+      "title": "Allowed Headers In",
+      "description": "Defines which input headers are allowed to pass to the backend. Notice that you need to declare the `input_headers` at the endpoint level too.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": [],
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$id": "#websocket/input_headers/items",
+        "examples": [
+          "User-Agent",
+          "Accept",
+          "*"
+        ],
+        "type": "string"
+      }
+    },
+    "max_message_size": {
+      "title": "Maximum message size",
+      "description": "Sets the maximum size of messages **in bytes** sent by or returned to the client. Messages larger than this value are discarded by KrakenD and the client disconnected.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 512,
+      "type": "integer"
+    },
+    "max_retries": {
+      "title": "Max retries",
+      "description": "The maximum number of times you will allow KrakenD to retry reconnecting to a broken websockets server. When the maximum retries are reached, the gateway gives up the connection for good. Minimum value is `1` retry, or use `<= 0` for unlimited retries.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 0,
+      "type": "integer"
+    },
+    "message_buffer_size": {
+      "title": "Message buffer size",
+      "description": "Sets the maximum number of messages **each end-user** can have in the buffer waiting to be processed. As this is a per-end-user setting, you must forecast how many consumers of KrakenD websockets you will have. The default value may be too high (memory consumption) if you expect thousands of clients consuming simultaneously.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 256,
+      "type": "integer"
+    },
+    "ping_period": {
+      "title": "Ping frequency",
+      "description": "Sets the time between pings checking the health of the system.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": "54s",
+      "$ref": "./timeunits.json#/$defs/timeunit"
+    },
+    "pong_wait": {
+      "title": "Pong timeout",
+      "description": "Sets the maximum time KrakenD will until the pong times out.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": "60s",
+      "$ref": "./timeunits.json#/$defs/timeunit"
+    },
+    "read_buffer_size": {
+      "title": "Read buffer size",
+      "description": "Connections buffer network input and output to reduce the number of system calls when reading messages. You can set the maximum buffer size for reading in bytes.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 1024,
+      "type": "integer"
+    },
+    "return_error_details": {
+      "title": "Return error details",
+      "description": "Provides an error `{'error':'reason here'}` to the client when KrakenD was unable to send the message to the backend.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": false,
+      "type": "boolean"
+    },
+    "timeout": {
+      "title": "Timeout",
+      "description": "Sets the read timeout for the backend. After a read has timed out, the websocket connection is terminated and KrakenD will try to reconnect according the `backoff_strategy`. Minimum accepted time is one minute. This flag only applies when you use ' enable_direct_communication`.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": "5m",
+      "$ref": "./timeunits.json#/$defs/timeunit"
+    },
+    "write_buffer_size": {
+      "title": "Write buffer size",
+      "description": "Connections buffer network input and output to reduce the number of system calls when writing messages. You can set the maximum buffer size for writing in bytes.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": 1024,
+      "type": "integer"
+    },
+    "write_wait": {
+      "title": "Write timeout",
+      "description": "Sets the maximum time KrakenD will wait until the write times out.\n\nSee: https://www.krakend.io/docs/enterprise/websockets/",
+      "default": "10s",
+      "$ref": "./timeunits.json#/$defs/timeunit"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

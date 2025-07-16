@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/modifier/body-generator.json",
+  "title": "Template-based body generator",
+  "description": "Enterprise only. Crafts the body/payload using a templating system.\n\nSee: https://www.krakend.io/backends/body-generator/",
+  "type": "object",
+  "oneOf": [
+    {
+      "required": [
+        "path"
+      ]
+    },
+    {
+      "required": [
+        "template"
+      ]
+    }
+  ],
+  "properties": {
+    "content_type": {
+      "title": "Content-Type",
+      "description": "The `Content-Type` you are generating in the template, so it can be recognized by whoever is using it.\n\nSee: https://www.krakend.io/docs/enterprise/backends/body-generator/",
+      "examples": [
+        "application/json",
+        "application/xml",
+        "text/xml"
+      ],
+      "default": "application/json",
+      "type": "string"
+    },
+    "debug": {
+      "title": "Enable debug",
+      "description": "When `true`, shows useful information in the logs with `DEBUG` level about the input received and the body generated. Do not enable in production. Debug logs are multiline and designed fore developer readibility, not machine processing.\n\nSee: https://www.krakend.io/docs/enterprise/backends/body-generator/",
+      "default": false,
+      "type": "boolean"
+    },
+    "path": {
+      "title": "Path to template",
+      "description": "The path to the Go template file you want to use to craft the body.\n\nSee: https://www.krakend.io/docs/enterprise/backends/body-generator/",
+      "examples": [
+        "./path/to.tmpl"
+      ],
+      "type": "string"
+    },
+    "template": {
+      "title": "Template",
+      "description": "An inline base64 encoded Go template with the body you want to generate. This option is useful if you want to have the template embedded in the configuration instead of an external file.\n\nSee: https://www.krakend.io/docs/enterprise/backends/body-generator/",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false,
+  "@comment": "This schema is used by modifier/request-body-generator and modifier/body-generator simultaneously"
+}

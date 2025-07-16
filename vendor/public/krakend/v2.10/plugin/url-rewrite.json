@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/plugin/url-rewrite.json",
+  "title": "URL rewrite",
+  "description": "Enterprise only. Allows you to declare additional URLs other than the ones defined under the endpoints configuration, used as aliases of existing endpoints.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/url-rewrite/",
+  "type": "object",
+  "anyOf": [
+    {
+      "required": [
+        "literal"
+      ]
+    },
+    {
+      "required": [
+        "regexp"
+      ]
+    }
+  ],
+  "properties": {
+    "literal": {
+      "title": "Literal match",
+      "description": "A map with the exact desired url and its mapping to an endpoint. If the endpoint has `{placeholders}` you need to write them, but the literal value `{placeholders}` is passed.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/url-rewrite/",
+      "examples": [
+        {
+          "/hi-there": "/hello",
+          "/whatsup": "/hello"
+        }
+      ],
+      "type": "object"
+    },
+    "regexp": {
+      "title": "Regexp match",
+      "description": "A list of lists, containing the regular expression that defines the URL to be rewritten, and its endpoint destination. You can use the capturing groups with the syntax `${1}`, `${2}`, etc.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/url-rewrite/",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

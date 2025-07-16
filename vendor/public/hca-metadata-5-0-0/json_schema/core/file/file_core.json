@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/core/file/5.0.0/file_core",
+    "description": "A file entity contains information about a data file produced from any process.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+	    "file_name",
+	    "file_format"
+    ],
+    "title": "file_core",
+    "type": "object",
+    "properties": {
+        "describedBy": {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/core/file/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/file_core"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "file_name": {
+            "description": "The filename of the data file.",
+            "type": "string",
+            "user_friendly": "File name"
+        },
+        "file_format": {
+            "description": "The format of the data file.",
+            "type": "string",
+            "user_friendly": "File format"
+        }, 
+        "checksum": {
+            "description": "MD5 checksum of the data file.",
+            "type": "string",
+            "user_friendly": "Checksum"
+	    }
+    }
+}

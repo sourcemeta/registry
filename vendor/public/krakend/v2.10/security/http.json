@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/security/http.json",
+  "title": "HTTP Security",
+  "description": "Security through HTTP headers, including HSTS, HPKP, MIME-Sniffing prevention, Clickjacking protection, and others.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+  "type": "object",
+  "properties": {
+    "allowed_hosts": {
+      "$id": "#security/http/allowed_hosts",
+      "title": "Allowed hosts",
+      "description": "When a request hits KrakenD, it will confirm if the value of the Host HTTP header is in the list. If so, it will further process the request. If the host is not in the allowed hosts list, KrakenD will simply reject the request.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "allowed_hosts_are_regex": {
+      "$id": "#security/http/allowed_hosts_are_regex",
+      "title": "Hosts are regexps",
+      "description": "Treat the allowed hosts list as regular expressions.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": false,
+      "type": "boolean"
+    },
+    "browser_xss_filter": {
+      "$id": "#security/http/browser_xss_filter",
+      "title": "This feature enables the Cross-site scripting (XSS) filter in the user's browser.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": false,
+      "type": "boolean"
+    },
+    "content_security_policy": {
+      "$id": "#security/http/content_security_policy",
+      "title": "Content-Security-Policy (CSP)",
+      "description": "The HTTP Content-Security-Policy (CSP) default-src directive serves as a fallback for the other CSP fetch directives.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "examples": [
+        "default-src 'self';"
+      ],
+      "default": "",
+      "type": "string"
+    },
+    "content_type_nosniff": {
+      "$id": "#security/http/content_type_nosniff",
+      "title": "Nosniff",
+      "description": "Enabling this feature will prevent the user's browser from interpreting files as something else than declared by the content type in the HTTP headers.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": false,
+      "type": "boolean"
+    },
+    "custom_frame_options_value": {
+      "$id": "#security/http/custom_frame_options_value",
+      "title": "Clickjacking protection. Frame-Options value",
+      "description": "You can add an X-Frame-Options header using custom_frame_options_value with the value of DENY (default behavior) or even set your custom value.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "examples": [
+        "ALLOW-FROM https://example.com"
+      ],
+      "default": "",
+      "type": "string"
+    },
+    "force_sts_header": {
+      "$id": "#security/http/force_sts_header",
+      "title": "Force STS header",
+      "description": "Force a STS Header even if using plain HTTP.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": false,
+      "type": "boolean"
+    },
+    "frame_deny": {
+      "$id": "#security/http/frame_deny",
+      "title": "Clickjacking protection",
+      "description": "Set to true to enable clickjacking protection, together with `custom_frame_options_value`.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": false,
+      "type": "boolean"
+    },
+    "host_proxy_headers": {
+      "$id": "#security/http/host_proxy_headers",
+      "title": "SSL Host",
+      "description": "A set of header keys that may hold a proxied hostname value for the request.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "examples": [
+        [
+          "X-Forwarded-Hosts"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hpkp_public_key": {
+      "$id": "#security/http/hpkp_public_key",
+      "title": "HTTP Public Key Pinning (HPKP)",
+      "description": "HTTP Public Key Pinning (HPKP) is a security mechanism which allows HTTPS websites to resist impersonation by attackers using mis-issued or otherwise fraudulent certificates. (For example, sometimes attackers can compromise certificate authorities, and then can mis-issue certificates for a web origin.).\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "examples": [
+        "pin-sha256=\"base64==\"; max-age=expireTime [; includeSubDomains][; report-uri=\"reportURI\"]"
+      ],
+      "default": "",
+      "type": "string"
+    },
+    "is_development": {
+      "$id": "#security/http/is_development",
+      "title": "Development flag",
+      "description": "This will cause the AllowedHosts, SSLRedirect, and STSSeconds/STSIncludeSubdomains options to be ignored during development. When deploying to production, be sure to set this to false.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": false,
+      "type": "boolean"
+    },
+    "referrer_policy": {
+      "$id": "#security/http/referrer_policy",
+      "title": "Referrer Policy",
+      "description": "Allows the Referrer-Policy header with the value to be set with a custom value.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": "same-origin",
+      "type": "string"
+    },
+    "ssl_host": {
+      "$id": "#security/http/ssl_host",
+      "title": "SSL Host",
+      "description": "When the SSL redirect is true, the host where the request is redirected to.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "examples": [
+        "ssl.host.domain"
+      ],
+      "default": "ssl.host.domain",
+      "type": "string"
+    },
+    "ssl_proxy_headers": {
+      "$id": "#security/http/ssl_proxy_headers",
+      "title": "SSL Proxy Headers",
+      "description": "Header keys with associated values that would indicate a valid https request. Useful when using Nginx, e.g: `\"X-Forwarded-Proto\": \"https\"`\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "examples": [
+        {
+          "X-Forwarded-Proto": "https"
+        }
+      ],
+      "type": "object"
+    },
+    "ssl_redirect": {
+      "$id": "#security/http/ssl_redirect",
+      "title": "SSL redirect",
+      "description": "Redirect any request that is not using HTTPS\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": true,
+      "type": "boolean"
+    },
+    "sts_include_subdomains": {
+      "$id": "#security/http/sts_include_subdomains",
+      "title": "Strict-Transport-Security include_subdomains",
+      "description": "Set to true when you want the `includeSubdomains` be appended to the Strict-Transport-Security header.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": false,
+      "type": "boolean"
+    },
+    "sts_seconds": {
+      "$id": "#security/http/sts_seconds",
+      "title": "HTTP Strict Transport Security (HSTS) seconds",
+      "description": "Enable this policy by setting the `max-age` of the `Strict-Transport-Security` header. Setting to `0` disables HSTS.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": 0,
+      "type": "integer"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

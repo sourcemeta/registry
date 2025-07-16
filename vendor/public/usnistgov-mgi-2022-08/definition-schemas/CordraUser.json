@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "CordraUser",
+    "definitions": {"CordraUser": {
+        "type": "object",
+        "properties": {
+            "username": {
+                "type": "string",
+                "title": "Username",
+                "cordra": {
+                    "preview": {"showInPreview": true},
+                    "auth": "username"
+                }
+            },
+            "password": {
+                "type": "string",
+                "format": "password",
+                "title": "Password",
+                "cordra": {"auth": "password"}
+            },
+            "requirePasswordChange": {
+                "type": "boolean",
+                "title": "Require Password Change",
+                "description": "If true a new password must be set on next authentication.",
+                "cordra": {"auth": "requirePasswordChange"}
+            },
+            "publicKey": {
+                "type": "object",
+                "cordra": {"auth": "publicKey"}
+            }
+        }
+    }}
+}

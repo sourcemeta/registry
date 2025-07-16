@@ -1,0 +1,181 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/process/analysis/5.0.0/analysis_process",
+    "description": "Information about an analysis that was performed on data files.",
+    "additionalProperties": true,
+    "required": [
+        "describedBy",
+        "schema_type",
+        "timestamp_start_utc",
+        "timestamp_stop_utc",
+        "computational_method",
+        "input_bundles",
+        "reference_bundle",
+        "analysis_run_type",
+        "metadata_schema",
+        "tasks",
+        "inputs",
+        "outputs"
+    ],
+    "title": "analysis_process",
+    "type": "object",
+    "definitions": {
+        "task": {
+            "additionalProperties": false,
+            "required": [
+                "task_name",
+                "start_time",
+                "stop_time",
+                "disk_size",
+                "docker_image",
+                "cpus",
+                "memory",
+                "zone"
+            ],
+            "type": "object",
+            "properties": {
+                "disk_size": {
+                    "type": "string"
+                },
+                "task_name": {
+                    "type": "string"
+                },
+                "zone": {
+                    "type": "string"
+                },
+                "log_err": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "cpus": {
+                    "type": "integer"
+                },
+                "log_out": {
+                    "type": "string"
+                },
+                "stop_time": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "memory": {
+                    "type": "string"
+                },
+                "docker_image": {
+                    "type": "string"
+                }
+            }
+        },
+        "parameter": {
+            "additionalProperties": false,
+            "required": [
+                "parameter_name",
+                "parameter_value"
+            ],
+            "type": "object",
+            "properties": {
+                "checksum": {
+                    "type": "string"
+                },
+                "parameter_name": {
+                    "type": "string"
+                },
+                "parameter_value": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "properties": {
+        "describedBy": {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/process/analysis/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/analysis_process"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "process"
+            ]
+        },
+        "process_core" : {
+            "description": "Core process-level information.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/process/5.0.0/process_core"
+    	},
+        "process_type": {
+            "description": "The type of process. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0002694.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/process_type_ontology"
+        },
+        "inputs": {
+            "description": "Input parameters used in the pipeline run, these can be files or string values (settings).",
+            "type": "array",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/type/process/analysis/5.0.0/analysis_process#/definitions/parameter"
+            }
+        },
+        "reference_bundle": {
+            "description": "Bundle containing the reference used in running the pipeline.",
+            "type": "string"
+        },
+        "tasks": {
+            "description": "Descriptions of tasks in the workflow.",
+            "type": "array",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/type/process/analysis/5.0.0/analysis_process#/definitions/task"
+            }
+        },
+        "timestamp_stop_utc": {
+            "description": "Terminal stop time of the full pipeline.",
+            "type": "string",
+            "format": "date-time"
+        },
+        "input_bundles": {
+            "description": "The input bundles used in this analysis run.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "outputs": {
+            "description": "Output generated by the pipeline run.",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "$ref": "https://schema.humancellatlas.org/type/file/5.0.0/analysis_file"
+            }
+        },
+        "computational_method": {
+            "description": "A URI to a versioned workflow and versioned execution environment in a GA4GH-compliant repository.",
+            "type": "string"
+        },
+        "timestamp_start_utc": {
+            "description": "Initial start time of the full pipeline.",
+            "type": "string",
+            "format": "date-time"
+        },
+        "analysis_run_type": {
+            "description": "Indicator of whether the analysis actually ran or was just copied forward as an optimization.",
+            "type": "string",
+            "enum": [
+                "run",
+                "copy-forward"
+            ]
+        },
+        "metadata_schema": {
+            "description": "The version of the metadata schemas used for the JSON files.",
+            "type": "string",
+            "pattern" : "[0-9]{1,}.[0-9]{1,}.[0-9]{1,}"
+        }
+    }
+}

@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Product",
+    "definitions": {"Product": {
+        "type": "object",
+        "properties": {
+            "manufacturer": {
+                "type": "array",
+                "title": "Manufacturers",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Manufacturer",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person",
+                        "Organization"
+                    ]}}}
+                }
+            },
+            "brand": {"type": "string"},
+            "model": {"type": "string"},
+            "productID": {"type": "string"},
+            "productionDate": {
+                "title": "Production Date",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            },
+            "purchaseDate": {
+                "title": "Purchase Date",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            },
+            "serialNumber": {
+                "title": "Serial Number",
+                "type": "string"
+            }
+        }
+    }}
+}

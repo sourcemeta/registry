@@ -1,0 +1,55 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v1.0.0/gcn/notices/core/Statistics.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Statistics",
+  "description": "statistical measures of source significance or classification",
+  "properties": {
+    "far": {
+      "type": "number",
+      "description": "False alarm rate: the rate of occurrence of non-astrophysical events that are of the same intensity or significance as the current event [Hz]"
+    },
+    "rate_snr": {
+      "type": "number",
+      "description": "Rate signal to noise ratio [dimensionless]"
+    },
+    "rate_duration": {
+      "type": "number",
+      "description": "Interval over rate signal to noise ratio calculation [s]"
+    },
+    "rate_energy_range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Low and High energy bounds used in rate signal to noise ratio calculation, if not parsed in Reporter.schema.json, default unit is keV"
+    },
+    "image_snr": {
+      "type": "number",
+      "description": "Image signal to noise ratio [dimensionless]"
+    },
+    "image_duration": {
+      "type": "number",
+      "description": "Interval over image signal to noise ratio calculation [s]"
+    },
+    "image_energy_range": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Low and High energy bounds used in image signal to noise ratio calculation, if not parsed in Reporter.schema.json, default unit is keV"
+    },
+    "p_astro": {
+      "type": "number",
+      "description": "Probability [dimensionless, 0-1] that source is of astrophysical origin"
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": { "type": "number" },
+      "description": "Dictionary mapping mutually exclusive source classes to probabilities between 0 and 1, the sum of all values must be 1. e.g. ({'BNS', 0.9}, {'NSBH', 0.05}, {'BBH', 0.05})"
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": { "type": "number" },
+      "description": "Dictionary of binary classifiers, each entry is between 0 and 1. e.g. ({'NS', 0.95}, {'REMNANT', 0.3})"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/plugin/geoip.json",
+  "title": "GeoIP",
+  "description": "Enterprise only. The GeoIP integration allows you load Maxmind's GeoIP2 City database (payment and free versions) and enrich all KrakenD calls to your backends with geo data.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/geoip/",
+  "type": "object",
+  "required": [
+    "citydb_path"
+  ],
+  "properties": {
+    "citydb_path": {
+      "title": "CityDB path",
+      "description": "The path in the filesystem containing the database in GeoIP2 Binary (`.mmdb`) format. Relative to the working dir or absolute path.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/geoip/",
+      "examples": [
+        "path/to/GeoIP2-City.mmdb"
+      ],
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

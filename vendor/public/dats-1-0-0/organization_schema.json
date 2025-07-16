@@ -1,0 +1,76 @@
+{
+  "id": "https://w3id.org/dats/schema/organization_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS organization schema",
+  "description": "Legal or physical entity corresponding to a business or administration.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Organization" ]},
+    "identifier": {
+      "description": "The identifier of the organization.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the organization.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the organization.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the organization.",
+      "type" :  "string"
+    },
+    "abbreviation": {
+      "description": "The shortname, abbreviation associated to the organization.",
+      "type" :  "string"
+    },
+    "location": {
+      "description": "The place where the organization is located.",
+      "$ref" : "place_schema.json#"
+    },
+    "roles" : {
+      "description": "The roles of the organization (ideally from a controlled vocabulary/ontology).",
+      "type" : "array",
+      "items" : {
+        "$ref" : "annotation_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "name" ]
+}

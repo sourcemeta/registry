@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/plugin/jwk-aggregator.json",
+  "title": "JWK aggregator",
+  "description": "Enterprise only. The JWK aggregator plugin allows KrakenD to validate tokens issued by multiple Identity Providers.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/multiple-identity-providers/",
+  "type": "object",
+  "required": [
+    "port",
+    "origins"
+  ],
+  "properties": {
+    "origins": {
+      "title": "Origins",
+      "description": "The list of all JWK URLs recognized as valid Identity Providers by the gateway.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/multiple-identity-providers/",
+      "type": "array"
+    },
+    "port": {
+      "title": "Port",
+      "description": "The port of the local server doing the aggregation. The port is only accessible within the gateway machine using localhost, and it's never exposed to the external network. Choose any port that is free in the system.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/multiple-identity-providers/",
+      "examples": [
+        9876
+      ],
+      "type": "integer"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

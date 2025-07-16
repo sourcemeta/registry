@@ -1,0 +1,39 @@
+{
+  "id": "https://w3id.org/dats/schema/alternate_identifier_info_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS alternate identifier information schema",
+  "description": "Information about an alternate identifier (other than the primary).",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "AlternateIdentifier" ]},
+    "identifier": {
+      "description": "An identifier or identifiers other than the primary Identifier applied to the resource being registered. (definition from DataCite)",
+      "type" : "string"
+    },
+    "identifierSource": {
+      "description": "The identifier source represents information about the organisation/namespace responsible for minting the identifiers. It must be provided if the identifier is provided.",
+      "type" : "string"
+    }
+  },
+  "additionalProperties": false
+}

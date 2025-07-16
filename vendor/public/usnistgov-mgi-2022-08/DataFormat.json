@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "DataFormat",
+    "description": "This schema is for describing a Data Format in Cordra.",
+    "required": [
+        "@id",
+        "@context",
+        "@type"
+    ],
+    "allOf": [
+        {
+            "@context": {
+                "type": "array",
+                "default": [
+                    "http://schema.org/",
+                    {
+                        "mat": "https://pages.nist.gov/material-schema/",
+                        "@vocab": "https://pages.nist.gov/material-schema/user-defined/"
+                    }
+                ]
+            },
+            "@type": {
+                "type": "array",
+                "default": [
+                    "CreativeWork",
+                    "mat:DataFormat"
+                ]
+            }
+        },
+        {
+            "$ref": "definition-schemas/CordraObjectID.json#/definitions/CordraObjectID"
+        },
+        {
+            "$ref": "definition-schemas/Thing.json#/definitions/Thing"
+        },
+        {
+            "$ref": "definition-schemas/CreativeWork.json#/definitions/CreativeWork"
+        },
+        {
+            "$ref": "definition-schemas/DataFormat.json#/definitions/DataFormat"
+        }
+    ]
+}

@@ -1,0 +1,63 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/process/biomaterial_collection/5.0.0/collection_process",
+    "description": "Process by which a biomaterial was collected or transformed from another biomaterial or from a population.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type",
+        "process_core"
+    ],
+    "title": "collection_process",
+    "type": "object",
+    "properties": {
+        "describedBy": {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/process/biomaterial_collection/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/collection_process"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "process"
+            ]
+        },
+        "process_core" : {
+            "description": "Core process-level information.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/process/5.0.0/process_core"
+        },
+        "process_type": {
+            "description": "The type of process. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0002694.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/process_type_ontology",
+            "user_friendly": "Process type"
+        },
+        "collection_method": {
+            "description": "How the biomaterial was collected.",
+            "type": "string",
+            "enum": [
+                "biopsy",
+                "blood draw",
+                "scraping",
+                "urine collection",
+                "organ extraction"
+            ],
+            "user_friendly": "Collection method"
+        },
+        "process_reagents": {
+            "description": "A list of purchased reagents used in this process.",
+            "type": "array",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/module/process/5.0.0/purchased_reagents"
+            }
+        }
+    }
+}

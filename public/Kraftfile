@@ -1,0 +1,7 @@
+spec: v0.6
+runtime: base:latest
+rootfs: ./Dockerfile
+labels:
+  cloud.unikraft.v1.instances/scale_to_zero.policy: "on"
+  cloud.unikraft.v1.instances/scale_to_zero.cooldown_time_ms: 5000
+cmd: [ "/usr/bin/sourcemeta-registry-server", "/app/index" ]

@@ -1,0 +1,13 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.2.0/gcn/notices/core/AdditionalInfo.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Comments",
+  "description": "Comments that are not summarized elsewhere in schema",
+  "properties": {
+    "additional_info": {
+      "type": "string",
+      "description": "Additional information about the event"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/process/sequencing/5.0.0/sequencing_process",
+    "description": "Information about how a biomaterial was sequenced.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type",
+        "process_core",
+        "instrument_manufacturer_model",
+        "paired_ends"
+    ],
+    "title": "sequencing_process",
+    "type": "object",
+    "properties": {
+         "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/process/sequencing/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/sequencing_process"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+           "enum": [
+                "process"
+            ]
+        },
+        "process_core" : {
+            "description": "Core process-level information.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/process/5.0.0/process_core"
+        },
+        "instrument_manufacturer_model": {
+            "description": "The manufacturer and model of the sequencer used. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0000548.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/instrument_ontology",
+            "example": "Illumina HiSeq 4000",
+            "user_friendly": "Instrument manufacturer and model"
+        },
+        "local_machine_name": {
+            "description": "Local name for the particular machine on which the biomaterial was sequenced.",
+            "type": "string",
+            "user_friendly": "Local machine name"
+        },
+        "paired_ends": {
+            "description": "Was a paired-end sequencing strategy used? Must be either yes or no.",
+            "type": "boolean",
+            "example": "yes",
+            "comment": "If 10x, then put no.",
+            "user_friendly": "Paired ends?"
+        },
+        "insdc_experiment": {
+            "description": "An INSDC (International Nucleotide Sequence Database Collaboration) experiment accession. Accession must start with DRX, ERX, or SRX.",
+            "pattern": "^[D|E|S]RX[0-9]+$",
+            "type": "string",
+            "user_friendly": "INSDC experiment"
+        },
+        "smartseq2" : {
+	        "description": "Fields specific for SmartSeq2 experiments.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/process/sequencing/5.0.0/smartseq2"
+        },
+        "process_type": {
+            "description": "The type of process. Should be a child term of https://www.ebi.ac.uk/ols/ontologies/efo/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0002694.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/process_type_ontology",
+            "user_friendly": "Process type"
+        }
+    }
+}

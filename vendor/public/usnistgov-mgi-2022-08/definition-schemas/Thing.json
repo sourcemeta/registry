@@ -1,0 +1,86 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Thing",
+    "definitions": {"Thing": {
+        "type": "object",
+        "properties": {
+            "identifier": {
+                "type": "array",
+                "title": "Identifers",
+                "items": {
+                    "type": "object",
+                    "title": "Identifer",
+                    "properties": {
+                        "@type": {
+                            "type": "string",
+                            "default": "PropertyValue"
+                        },
+                        "propertyID": {
+                            "title": "Property IDs",
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "title": "Property ID",
+                                "type": "string",
+                                "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                            }
+                        },
+                        "name": {
+                            "title": "Identifier Type/Name",
+                            "type": "string"
+                        },
+                        "value": {"title": "Identifier Value"},
+                        "url": {
+                            "title": "Identifier URL",
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "name": {
+                "type": "string",
+                "title": "Name",
+                "cordra": {"preview": {
+                    "showInPreview": true,
+                    "isPrimary": true
+                }}
+            },
+            "alternateName": {
+                "type": "string",
+                "title": "Alternate Name",
+                "cordra": {"preview": {"showInPreview": true}}
+            },
+            "description": {
+                "type": "string",
+                "title": "Description",
+                "format": "textarea",
+                "cordra": {"preview": {"showInPreview": true}}
+            },
+            "url": {
+                "type": "string",
+                "title": "URL"
+            },
+            "image": {
+                "type": "array",
+                "title": "Image URLs",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Image URL"
+                }
+            },
+            "subjectOf": {
+                "type": "array",
+                "title": "Subject Of",
+                "description": "A CreativeWork about this Thing (e.g., Linked Materials, Datasets, etc.)",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Referenced Item",
+                    "cordra": {"type": {"handleReference": {"types": []}}}
+                }
+            }
+        }
+    }}
+}

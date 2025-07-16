@@ -1,0 +1,54 @@
+{
+  "id": "https://w3id.org/dats/schema/category_values_pair_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS extension mechanism",
+  "description": "Extension mechanism for DATS, which allows to add extra properties to the entities. It should be used only for cases where there are no specific properties to deal with the desired property.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri" },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "CategoryValuesPair" ]},
+    "category": {
+      "description": "A characteristic or property about the entity this object is associated with.",
+      "type": "string"
+    },
+    "categoryIRI": {
+      "description": "The IRI corresponding to the category, if associated with an ontology term.",
+       "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "string",
+          "maxLength": 0
+        }
+      ]
+    },
+    "values": {
+      "description": "A set of (annotated) values associated with the cateogory.",
+      "type": "array",
+      "items": {
+          "$ref" : "annotation_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false
+}

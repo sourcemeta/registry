@@ -1,0 +1,55 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/death",
+    "description": "Information relating to the death of an organism.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+    	"cause_of_death"
+    ],
+    "title": "death",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/biomaterial/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/death"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "cause_of_death": {
+            "description": "Cause of death from death report for human donor, from research lab for mouse.",
+            "type": "string",
+            "user_friendly": "Cause of death"
+        }, 
+        "cold_perfused": {
+            "description": "Yes if perfused with cold fluid to help preserve tissues before heart stopped. No otherwise.",
+            "type": "boolean",
+            "user_friendly": "Cold perfused?"
+        },  
+        "days_on_ventilator": {
+            "description": "Days on ventilator before dying.",
+            "maximum": 10000, 
+            "minimum": 0, 
+            "type": "number",
+            "user_friendly": "Number of days on ventilator"
+        }, 
+        "hardy_scale": {
+            "description": "Should be integer representing: (0) ventilator case, (1) violent and fast death, (2) fast death of natural causes, (3) intermediate death, or (4) slow death.",
+            "maximum": 4, 
+            "minimum": 0, 
+            "type": "integer",
+            "user_friendly": "Value on Hardy scale"
+        }, 
+        "time_of_death": {
+            "description": "Date and time of death of the organism, in format yyyy-mm-ddThh:mm:ssZ.",
+            "format": "date-time",
+            "type": "string",
+            "user_friendly": "Time of death"
+        }
+    }
+}

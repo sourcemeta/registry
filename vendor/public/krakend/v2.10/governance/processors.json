@@ -1,0 +1,199 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/governance/processors.json",
+  "title": "Governance processors.",
+  "description": "Declares rules and limits to be enforced.",
+  "type": "object",
+  "required": [
+    "quotas"
+  ],
+  "properties": {
+    "quotas": {
+      "description": "The list of quota processors available for attachment. You can have multiple processors with different configurations.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "connection_name",
+          "rules"
+        ],
+        "properties": {
+          "connection_name": {
+            "description": "The name of the [Redis connection](https://www.krakend.io/docs/enterprise/service-settings/redis-connection-pools/) to use, it must exist under the `redis` namespace at the service level and written exactly as declared.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "type": "string"
+          },
+          "deny_queue_flush_interval": {
+            "description": "When you have a `rejecter_cache`, the time interval to write the events stored in the buffer in the bloom filter. This is the maximum time that can elapse before the events are written to the bloom filter.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "default": "1s",
+            "$ref": "../timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "deny_queue_flush_threshold": {
+            "description": "When you have a `rejecter_cache`, the maximum number of events in the buffer that will force a write to the bloom filter event when the flush interval has not kicked in yet.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "default": 10,
+            "type": "integer"
+          },
+          "deny_queue_size": {
+            "description": "When you have a `rejecter_cache`, the size of the buffer (number of events stored) to write in the bloomfilter. It defaults to the number of cores on the machine. This is the maximum number of events that can be stored in memory before being written to the bloom filter. You should not set this value unless you are seeing increased latencies on very high-concurrency scenarios; ask support for help.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "type": "integer"
+          },
+          "hash_keys": {
+            "description": "Whether to hash the keys used for quota consumption. If you have PII (Personal Identifiable Information) in the keys (like an email), enable this option to `true` to avoid Redis containing clear text keys with PII. This is a setting for privacy, enabling it may affect performance because of the extra hashing, and makes data exploration difficult.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "default": false,
+            "type": "boolean"
+          },
+          "name": {
+            "description": "Name of the quota. The exact name you type here is the one you need to reference when you attach a quota under the `governance/quota` namespace, and is also part of the key name on the persistence layer.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "examples": [
+              "public_api",
+              "LLM"
+            ],
+            "type": "string"
+          },
+          "on_failure_allow": {
+            "description": "What to do with the user request if Redis is down. When `true`, allows continuing to perform requests even when Redis is unreachable, but the quota won't be counted. When `false`, the request is rejected and the user receives a 500 error. This is a fail-safe option, but it may lead to quota overconsumption.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "type": "boolean"
+          },
+          "on_failure_backoff_strategy": {
+            "description": "The backoff strategy to use when Redis is unreachable. The default is `exponential`, which means that the time between retries will increase exponentially. The other option is `linear`, which means that the time between retries will be constant.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "default": "exponential",
+            "enum": [
+              "linear",
+              "exponential"
+            ]
+          },
+          "on_failure_max_retries": {
+            "description": "Maximum number of retries to Redis when it is unreachable. Once the retries are exhausted, the processor is no longer usable and the quota stops working until the Redis connection is restored and the service restarted. The users will be able to consume content depending on the `on_failure_allow` option. A zero value means no retries.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "default": 0,
+            "type": "integer"
+          },
+          "rejecter_cache": {
+            "description": "The bloom filter configuration that you use to cache rejections. The bloom filter is used to store the events that are rejected by the quota processor. This is useful to avoid rejecting the same event multiple times.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "type": "object",
+            "required": [
+              "N",
+              "P"
+            ],
+            "properties": {
+              "N": {
+                "title": "Number of elements",
+                "description": "The maximum `N`umber of elements you want to keep in the bloom filter. Tens of millions work fine on machines with low resources.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+                "examples": [
+                  10000000
+                ],
+                "type": "integer"
+              },
+              "P": {
+                "title": "Probability",
+                "description": "The `P`robability of returning a false positive. E.g.,`1e-7` for one false positive every 10 million different tokens. The values `N` and `P` determine the size of the resulting bloom filter to fulfill your expectations. E.g: 0.0000001\n\nSee: https://www.krakend.io/docs/authorization/revoking-tokens/\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+                "examples": [
+                  1e-07,
+                  1e-07
+                ],
+                "type": "number"
+              },
+              "cleanup_interval": {
+                "description": "The time interval to clean up the bloom filter. This is the maximum time that can elapse before the bloom filter is cleaned up.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+                "default": "30m",
+                "$ref": "../timeunits.json#/$defs/timeunit",
+                "type": "string"
+              },
+              "hash_name": {
+                "title": "Hash function name",
+                "description": "Either `optimal` (recommended) or `default`. The `optimal` consumes less CPU but has less entropy when generating the hash, although the loss is negligible.\n\nSee: https://www.krakend.io/docs/authorization/revoking-tokens/\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+                "default": "optimal",
+                "enum": [
+                  "optimal",
+                  "default"
+                ]
+              }
+            },
+            "patternProperties": {
+              "^[@$_#]": {}
+            },
+            "additionalProperties": false
+          },
+          "rules": {
+            "description": "The rules to use for the quota processor.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "limits"
+              ],
+              "properties": {
+                "limits": {
+                  "description": "The limits for the rule. The limits are defined as an array of objects, each object containing an amount and a unit.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+                  "examples": [
+                    [
+                      {
+                        "amount": 10,
+                        "unit": "hour"
+                      },
+                      {
+                        "amount": 250,
+                        "unit": "day"
+                      }
+                    ]
+                  ],
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "amount",
+                      "unit"
+                    ],
+                    "properties": {
+                      "amount": {
+                        "description": "The amount of the limit. This is the maximum number of requests that can be made in the given time unit.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+                        "type": "number"
+                      },
+                      "unit": {
+                        "description": "The time unit for the limit.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+                        "enum": [
+                          "second",
+                          "minute",
+                          "hour",
+                          "day",
+                          "week",
+                          "month",
+                          "year"
+                        ]
+                      }
+                    },
+                    "patternProperties": {
+                      "^[@$_#]": {}
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "name": {
+                  "description": "The name of the rule. This is the name that will be used to identify the rule in the logs and metrics. It is also the plan name.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+                  "examples": [
+                    "gold",
+                    "silver"
+                  ],
+                  "type": "string"
+                }
+              },
+              "patternProperties": {
+                "^[@$_#]": {}
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "patternProperties": {
+          "^[@$_#]": {}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

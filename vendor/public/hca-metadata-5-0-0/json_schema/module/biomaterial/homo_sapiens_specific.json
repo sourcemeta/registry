@@ -1,0 +1,39 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/homo_sapiens_specific",
+    "description": "Information specific to an organism that is a homo sapiens.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy"
+    ],
+    "title": "homo_sapiens_specific",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/biomaterial/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/homo_sapiens_specific"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+         "body_mass_index": {
+            "description": "The body mass index of the organism.",
+            "type": "number",
+            "maximum": 100,
+            "minimum": 5,
+            "user_friendly": "Body mass index"
+        },
+        "ethnicity": {
+            "description": "An array of ontology terms from EMBL-EBI's Ancestry Ontology describing ancestral groups, uncategorised ancestral groups, and population isolates.",
+            "type": "array",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/ethnicity_ontology"
+            },
+            "user_friendly": "Ethnicity"
+        }
+    }
+}

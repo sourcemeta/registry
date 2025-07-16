@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.9/security/cors.json",
+  "title": "HTTP Security",
+  "description": "Security through HTTP headers, including HSTS, HPKP, MIME-Sniffing prevention, Clickjacking protection, and others.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+  "type": "object",
+  "properties": {
+    "allow_credentials": {
+      "$id": "#security/cors/allow_credentials",
+      "title": "Allow credentials",
+      "description": "When requests can include user credentials like cookies, HTTP authentication or client side SSL certificates.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "default": false,
+      "type": "boolean"
+    },
+    "allow_headers": {
+      "$id": "#security/cors/allow_headers",
+      "title": "Allowed headers",
+      "description": "An array with the headers allowed, but `Origin`is always appended to the list. Requests with headers not in this list are rejected.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "example": [
+        "Accept-Language"
+      ]
+    },
+    "allow_methods": {
+      "$id": "#security/cors/allow_methods",
+      "title": "Allowed methods",
+      "description": "An array with all the HTTP methods allowed, in uppercase. Possible values are `GET`, `HEAD`,`POST`,`PUT`,`PATCH`,`DELETE`, or `OPTIONS`\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "default": [
+        "GET",
+        "HEAD",
+        "POST"
+      ],
+      "type": "array",
+      "items": {
+        "enum": [
+          "GET",
+          "HEAD",
+          "POST",
+          "PUT",
+          "PATCH",
+          "DELETE",
+          "OPTIONS"
+        ]
+      }
+    },
+    "allow_origins": {
+      "$id": "#security/cors/allow_origins",
+      "title": "Allowed origins",
+      "description": "An array with all the origins allowed, examples of values are `https://example.com`, or `*` (any origin).\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "default": [
+        "*"
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "allow_private_network": {
+      "$id": "#security/cors/allow_private_network",
+      "title": "Allow private network",
+      "description": "Indicates whether to accept cross-origin requests over a private network.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "default": false,
+      "type": "boolean"
+    },
+    "debug": {
+      "$id": "#security/cors/debug",
+      "title": "Development flag",
+      "description": "Show debugging information in the logger, **use it only during development**.\n\nSee: https://www.krakend.io/docs/service-settings/security/",
+      "default": false,
+      "type": "boolean"
+    },
+    "expose_headers": {
+      "$id": "#security/cors/expose_headers",
+      "title": "Expose headers",
+      "description": "List of headers that are safe to expose to the API of a CORS API specification.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "default": [
+        "Content-Length",
+        "Content-Type"
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "max_age": {
+      "$id": "#security/cors/max_age",
+      "title": "Max Age",
+      "description": "For how long the response can be cached. For zero values the `Access-Control-Max-Age` header is not set.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "default": "0h",
+      "$ref": "../timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "options_passthrough": {
+      "$id": "#security/cors/options_passthrough",
+      "title": "OPTIONS Passthrough",
+      "description": "Instructs preflight to let other potential next handlers to process the OPTIONS method. Turn this on when you set the [`auto_opts` flag in the router to `true`](https://www.krakend.io/docs/service-settings/router-options/#auto_options).\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "default": false,
+      "type": "boolean"
+    },
+    "options_success_status": {
+      "$id": "#security/cors/options_success_status",
+      "title": "Success Status Codes",
+      "description": "The HTTP status code that is considered a success.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "examples": [
+        200
+      ],
+      "default": 204,
+      "type": "integer"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

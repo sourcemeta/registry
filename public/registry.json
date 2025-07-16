@@ -1,0 +1,457 @@
+{
+  "url": "https://schemas.sourcemeta.com",
+  "title": "Sourcemeta",
+  "description": "The universal JSON Schema index, bringing together and supercharging the world's open-source schemas",
+  "port": 8000,
+  "hero": "<p class=\"mb-1\">The universal JSON Schema index, bringing together and supercharging the world's open-source schemas</p> <small class=\"fw-light\">Are we missing any schema collection you know about? <a href=\"https://github.com/sourcemeta/schemas/issues/new\" target=\"_blank\">Let us know!</a></small>",
+  "head": "<script defer data-domain=\"schemas.sourcemeta.com\" src\"https://plausible.io/js/script.js\"></script><script defer data-app-id=\"BBDECA33-5DA2-4309-B092-7EFC3D803B81\" src=\"https://cdn.telemetrydeck.com/websdk/telemetrydeck.min.js\"></script>",
+  "action": {
+    "title": "Star on GitHub",
+    "url": "https://github.com/sourcemeta/registry",
+    "icon": "github"
+  },
+  "pages": {
+    "nasa": {
+      "title": "National Aeronautics and Space Administration",
+      "description": "The United States' government agency responsible for leading advancements in space exploration, scientific discovery, and aeronautics research",
+      "github": "nasa",
+      "website": "https://www.nasa.gov"
+    },
+    "nasa/gcn": {
+      "title": "General Coordinates Network",
+      "description": "NASA's Next Generation Time-Domain and Multimessenger Astronomy Alert System",
+      "email": "support@gcn.nasa.gov",
+      "github": "nasa-gcn/gcn-schema",
+      "website": "https://gcn.nasa.gov"
+    },
+    "ossf": {
+      "title": "Open Source Security Foundation",
+      "description": "A community of software developers and security engineers who are working together to secure open source software for the greater public good",
+      "email": "operations@openssf.org",
+      "github": "ossf",
+      "website": "https://openssf.org"
+    },
+    "ossf/osv": {
+      "title": "Open Source Vulnerability schema",
+      "github": "ossf/osv-schema"
+    },
+    "krakend": {
+      "title": "KrakenD API Gateway",
+      "description": "An open-source API Gateway that helps you effortlessly adopt microservices and secure communications",
+      "email": "hello@krakend.io",
+      "github": "krakend",
+      "website": "https://www.krakend.io"
+    },
+    "manfred": {
+      "title": "Manfred",
+      "description": "The Job Platform for those who are not looking for a job",
+      "email": "hello@getmanfred.com",
+      "github": "getmanfred",
+      "website": "https://www.getmanfred.com"
+    },
+    "manfred/mac": {
+      "title": "Manfred Awesomic CV",
+      "description": "A standard open source format to define and share CVs",
+      "github": "getmanfred/mac"
+    },
+    "movielabs": {
+      "title": "Motion Picture Laboratories",
+      "description": "A Technology Joint Venture of the Major Hollywood Studios",
+      "github": "movielabs",
+      "website": "https://www.movielabs.com/"
+    },
+    "movielabs/omc": {
+      "title": "The MovieLabs Ontology for Media Creation",
+      "github": "movielabs/omc"
+    },
+    "octue": {
+      "title": "Octue",
+      "description": "Software developer for the renewables industry",
+      "email": "tom@octue.com",
+      "github": "octue",
+      "website": "https://www.octue.com"
+    },
+    "octue/power-curve": {
+      "title": "Schema related to Wind Turbine Power Curves",
+      "github": "octue/power-curve-schema"
+    },
+    "usnistgov": {
+      "title": "U.S. National Institute of Standards and Technology",
+      "description": "Department of Commerce",
+      "github": "usnistgov",
+      "website": "https://www.nist.gov"
+    },
+    "usnistgov/mgi": {
+      "title": "Materials Genome Initiative",
+      "description": "Community development of JSON schema within materials science and engineering",
+      "github": "usnistgov/mgi-json-schema"
+    },
+    "cloudevents": {
+      "title": "CloudEvents",
+      "description": "A specification for describing event data in a common way",
+      "github": "cloudevents",
+      "website": "https://cloudevents.io"
+    },
+    "riskine": {
+      "title": "Riskine",
+      "description": "To create the customer-centric advisory of the future",
+      "email": "office@riskine.com",
+      "github": "riskine",
+      "website": "https://riskine.com"
+    },
+    "riskine/global-insurance": {
+      "title": "Global Insurance Ontology",
+      "github": "riskine/ontology"
+    },
+    "jsr": {
+      "title": "JSR",
+      "description": "The open-source package registry for modern JavaScript and TypeScript",
+      "email": "help@jsr.io",
+      "github": "jsr-io",
+      "website": "https://jsr.io"
+    },
+    "jsonschema": {
+      "title": "JSON Schema",
+      "description": "The organisation responsible for the JSON Schema specification",
+      "github": "json-schema-org",
+      "website": "https://json-schema.org"
+    },
+    "openapi": {
+      "title": "OpenAPI",
+      "description": "The world's most widely used API description standard",
+      "email": "tsc@openapi.groups.io",
+      "github": "oai",
+      "website": "https://openapis.org"
+    },
+    "geojson": {
+      "title": "GeoJSON",
+      "description": "A format for encoding a variety of geographic data structures",
+      "github": "geojson",
+      "website": "https://geojson.org"
+    },
+    "humancellatlas": {
+      "title": "Human Cell Atlas",
+      "description": "An open international collaboration to create comprehensive reference maps of all human cells",
+      "github": "humancellatlas",
+      "website": "https://www.humancellatlas.org/"
+    },
+    "humancellatlas/metadata": {
+      "title": "Human Cell Atlas Metadata Schema",
+      "github": "humancellatlas/metadata-schema"
+    },
+    "dats": {
+      "title": "Data Tag Suite (DATS)",
+      "description": "A data model for describing datasets",
+      "github": "datatagsuite",
+      "website": "https://datatagsuite.github.io/docs/html"
+    },
+    "hl7": {
+      "title": "Health Level Seven International (HL7)",
+      "description": "A range of global standards for the transfer of clinical and administrative health",
+      "email": "webmaster@hl7.org",
+      "github": "hl7",
+      "website": "https://www.hl7.org"
+    },
+    "hl7/fhir": {
+      "title": "Fast Healthcare Interoperability Resources (FHIR)",
+      "description": "A standard for health care data exchange",
+      "email": "fhir.github@gmail.com",
+      "github": "fhir",
+      "website": "https://www.hl7.org/implement/standards/fhir/"
+    },
+    "asyncapi": {
+      "title": "AsyncAPI Initiative",
+      "description": "Building the future of Event-Driven Architectures (EDA)",
+      "email": "info@asyncapi.io",
+      "github": "asyncapi",
+      "website": "https://www.asyncapi.com"
+    },
+    "iptc": {
+      "title": "IPTC",
+      "description": "The global standards body of the news media. We provide the technical foundation for the news ecosystem",
+      "email": "office@iptc.org",
+      "github": "iptc",
+      "website": "https://www.iptc.org"
+    },
+    "iptc/ninjs": {
+      "title": "News in JSON",
+      "description": "A standard the representation of news in JSON",
+      "github": "iptc/newsinjson"
+    },
+    "apis-json": {
+      "title": "APIs.json",
+      "description": "The API discovery format",
+      "email": "info@apievangelist.com",
+      "github": "apis-json",
+      "website": "http://apisjson.org"
+    },
+    "sony": {
+      "title": "Sony",
+      "description": "Sony Group Corporation",
+      "github": "sony",
+      "website": "https://www.sony.com"
+    },
+    "sony/x590": {
+      "title": "X590 Schema",
+      "description": "A JSON Schema for X.590, the ITU-T standard for a JSON Signature Scheme (JSS)",
+      "github": "sony/x590schema"
+    }
+  },
+  "schemas": {
+    "nasa/gcn/v4.2.0": {
+      "base": "https://gcn.nasa.gov/schema/v4.2.0/gcn",
+      "path": "../vendor/public/nasa-gcn-4-2-0"
+    },
+    "nasa/gcn/v4.1.0": {
+      "base": "https://gcn.nasa.gov/schema/v4.1.0/gcn",
+      "path": "../vendor/public/nasa-gcn-4-1-0"
+    },
+    "nasa/gcn/v4.0.0": {
+      "base": "https://gcn.nasa.gov/schema/v4.0.0/gcn",
+      "path": "../vendor/public/nasa-gcn-4-0-0"
+    },
+    "nasa/gcn/v3.0.0": {
+      "base": "https://gcn.nasa.gov/schema/v3.0.0/gcn",
+      "path": "../vendor/public/nasa-gcn-3-0-0"
+    },
+    "nasa/gcn/v2.0.0": {
+      "base": "https://gcn.nasa.gov/schema/v2.0.0/gcn",
+      "path": "../vendor/public/nasa-gcn-2-0-0"
+    },
+    "nasa/gcn/v1.0.0": {
+      "base": "https://gcn.nasa.gov/schema/v1.0.0/gcn",
+      "path": "../vendor/public/nasa-gcn-1-0-0"
+    },
+    "ossf/osv/v1.7.0": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-7-0"
+    },
+    "ossf/osv/v1.6.7": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-6-7"
+    },
+    "ossf/osv/v1.6.6": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-6-6"
+    },
+    "ossf/osv/v1.6.5": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-6-5"
+    },
+    "ossf/osv/v1.6.4": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-6-4"
+    },
+    "ossf/osv/v1.6.3": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-6-3"
+    },
+    "ossf/osv/v1.6.2": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-6-2"
+    },
+    "ossf/osv/v1.6.1": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-6-1"
+    },
+    "ossf/osv/v1.6.0": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-6-0"
+    },
+    "ossf/osv/v1.5.0": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-5-0"
+    },
+    "ossf/osv/v1.4.0": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-4-0/validation"
+    },
+    "ossf/osv/v1.3.1": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-3-1/validation"
+    },
+    "ossf/osv/v1.3.0": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-3-0/validation"
+    },
+    "ossf/osv/v1.2.0": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-2-0/validation"
+    },
+    "ossf/osv/v1.1.0": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-1-0/validation"
+    },
+    "ossf/osv/v1.0.0": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-0-0/validation"
+    },
+    "manfred/mac/v0.6": {
+      "base": "http://github.com/manfred/mac",
+      "path": "../vendor/public/manfred-mac-0-6"
+    },
+    "manfred/mac/v0.5": {
+      "base": "http://github.com/manfred/mac",
+      "path": "../vendor/public/manfred-mac-0-5"
+    },
+    "manfred/mac/v0.4": {
+      "base": "http://github.com/manfred/mac",
+      "path": "../vendor/public/manfred-mac-0-4"
+    },
+    "manfred/mac/v0.3": {
+      "base": "http://github.com/manfred/mac",
+      "path": "../vendor/public/manfred-mac-0-3"
+    },
+    "krakend": {
+      "base": "https://www.krakend.io/schema",
+      "path": "../vendor/public/krakend"
+    },
+    "movielabs/omc": {
+      "base": "https://movielabs.com/omc/json/schema",
+      "path": "../vendor/public/movielabs-omc-2-6"
+    },
+    "octue/power-curve/v1.0.0.alpha-1": {
+      "base": "https://jsonschema.registry.octue.com/octue/power-curves",
+      "path": "../vendor/public/octue-power-curve/power-curve-schema"
+    },
+    "usnistgov/mgi/2022-08": {
+      "base": "https://github.com/usnistgov/mgi-json-schema",
+      "path": "../vendor/public/usnistgov-mgi-2022-08"
+    },
+    "cloudevents/v1.0.2": {
+      "base": "https://github.com/cloudevents/spec",
+      "path": "../vendor/public/cloudevents-1-0-2/cloudevents/formats"
+    },
+    "cloudevents/v1.0.1": {
+      "base": "https://github.com/cloudevents/spec",
+      "path": "../vendor/public/cloudevents-1-0-1"
+    },
+    "cloudevents/v1.0.0": {
+      "base": "https://github.com/cloudevents/spec",
+      "path": "../vendor/public/cloudevents-1-0-0",
+      "defaultDialect": "http://json-schema.org/draft-07/schema#"
+    },
+    "riskine/global-insurance/v1.0.0/core": {
+      "base": "https://ontology.riskine.com",
+      "path": "../vendor/public/riskine-ontology-1-0-0/schemas/core",
+      "defaultDialect": "http://json-schema.org/draft-07/schema#"
+    },
+    "riskine/global-insurance/v1.0.0/products": {
+      "base": "https://ontology.riskine.com",
+      "path": "../vendor/public/riskine-ontology-1-0-0/schemas/products",
+      "defaultDialect": "http://json-schema.org/draft-07/schema#"
+    },
+    "jsr": {
+      "base": "https://jsr.io/schema",
+      "path": "../vendor/public/jsr"
+    },
+    "jsonschema/2020-12": {
+      "base": "https://json-schema.org/draft/2020-12",
+      "path": "../vendor/public/jsonschema-2020-12"
+    },
+    "jsonschema/2019-09": {
+      "base": "https://json-schema.org/draft/2019-09",
+      "path": "../vendor/public/jsonschema-2019-09"
+    },
+    "jsonschema/draft7": {
+      "base": "http://json-schema.org/draft-07",
+      "path": "../vendor/public/jsonschema-draft7"
+    },
+    "jsonschema/draft6": {
+      "base": "http://json-schema.org/draft-06",
+      "path": "../vendor/public/jsonschema-draft6"
+    },
+    "jsonschema/draft4": {
+      "base": "http://json-schema.org/draft-04",
+      "path": "../vendor/public/jsonschema-draft4"
+    },
+    "openapi/v1.2": {
+      "base": "https://raw.githubusercontent.com/oai/openapi-specification/master/schemas/v1.2",
+      "path": "../vendor/public/openapi/schemas/v1.2"
+    },
+    "openapi/v2.0": {
+      "base": "http://swagger.io/v2",
+      "path": "../vendor/public/openapi/schemas/v2.0"
+    },
+    "openapi/v3.0": {
+      "base": "https://spec.openapis.org/oas/3.0/schema/2021-09-28",
+      "path": "../vendor/public/openapi/schemas/v3.0"
+    },
+    "openapi/v3.1": {
+      "base": "https://spec.openapis.org/oas/3.1",
+      "path": "../vendor/public/openapi/schemas/v3.1"
+    },
+    "geojson/v1.0.5": {
+      "base": "https://geojson.org/schema",
+      "path": "../build/geojson-1-0-5"
+    },
+    "geojson/v1.0.4": {
+      "base": "https://geojson.org/schema",
+      "path": "../build/geojson-1-0-4"
+    },
+    "geojson/v1.0.3": {
+      "base": "https://geojson.org/schema",
+      "path": "../build/geojson-1-0-3"
+    },
+    "geojson/v1.0.2": {
+      "base": "https://geojson.org/schema",
+      "path": "../build/geojson-1-0-2"
+    },
+    "geojson/v1.0.1": {
+      "base": "https://geojson.org/schema",
+      "path": "../build/geojson-1-0-1"
+    },
+    "geojson/v1.0.0": {
+      "base": "https://geojson.org/schema",
+      "path": "../build/geojson-1-0-0"
+    },
+    "humancellatlas/metadata/v5.0.0": {
+      "base": "https://schema.humancellatlas.org",
+      "path": "../vendor/public/hca-metadata-5-0-0/json_schema"
+    },
+    "dats/v1.0.0": {
+      "base": "https://w3id.org/dats/schema",
+      "path": "../vendor/public/dats-1-0-0",
+      "x-sourcemeta-registry:blaze-exhaustive": false
+    },
+    "hl7/fhir/r5": {
+      "base": "http://hl7.org/fhir/json-schema",
+      "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r5.core/package/openapi",
+      "x-sourcemeta-registry:blaze-exhaustive": false
+    },
+    "hl7/fhir/r4b": {
+      "base": "http://hl7.org/fhir/json-schema",
+      "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r4b.core/package/openapi",
+      "x-sourcemeta-registry:blaze-exhaustive": false
+    },
+    "hl7/fhir/r4": {
+      "base": "http://hl7.org/fhir/json-schema",
+      "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r4.core/package/openapi",
+      "x-sourcemeta-registry:blaze-exhaustive": false
+    },
+    "hl7/fhir/r3": {
+      "base": "http://hl7.org/fhir/json-schema",
+      "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r3.core/package/openapi",
+      "x-sourcemeta-registry:blaze-exhaustive": false
+    },
+    "asyncapi": {
+      "base": "http://asyncapi.com",
+      "path": "../vendor/public/asyncapi"
+    },
+    "iptc/ninjs": {
+      "base": "http://www.iptc.org/std/ninjs",
+      "path": "../vendor/public/ninjs/specification",
+      "rebase": [
+        { "from": "https://geojson.org/schema", "to": "/geojson/v1.0.5" }
+      ]
+    },
+    "apis-json": {
+      "base": "https://github.com/apis-json/api-json/blob/develop/spec/",
+      "path": "../vendor/public/apis-json/spec"
+    },
+    "sony/x590/v1.0.0": {
+      "base": "https://www.sony.com",
+      "path": "../vendor/public/sony-x590/v1.0.0"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/auth/gcp.json",
+  "title": "GCP Authentication",
+  "description": "Enterprise only. Enables GCP authentication between KrakenD and Google Cloud service account.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/gcp/",
+  "type": "object",
+  "anyOf": [
+    {
+      "required": [
+        "audience"
+      ]
+    },
+    {
+      "required": [
+        "audience",
+        "credentials_file"
+      ]
+    },
+    {
+      "required": [
+        "audience",
+        "credentials_json"
+      ]
+    }
+  ],
+  "properties": {
+    "audience": {
+      "$id": "#auth/gcp/audience",
+      "title": "Audience",
+      "description": "The audience in GCP looks like an URL, and contains the destination service you will ask a token for. Most of the times this URL will match exactly with the `host` entry.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/gcp/",
+      "examples": [
+        "https://gcptest-76fewi6rca-uc.a.run.app"
+      ],
+      "type": "string"
+    },
+    "credentials_file": {
+      "$id": "#auth/gcp/credentials_file",
+      "title": "Path to credentials file",
+      "description": "The relative or absolute path to a credentials file in JSON format that contains all the credentials to authenticate API calls to the given service account.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/gcp/",
+      "examples": [
+        "/etc/krakend/gcp.json"
+      ],
+      "type": "string"
+    },
+    "credentials_json": {
+      "$id": "#auth/gcp/credentials_json",
+      "title": "JSON credentials file",
+      "description": "An inline JSON object containing all the credentials fields to authenticate to GCP.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/gcp/",
+      "examples": [
+        {
+          "type": "service_account",
+          "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+          "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+          "client_email": "xyz@developer.gserviceaccount.com",
+          "client_id": "123",
+          "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/xyz%40developer.gserviceaccount.com",
+          "private_key": "-----BEGIN PRIVATE KEY-----\nSOME_KEY\n-----END PRIVATE KEY-----\n",
+          "private_key_id": "private_key_id",
+          "project_id": "project_id",
+          "token_uri": "https://accounts.google.com/o/oauth2/token"
+        }
+      ],
+      "type": "object"
+    },
+    "custom_claims": {
+      "$id": "#auth/gcp/custom_claims",
+      "title": "Custom claims",
+      "description": "Custom private claims that you can optionally add to an ID token.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/gcp/",
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

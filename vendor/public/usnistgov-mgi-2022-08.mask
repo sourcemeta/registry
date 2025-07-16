@@ -1,0 +1,7 @@
+dereferenced-schemas/
+img/
+ABOUT.md
+CONTRIBUTING.md
+dereference.py
+README.md
+updateContexts.py

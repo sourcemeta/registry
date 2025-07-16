@@ -1,0 +1,306 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.8/krakend.json",
+  "title": "Schema validation for KrakenD",
+  "type": "object",
+  "required": [
+    "version"
+  ],
+  "properties": {
+    "async_agent": {
+      "$ref": "async_agent.json"
+    },
+    "cache_ttl": {
+      "$id": "#service/cache_ttl",
+      "title": "Cache TTL",
+      "description": "Sets a default `Cache-Control: public, max-age=%d` header to all endpoints where `%d` is the conversion to seconds of any duration you write, indicating for how long the client (or CDN) can cache the content of the request. You can override this value per endpoint, but setting an endpoint to 0 will use the default value instead. Notice that KrakenD does not cache the content with this parameter, but tells the client how to do it. Defaults to `0s` (no cache). **For KrakenD cache, see [backend caching](https://www.krakend.io/docs/backends/caching/)**.",
+      "default": "0s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "client_tls": {
+      "title": "TLS Client settings",
+      "description": "Allows to set specific transport settings when using TLS in your upstream services. See [TLS Client](https://www.krakend.io/docs/service-settings/tls/) for more settings",
+      "$ref": "client_tls.json"
+    },
+    "debug_endpoint": {
+      "$id": "#service/debug_endpoint",
+      "title": "Debug endpoint",
+      "description": "Enables the `/__debug/` endpoint for this configuration. You can safely enable it in production.",
+      "default": false,
+      "type": "boolean"
+    },
+    "dialer_fallback_delay": {
+      "$id": "#service/dialer_fallback_delay",
+      "title": "Dialer fallback delay",
+      "description": "Specifies the length of time to wait before spawning a RFC 6555 Fast Fallback connection. If zero, a default delay of 300ms is used.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": "300ms",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "dialer_keep_alive": {
+      "$id": "#service/dialer_keep_alive",
+      "title": "Dialer keep alive",
+      "description": "The interval between keep-alive probes for an active network connection. If zero, keep-alive probes are sent with a default value (currently 15 seconds), if supported by the protocol and operating system. Network protocols or operating systems that do not support keep-alives ignore this field. If negative, keep-alive probes are disabled.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": "15s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "dialer_timeout": {
+      "$id": "#service/dialer_timeout",
+      "title": "Dialer Timeout",
+      "description": "The timeout of the dial function for creating connections.The default is no timeout. With or without a timeout, the operating system may impose its own earlier timeout.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": "0s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "disable_compression": {
+      "$id": "#service/disable_compression",
+      "title": "Disable compression",
+      "description": "When true prevents requesting compression with an `Accept-Encoding: gzip` request header when the Request contains no existing Accept-Encoding value. If the Transport requests gzip on its own and gets a gzipped response, it's transparently decoded. However, if the user explicitly requested gzip it is not automatically uncompressed.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": false,
+      "type": "boolean"
+    },
+    "disable_keep_alives": {
+      "$id": "#service/disable_keep_alives",
+      "title": "Disable keep alives",
+      "description": "When true it disables HTTP keep-alives and will only use the connection to the server for a single HTTP request.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": false,
+      "type": "boolean"
+    },
+    "disable_rest": {
+      "$id": "#service/disable_rest",
+      "title": "Disable RESTful URLs",
+      "description": "Endpoints require in its `endpoint` definition the usage of a RESTful pattern. If you require unrestful patterns, like `/file.{ext}` (instead of its RESTful counterpart `/file/{ext}`), then you must set this parameter to `true`.\nYou can use multiple variables if needed, but only one can be in an unrestful position, and when you do, it must be in the last position of the definition. E.g.: you can declare an endpoint `/file/{name}/base.{ext}` but you cannot do `/file.{ext}.json` because the variable `{ext}` is not in the last position of the definitino, and therefore the remaining path after `{ext}` is ignored by the router.",
+      "default": false,
+      "type": "boolean"
+    },
+    "dns_cache_ttl": {
+      "$id": "#service/dns_cache_ttl",
+      "title": "DNS Cache TTL",
+      "description": "Sets the maximum time KrakenD can store the results of a query to the configured Service Discovery returning the available hosts list. For values under `1s` this setting is ignored.\n\nSee: https://www.krakend.io/docs/backends/service-discovery/",
+      "default": "30s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "echo_endpoint": {
+      "$id": "#service/echo_endpoint",
+      "title": "Echo endpoint",
+      "description": "Enables the `/__echo/` endpoint for this configuration, that returns information about the incoming request. When using /__echo as a backend you can check the actual headers and content a backend receives after all the zero-trust filtering.",
+      "default": false,
+      "type": "boolean"
+    },
+    "endpoints": {
+      "title": "Endpoints",
+      "description": "Your API contract, or the list of all paths recognized by this gateway. The paths `/__health/`, `/__debug/`, `/__echo/`, `/__catchall`, and `/__stats/` are reserved by the system and you cannot declare them. Their existence depends on their respective settings.\n\nSee: https://www.krakend.io/docs/endpoints/",
+      "type": "array",
+      "items": {
+        "$ref": "endpoint.json",
+        "type": "object"
+      }
+    },
+    "expect_continue_timeout": {
+      "$id": "#service/expect_continue_timeout",
+      "title": "Expect_continue_timeout",
+      "description": "If non-zero, specifies the amount of time to wait for a server's first response headers after fully writing the request headers if the request has an `Expect: 100-continue` header. Zero means no timeout and causes the body to be sent immediately, without waiting for the server to approve. This time does not include the time to send the request header.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": "0s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "extra_config": {
+      "title": "Extra configuration",
+      "description": "The optional configuration that extends the core functionality of the gateway is specified here. The `extra_config` at this level enables service components, meaning that they apply globally to all endpoints or activity.",
+      "$ref": "service_extra_config.json",
+      "type": "object"
+    },
+    "host": {
+      "$id": "#service/host",
+      "title": "Default host",
+      "description": "The default host list for all backends if they specify none.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "idle_connection_timeout": {
+      "$id": "#service/idle_connection_timeout",
+      "title": "HTTP Idle timeout",
+      "description": "The maximum number of idle (keep-alive) connections across all hosts. Zero means no limit.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": "0s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "idle_timeout": {
+      "$id": "#service/idle_timeout",
+      "title": "HTTP Idle timeout",
+      "description": "The maximum amount of time to wait for the next request when keep-alives are enabled. If `idle_timeout` is zero, the value of `read_timeout` is used. If both are zero, there is no timeout.\n\nSee: https://www.krakend.io/docs/service-settings/http-server-settings/",
+      "default": "0s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "listen_ip": {
+      "$id": "#service/listen_ip",
+      "title": "Listen IP",
+      "description": "The IP address that KrakenD listens to in IPv4 or IPv6. An empty string, or no declaration at all means listening on all interfaces. The inclusion of `::` is meant for IPv6 format only (**this is not the port**). Examples of valid addresses are `192.0.2.1` (IPv4), `2001:db8::68` (IPv6). The values `::` and `0.0.0.0` listen to all addresses and both are valid for IPv4 and IPv6 simultaneously.",
+      "examples": [
+        "172.12.1.1",
+        "::1"
+      ],
+      "default": "0.0.0.0",
+      "type": "string"
+    },
+    "max_header_bytes": {
+      "$id": "#service/max_header_bytes",
+      "title": "Max header bytes",
+      "description": "Allows overriding the maximum size of headers sent in bytes. It does not limit the request body. When the value is zero, the default is used instead (1MB)\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": 1000000,
+      "type": "integer"
+    },
+    "max_idle_connections": {
+      "$id": "#service/max_idle_connections",
+      "title": "Max idle connections",
+      "description": "The maximum number of idle (keep-alive) connections across all hosts. Zero means no limit.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": 0,
+      "type": "integer"
+    },
+    "max_idle_connections_per_host": {
+      "$id": "#service/max_idle_connections_per_host",
+      "title": "Max idle connections per host",
+      "description": "If non-zero, controls the maximum idle (keep-alive) connections to keep per-host. If zero, `250` is used instead.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": 250,
+      "type": "integer"
+    },
+    "name": {
+      "$id": "#service/name",
+      "title": "Name",
+      "description": "Used in telemetry. A friendly name, title, date, version or any other short description that helps you recognize the configuration.",
+      "default": "KrakenD configuration at MyCompany",
+      "type": "string"
+    },
+    "output_encoding": {
+      "$id": "#service/output_encoding",
+      "title": "Output Encoding",
+      "description": "The encoding used to display the content to the end-user. This setting is the default for all endpoints, unless they have another `output_encoding` overrinding this value.\n\nSee: https://www.krakend.io/docs/endpoints/content-types/",
+      "default": "json",
+      "enum": [
+        "json",
+        "fast-json",
+        "json-collection",
+        "xml",
+        "negotiate",
+        "string",
+        "no-op"
+      ]
+    },
+    "plugin": {
+      "$id": "#service/plugin",
+      "title": "Plugin",
+      "description": "Enables external plugins that are copied in a specific folder",
+      "type": "object",
+      "required": [
+        "pattern",
+        "folder"
+      ],
+      "properties": {
+        "pattern": {
+          "$id": "#service/plugin/pattern",
+          "title": "Pattern",
+          "description": "The pattern narrows down the contents of the folder. It represents the substring that must be present in the plugin name to load.",
+          "examples": [
+            ".so",
+            "-production.so"
+          ],
+          "default": ".so",
+          "type": "string"
+        },
+        "folder": {
+          "$id": "#service/plugin/folder",
+          "title": "Folder",
+          "description": "The path in the filesystem where all the plugins you want to load are. MUST END IN SLASH. The folder can be a relative or absolute path. KrakenD Enterprise uses /opt/krakend/plugins/ for all plugins.",
+          "examples": [
+            "/opt/krakend/plugins/",
+            "./plugins/"
+          ],
+          "default": "/opt/krakend/plugins/",
+          "type": "string"
+        }
+      }
+    },
+    "port": {
+      "$id": "#service/port",
+      "title": "Port",
+      "description": "The TCP port where KrakenD is listening to. Recommended value is in the range 1024-65535 to run as an unpriviliged user",
+      "default": 8080,
+      "type": "integer",
+      "maximum": 65535,
+      "minimum": 0
+    },
+    "read_header_timeout": {
+      "$id": "#service/read_header_timeout",
+      "title": "HTTP Idle timeout",
+      "description": "The amount of time allowed to read request headers. The connection's read deadline is reset after reading the headers and the Handler can decide what is considered too slow for the body.\n\nSee: https://www.krakend.io/docs/service-settings/http-server-settings/",
+      "default": "0s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "read_timeout": {
+      "$id": "#service/read_timeout",
+      "title": "HTTP read timeout",
+      "description": "Is the maximum duration for reading the entire request, including the body. Because `read_timeout` does not let Handlers make per-request decisions on each request body's acceptable deadline or upload rate, most users will prefer to use `read_header_timeout`. It is valid to use them both.\n\nSee: https://www.krakend.io/docs/service-settings/http-server-settings/",
+      "default": "0s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "response_header_timeout": {
+      "$id": "#service/response_header_timeout",
+      "title": "Response header timeout",
+      "description": "If non-zero, specifies the amount of time to wait for a server's response headers after fully writing the request (including its body, if any). This time does not include the time to read the response body.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/",
+      "default": "0s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "sequential_start": {
+      "$id": "#service/sequential_start",
+      "title": "Sequential start",
+      "description": "A sequential start registers all async agents in order, allowing you to have the starting logs in sequential order. A non-sequential start is much faster, but logs are harder to follow.\n\nSee: https://www.krakend.io/docs/service-settings/http-server-settings/",
+      "default": false,
+      "type": "boolean"
+    },
+    "timeout": {
+      "$id": "#service/timeout",
+      "title": "Global timeout",
+      "description": "Defines a default timeout for all endpoints. Can be overriden per endpoint.\n\nSee: https://www.krakend.io/docs/service-settings/http-transport-settings/#global-timeout",
+      "default": "2s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "tls": {
+      "$ref": "tls.json"
+    },
+    "use_h2c": {
+      "title": "Enable h2c",
+      "description": "Enable the support for HTTP/2 with no TLS. This option is only advised when you have a load balancer in front of KrakenD doing SSL termination, and you have no option to enable SSL communication between the balancer and KrakenD (no internal certificates available either). Otherwise, enabling this flag is less secure and less performant.\n\nSee: https://www.krakend.io/docs/service-settings/router-options/",
+      "default": false,
+      "type": "boolean"
+    },
+    "version": {
+      "$id": "#service/version",
+      "title": "Version of this syntax",
+      "description": "The syntax version tells KrakenD how to read this configuration. This is not the KrakenD version. Each KrakenD version is linked to a syntax version, and since KrakenD v2.0 the version must be `3`",
+      "const": 3
+    },
+    "write_timeout": {
+      "$id": "#service/write_timeout",
+      "title": "HTTP write timeout",
+      "description": "Maximum duration before timing out writes of the response.\n\nSee: https://www.krakend.io/docs/service-settings/http-server-settings/",
+      "default": "0s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false,
+  "definitions": {}
+}

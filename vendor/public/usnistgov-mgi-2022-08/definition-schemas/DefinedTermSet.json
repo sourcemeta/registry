@@ -1,0 +1,35 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "DefinedTermSet",
+    "definitions": {"DefinedTermSet": {
+        "type": "object",
+        "properties": {
+            "hasDefinedTerm": {
+                "type": "array",
+                "title": "Has Defined Terms",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Has Defined Term",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                }
+            },
+            "uploadDate": {
+                "title": "Upload Date",
+                "description": "A date value in ISO 8601 date format, e.g.: YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD",
+                "type": "string"
+            },
+            "isPartOf": {
+                "type": "array",
+                "title": "Is Part Of",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Is Part Of",
+                    "cordra": {"type": {"handleReference": {"types": ["Collection"]}}}
+                }
+            }
+        }
+    }}
+}

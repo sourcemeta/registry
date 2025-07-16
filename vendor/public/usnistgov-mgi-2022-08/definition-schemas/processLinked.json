@@ -1,0 +1,79 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "exampleOfWork",
+    "definitions": {
+        "exampleOfWork": {
+            "type": "array",
+            "title": "This Material/Data was created by/during this Process",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "title": "Processing History/Protocol",
+                "cordra": {"type": {"handleReference": {"types": [
+                    "ProcessHistory",
+                    "ProcessProtocol"
+                ]}}}
+            }
+        },
+        "workExample": {
+            "type": "array",
+            "title": "Resulting Materials/Data",
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "title": "Resulting Material/Data",
+                "cordra": {"type": {"handleReference": {"types": [
+                    "Material",
+                    "Dataset",
+                    "File",
+                    "MaterialStructure",
+                    "MaterialProperty",
+                    "MaterialPerformance",
+                    "TabularData",
+                    "TabularDataPackage"
+                ]}}}
+            }
+        },
+        "supply": {
+            "type": "array",
+            "title": "Supply/Starting Materials",
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "title": "Supply/Starting Material",
+                "properties": {
+                    "@type": {
+                        "type": "array",
+                        "default": [
+                            "HowToSupply",
+                            "mat:Material"
+                        ]
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "cordra": {"type": {"handleReference": {"types": ["Material"]}}}
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "requiredQuantity": {"$ref": "QuantitativeValue.json#/definitions/QuantitativeValue"}
+                }
+            }
+        },
+        "isSupplyFor": {
+            "type": "array",
+            "title": "This Material is a Supply/Starting Material for this Process",
+            "uniqueItems": true,
+            "items": {
+                "title": "Process",
+                "type": "string",
+                "cordra": {"type": {"handleReference": {"types": [
+                    "ProcessHistory",
+                    "ProcessProtocol"
+                ]}}}
+            }
+        }
+    }
+}

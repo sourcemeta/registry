@@ -1,0 +1,40 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/ontology/5.0.0/time_unit_ontology",
+    "description": "A term that may be associated with a time unit-related ontology term",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "text"
+    ],
+    "title": "time_unit_ontology",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/ontology/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/time_unit_ontology"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "text": {
+            "description": "The name of a time unit being used.",
+            "type": "string"
+        },
+        "ontology": {
+            "description": "An ontology term identifier in the form prefix:accession",
+            "type": "string",
+            "graph_restriction":  {
+                "ontologies" : ["obo:uo, obo:efo"],
+                "classes": ["UO:0000003, UO:0000149"],
+                "relations": ["rdfs:subClassOf"],
+                "direct": false,
+                "include_self": false
+            }
+        }
+    },
+    "type": "object"
+}

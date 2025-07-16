@@ -1,0 +1,19 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.0.0/gcn/notices/core/Distance.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Distance",
+  "description": "Luminosity Distance",
+  "properties": {
+    "luminosity_distance": {
+      "type": "number",
+      "description": "Luminosity distance [Mpc]"
+    },
+    "luminosity_distance_error": {
+      "type": "array",
+      "items": { "type": "number" },
+      "maxItems": 2,
+      "description": "Luminosity distance uncertainty [Mpc, 1-sigma], with optional asymmetric uncertainty"
+    }
+  }
+}

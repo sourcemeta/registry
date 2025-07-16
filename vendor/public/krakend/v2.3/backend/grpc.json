@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/backend/grpc.json",
+  "title": "gRPC backend connection",
+  "description": "Enterprise only. Handles the communication with a backend using gRPC, after having defined the protocol buffer definitions.\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+  "type": "object",
+  "properties": {
+    "client_tls": {
+      "title": "Enable TLS client options",
+      "description": "Enables specific TLS connection options when using the gRPC service. Supports all options under [TLS client settings](https://www.krakend.io/docs/service-settings/tls/#client-tls-settings).\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "$ref": "../client_tls.json"
+    },
+    "disable_query_params": {
+      "title": "Disable query parameters",
+      "description": "When `true`, it does not use URL parameters (`{placeholders}` in endpoints)  or query strings to fill the gRPC payload to send. If `use_request_body` is not set, or set to `false`, and this option is set to `true`, there will be no input used for the gRPC message to send. That is still a valid option, when we just want to send the message with its default values, or when the input for the gRPC calls is just the [empty message](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/empty.proto).\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "default": false,
+      "type": "boolean"
+    },
+    "input_mapping": {
+      "title": "Mapping of parameters",
+      "description": "A dictionary that converts query string parameters and parameters from `{placeholders}` into a different field during the backend request. When passing parameters using `{placeholder}` the parameter capitalizes the first letter, so you receive `Placeholder`.\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "examples": [
+        {
+          "lat": "where.latitude",
+          "lon": "where.longitude"
+        }
+      ],
+      "type": "object"
+    },
+    "output_duration_as_string": {
+      "title": "Output duration types as string",
+      "description": "Well-known Duration types (`google.protobuf.Duration`) are returned as a struct containing fields with `seconds` and `nanos` fields (flag set to `false`). Setting this flag to `true` transforms the timestamps into a string representation in seconds.\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "default": false,
+      "type": "boolean"
+    },
+    "output_enum_as_string": {
+      "title": "Output enum types as string",
+      "description": "Enum types are returned as numeric values (flag set to `false`). Set this flag to `true` to return the string representation of the enum value. For instance, an enum representing allergies, such as `['NUTS', 'MILK', ' SOY', 'WHEAT']` would return a value `SOY` when this flag is `true`, or `2` when `false`.\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "default": false,
+      "type": "boolean"
+    },
+    "output_remove_unset_values": {
+      "title": "Output removes unset values",
+      "description": "When the response has missing fields from the definition, they are returned with default values. Setting this flag to `true` removes those fields from the response, while setting it to `false` or not setting it, returns all the fields in the definition.\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "default": false,
+      "type": "boolean"
+    },
+    "output_timestamp_as_string": {
+      "title": "Output timestamps types as string",
+      "description": "Well-known Timestamp types (`google.protobuf.Timestamp`) are returned as a struct containing fields with `seconds` and `nanos` fields (flag set to `false`). Setting this flag to `true` transforms the timestamps into a string representation in RFC3999 format.\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "default": false,
+      "type": "boolean"
+    },
+    "request_naming_convention": {
+      "title": "Request naming convention",
+      "description": "Defines the naming convention used to format the request. Applies to query strings and JSON field names. By default, the gateway uses `snake_case` which makes use of the standard `encoding/json` package, while when you choose `camelCase` the `protobuf/encoding` deserialization is used instead.\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "default": "snake_case",
+      "enum": [
+        "camelCase",
+        "snake_case"
+      ]
+    },
+    "response_naming_convention": {
+      "title": "Response naming convention",
+      "description": "Defines the naming convention used to format the returned data. By default, the gateway uses `snake_case` which makes use of the standard `encoding/json` package, while when you choose `camelCase` the `protobuf/encoding` deserialization is used instead.\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "default": "snake_case",
+      "enum": [
+        "camelCase",
+        "snake_case"
+      ]
+    },
+    "use_request_body": {
+      "title": "Use body",
+      "description": "Enables the use of the sent body to fill the gRPC request. Take into account that when you set this flag to `true` a body is expected, and this body is **consumed** in the first backend. If the endpoint that uses this gRPC backend has additional backends (either gRPC or HTTP) that also expect to consume the payload, these requests might fail.\n\nSee: https://www.krakend.io/docs/backends/grpc/",
+      "default": false,
+      "type": "boolean"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,26 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.0.0/gcn/notices/core/GeoLocBase.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spacecraft Geolocation and McIlwain L",
+  "description": "Enables GCN providers to include spacecraft geolocation and McIlwain L-Parameter.",
+  "type": "object",
+  "properties": {
+    "latitude": {
+      "type": "number",
+      "description": "Geocentric latitude [deg]"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Geocentric longitude [deg]"
+    },
+    "altitude": {
+      "type": "number",
+      "description": "Distance from the surface of the Earth [km]."
+    },
+    "mcilwain_l": { "type": "number", "description": "McIlwain L-parameter" },
+    "geoloc_time": {
+      "type": "string",
+      "description": "Time [UTC, ISO 8601] of the geolocation and McIlwain L-parameter, if different than the trigger time."
+    }
+  }
+}

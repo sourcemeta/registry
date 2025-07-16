@@ -1,0 +1,165 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/backend_extra_config.json",
+  "title": "Extra configuration for backends",
+  "type": "object",
+  "properties": {
+    "auth/client-credentials": {
+      "$ref": "auth/client-credentials.json"
+    },
+    "auth/gcp": {
+      "$ref": "auth/gcp.json"
+    },
+    "auth/ntlm": {
+      "$ref": "auth/ntlm.json"
+    },
+    "backend/amqp/consumer": {
+      "$ref": "backend/amqp/consumer.json"
+    },
+    "backend/amqp/producer": {
+      "$ref": "backend/amqp/producer.json"
+    },
+    "backend/graphql": {
+      "$ref": "backend/graphql.json"
+    },
+    "backend/grpc": {
+      "$ref": "backend/grpc.json"
+    },
+    "backend/http": {
+      "oneOf": [
+        {
+          "required": [
+            "return_error_details"
+          ]
+        },
+        {
+          "required": [
+            "return_error_code"
+          ]
+        }
+      ],
+      "properties": {
+        "return_error_code": {
+          "title": "Return error code",
+          "description": "Returns the HTTP status code of the backend (when there is only one). The headers are not returned.\n\nSee: https://www.krakend.io/docs/backends/detailed-errors/",
+          "type": "boolean"
+        },
+        "return_error_details": {
+          "title": "Return error details",
+          "description": "Returns to the client details of a failing request.\n\nSee: https://www.krakend.io/docs/backends/detailed-errors/",
+          "type": "string"
+        }
+      }
+    },
+    "backend/http/client": {
+      "$ref": "backend/http_client.json"
+    },
+    "backend/lambda": {
+      "$ref": "backend/lambda.json"
+    },
+    "backend/pubsub/publisher": {
+      "$ref": "backend/pubsub/publisher.json"
+    },
+    "backend/pubsub/subscriber": {
+      "$ref": "backend/pubsub/subscriber.json"
+    },
+    "backend/soap": {
+      "$ref": "backend/soap.json"
+    },
+    "backend/static-filesystem": {
+      "$ref": "backend/static-filesystem.json"
+    },
+    "modifier/body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "modifier/jmespath": {
+      "$ref": "modifier/jmespath.json"
+    },
+    "modifier/lua-backend": {
+      "$ref": "modifier/lua.json"
+    },
+    "modifier/martian": {
+      "title": "Martian modifiers",
+      "description": "Transform requests and responses through a simple DSL definition in the configuration file.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "$ref": "modifier/martian.json",
+      "type": "object"
+    },
+    "modifier/request-body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "modifier/response-body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "plugin/http-client": {
+      "$ref": "plugin/http-client.json"
+    },
+    "plugin/req-resp-modifier": {
+      "$ref": "plugin/req-resp-modifier.json"
+    },
+    "proxy": {
+      "$ref": "proxy.json"
+    },
+    "qos/circuit-breaker": {
+      "$ref": "qos/circuit-breaker.json"
+    },
+    "qos/http-cache": {
+      "title": "Backend Cache",
+      "description": "Enable in-memory caching for backend responses for as long as its Cache-Control header permits.\n\nSee: https://www.krakend.io/docs/backends/caching/",
+      "type": "object",
+      "properties": {
+        "shared": {
+          "title": "Shared cache",
+          "description": "The `shared` cache makes that different backend definitions with this flag enabled can reuse the cache. When the `shared` flag is missing or set to false, the backend uses its own cache private context.\n\nSee: https://www.krakend.io/docs/backends/detailed-errors/",
+          "type": "boolean"
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "qos/ratelimit/proxy": {
+      "$ref": "qos/ratelimit/proxy.json"
+    },
+    "security/policies": {
+      "$ref": "./security/policies.json",
+      "anyOf": [
+        {
+          "required": [
+            "req"
+          ]
+        },
+        {
+          "required": [
+            "resp"
+          ]
+        }
+      ],
+      "not": {
+        "required": [
+          "jwt"
+        ]
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "telemetry/opentelemetry": {
+      "$ref": "telemetry/opentelemetry-backend.json"
+    },
+    "validation/cel": {
+      "$ref": "validation/cel.json"
+    },
+    "workflow": {
+      "title": "Workflow",
+      "description": "Enterprise only. A whole new endpoint that is executed within this backend context.",
+      "$ref": "workflow.json",
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

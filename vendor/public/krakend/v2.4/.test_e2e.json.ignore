@@ -1,0 +1,36 @@
+{
+  "$schema": "./e2e.json",
+  "@comment": "Makes sure that the debug endpoint returns a status ok",
+  "in": {
+    "method": "GET",
+    "url": "http://localhost:8080/__debug/something",
+    "header": {
+      "User-Agent": "krakend e2e tool"
+    }
+  },
+  "out": {
+    "status_code": 200,
+    "body": "http://localhost:8080/__debug/something",
+    "header": {
+      "content-type": [
+        "application/json; charset=utf-8"
+      ],
+      "Cache-Control": [
+        ""
+      ],
+      "X-Krakend-Completed": [
+        "true"
+      ]
+    },
+    "schema": {
+      "title": "A JSON schema",
+      "description": "some description",
+      "type": "object",
+      "properties": {
+        "abc": {
+          "type": "array"
+        }
+      }
+    }
+  }
+}

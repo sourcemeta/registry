@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.4/qos/ratelimit/proxy.json",
+  "title": "Proxy ratelimit",
+  "description": "Restrict the rate of requests KrakenD makes to your backends.\n\nSee: https://www.krakend.io/docs/backends/rate-limit/",
+  "type": "object",
+  "required": [
+    "max_rate",
+    "capacity"
+  ],
+  "properties": {
+    "capacity": {
+      "$id": "#qos/ratelimit/proxy/capacity",
+      "title": "Capacity",
+      "description": "The capacity according to the [token bucket algorithm](https://www.krakend.io/docs/throttling/token-bucket/). Defines the maximum requests you can do in an instant (including the zero moment when you start the gateway), and can be larger or smaller than the `max_rate`. When unsure, use the same value of `max_rate`, so the maximum number of requests can be consumed at once.\n\nSee: https://www.krakend.io/docs/backends/rate-limit/",
+      "default": 1,
+      "type": "integer"
+    },
+    "every": {
+      "title": "Time window",
+      "description": "Time period in which the counter works. For instance, if you set an `every` of `10m` and a `max_rate` of `5`, you are allowing 5 requests every ten minutes.\n\nSee: https://www.krakend.io/docs/endpoints/rate-limit/",
+      "default": "1s",
+      "$ref": "../../timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "max_rate": {
+      "$id": "#qos/ratelimit/proxy/max_rate",
+      "title": "Max rate",
+      "description": "Maximum requests per second you want to accept in this backend.\n\nSee: https://www.krakend.io/docs/backends/rate-limit/",
+      "examples": [
+        0.5
+      ],
+      "type": "number"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

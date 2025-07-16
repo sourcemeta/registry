@@ -1,0 +1,55 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/process/5.0.0/purchased_reagents",
+    "description": "This module describes purchased kits or reagents used in any process.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy"
+    ],
+    "title": "purchased_reagents",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/process/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/purchased_reagents"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "retail_name": {
+          "description": "The retail name of the kit/reagent.",
+          "type": "string",
+          "example": "SureCell WTA 3' Library Prep Kit",
+          "user_friendly": "Retail name"
+        },
+        "catalog_number": {
+          "description": "The catalog number of the kit/reagent.",
+          "type": "string",
+          "example": "20014279",
+          "user_friendly": "Catalog number"
+        },
+        "manufacturer": {
+           "description": "The manufacturer of the kit/reagent.",
+           "type": "string",
+           "example": "Illumina",
+           "user_friendly": "Manufacturer"
+        },
+        "batch_number": {
+           "description": "The batch or lot number of the kit/reagent.",
+           "type": "string",
+           "example": "10001A",
+           "user_friendly": "Batch/lot number"
+        },
+        "expiry_date": {
+           "description": "The date of expiration for the kit/reagent.",
+            "type": "string",
+            "format": "date",
+            "example": "2018-01-31",
+            "user_friendly": "Expiry date"
+        }
+	}
+}

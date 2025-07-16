@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.2/telemetry/newrelic.json",
+  "title": "NewRelic exporter",
+  "description": "The New Relic integration lets you push KrakenD metrics and distributed traces to your New Relic dashboard. It uses internally the official New Relic SDK and brings its features to your APM dashboard.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/newrelic/",
+  "type": "object",
+  "required": [
+    "license"
+  ],
+  "properties": {
+    "debug": {
+      "$id": "#telemetry/newrelic/debug",
+      "title": "Enable debug",
+      "description": "Set to true when configuring New Relic for the first time while in development, to see the activity in the logs. Set to false in production.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/newrelic/",
+      "default": false,
+      "type": "boolean"
+    },
+    "license": {
+      "$id": "#telemetry/newrelic/url",
+      "title": "License key",
+      "description": "The API key provided by New Relic to push data into your account.\n\nSee: https://www.krakend.io/docs/enterprise/telemetry/newrelic/",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

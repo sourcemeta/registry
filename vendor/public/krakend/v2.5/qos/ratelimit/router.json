@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.5/qos/ratelimit/router.json",
+  "type": "object",
+  "anyOf": [
+    {
+      "required": [
+        "max_rate"
+      ]
+    },
+    {
+      "required": [
+        "client_max_rate"
+      ]
+    }
+  ],
+  "properties": {
+    "capacity": {
+      "$id": "#endpoint_extra_config/qos/ratelimit/router/capacity",
+      "title": "Capacity",
+      "description": "Defines the maximum number of [tokens a bucket can hold](https://www.krakend.io/docs/throttling/token-bucket/), or said otherwise, how many requests will you accept from **all users together** at **any given instant**. When the gateway starts, the bucket is full. As requests from users come, the remaining tokens in the bucket decrease. At the same time, the `max_rate` refills the bucket at the desired rate until its maximum capacity is reached. The default value for the `capacity` is the `max_rate` value expressed in seconds or 1 for smaller fractions. When unsure, use the same number as `max_rate`.\n\nSee: https://www.krakend.io/docs/endpoints/rate-limit/",
+      "default": 1,
+      "type": "integer"
+    },
+    "client_capacity": {
+      "$id": "#endpoint_extra_config/qos/ratelimit/router/client_capacity",
+      "title": "Client capacity",
+      "description": "Defines the maximum number of [tokens a bucket can hold](https://www.krakend.io/docs/throttling/token-bucket/), or said otherwise, how many requests will you accept from **each individual user** at **any given instant**. Works just as `capacity`, but instead of having one bucket for all users, keeps a counter for every connected client and endpoint, and refills from `client_max_rate` instead of `max_rate`. The client is recognized using the `strategy` field (an IP address, a token, a header, etc.). The default value for the `client_capacity` is the `client_max_rate` value expressed in seconds or 1 for smaller fractions. When unsure, use the same number as `client_max_rate`.\n\nSee: https://www.krakend.io/docs/endpoints/rate-limit/",
+      "default": 1,
+      "type": "integer"
+    },
+    "client_max_rate": {
+      "$id": "#endpoint_extra_config/qos/ratelimit/router/client_max_rate",
+      "title": "Client max rate",
+      "description": "Number of tokens you add to the [Token Bucket](https://www.krakend.io/docs/throttling/token-bucket/) for each individual user (*user quota*) in the time interval you want (`every`). The remaining tokens in the bucket are the requests a specific user can do. It keeps a counter for every client and endpoint. Keep in mind that every KrakenD instance keeps its counters in memory for **every single client**.\n\nSee: https://www.krakend.io/docs/endpoints/rate-limit/",
+      "type": "number"
+    },
+    "every": {
+      "title": "Time window",
+      "description": "Time period in which the maximum rates operate. For instance, if you set an `every` of `10m` and a `max_rate` of `5`, you are allowing 5 requests every ten minutes.\n\nSee: https://www.krakend.io/docs/endpoints/rate-limit/",
+      "default": "1s",
+      "$ref": "../../timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "key": {
+      "$id": "#endpoint_extra_config/qos/ratelimit/router/key",
+      "title": "Header key",
+      "description": "Available when using `client_max_rate` and you have set a `strategy` of `header`. It makes no sense in other contexts. Sets the header containing the user identification (e.g., `Authorization` on tokens) or IP (e.g.,`X-Original-Forwarded-For`). When the header contains a list of space-separated IPs, it will take the IP from the client that hit the first trusted proxy.\n\nSee: https://www.krakend.io/docs/endpoints/rate-limit/",
+      "examples": [
+        "X-TOKEN"
+      ],
+      "type": "string"
+    },
+    "max_rate": {
+      "$id": "#endpoint_extra_config/qos/ratelimit/router/max_rate",
+      "title": "Max rate",
+      "description": "Sets the maximum number of requests all users can do in the given time frame. Internally uses the [Token Bucket](https://www.krakend.io/docs/throttling/token-bucket/) algorithm. The absence of `max_rate` in the configuration or a `0` is the equivalent to no limitation. You can use decimals if needed.\n\nSee: https://www.krakend.io/docs/endpoints/rate-limit/",
+      "type": "number"
+    },
+    "strategy": {
+      "$id": "#endpoint_extra_config/qos/ratelimit/router/strategy",
+      "title": "Strategy",
+      "description": "Available when using `client_max_rate`. Sets the strategy you will use to set client counters. Choose `ip` when the restrictions apply to the client's IP address, or set it to `header` when there is a header that identifies a user uniquely. That header must be defined with the `key` entry.\n\nSee: https://www.krakend.io/docs/endpoints/rate-limit/",
+      "enum": [
+        "ip",
+        "header"
+      ]
+    }
+  }
+}

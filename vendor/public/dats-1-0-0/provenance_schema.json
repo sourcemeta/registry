@@ -1,0 +1,51 @@
+{
+  "id": "https://w3id.org/dats/schema/provenance_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "Internal DATS provenance schema",
+  "description": "The provenance information kept in DataMed. This schema is for internal use in DataMed and not to be implemented by repositories.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Provenance" ]},
+    "transformationFile": {
+      "description": "The DataMed transformation file describing the mapping between the original repository and DATS.",
+      "type": "string"
+    },
+    "ingestMethod": {
+      "description": "The method used to ingest the dataset from the repository into DataMed.",
+      "type": "string"
+    },
+    "ingestTarget": {
+      "description": "The location where the source files can be found, using the ingestMethod, to produce this DATS intance ingested in DataMed.",
+      "type": "string"
+    },
+    "filePattern": {
+      "description": "A regular expression indicating the pattern of files considered during the ingestion process.",
+      "type": "string"
+    },
+    "ingestTimestamp": {
+      "description": "A timestamp reporting when the ingestion occurred.",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

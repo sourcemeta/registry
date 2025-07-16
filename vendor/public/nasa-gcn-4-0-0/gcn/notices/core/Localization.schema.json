@@ -1,0 +1,64 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.0.0/gcn/notices/core/Localization.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Localization",
+  "description": "Localization of transient",
+  "properties": {
+    "ra": {
+      "type": "number",
+      "description": "ICRS right ascension [deg], utilizes the J2000 epoch and an equatorial coordinate system"
+    },
+    "dec": {
+      "type": "number",
+      "description": "ICRS declination [deg], utilizes the J2000 epoch and an equatorial coordinate system"
+    },
+    "ra_dec_error": {
+      "anyOf": [
+        {
+          "type": "number",
+          "description": "Uncertainty region described as a circle with a radius [deg]."
+        },
+        {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 1,
+          "maxItems": 3,
+          "description": "An array of up to three values that describe the localization region as an ellipse: length of the semi-major axis, length of the semi-minor axis (default is the same as the semi-major axis), and astronomical position angle of the semi-major axis (measured from North through East, default is zero)."
+        }
+      ]
+    },
+    "containment_probability": {
+      "type": "number",
+      "description": "Containment probability [dimensionless, 0-1]; if absent, default is 0.9",
+      "default": 0.9
+    },
+    "systematic_included": {
+      "type": "boolean",
+      "description": "Contains true when the systematic error is included and false when the systematic error is not included",
+      "default": false
+    },
+    "instrument_phi": {
+      "type": "number",
+      "description": "Instrument phi [deg]"
+    },
+    "instrument_theta": {
+      "type": "number",
+      "description": "Instrument theta [deg]"
+    },
+    "instrument_semimajor_angle": {
+      "type": "number",
+      "description": "Position angle of semi-major axis in instrument coordinates [deg]"
+    },
+    "healpix_url": {
+      "type": "string",
+      "description": "URL of HEALPix localization probability file"
+    },
+    "healpix_file": {
+      "type": "string",
+      "contentEncoding": "base64",
+      "contentMediaType": "image/fits",
+      "description": "Base 64 encoded content of a FITS file"
+    }
+  }
+}

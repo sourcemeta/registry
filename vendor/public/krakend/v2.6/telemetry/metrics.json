@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.6/telemetry/metrics.json",
+  "title": "Extended metrics",
+  "description": "Collects extended metrics to push to InfluxDB or expose them in the /__stats/ endpoint.\n\nSee: https://www.krakend.io/docs/telemetry/extended-metrics/",
+  "type": "object",
+  "properties": {
+    "backend_disabled": {
+      "$id": "#backend_disabled",
+      "title": "Backend disabled",
+      "description": "Skip any metrics happening in the backend layer. Disabling layers saves memory consumption but reduces visibility.\n\nSee: https://www.krakend.io/docs/telemetry/extended-metrics/",
+      "default": false,
+      "type": "boolean"
+    },
+    "collection_time": {
+      "$id": "#collection_time",
+      "title": "Collection time",
+      "description": "The time window to consolidate collected metrics. Metrics are updated in their internal counters all the time, but the `/__stats/` endpoint, or the Influx reporter, won't see them updated until this window completes.\n\nSee: https://www.krakend.io/docs/telemetry/extended-metrics/",
+      "default": "60s",
+      "$ref": "../timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "endpoint_disabled": {
+      "$id": "#endpoint_disabled",
+      "title": "Endpoint disabled",
+      "description": "When true do not publish the /__stats/ endpoint. Metrics won't be accessible via the endpoint but still collected (and you can send them to Influx for instance).\n\nSee: https://www.krakend.io/docs/telemetry/extended-metrics/",
+      "default": false,
+      "type": "boolean"
+    },
+    "listen_address": {
+      "$id": "#listen_address",
+      "title": "Listen address",
+      "description": "Change the listening address where the metrics endpoint is exposed.\n\nSee: https://www.krakend.io/docs/telemetry/extended-metrics/",
+      "default": ":8090",
+      "type": "string",
+      "pattern": "^:[0-9]+$"
+    },
+    "proxy_disabled": {
+      "$id": "#proxy_disabled",
+      "title": "Proxy disabled",
+      "description": "Skip any metrics happening in the proxy layer (traffic against your backends). Disabling layers saves memory consumption but reduces visibility.\n\nSee: https://www.krakend.io/docs/telemetry/extended-metrics/",
+      "default": false,
+      "type": "boolean"
+    },
+    "router_disabled": {
+      "$id": "#router_disabled",
+      "title": "Router disabled",
+      "description": "Skip any metrics happening in the router layer (activity in KrakenD endpoints). Disabling layers saves memory consumption but reduces visibility.\n\nSee: https://www.krakend.io/docs/telemetry/extended-metrics/",
+      "default": false,
+      "type": "boolean"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

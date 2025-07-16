@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.4/auth/basic.json",
+  "description": "Enterprise only. The Basic Authentication component protects the access to selected endpoints using basic username and password credentials.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/basic-authentication/",
+  "type": "object",
+  "properties": {
+    "htpasswd_path": {
+      "title": "Path to htpasswd file",
+      "description": "Absolute Path to the `htpasswd` filename (recommended) or relative `./` to the workdir (less secure).\n\nSee: https://www.krakend.io/docs/enterprise/authentication/basic-authentication/",
+      "examples": [
+        "/path/to/.htpasswd"
+      ],
+      "type": "string"
+    },
+    "users": {
+      "title": "Additional users",
+      "description": "**Additional** users to the `htpasswd` file can be declared directly inside the configuration. The content of both places will be merged (and this list will overwrite users already defined in the htpasswd file). The key of each entry is the username, and the value the bcrypt.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/basic-authentication/",
+      "examples": [
+        {
+          "admin": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ...",
+          "user2": "$2y$05$HpdPmv2Z3h3skMCVaf/CEep/UUBuhZ..."
+        }
+      ],
+      "type": "object",
+      "patternProperties": {
+        "(.*)": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

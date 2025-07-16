@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.7/async/amqp.json",
+  "title": "Async AMQP Driver",
+  "description": "The Async AMQP component enables the AMQP driver for the Async functionality.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+  "type": "object",
+  "required": [
+    "name",
+    "host",
+    "exchange"
+  ],
+  "properties": {
+    "auto_ack": {
+      "$id": "#async/amqp/auto_ack",
+      "title": "Auto ACK",
+      "description": "When KrakenD retrieves the messages, regardless of the success or failure of the operation, it marks them as ACK. When auto ACK is not used, only successful backend responses do the ACK, and failing messages are requeued. Defaults to `false`.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "default": false,
+      "type": "boolean"
+    },
+    "delete": {
+      "$id": "#async/amqp/delete",
+      "title": "Delete",
+      "description": "When `true`, AMQP deletes the queue when there are no remaining connections. This option is **not recommended** in most of the scenarios. If for instance, the connectivity between KrakenD and AMQP is lost for whatever reason and it's the only client, AMQP will delete the queue no matter the number of messages there are inside, and when KrakenD gets the connection again the queue won't exist and future connections will recreate it again.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "default": false,
+      "type": "boolean"
+    },
+    "durable": {
+      "$id": "#async/amqp/durable",
+      "title": "Durable",
+      "description": "Durable queues will survive server restarts and remain when there are no remaining consumers or bindings. Most of the times `true` is recommended, but depends on the use case.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "default": false,
+      "type": "boolean"
+    },
+    "exchange": {
+      "$id": "#async/amqp/exchange",
+      "title": "Exchange",
+      "description": "The entity name where messages are retrieved (it will be created, or it must have a **topic** type if already exists).\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "examples": [
+        "some-exchange"
+      ],
+      "type": "string"
+    },
+    "exclusive": {
+      "$id": "#async/amqp/exclusive",
+      "title": "Exclusive",
+      "description": "When `true`, AMQP will allow **a single KrakenD client** to access the queue. This option is **not recommended** in environments where the gateway needs high availability and you have several instances running.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "default": false,
+      "type": "boolean"
+    },
+    "host": {
+      "$id": "#async/amqp/host",
+      "title": "Host",
+      "description": "The connection string, ends in slash. E.g: `amqp://user:password@host:5672/`.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "type": "string"
+    },
+    "name": {
+      "$id": "#async/amqp/name",
+      "title": "Name",
+      "description": "The queue name.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "type": "string"
+    },
+    "no_local": {
+      "$id": "#async/amqp/no_local",
+      "title": "No local",
+      "description": "The no_local flag is not supported by RabbitMQ.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "type": "boolean"
+    },
+    "no_wait": {
+      "$id": "#async/amqp/no_wait",
+      "title": "No wait",
+      "description": "When true, do not wait for the server to confirm the request and immediately begin deliveries. If it is not possible to consume, a channel exception will be raised and the channel will be closed.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "type": "boolean"
+    },
+    "prefetch_count": {
+      "$id": "#async/amqp/prefetch_count",
+      "title": "Prefetch count",
+      "description": "The number of messages you want to prefetch prior to consume them.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "default": 10,
+      "type": "integer"
+    },
+    "prefetch_size": {
+      "$id": "#async/amqp/prefetch_size",
+      "title": "Prefetch size",
+      "description": "The number of bytes you want to use to prefetch messages.\n\nSee: https://www.krakend.io/docs/async/amqp/",
+      "default": 0,
+      "type": "integer"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

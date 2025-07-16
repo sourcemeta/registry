@@ -1,0 +1,99 @@
+{
+  "id": "https://w3id.org/dats/schema/grant_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS grant schema",
+  "description": "An allocated sum of funds given by a government or other organization for a particular purpose.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Grant" ]},
+    "identifier": {
+      "description": "The identifier of the grant.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the grant.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the grant.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the grant and its funding program.",
+      "type" :  "string"
+    },
+    "funds" : {
+      "description": "The study or dataset supported by the grant.",
+      "type" : "array",
+      "items" : {
+        "oneOf": [
+          {"$ref" : "study_schema.json#"},
+          {"$ref" : "dataset_schema.json#"}
+        ]
+      }
+    },
+    "funders" : {
+      "description": "The person(s) or organization(s) which has awarded the funds supporting the project.",
+      "type" : "array",
+      "items" : {
+        "oneOf": [
+          {"$ref" : "person_schema.json#"},
+          {"$ref" : "organization_schema.json#"}
+        ]
+      },
+      "minItems" : 1
+    },
+    "awardees" : {
+      "description": "The person(s) or organization(s) which received the funds supporting the project.",
+      "type" : "array",
+      "items" : {
+        "oneOf": [
+          {"$ref" : "person_schema.json#"},
+          {"$ref" : "organization_schema.json#"}
+        ]
+      }
+    },
+    "dates" : {
+      "description": "Relevant dates, such as the date when the grant was awarded, may be provided.",
+      "type" : "array",
+      "items": {
+        "$ref" : "date_info_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "name"]
+}

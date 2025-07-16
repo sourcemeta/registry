@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/project/5.0.0/publication",
+    "description": "Information about a journal article, book, web page, or other external available documentation on a project.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "authors",
+        "title"
+    ],
+    "title": "publication",
+    "type": "object",
+    "properties": {
+        "describedBy": {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/project/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/publication"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "authors": {
+            "description": "A list of authors associated with the publication in 'surname initials' format.",
+            "type": "array",
+            "example":  "Smith JD",
+            "items": {
+                "type": "string"
+            }, 
+            "user_friendly": "Authors"
+        },
+        "publication_title": {
+            "description": "The full title of the publication.",
+            "type": "string",
+            "user_friendly": "Publication title"
+        },
+        "doi": {
+            "description": "The publication digital object identifier.",
+            "type": "string",
+            "example": "10.1016/j.cell.2016.07.054",
+            "user_friendly": "DOI"
+        }, 
+        "pmid": {
+            "description": "The PubMed ID of the publication.",
+            "type": "integer",
+            "example": "27565351",
+            "user_friendly": "PMID"
+        },
+        "publication_url": {
+            "description": "A URL, preferably not behind a paywall, for the publication.",
+            "type": "string",
+            "user_friendly": "Publication URL"
+        }
+    }
+}

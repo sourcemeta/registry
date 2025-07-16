@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.9/workflow_extra_config.json",
+  "title": "Schema definition for extra_config of workflows",
+  "type": "object",
+  "properties": {
+    "modifier/jmespath": {
+      "$ref": "modifier/jmespath.json"
+    },
+    "modifier/lua-proxy": {
+      "$ref": "modifier/lua.json"
+    },
+    "modifier/request-body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "modifier/response-body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "plugin/req-resp-modifier": {
+      "$ref": "plugin/req-resp-modifier.json"
+    },
+    "proxy": {
+      "$id": "#endpoint_extra_config/proxy",
+      "title": "Proxy",
+      "type": "object",
+      "properties": {
+        "combiner": {
+          "$id": "#endpoint_extra_config/proxy/combiner",
+          "title": "Custom combiner",
+          "description": "For custom builds of KrakenD only",
+          "examples": [
+            "combiner_name"
+          ],
+          "type": "string"
+        },
+        "flatmap_filter": {
+          "$id": "#proxy/flatmap_filter",
+          "title": "Flatmap (Array manipulation)",
+          "description": "The list of operations to **execute sequentially** (top down). Every operation is defined with an object containing two properties:\n\nSee: https://www.krakend.io/docs/backends/flatmap/",
+          "$ref": "proxy/flatmap.json",
+          "type": "array"
+        },
+        "sequential": {
+          "$id": "#endpoint_extra_config/proxy/sequential",
+          "title": "Sequential proxy",
+          "description": "The sequential proxy allows you to chain backend requests, making calls dependent one of each other.\n\nSee: https://www.krakend.io/docs/endpoints/sequential-proxy/",
+          "default": true,
+          "type": "boolean"
+        },
+        "sequential_propagated_params": {
+          "$id": "#endpoint_extra_config/proxy/sequential_propagated_params",
+          "title": "Sequential propagated parameters",
+          "description": "The list of parameters you want to propagate from a previous response to the next request. Parameters are accessible by Lua scripts, CEL, security policies, the body generator, or plugins. When you add a `resp`-like parameter in this list, the parameter becomes available to the components mentioned in subsequent calls, **uppercasing the first letter**. For instance, if you add `resp0_user`, you can access in the second, third, etc. backends in Lua to `req:params('Resp0_user')`.The format of the parameters must start with `respX_` or `respX`, where `X` is the backend index from which you want to take the parameter. If you don't set the underscore `_`, you set the whole payload as a parameter. For instance, `resp0` sets a parameter `Resp0` to use in Lua or a Body generator and contains **the entire payload of the backend 0** (as a string). In this extreme case, you must use `no-op` in the backend's output (even the endpoint has a `json` output encoding) and you should access the value in Lua or a plugin. Note that access to **nested parameters** uses a single string with the dot notation inside, e.g.: `req_params['Resp0_f1.f2.f3']` (CEL and Security Policies), or `{{ index .req_params \"Resp0_f1.f2.f3\" }}` (body generators).\n\nSee: https://www.krakend.io/docs/endpoints/sequential-proxy/",
+          "examples": [
+            [
+              "resp0"
+            ],
+            [
+              "resp1_my_field",
+              "resp0_user_id"
+            ]
+          ],
+          "type": "array",
+          "items": {
+            "title": "Propagated parameter name",
+            "description": "A `resp`-like string that references the field you want to set a parameter and use it in the next backend call.",
+            "type": "string",
+            "pattern": "^resp[0-9]+(_[^\\s]+)?$"
+          }
+        },
+        "static": {
+          "$id": "#endpoint_extra_config/proxy/static",
+          "title": "Static response",
+          "description": "The static proxy injects static data in the final response when the selected strategy matches.\n\nSee: https://www.krakend.io/docs/endpoints/static-proxy/",
+          "type": "object",
+          "required": [
+            "data",
+            "strategy"
+          ],
+          "properties": {
+            "data": {
+              "$id": "#endpoint_extra_config/proxy/static/data",
+              "title": "Data",
+              "description": "The static data (as a JSON object) that you will return.\n\nSee: https://www.krakend.io/docs/endpoints/static-proxy/",
+              "type": "object"
+            },
+            "strategy": {
+              "$id": "#endpoint_extra_config/proxy/static/strategy",
+              "title": "Strategy",
+              "description": "One of the supported strategies\n\nSee: https://www.krakend.io/docs/endpoints/static-proxy/",
+              "enum": [
+                "always",
+                "success",
+                "complete",
+                "errored",
+                "incomplete"
+              ]
+            }
+          },
+          "patternProperties": {
+            "^[@$_#]": {}
+          },
+          "additionalProperties": false
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "security/policies": {
+      "$ref": "security/policies.json"
+    },
+    "validation/cel": {
+      "$ref": "validation/cel.json"
+    },
+    "validation/json-schema": {
+      "title": "Validating the body with the JSON Schema",
+      "description": "apply automatic validations using the JSON Schema vocabulary before the content passes to the backends. The json schema component allows you to define validation rules on the body, type definition, or even validate the fields' values.\n\nSee: https://www.krakend.io/docs/endpoints/json-schema/",
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

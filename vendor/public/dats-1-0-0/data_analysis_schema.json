@@ -1,0 +1,142 @@
+{
+  "id": "https://w3id.org/dats/schema/data_analysis_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS data analysis schema",
+  "description": "Process (or activity) of transforming data and producing data.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "DataAnalysis" ]},
+    "identifier": {
+      "description": "The identifier of the data analysis.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the activity.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the activity.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the activity, usually one sentece or short description of the data analysis.",
+      "type" :  "string"
+    },
+    "description" : {
+      "description": "A textual narrative comprised of one or more statements describing the data analysis.",
+      "type" : "string"
+    },
+    "startDate": {
+      "description": "A timestamp to record the starting point of the activity.",
+      "$ref": "date_info_schema.json#"
+    },
+    "endDate": {
+      "description": "A timestamp to record the end point of the activity.",
+      "$ref": "date_info_schema.json#"
+    },
+    "dates" : {
+      "description": "Relevant dates for the datasets, a date must be added, e.g. creation date or last modification date should be added.",
+      "type" : "array",
+      "items" : {
+        "$ref" : "date_info_schema.json#"
+      }
+    },
+    "duration": {
+      "description": "The time during which the activity takes place.",
+      "type" :  "string"
+    },
+    "location" : {
+      "description": "The location where the activity takes place.",
+      "$ref" : "place_schema.json#"
+    },
+    "performedBy" : {
+      "description": "The person(s) or organisation(s) responsible for executing the process.",
+      "type" : "array",
+      "items" : {
+        "anyOf": [
+          {"$ref" : "person_schema.json#"},
+          {"$ref" : "organization_schema.json#"}
+        ]
+      }
+    },
+    "keywords": {
+      "description": "Tags associated with the activity, which will help in its discovery.",
+      "type": "array",
+      "items": {
+        "$ref" : "annotation_schema.json#"
+      }
+    },
+    "input" : {
+      "description": "The entities used as input.",
+      "type": "array",
+      "items":{
+        "$ref" : "dataset_schema.json#"
+      },
+      "minItems": 1
+    },
+    "output" : {
+      "description": "The entities resulting from applying the activity.",
+      "type": "array",
+      "items":{
+        "$ref" : "dataset_schema.json#"
+      },
+      "minItems": 1
+    },
+    "uses": {
+      "description": "The instrument(s) or software(s) used to acquire the signal.",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "instrument_schema.json#"
+          },
+          {
+            "$ref": "software_schema.json#"
+          }
+        ]
+      }
+    },
+    "measures": {
+      "description": "The dimension(s) being acquired as signal.",
+      "type": "array",
+      "items": {
+        "$ref": "dimension_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "name" ]
+}

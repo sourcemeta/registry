@@ -1,0 +1,104 @@
+{
+  "id": "https://w3id.org/dats/schema/publication_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title" : "DATS publication schema",
+  "description" : "A (digital) document made available by a publisher.",
+  "type" : "object",
+  "properties" : {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type":  {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Publication" ]},
+    "identifier": {
+      "description": "The identifier of the publication.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the publication.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the publication.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "title": {
+      "description": "The name of the publication, usually one sentece or short description of the publication.",
+      "type" :  "string"
+    },
+    "type" : {
+      "description": "Publication type, ideally delegated to an external vocabulary/resource.",
+      "$ref" : "annotation_schema.json#"
+    },
+    "publicationVenue": {
+      "description": "The name of the publication venue where the document is published if applicable.",
+      "type": "string"
+    },
+    "dates" : {
+      "description": "Relevant dates, the date of the publication must be provided.",
+      "type" : "array",
+      "items": {
+        "$ref" : "date_info_schema.json#"
+      }
+    },
+    "authors" : {
+      "description": "The person(s) and/or organisation(s) responsible for the publication.",
+      "type" : "array",
+      "items" : {
+        "oneOf": [
+          {"$ref" : "person_schema.json#"},
+          {"$ref" : "organization_schema.json#"}
+        ]
+      },
+      "minItems" : 1
+    },
+    "authorsList": {
+      "description": "The list of authors made available as a string (does not allow disambiguation).",
+      "type": "string"
+    },
+    "acknowledges" : {
+      "description": "The grant(s) which funded and supported the work reported by the publication.",
+      "type" : "array",
+      "items" : {
+        "$ref" : "grant_schema.json#"
+      }
+    },
+    "licenses" : {
+      "description": "The terms of use of the publication.",
+      "type" : "array",
+      "items" : {
+        "$ref" : "license_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false
+}

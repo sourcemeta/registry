@@ -1,0 +1,315 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/e2e.json",
+  "title": "Schema validation for End To End testing specs",
+  "type": "object",
+  "required": [
+    "in",
+    "out"
+  ],
+  "properties": {
+    "in": {
+      "title": "Input",
+      "description": "The input request definition. At least you should define the URL used to connect to KrakenD",
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "body": {
+          "title": "Body",
+          "description": "If you want to add a payload in the request, set its body here",
+          "type": [
+            "object",
+            "array",
+            "string"
+          ]
+        },
+        "header": {
+          "title": "Headers",
+          "description": "An optional map of headers you want to include in the request.",
+          "examples": [
+            {
+              "User-Agent": "krakend e2e tool"
+            }
+          ],
+          "type": "object"
+        },
+        "method": {
+          "title": "Method",
+          "description": "The method sent in the request",
+          "default": "GET",
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
+        },
+        "url": {
+          "title": "URL",
+          "description": "The full URL you want to use in the request, including schema, host, port, path, and any additional query string parameters you might need.",
+          "examples": [
+            "http://localhost:8080/__debug/something"
+          ],
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "next": {
+      "description": "Additional checks, in sequential order, of `in` and `out` definitions. The outter `in` and `out` are always executed first.",
+      "examples": [
+        {
+          "next": [
+            {
+              "in": {},
+              "out": {}
+            },
+            {
+              "in": {},
+              "out": {}
+            }
+          ]
+        }
+      ],
+      "type": "array",
+      "items": {
+        "minItems": 1,
+        "required": [
+          "in",
+          "out"
+        ],
+        "properties": {
+          "in": {
+            "title": "Input",
+            "description": "The input request definition. At least you should define the URL used to connect to KrakenD",
+            "type": "object",
+            "required": [
+              "url"
+            ],
+            "properties": {
+              "body": {
+                "title": "Body",
+                "description": "If you want to add a payload in the request, set its body here",
+                "type": [
+                  "object",
+                  "array",
+                  "string"
+                ]
+              },
+              "header": {
+                "title": "Headers",
+                "description": "An optional map of headers you want to include in the request.",
+                "examples": [
+                  {
+                    "User-Agent": "krakend e2e tool"
+                  }
+                ],
+                "type": "object"
+              },
+              "method": {
+                "title": "Method",
+                "description": "The method sent in the request",
+                "default": "GET",
+                "enum": [
+                  "GET",
+                  "POST",
+                  "PUT",
+                  "PATCH",
+                  "DELETE"
+                ]
+              },
+              "url": {
+                "title": "URL",
+                "description": "The full URL you want to use in the request, including schema, host, port, path, and any additional query string parameters you might need.",
+                "examples": [
+                  "http://localhost:8080/__debug/something"
+                ],
+                "type": "string"
+              }
+            },
+            "patternProperties": {
+              "^[@$_#]": {}
+            },
+            "additionalProperties": false
+          },
+          "out": {
+            "title": "Output",
+            "description": "The expected response from the server",
+            "type": "object",
+            "anyOf": [
+              {
+                "required": [
+                  "status_code"
+                ]
+              },
+              {
+                "required": [
+                  "status_code",
+                  "body"
+                ]
+              },
+              {
+                "required": [
+                  "status_code",
+                  "schema"
+                ]
+              }
+            ],
+            "properties": {
+              "body": {
+                "title": "Body",
+                "description": "The expected returned body by the response as a string or JSON object. Remove this body field when you don't want to check its contents, when the response does not have a body, or when you want to use the schema instead.",
+                "examples": [
+                  "http://localhost:8080/__debug/something"
+                ],
+                "type": [
+                  "string",
+                  "object"
+                ]
+              },
+              "header": {
+                "title": "Headers",
+                "description": "Checks that all headers included in the response match the provided values. You only need to declare the relevant headers you want, as the rest are ignored. As headers, by RFC definition, can be multiple, you must always use an array to express the values you want to check. You can also check that **a specific header does not exist** in the response declaring an empty value `[\"\"]`.",
+                "examples": [
+                  {
+                    "Cache-Control": [
+                      ""
+                    ],
+                    "X-Krakend-Completed": [
+                      "true"
+                    ],
+                    "content-type": [
+                      "application/json; charset=utf-8"
+                    ]
+                  }
+                ],
+                "type": "object",
+                "patternProperties": {
+                  ".*": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "schema": {
+                "title": "JSON Schema",
+                "description": "A JSON Schema object that validates the response. This option allows you to work with responses that the literal value is not that important and you want to check the structure of the returned document instead. If the response matches the schema definition, the test passes. If you define a `schema` and a `body` simultaneously only the schema is validated.",
+                "$ref": "http://json-schema.org/draft-07/schema#",
+                "type": "object"
+              },
+              "status_code": {
+                "title": "Status code",
+                "description": "The integer value of the HTTP status code returned by the server.",
+                "examples": [
+                  200
+                ],
+                "type": "integer"
+              }
+            },
+            "patternProperties": {
+              "^[@$_#]": {}
+            },
+            "additionalProperties": false
+          }
+        },
+        "patternProperties": {
+          "^[@$_#]": {}
+        },
+        "additionalProperties": false
+      }
+    },
+    "out": {
+      "title": "Output",
+      "description": "The expected response from the server",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "status_code"
+          ]
+        },
+        {
+          "required": [
+            "status_code",
+            "body"
+          ]
+        },
+        {
+          "required": [
+            "status_code",
+            "schema"
+          ]
+        }
+      ],
+      "properties": {
+        "body": {
+          "title": "Body",
+          "description": "The expected returned body by the response as a string or JSON object. Remove this body field when you don't want to check its contents, when the response does not have a body, or when you want to use the schema instead.",
+          "examples": [
+            "http://localhost:8080/__debug/something"
+          ],
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "header": {
+          "title": "Headers",
+          "description": "Checks that all headers included in the response match the provided values. You only need to declare the relevant headers you want, as the rest are ignored. As headers, by RFC definition, can be multiple, you must always use an array to express the values you want to check. You can also check that **a specific header does not exist** in the response declaring an empty value `[\"\"]`.",
+          "examples": [
+            {
+              "Cache-Control": [
+                ""
+              ],
+              "X-Krakend-Completed": [
+                "true"
+              ],
+              "content-type": [
+                "application/json; charset=utf-8"
+              ]
+            }
+          ],
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "schema": {
+          "title": "JSON Schema",
+          "description": "A JSON Schema object that validates the response. This option allows you to work with responses that the literal value is not that important and you want to check the structure of the returned document instead. If the response matches the schema definition, the test passes. If you define a `schema` and a `body` simultaneously only the schema is validated.",
+          "$ref": "http://json-schema.org/draft-07/schema#",
+          "type": "object"
+        },
+        "status_code": {
+          "title": "Status code",
+          "description": "The integer value of the HTTP status code returned by the server.",
+          "examples": [
+            200
+          ],
+          "type": "integer"
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

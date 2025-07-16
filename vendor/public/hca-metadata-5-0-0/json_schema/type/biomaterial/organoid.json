@@ -1,0 +1,89 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/type/biomaterial/5.0.0/organoid",
+    "description": "Information about an organoid biomaterial.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "schema_type",
+        "biomaterial_core",
+        "model_for_organ"
+    ],
+    "title": "organoid",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/type/biomaterial/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/organoid"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+            "enum": [
+                "biomaterial"
+            ]
+        },
+        "biomaterial_core" : {
+            "description": "Core biomaterial-level information.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/core/biomaterial/5.0.0/biomaterial_core"
+        },
+        "cell_morphology": {
+            "description": "Features relating to the morphology of cells in a biomaterial.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/cell_morphology",
+            "user_friendly": "Cell morphology"
+        },
+        "growth_conditions": {
+            "description": "Features relating to the growth and/or maintenance of a biomaterial.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/growth_conditions",
+            "user_friendly": "Growth conditions"
+        },
+        "genus_species": {
+            "description": "The scientific binomial name for the species of the biomaterial.",
+            "type" : "array",
+            "example": "Homo sapiens",
+            "items":{
+                "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/species_ontology"
+            },
+            "user_friendly": "Genus species"
+        },
+        "model_for_organ": {
+            "description":  "Organ for which this organoid is a model system.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/organ_ontology",
+            "user_friendly": "Organ model"
+        },
+        "organoid_age": {
+            "description": "Age of the organoid.",
+            "type": "number",
+            "example": 55,
+            "user_friendly": "Organoid age"
+        },
+        "organoid_age_unit": {
+            "description": "The unit in which organoid age is expressed. Must be one of hour, day, week, month, or year.",
+            "type": "object",
+            "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/time_unit_ontology",
+            "user_friendly": "Organoid age unit"
+        },
+        "organoid_type": {
+            "description": "The type of organoid. Must be one of primary, immortalized, stem cell-derived, or synthetic.",
+            "type": "string",
+            "enum": [
+                "primary",
+                "immortalized",
+                "stem cell-derived",
+                "synthetic"
+            ],
+            "user_friendly": "Organoid type"
+        }
+    }
+}

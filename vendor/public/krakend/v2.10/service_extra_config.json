@@ -1,0 +1,209 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.10/service_extra_config.json",
+  "title": "Schema definition for service extra_config",
+  "type": "object",
+  "properties": {
+    "auth/api-keys": {
+      "$ref": "auth/api-keys.json"
+    },
+    "auth/basic": {
+      "$ref": "auth/basic.json"
+    },
+    "auth/revoker": {
+      "$ref": "auth/revoker.json"
+    },
+    "auth/validator": {
+      "$ref": "auth/jose.json"
+    },
+    "documentation/openapi": {
+      "$ref": "documentation/openapi.json"
+    },
+    "documentation/postman": {
+      "$ref": "documentation/postman.json"
+    },
+    "governance/processors": {
+      "$ref": "governance/processors.json"
+    },
+    "governance/quota": {
+      "$ref": "governance/quota.json"
+    },
+    "grpc": {
+      "$ref": "grpc.json"
+    },
+    "modifier/lua-endpoint": {
+      "$ref": "modifier/lua.json"
+    },
+    "modifier/response-headers": {
+      "title": "Response Headers modifier",
+      "description": "Enterprise only. Allows you to transform response headers declaratively.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/response-headers-modifier/",
+      "$ref": "modifier/response-headers.json"
+    },
+    "plugin/http-server": {
+      "$ref": "plugin/http-server.json"
+    },
+    "qos/ratelimit/service": {
+      "title": "Service Rate-limiting",
+      "description": "Enterprise Only. The service rate limit feature allows you to set the maximum requests per second a user or group of users can do to KrakenD and works analogously to the endpoint rate limit.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/service-rate-limit/",
+      "$ref": "qos/ratelimit/router.json"
+    },
+    "qos/ratelimit/service/redis": {
+      "$ref": "qos/ratelimit/redis.json"
+    },
+    "qos/ratelimit/tiered": {
+      "$ref": "qos/ratelimit/tiered.json"
+    },
+    "redis": {
+      "$ref": "redis.json"
+    },
+    "router": {
+      "$ref": "router.json"
+    },
+    "security/bot-detector": {
+      "$ref": "security/bot-detector.json"
+    },
+    "security/cors": {
+      "$id": "#service_extra_config/security/cors",
+      "title": "Cross Origin Resource Sharing",
+      "description": "When KrakenD endpoints are consumed from a browser, you might need to enable the Cross-Origin Resource Sharing (CORS) module as browsers restrict cross-origin HTTP requests initiated from scripts.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+      "default": {
+        "allow_methods": [
+          "POST",
+          "GET"
+        ],
+        "allow_origins": [
+          "http://foobar.com"
+        ],
+        "max_age": "12h"
+      },
+      "type": "object",
+      "required": [
+        "allow_origins"
+      ],
+      "properties": {
+        "allow_credentials": {
+          "$id": "#service_extra_config/security/cors/allow_credentials",
+          "title": "Allow_credentials",
+          "description": "When requests can include user credentials like cookies, HTTP authentication or client side SSL certificates\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+          "default": true,
+          "type": "boolean"
+        },
+        "allow_headers": {
+          "$id": "#service_extra_config/security/cors/allow_headers",
+          "title": "Allowed headers",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allow_methods": {
+          "$id": "#service_extra_config/security/cors/allow_methods",
+          "title": "Allowed methods",
+          "description": "The array of all HTTP methods accepted, in uppercase.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$id": "#service_extra_config/security/cors/allow_methods/items",
+            "title": "Object in array",
+            "description": "\n\nSee: https://www.krakend.io",
+            "enum": [
+              "GET",
+              "HEAD",
+              "POST",
+              "PUT",
+              "PATCH",
+              "DELETE",
+              "OPTIONS"
+            ]
+          }
+        },
+        "allow_origins": {
+          "$id": "#service_extra_config/security/cors/allow_origins",
+          "title": "Allowed origins",
+          "description": "An array with all the origins allowed, examples of values are https://example.com, or * (any origin).\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+          "type": "array",
+          "items": {
+            "$id": "#service_extra_config/security/cors/allow_origins/items",
+            "title": "Allowed origins list",
+            "examples": [
+              "*",
+              "https://example.com"
+            ],
+            "type": "string"
+          }
+        },
+        "debug": {
+          "$id": "#service_extra_config/security/cors/debug",
+          "title": "Show debug",
+          "description": "Show debugging information in the logger, to be used only during development.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+          "default": true,
+          "type": "boolean"
+        },
+        "expose_headers": {
+          "$id": "#service_extra_config/security/cors/expose_headers",
+          "title": "Expose headers",
+          "description": "Headers that are safe to expose to the API of a CORS API specification-\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "max_age": {
+          "$id": "#service_extra_config/security/cors/max_age",
+          "title": "Max age",
+          "description": "For how long the response can be cached.\n\nSee: https://www.krakend.io/docs/service-settings/cors/",
+          "examples": [
+            "12h"
+          ],
+          "$ref": "timeunits.json#/$defs/timeunit",
+          "type": "string"
+        }
+      }
+    },
+    "security/http": {
+      "$ref": "security/http.json"
+    },
+    "server/static-filesystem": {
+      "$ref": "server/static-filesystem.json"
+    },
+    "server/virtualhost": {
+      "$ref": "server/virtualhost.json"
+    },
+    "telemetry/gelf": {
+      "$ref": "telemetry/gelf.json"
+    },
+    "telemetry/influx": {
+      "$ref": "telemetry/influx.json"
+    },
+    "telemetry/logging": {
+      "$ref": "telemetry/logging.json"
+    },
+    "telemetry/logstash": {
+      "$ref": "telemetry/logstash.json"
+    },
+    "telemetry/metrics": {
+      "$ref": "telemetry/metrics.json"
+    },
+    "telemetry/moesif": {
+      "$ref": "telemetry/moesif.json"
+    },
+    "telemetry/newrelic": {
+      "$ref": "telemetry/newrelic.json"
+    },
+    "telemetry/opencensus": {
+      "$ref": "telemetry/opencensus.json"
+    },
+    "telemetry/opentelemetry": {
+      "$ref": "telemetry/opentelemetry.json"
+    },
+    "telemetry/opentelemetry-security": {
+      "$ref": "telemetry/opentelemetry-security.json"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

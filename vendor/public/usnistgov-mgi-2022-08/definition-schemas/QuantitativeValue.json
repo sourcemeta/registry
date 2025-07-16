@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "QuantitativeValue",
+    "definitions": {"QuantitativeValue": {
+        "type": "object",
+        "properties": {
+            "@type": {
+                "type": "string",
+                "default": "QuantitativeValue"
+            },
+            "name": {
+                "type": "string",
+                "title": "Name"
+            },
+            "value": {
+                "title": "Value"
+            },
+            "unitText": {
+                "title": "Unit Text",
+                "type": "string"
+            },
+            "unitCode": {
+                "title": "Unit Code",
+                "type": "string",
+                "cordra": {"type": {"handleReference": {"types": ["UnitOfMeasurement"]}}}
+            }
+        }
+    }}
+}

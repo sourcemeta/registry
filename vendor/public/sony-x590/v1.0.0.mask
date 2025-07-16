@@ -1,0 +1,7 @@
+signing/
+test/
+example-instance.json
+example-subschema.json
+Makefile
+README.md
+requirements.txt

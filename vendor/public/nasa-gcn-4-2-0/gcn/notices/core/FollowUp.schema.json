@@ -1,0 +1,26 @@
+{
+  "$id": "https://gcn.nasa.gov/schema/v4.2.0/gcn/notices/core/FollowUp.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FollowUp",
+  "description": "Schema specific to follow-up cases",
+  "type": "object",
+  "properties": {
+    "ref_type": {
+      "type": "string",
+      "description": "Type of the event detected, ex. GRB, GW, neutrino"
+    },
+    "ref_instrument": {
+      "type": "string",
+      "description": "Name of the reference mission or, instrument, ex. Fermi-GBM"
+    },
+    "ref_ID": {
+      "type": "string",
+      "description": "Trigger ID as reported by the reference instrument, ex. bnYYMMDDFF"
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": { "type": ["number", "string"] },
+      "description": "Reference as distributed by the notices or circulars or ATel, ex. gcn circulars: 12345, gcn.notices.LVK.alert: SYYMMDDak-2-preliminary. "
+    }
+  }
+}

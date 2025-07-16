@@ -1,0 +1,131 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Place",
+    "definitions": {"Place": {
+        "type": "object",
+        "properties": {
+            "about": {
+                "type": "array",
+                "title": "About",
+                "description": "This is for linking controlled vocabulary terms and parent projects.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Subject/Project",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "DefinedTerm",
+                        "Project",
+                        "Collection",
+                        "ProcessHistory",
+                        "ProcessProtocol",
+                        "Material"
+                    ]}}}
+                }
+            },
+            "keywords": {
+                "type": "array",
+                "title": "Keywords",
+                "description": "This is for user-defined terms.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Keyword"
+                }
+            },
+            "address": {
+                "title": "Address",
+                "type": "string"
+            },
+            "geo": {"anyOf": [
+                {
+                    "type": "object",
+                    "title": "GeoCoordinates",
+                    "properties": {
+                        "@type": {
+                            "type": "string",
+                            "default": "GeoCoordinates"
+                        },
+                        "latitude": {
+                            "title": "Latitude",
+                            "type": "number"
+                        },
+                        "longitude": {
+                            "title": "Longitude",
+                            "type": "number"
+                        },
+                        "elevation": {
+                            "title": "Elevation",
+                            "type": "number"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "title": "GeoShape",
+                    "properties": {
+                        "@type": {
+                            "type": "string",
+                            "default": "GeoShape"
+                        },
+                        "box": {
+                            "title": "Box"
+                        },
+                        "circle": {
+                            "title": "Circle"
+                        },
+                        "line": {
+                            "title": "Line"
+                        },
+                        "polygon": {
+                            "title": "PolyGon"
+                        },
+                        "elevation": {
+                            "title": "Elevation",
+                            "type": "number"
+                        }
+                    }
+                }
+            ]},
+            "containedInPlace": {
+                "type": "array",
+                "title": "Contained In Place",
+                "description": "The basic containment relation between a place and one that contains it.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Place",
+                    "cordra": {"type": {"handleReference": {"types": ["Place"]}}}
+                }
+            },
+            "containsPlace": {
+                "type": "array",
+                "title": "Contains Place",
+                "description": "The basic containment relation between a place and another that it contains.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Place",
+                    "cordra": {"type": {"handleReference": {"types": ["Place"]}}}
+                }
+            },
+            "telephone": {
+                "title": "Telephone",
+                "type": "string"
+            },
+            "accountablePerson": {
+                "type": "array",
+                "title": "Accountable Persons",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Accountable Person",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "User",
+                        "Person"
+                    ]}}}
+                }
+            }
+        }
+    }}
+}

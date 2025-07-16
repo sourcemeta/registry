@@ -1,0 +1,49 @@
+{
+  "id": "https://w3id.org/dats/schema/data_type_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS Data Type schema",
+  "description": "The nature of the data, as determined for the information collected, the method used and the platform used.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "DataType" ]},
+    "information": {
+      "description": "The measurements or facts that the data is about.",
+      "$ref" : "annotation_schema.json#"
+    },
+    "method": {
+      "description": "The procedure or technology used to generate the information.",
+      "$ref" : "annotation_schema.json#"
+
+    },
+    "platform": {
+      "description": "The set of instruments, software and reagents that are needed to generated the data.",
+      "$ref" : "annotation_schema.json#"
+
+    },
+    "instrument": {
+      "description": "The specific device used to generate the data.",
+      "$ref" : "annotation_schema.json#"
+
+    }
+  }
+}

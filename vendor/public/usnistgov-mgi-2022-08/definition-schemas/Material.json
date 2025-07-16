@@ -1,0 +1,71 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Material",
+    "definitions": {"Material": {
+        "type": "object",
+        "properties": {
+            "exampleOfWork": {"$ref": "processLinked.json#/definitions/exampleOfWork"},
+            "isSupplyFor": {"$ref": "processLinked.json#/definitions/isSupplyFor"},
+            "isPartOf": {
+                "title": "Has Parent Materials and Collections",
+                "type": "array",
+                "items": {
+                    "title": "Has Parent Materialor Collection",
+                    "type": "string",
+                    "cordra": {"type": {"handleReference": {"types": [
+                        "Collection",
+                        "Material"
+                    ]}}}
+                }
+            },
+            "hasPart": {
+                "title": "Has Child Materials",
+                "type": "array",
+                "items": {
+                    "title": "Has Child Material",
+                    "type": "string",
+                    "cordra": {"type": {"handleReference": {"types": ["Material"]}}}
+                }
+            },
+            "variableMeasured": {
+                "type": "array",
+                "title": "Variables Measured",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Variable Measured",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "parameterControlled": {
+                "type": "array",
+                "title": "Parameters Controlled",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Parameter Controlled",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "conditionObserved": {
+                "type": "array",
+                "title": "Conditions Observed",
+                "uniqueItems": true,
+                "items": {
+                    "title": "Condition Observed",
+                    "$ref": "PropertyValue.json#/definitions/PropertyValue"
+                }
+            },
+            "materialExtent": {"$ref": "QuantitativeValue.json#/definitions/QuantitativeValue"},
+            "isBasedOn": {
+                "type": "array",
+                "title": "Material is based on",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Material",
+                    "cordra": {"type": {"handleReference": {"types": ["Material"]}}}
+                }
+            }
+        }
+    }}
+}

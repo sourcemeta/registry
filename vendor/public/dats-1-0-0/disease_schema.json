@@ -1,0 +1,72 @@
+{
+  "id": "https://w3id.org/dats/schema/disease_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS disease schema",
+  "description": "A disorder of structure or function in a human, animal, or plant, that produces specific symptoms or that affects a specific location.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Disease" ]},
+    "identifier": {
+      "description": "The identifier of the disease.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the disease.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the disease.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the disease.",
+      "type" :  "string"
+    },
+    "dates" : {
+      "description": "Relevant dates, such as the diagnosis date of the disease, may be provided.",
+      "type": "array",
+      "items": {
+        "$ref": "date_info_schema.json#"
+      }
+    },
+    "diseaseStatus": {
+      "description": "A value (and ideally also an ontology annotation provided as a valueIRI) for the disease status.",
+      "$ref": "annotation_schema.json#"
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required" : [ "name" ]
+}

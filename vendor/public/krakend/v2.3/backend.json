@@ -1,0 +1,142 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/backend.json",
+  "title": "Backend Object",
+  "description": "A backend object is an array of all the services that an endpoint connects to. It defines the list of hostnames that connects to and the URL to send or receive the data.",
+  "type": "object",
+  "required": [
+    "url_pattern"
+  ],
+  "properties": {
+    "allow": {
+      "$id": "#backend/allow",
+      "title": "Allow (data manipulation)",
+      "description": "**Only return the fields in the list**. Only the matching fields (case-sensitive) are returned in the final response. Use a dot `.` separator to define nested attributes, e.g.: `a.b` removes `{\"a\":{\"b\": true}}` \n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
+      "examples": [
+        "token",
+        "CVV",
+        "password"
+      ],
+      "type": "array",
+      "uniqueItems": true
+    },
+    "deny": {
+      "$id": "#backend/deny",
+      "title": "Deny (data manipulation)",
+      "description": "**Don't return the fields in the list**. All matching fields (case-sensitive) defined in the list, are removed from the response. Use a dot `.` separator to definr nested attributes, e.g.: `a.b` removes `{\"a\":{\"b\": true}}`.\n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "disable_host_sanitize": {
+      "$id": "#backend/disable_host_sanitize",
+      "title": "Disable host sanitize",
+      "description": "Set it to `true` when the host doesn't need to be checked for an HTTP protocol. This is the case of `sd=dns` or when using other protocols like `amqp://`, `nats://`, `kafka://`, etc. When set to true, and the protocol is not HTTP, KrakenD fails with an `invalid host` error.",
+      "default": false,
+      "type": "boolean"
+    },
+    "encoding": {
+      "$id": "#backend/encoding",
+      "title": "Backend Encoding",
+      "description": "Defines your [needed encoding](https://www.krakend.io/docs/backends/supported-encodings/) to set how to parse the response. Defaults to the value of its endpoint's `encoding`, or to `json` if not defined anywhere else.\n\nSee: https://www.krakend.io/docs/backends/supported-encodings/",
+      "default": "json",
+      "enum": [
+        "json",
+        "safejson",
+        "fast-json",
+        "xml",
+        "rss",
+        "string",
+        "no-op"
+      ]
+    },
+    "extra_config": {
+      "title": "Backend Extra configuration",
+      "description": "When there is additional configuration related to a specific component or middleware (like a circuit breaker, rate limit, etc.), it is declared under this section.",
+      "$ref": "backend_extra_config.json",
+      "type": "object"
+    },
+    "group": {
+      "$id": "#backend/group",
+      "title": "Group (data manipulation)",
+      "description": "Instead of placing all the response attributes in the root of the response, create a new key and encapsulate the response inside.\n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
+      "default": "backend1",
+      "type": "string"
+    },
+    "host": {
+      "$id": "#backend/host",
+      "title": "Host array",
+      "description": "An array with all the available hosts to [load balance](https://www.krakend.io/docs/throttling/load-balancing/#balancing-egress-traffic-to-upstream) requests, including the schema (when possible) `schema://host:port`. E.g.: ` https://my.users-ms.com`. If you are in a platform where hosts or services are balanced (e.g., a K8S service), write a single entry in the array with the service name/balancer address. Defaults to the `host` declaration at the configuration's root level, and the service fails starting when there is none.",
+      "type": "array"
+    },
+    "is_collection": {
+      "$id": "#backend/is_collection",
+      "title": "Is a collection/array",
+      "description": "Set to true when your API does not return an object {} but a collection []\n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
+      "default": true,
+      "type": "boolean"
+    },
+    "mapping": {
+      "$id": "#backend/mapping",
+      "title": "Mapping",
+      "description": "Mapping, or also known as renaming, let you change the name of the fields of the generated responses, so your composed response would be as close to your use case as possible without changing a line on any backend.\n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
+      "examples": [
+        {
+          "from": "to"
+        }
+      ],
+      "type": "object"
+    },
+    "method": {
+      "$id": "#backend/method",
+      "title": "Method",
+      "description": "The method sent to this backend in **uppercase**. The method does not need to match the endpoint's method. When the value is omitted, it uses the same endpoint's method. Some special methods will require you to use no-op encoding (like HEAD or OPTIONS) when these return an empty body.\n\nSee: https://www.krakend.io/docs/backends/",
+      "default": "GET",
+      "enum": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "OPTIONS",
+        "HEAD",
+        "CONNECT",
+        "TRACE"
+      ]
+    },
+    "sd": {
+      "$id": "#backend/sd",
+      "title": "Service Discovery",
+      "description": "The [Service Discovery](https://www.krakend.io/docs/backends/service-discovery/) system to resolve your backend services. Defaults to `static` (no external Service Discovery). Use `dns` to use DNS SRV records.\n\nSee: https://www.krakend.io/docs/backends/",
+      "default": "static",
+      "enum": [
+        "static",
+        "dns"
+      ]
+    },
+    "target": {
+      "$id": "#backend/target",
+      "title": "Target (data manipulation)",
+      "description": "Removes the matching object from the reponse and returns only its contents.\n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
+      "examples": [
+        "data",
+        "content",
+        "response"
+      ],
+      "type": "string"
+    },
+    "url_pattern": {
+      "$id": "#backend/url_pattern",
+      "title": "URL Pattern",
+      "description": "The path inside the service (no protocol, no host, no method). E.g: `/users`. Some functionalities under `extra_config` might drop the requirement of declaring a valid `url_pattern`, but they are exceptions. The URL must be RESTful, if it is not (e.g.: `/url.{some_variable}.json`), then see how to [disable RESTful checking](#disable-restful-checking).\n\nSee: https://www.krakend.io/docs/backends/",
+      "examples": [
+        "/users",
+        "/user/{id_user}"
+      ],
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,70 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "SoftwareApplication",
+    "definitions": {"SoftwareApplication": {
+        "type": "object",
+        "properties": {
+            "applicationCategory": {
+                "type": "array",
+                "title": "Application Categories",
+                "description": "This is for controlled vocabulary terms.",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Application Category",
+                    "cordra": {"type": {"handleReference": {"types": ["DefinedTerm"]}}}
+                }
+            },
+            "applicationSuite": {
+                "type": "array",
+                "title": "Application Suites",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Application Suite",
+                    "cordra": {"type": {"handleReference": {"types": ["SoftwareApplication"]}}}
+                }
+            },
+            "operatingSystem": {
+                "type": "array",
+                "title": "Operating Systems",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Operating System"
+                }
+            },
+            "softwareAddOn": {
+                "type": "array",
+                "title": "Software Add Ons",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Software Add On",
+                    "cordra": {"type": {"handleReference": {"types": ["SoftwareApplication"]}}}
+                }
+            },
+            "softwareRequirements": {
+                "type": "string",
+                "title": "Software Requirements",
+                "format": "textarea"
+            },
+            "softwareVersion": {
+                "type": "string",
+                "title": "Software Version"
+            },
+            "isBasedOn": {"$ref": "datasetLinked.json#/definitions/isBasedOn"},
+            "isPartOf": {
+                "type": "array",
+                "title": "Is Part Of",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string",
+                    "title": "Is Part Of",
+                    "cordra": {"type": {"handleReference": {"types": ["Collection"]}}}
+                }
+            }
+        }
+    }}
+}

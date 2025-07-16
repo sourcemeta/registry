@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "UnitOfMeasurement",
+    "description": "This schema is for describing a Units of Measurement in Cordra.",
+    "required": [
+        "@id",
+        "@context",
+        "@type"
+    ],
+    "allOf": [
+        {
+            "@context": {
+                "type": "array",
+                "default": [
+                    "http://schema.org/",
+                    {
+                        "mat": "https://pages.nist.gov/material-schema/",
+                        "@vocab": "https://pages.nist.gov/material-schema/user-defined/"
+                    }
+                ]
+            },
+            "@type": {
+                "type": "array",
+                "default": [
+                    "DefinedTerm",
+                    "mat:UnitOfMeasurement"
+                ]
+            }
+        },
+        {
+            "$ref": "definition-schemas/CordraObjectID.json#/definitions/CordraObjectID"
+        },
+        {
+            "$ref": "definition-schemas/Thing.json#/definitions/Thing"
+        },
+        {
+            "$ref": "definition-schemas/UnitOfMeasurement.json#/definitions/UnitOfMeasurement"
+        }
+    ]
+}

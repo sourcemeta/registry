@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/biomaterial/5.0.0/mus_musculus_specific",
+    "description": "Information specific to an organism that is a mouse (mus musculus).",
+    "additionalProperties": false,
+    "required": [
+        "describedBy"
+    ],
+    "title": "mus_musculus_specific",
+    "type": "object",
+    "properties": {
+        "describedBy":  {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/biomaterial/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/mus_musculus_specific"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "strain": {
+            "description": "The name of the strain.",
+            "type": "array",
+            "example": "C57BL/6.",
+            "items": {
+                "$ref": "https://schema.humancellatlas.org/module/ontology/5.0.0/strain_ontology"
+            },
+            "user_friendly": "Strain"
+        }
+    }
+}

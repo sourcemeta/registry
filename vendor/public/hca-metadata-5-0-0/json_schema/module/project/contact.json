@@ -1,0 +1,63 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/module/project/5.0.0/contact",
+    "description": "Information about a person who submitted or contributed to a project.",
+    "additionalProperties": false,
+    "required": [
+        "describedBy",
+        "contact_name",
+        "email"
+    ],
+    "title": "contact",
+    "type": "object",
+    "properties": {
+        "describedBy": {
+            "description": "The URL reference to the schema.",
+            "type": "string",
+            "pattern" : "https://schema.humancellatlas.org/module/project/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/contact"
+        },
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "contact_name": {
+            "description": "The contact's name. Should be in the format 'first, middle, last name'. Middle can be initial or left blank.",
+            "type": "string",
+            "example": "John,D,Doe",
+            "user_friendly": "Contact name"
+        },
+        "email": {
+            "description": "An email address for the contact.",
+            "type": "string",
+            "format": "email",
+            "user_friendly": "Email"
+        },
+        "phone": {
+            "description": "Phone number (including country code) of contact or contact's lab.",
+            "type": "string",
+            "user_friendly": "Phone number"
+        },
+        "institution": {
+            "description": "Name of primary institute where contact works.",
+            "type": "string",
+            "user_friendly": "Institution"
+        },
+        "laboratory": {
+            "description": "Name of lab (often the PI name) within institute where contact works.",
+            "type": "string",
+            "user_friendly": "Laboratory"
+        },
+        "address": {
+            "description": "Street address where contact works. Should include street name and number, city, country division, postal code.",
+            "type": "string",
+            "user_friendly": "Address"
+        },
+        "country": {
+            "description": "Country where contact works.",
+            "type": "string",
+            "user_friendly": "Country"
+        }
+    }
+}

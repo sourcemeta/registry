@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.1/backend/amqp/producer.json",
+  "title": "AMQP Producer",
+  "description": "Send messages to a queue through the API Gateway.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+  "type": "object",
+  "required": [
+    "name",
+    "exchange",
+    "routing_key",
+    "durable",
+    "delete",
+    "no_wait"
+  ],
+  "properties": {
+    "delete": {
+      "$id": "#backend/amqp/consumer/delete",
+      "title": "Delete",
+      "description": "false is recommended to avoid deletions when the consumer is disconnected.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "durable": {
+      "$id": "#backend/amqp/consumer/durable",
+      "title": "Durable",
+      "description": "true is recommended, but depends on the use case. Durable queues will survive server restarts and remain when there are no remaining consumers or bindings.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": true,
+      "type": "boolean"
+    },
+    "exchange": {
+      "$id": "#backend/amqp/consumer/exchange",
+      "title": "Exchange",
+      "description": "The exchange name (must have a topic type if already exists).\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "examples": [
+        "some-exchange"
+      ],
+      "type": "string"
+    },
+    "immediate": {
+      "$id": "#backend_extra_config/backend/amqp/producer/immediate",
+      "title": "Immediate",
+      "description": "A consumer must be connected to the queue when true. Defaults to false.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "mandatory": {
+      "$id": "#backend_extra_config/backend/amqp/producer/mandatory",
+      "title": "Mandatory",
+      "description": "The exchange must have at least one queue bound when true. Defaults to false.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "name": {
+      "$id": "#backend/amqp/consumer/name",
+      "title": "Name",
+      "description": "Queue name.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "type": "string"
+    },
+    "no_local": {
+      "$id": "#backend/amqp/consumer/no_local",
+      "title": "No local",
+      "description": "The no_local flag is not supported by RabbitMQ.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "type": "boolean"
+    },
+    "no_wait": {
+      "$id": "#backend/amqp/consumer/no_wait",
+      "title": "No wait",
+      "description": "When true, do not wait for the server to confirm the request and immediately begin deliveries. If it is not possible to consume, a channel exception will be raised and the channel will be closed.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "type": "boolean"
+    },
+    "prefetch_count": {
+      "$id": "#backend/amqp/consumer/prefetch_count",
+      "title": "Prefetch count",
+      "description": "The number of messages you want to prefetch prior to consume them.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": 10,
+      "type": "integer"
+    },
+    "prefetch_size": {
+      "$id": "#backend/amqp/consumer/prefetch_size",
+      "title": "Prefetch size",
+      "description": "The number of bytes you want to use to prefetch messages.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": 1024,
+      "type": "integer"
+    },
+    "routing_key": {
+      "$id": "#backend/amqp/consumer/routing_key",
+      "title": "Routing key",
+      "description": "The routing key you will use to send messages, case sensitive.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": "#",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

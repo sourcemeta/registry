@@ -1,0 +1,113 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://schema.humancellatlas.org/bundle/5.0.0/submission",
+    "description": "Information added to a submission at ingest." ,
+    "additionalProperties": false,
+	"required": [
+		"describedBy",
+    	"transfer_service_version",
+		"submitted_files"
+    ],
+    "title": "submission",
+	"type": "object",
+    "definitions": {
+    	"transfer_service_version": {
+			"description": "",
+			"additionalProperties": false,
+			"type" : "string"
+		},
+		"submitted_files": {
+			"description": "",
+			"additionalProperties": false,
+			"type": "array",
+			"items": {
+				"$ref": "https://schema.humancellatlas.org/bundle/5.0.0/submission#/definitions/file"
+			}
+		},
+		"file" : {
+			"description": "",
+			"additionalProperties": false,
+			"required": [
+				"name",
+				"content_type",
+				"size",
+				"id",
+				"checksums"
+			],
+			"type" : "object",
+			"properties" : {
+				"name" : {
+					"description": "Name of the file",
+					"type": "string"
+				},
+				"content_type":{
+					"description": "type of file e.g hca-biomaterial-json, hca-process-json, hca-rnaseq-fastq-gz",
+					"type": "string"
+				},
+				"size": {
+					"description": "Length of file in bytes",
+					"type": "integer"
+				},
+				"id": {
+					"description": "URI of the Data Storage System file resource that describes this file",
+					"type": "string"
+				},
+				"checksums": {
+					"type": "object",
+					"required": [
+						"s3etag",
+						"sha1",
+						"sha256",
+						"crc32"
+					],
+					"properties": {
+						"s3etag": {
+							"description": "S3 ETAG checksum of this file",
+							"type": "string"
+						},
+						"sha1": {
+							"description": "SHA-1 checksum of this file",
+							"type": "string"
+						},
+						"sha256": {
+							"description": "SHA-256 checksum of this file",
+							"type": "string"
+						},
+						"crc32": {
+							"description": "CRC-32 checksum of this file",
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+    },
+    "properties": {
+	 	"describedBy": {
+            "description": "The URL reference to the schema.",
+			"type": "string",
+      	  	"pattern": "https://schema.humancellatlas.org/bundle/[0-9]{1,}.[0-9]{1,}.[0-9]{1,}/submission"
+    	},
+        "schema_version": {
+            "description": "The version number of the schema in major.minor.patch format.",
+            "type": "string",
+            "pattern": "^[0-9]{1,}.[0-9]{1,}.[0-9]{1,}$",
+            "example": "4.6.1"
+        },
+        "schema_type": {
+            "description": "The type of the metadata schema entity.",
+            "type": "string",
+           "enum": [
+                "submission"
+            ]
+        },
+    	"transfer_service_version" : {
+			"description": "",
+			"$ref": "https://schema.humancellatlas.org/bundle/5.0.0/submission#/definitions/transfer_service_version"
+		},
+		"submitted_files" : {
+			"description": "",
+			"$ref": "https://schema.humancellatlas.org/bundle/5.0.0/submission#/definitions/submitted_files"
+		}
+    }
+}

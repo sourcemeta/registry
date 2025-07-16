@@ -1,0 +1,79 @@
+{
+  "id": "https://w3id.org/dats/schema/instrument_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS instrument schema",
+  "description": "An entity that helps an agent perform an activity.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Instrument" ]},
+    "identifier": {
+      "description": "The identifier of the instrument.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the instrument.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the instrument.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the instrument.",
+      "type" :  "string"
+    },
+    "type": {
+      "description": "The type of the instrument/technology.",
+      "$ref" : "annotation_schema.json#"
+    },
+    "isUsedBy" : {
+      "description": "The data acquisition activity that makes use of this instrument.",
+      "type" : "array",
+      "items" : {
+        "$ref": "data_acquisition_schema.json#"
+      }
+    },
+    "manufacturer" : {
+      "description": "The person or organisation that produced the instrument.",
+      "oneOf": [
+        {"$ref" : "person_schema.json#"},
+        {"$ref" : "organization_schema.json#"}
+      ]
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required":[ "name" ]
+}

@@ -1,0 +1,89 @@
+{
+  "id": "https://w3id.org/dats/schema/access_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS access schema",
+  "description": "Information about resources that provide the means to obtain an asset (a dataset or other research object).",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+   "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string",
+      "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string",
+      "enum": [ "Access" ]
+    },
+    "identifier": {
+      "description": "The identifier of the access entity.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "landingPage": {
+      "description": "A web page that contains information about the associated dataset or other research object and a direct link to the object itself.",
+      "type": "string",
+      "format": "uri"
+    },
+    "accessURL": {
+      "description": "A URL from which the resource (dataset or other research object) can be retrieved, i.e. a direct link to the object itself.",
+      "type": "string",
+      "format": "uri"
+    },
+    "types": {
+      "description": "Method to obtain the resource, ideally specified from a controlled vocabulary or ontology.",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },
+    "authorizations": {
+      "description": "Types of verification that accessing the resource is allowed. Authorization occurs before successful authentication and refers to the process of obtaining approval to use a data set. Ideally specified from a controlled vocabulary or ontology.",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },
+    "authentications": {
+      "description": "Types of verification of the credentials for accessing the resource, it is the identification process at the time of access. ideally specified from a controlled vocabulary or ontology.",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "landingPage" ]
+}

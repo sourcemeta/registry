@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.8/plugin/http-server.json",
+  "title": "HTTP Server plugins.\n\nSee: https://www.krakend.io/docs/extending/http-server-plugins/",
+  "type": "object",
+  "required": [
+    "name"
+  ],
+  "properties": {
+    "geoip": {
+      "$ref": "geoip.json"
+    },
+    "ip-filter": {
+      "$ref": "ip-filter.json"
+    },
+    "jwk-aggregator": {
+      "$ref": "jwk-aggregator.json"
+    },
+    "name": {
+      "$id": "#plugin/http-server",
+      "title": "Plugin name",
+      "description": "An array with the names of plugins to load. The names are defined inside your plugin.\n\nSee: https://www.krakend.io/docs/extending/http-server-plugins/",
+      "examples": [
+        "myplugin"
+      ],
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "redis-ratelimit": {
+      "$ref": "redis-ratelimit.json"
+    },
+    "static-filesystem": {
+      "$ref": "static-filesystem.json"
+    },
+    "url-rewrite": {
+      "$ref": "url-rewrite.json"
+    },
+    "virtualhost": {
+      "$ref": "virtualhost.json"
+    },
+    "wildcard": {
+      "$ref": "wildcard.json"
+    }
+  }
+}

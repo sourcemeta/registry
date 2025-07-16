@@ -1,0 +1,40 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "DefinedTermSet",
+    "description": "This schema is for describing a Defined Term Set in Cordra.",
+    "required": [
+        "@id",
+        "@context",
+        "@type"
+    ],
+    "allOf": [
+        {
+            "@context": {
+                "type": "string",
+                "default": [
+                    "https://schema.org/",
+                    {
+                        "@vocab": "https://pages.nist.gov/material-schema/user-defined"
+                    }
+                ]
+            },
+            "@type": {
+                "type": "string",
+                "default": "DefinedTermSet"
+            }
+        },
+        {
+            "$ref": "definition-schemas/CordraObjectID.json#/definitions/CordraObjectID"
+        },
+        {
+            "$ref": "definition-schemas/Thing.json#/definitions/Thing"
+        },
+        {
+            "$ref": "definition-schemas/CreativeWork.json#/definitions/CreativeWork"
+        },
+        {
+            "$ref": "definition-schemas/DefinedTermSet.json#/definitions/DefinedTermSet"
+        }
+    ]
+}

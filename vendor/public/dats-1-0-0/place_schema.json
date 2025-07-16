@@ -1,0 +1,82 @@
+{
+  "id": "https://w3id.org/dats/schema/place_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS place schema",
+  "description": "A spatially bounded entity.",
+  "comment": "It corresponds to Feature in GeoJSON, https://tools.ietf.org/html/rfc7946, geoLocation in DataCite,http://schema.datacite.org/meta/kernel-4.0/ and Place in schema.org",
+  "type": "object",
+  "definitions": {
+    "position": {
+      "description": "A GeoJSON Position",
+      "type": "array",
+      "minItems": 2,
+      "items": { "type": "number" }
+    }
+
+  },
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Place" ]},
+    "identifier": {
+      "description": "Primary identifier for the place.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the place.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the place.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the place.",
+      "type": "string"
+    },
+    "description": {
+      "description": "A textual narrative comprised of one or more statements describing the place.",
+      "type": "string"
+    },
+    "postalAddress": {
+      "description": "A physical street address.",
+      "type": "string"
+    },
+    "geometry": {
+      "description": "A region of a space.",
+      "type": "string",
+      "comment": "It follows GeoJSON specification https://tools.ietf.org/html/rfc7946",
+      "enum": [ "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection"]
+    },
+    "coordinates": {
+      "description": "A non-empty list of GeoJSON positions.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/position" }
+    }
+  }
+}

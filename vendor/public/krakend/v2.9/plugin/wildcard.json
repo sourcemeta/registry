@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.9/plugin/wildcard.json",
+  "title": "Wildcard",
+  "description": "Enterprise only. Enables wildcard processing of requests without declaring all endpoint subresrouces.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/wildcard/",
+  "type": "object",
+  "required": [
+    "endpoints"
+  ],
+  "properties": {
+    "endpoints": {
+      "title": "Endpoints",
+      "description": "The key of the map is the KrakenD endpoint that receives all the wildcard traffic. The value is an array with all the user paths that match this wildcard (you don't need to declare the subresources).\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/wildcard/",
+      "examples": [
+        {
+          "/__wildcard/foo": [
+            "/foo",
+            "/aliasfoo"
+          ]
+        }
+      ],
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

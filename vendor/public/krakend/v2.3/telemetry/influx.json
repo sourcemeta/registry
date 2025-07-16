@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.3/telemetry/influx.json",
+  "title": "Telemetry via influx",
+  "description": "Enables the extended logging capabilities.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+  "type": "object",
+  "required": [
+    "address",
+    "ttl"
+  ],
+  "properties": {
+    "address": {
+      "$id": "#telemetry/influx/address",
+      "title": "Address",
+      "description": "The complete url of the influxdb including the port if different from defaults in http/https.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "type": "string"
+    },
+    "buffer_size": {
+      "$id": "#telemetry/influx/buffer_size",
+      "title": "Points in buffer",
+      "description": "The buffer size is a protection mechanism that allows you to temporarily store datapoints for later reporting when Influx is unavailable. If the buffer is `0`, reported metrics that fail are discarded immediately. If the buffer is a positive number, KrakenD creates a buffer with the number of datapoints set. When the buffer is full because the Influx server keeps failing, newer datapoints replace older ones in the buffer.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "type": "integer",
+      "minimum": 0
+    },
+    "db": {
+      "$id": "#telemetry/influx/db",
+      "title": "DB name",
+      "description": "Name of the InfluxDB database (Influx v1) or the bucket name (Influx v2).\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "default": "krakend",
+      "type": "string"
+    },
+    "password": {
+      "$id": "#telemetry/influx/password",
+      "title": "Password",
+      "description": "Password to authenticate to InfluxDB. In Influx v2, you also need to add grant access with `influx v1 auth`.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "type": "string"
+    },
+    "ttl": {
+      "$id": "#telemetry/influx/ttl",
+      "title": "TTL",
+      "description": "TTL against Influx.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "$ref": "../timeunits.json#/$defs/timeunit"
+    },
+    "username": {
+      "$id": "#telemetry/influx/username",
+      "title": "Username",
+      "description": "Username to authenticate to InfluxDB.\n\nSee: https://www.krakend.io/docs/telemetry/influxdb-native/",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

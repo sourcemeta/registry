@@ -1,0 +1,11 @@
+assets/
+samples/
+scripts/
+skills/
+tools/
+typescript/
+code_of_conduct.md
+CONTRIBUTING.md
+LICENSE.md
+README.md
+tox.ini

@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.4/security/bot-detector.json",
+  "title": "Bot detector",
+  "description": "The bot detector module checks incoming connections to the gateway to determine if a bot made them, helping you detect and reject bots carrying out scraping, content theft, and form spam.\n\nSee: https://www.krakend.io/docs/throttling/botdetector/",
+  "type": "object",
+  "minProperties": 1,
+  "properties": {
+    "allow": {
+      "$id": "#security/bot-detector/allow",
+      "title": "Allow",
+      "description": "An array with EXACT MATCHES of trusted user agents that can connect.\n\nSee: https://www.krakend.io/docs/throttling/botdetector/",
+      "examples": [
+        "MyAndroidClient/1.0",
+        "Pingdom.com_bot_version_1.1"
+      ],
+      "default": [],
+      "type": "array"
+    },
+    "cache_size": {
+      "$id": "#security/bot-detector/cache_size",
+      "title": "Cache size",
+      "description": "Size of the LRU cache that helps speed the bot detection. The size is the mumber of users agents that you want to keep in memory.\n\nSee: https://www.krakend.io/docs/throttling/botdetector/",
+      "examples": [
+        1000
+      ],
+      "type": "integer"
+    },
+    "deny": {
+      "$id": "#security/bot-detector/deny",
+      "title": "Deny",
+      "description": "An array with EXACT MATCHES of undesired bots, to reject immediately.\n\nSee: https://www.krakend.io/docs/throttling/botdetector/",
+      "examples": [
+        "facebookexternalhit/1.1"
+      ],
+      "default": [],
+      "type": "array"
+    },
+    "empty_user_agent_is_bot": {
+      "$id": "#security/bot-detector/empty_user_agent_is_bot",
+      "title": "Empty user agent is a bot?",
+      "description": "Whether to consider an empty user-agent a bot (and reject it) or not. \n\nSee: https://www.krakend.io/docs/throttling/botdetector/",
+      "default": false,
+      "type": "boolean"
+    },
+    "patterns": {
+      "$id": "#security/bot-detector/patterns",
+      "title": "Bot patterns",
+      "description": "An array with all the regular expressions that define bots. Matching bots are rejected.\n\nSee: https://www.krakend.io/docs/throttling/botdetector/",
+      "examples": [
+        "GoogleBot.*",
+        "(facebookexternalhit)/.*"
+      ],
+      "default": [],
+      "type": "array"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

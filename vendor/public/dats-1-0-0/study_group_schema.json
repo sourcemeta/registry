@@ -1,0 +1,86 @@
+{
+  "id": "https://w3id.org/dats/schema/study_group_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS study group schema",
+  "description": "A collection of entities known as study subjects based on a set of specified criteria and rules; synonyms: population, cohort.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "StudyGroup" ]},
+    "identifier": {
+      "description": "The identifier of the study group.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the study group.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name": {
+      "description": "The name of the study group.",
+      "type" :  "string"
+    },
+    "keywords": {
+      "description": "a set of annotations to characterize the study group.",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },
+    "size": {
+      "description": "The number of members in the group.",
+      "type" :  "number"
+    },
+    "members" : {
+      "description": "The entities making up the study group.",
+      "type" : "array",
+      "items" : {
+        "$ref" : "material_schema.json#"
+      }
+    },
+    "consentInformation": {
+      "description": "The consent information related to this study group.",
+      "type": "array",
+      "items" : {
+        "$ref" : "consent_info_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "name" ]
+}

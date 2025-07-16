@@ -1,0 +1,108 @@
+{
+  "id": "https://w3id.org/dats/schema/dimension_schema.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "DATS dimension schema",
+  "description": "A feature of an entity, i.e. an individual measurable property (both quantitative or qualitative) of the entity being observed.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "description": "The JSON-LD context",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    },
+    "@id": {
+      "description": "The JSON-LD identifier",
+      "type": "string", "format": "uri"
+    },
+    "@type": {
+      "description": "The JSON-LD type",
+      "type": "string", "enum": [ "Dimension" ]},
+    "identifier": {
+      "description": "The identifier of the dimension.",
+      "$ref": "identifier_info_schema.json#"
+    },
+    "alternateIdentifiers": {
+      "description": "Alternate identifiers for the dimension.",
+      "type": "array",
+      "items": {
+        "$ref": "alternate_identifier_info_schema.json#"
+      }
+    },
+    "relatedIdentifiers": {
+      "description": "Related identifiers for the dimension.",
+      "type": "array",
+      "items": {
+        "$ref": "related_identifier_info_schema.json#"
+      }
+    },
+    "name" : {
+      "description": "The name of the dimension measured or observed during the data acquisition process, ideally from a controlled terminology.",
+      "$ref" : "annotation_schema.json#"
+    },
+    "description": {
+      "description": "A textual narrative comprised of one or more statements describing the dimension.",
+      "type": "string"
+    },
+    "types": {
+      "description": "A term, ideally from a controlled terminology, identifying the nature of the dimension, placing it in a typology.",
+      "type": "array",
+      "items": {
+        "$ref": "annotation_schema.json#"
+      }
+    },
+    "datatype": {
+      "description": "The type of data for this dimension, as described with the DataType entity.",
+      "$ref": "data_type_schema.json#"
+    },
+    "values": {
+      "description": "The actual collections of values collected for that dimension.",
+      "type": "array"
+    },
+    "unit": {
+      "description": "A reference measurement unit associated with scalar dimensions, ideally from a reference controlled terminology.",
+      "$ref" : "annotation_schema.json#"
+    },
+    "isAbout" : {
+      "description": "A material or a dataset, which is the object of this dimension (this dimension is about the material - e.g. the heights of the patients - or the dataset - e.g. the standard deviation or the set of outliers or a quality indicator of a dataset).",
+      "type" : "array",
+      "items" : {
+        "oneOf": [
+          {"$ref" : "material_schema.json#"},
+          {"$ref" : "dataset_schema.json#"}
+        ]
+      }
+    },
+   "consentInformation": {
+      "description": "The consent information related to this dimennsion.",
+      "type": "array",
+      "items" : {
+        "$ref" : "consent_info_schema.json#"
+      }
+    },
+    "partOf" : {
+      "description": "The dataset(s) this dimension belongs to.",
+      "type" : "array",
+      "items" : {
+        "$ref": "dataset_schema.json#"
+      }
+    },
+    "extraProperties": {
+      "description": "Extra properties that do not fit in the previous specified attributes. ",
+      "type": "array",
+      "items": {
+        "$ref" : "category_values_pair_schema.json#"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "name" ]
+}

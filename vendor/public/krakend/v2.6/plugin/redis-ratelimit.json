@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.6/plugin/redis-ratelimit.json",
+  "title": "Redis ratelimit",
+  "description": "Enterprise only. The global rate limit functionality enables a Redis database store to centralize all KrakenD node counters. Instead of having each KrakenD node count its hits, the counters are global and stored in the database.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/global-rate-limit/",
+  "type": "object",
+  "required": [
+    "host",
+    "tokenizer",
+    "burst",
+    "rate",
+    "period"
+  ],
+  "properties": {
+    "burst": {
+      "title": "Burst",
+      "description": "How many requests a client can make above the rate specified during a peak.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/global-rate-limit/",
+      "type": "integer"
+    },
+    "host": {
+      "title": "Redis host",
+      "description": "The URL to the Redis instance that stores the counters using the format `host:port`.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/global-rate-limit/",
+      "examples": [
+        "redis",
+        "redis:6379"
+      ],
+      "type": "string"
+    },
+    "period": {
+      "title": "Period",
+      "description": "For how long the content lives in the cache. Usually in seconds, minutes, or hours. E.g., use `120s` or `2m` for two minutes\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/global-rate-limit/",
+      "$ref": "../timeunits.json#/$defs/timeunit",
+      "type": "string"
+    },
+    "rate": {
+      "title": "Rate",
+      "description": "Number of allowed requests during the observed period.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/global-rate-limit/",
+      "type": "integer"
+    },
+    "tokenizer": {
+      "title": "Tokenizer",
+      "description": "One of the preselected strategies to rate-limit users.\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/global-rate-limit/",
+      "enum": [
+        "jwt",
+        "ip",
+        "url",
+        "path",
+        "header",
+        "param",
+        "cookie"
+      ]
+    },
+    "tokenizer_field": {
+      "title": "Tokenizer field",
+      "description": "The field used to set a custom field for the tokenizer (e.g., extracting the token from a custom header other than Authorization or using a claim from a JWT other than the jti).\n\nSee: https://www.krakend.io/docs/enterprise/endpoints/global-rate-limit/",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}
