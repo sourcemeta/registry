@@ -111,7 +111,7 @@ jobs:
         with:
           token: '${{ github.token }}'
           environment-url: https://${{ env.SERVICE_DOMAIN }}
-          environment: Sourcemeta Schemas
+          environment: sourcemeta-schemas
 
       - id: deploy
         uses: unikraft/kraftkit@v0.11.6
