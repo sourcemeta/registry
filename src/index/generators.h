@@ -154,6 +154,19 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
     }
   }
 
+  // Precompute the breadcrumb
+  result.assign("breadcrumb", sourcemeta::core::JSON::make_array());
+  std::filesystem::path current_path{"/"};
+  auto copy = relative_path;
+  copy.replace_extension("");
+  for (const auto &part : copy) {
+    current_path = current_path / part;
+    auto breadcrumb_entry{sourcemeta::core::JSON::make_object()};
+    breadcrumb_entry.assign("name", sourcemeta::core::JSON{part});
+    breadcrumb_entry.assign("url", sourcemeta::core::JSON{current_path});
+    result.at("breadcrumb").push_back(std::move(breadcrumb_entry));
+  }
+
   return result;
 }
 
@@ -197,6 +210,8 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
 
       entry_json.merge(
           sourcemeta::core::read_json(schema_nav_path).as_object());
+      // No need to show breadcrumbs of children
+      entry_json.erase("breadcrumb");
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});
       entries.push_back(std::move(entry_json));
     }
@@ -235,7 +250,6 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
 
   meta.assign("entries", std::move(entries));
 
-  // Precompute the breadcrumb
   const std::filesystem::path relative_path{directory.string().substr(
       std::min(base.string().size() + 1, directory.string().size()))};
   meta.assign(
@@ -249,6 +263,7 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
                                        "/" + relative_path.string()});
   }
 
+  // Precompute the breadcrumb
   meta.assign("breadcrumb", sourcemeta::core::JSON::make_array());
   std::filesystem::path current_path{"/"};
   for (const auto &part : relative_path) {
