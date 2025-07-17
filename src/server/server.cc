@@ -345,6 +345,11 @@ static auto on_request(const std::filesystem::path &base,
                      "uncaught-error", error.what());
         }
       });
+    } else if (!request->getQuery("meta").empty()) {
+      auto absolute_path{base / "explorer" / "pages" / lowercase_path};
+      absolute_path.replace_extension(".nav");
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK);
     } else {
       // Because Visual Studio Code famously does not support `$id` or `id`
       // See

@@ -134,3 +134,25 @@ jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
 jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/v2.0/schema.json"
+
+GET {{base}}/example/v2.0/schema.json?meta=1
+Accept: application/json
+HTTP 200
+Content-Type: application/json
+[Asserts]
+header "ETag" exists
+header "Last-Modified" exists
+jsonpath "$.baseDialect" == "draft7"
+jsonpath "$.canonical" == "{{base}}/example/v2.0/schema.json"
+jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
+jsonpath "$.id" == "{{base}}/example/v2.0/schema.json"
+jsonpath "$.url" == "/example/v2.0/schema.json"
+
+GET {{base}}/example/v2.0/xxxxx.json?meta=1
+Accept: application/json
+HTTP 404
+Content-Type: application/json
+[Asserts]  
+jsonpath "$.code" == 404
+jsonpath "$.error" == "not-found"
+jsonpath "$.message" == "There is nothing at this URL"
