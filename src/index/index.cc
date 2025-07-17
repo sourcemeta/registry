@@ -282,13 +282,22 @@ static auto index_main(const std::string_view &program,
     }
 
     const auto meta{sourcemeta::core::read_json(entry.path())};
+    auto relative_destination{
+        std::filesystem::relative(entry.path(), output.path())};
+    relative_destination.replace_extension(".html");
     if (meta.defines("entries")) {
-      auto relative_destination{
-          std::filesystem::relative(entry.path(), output.path())};
-      relative_destination.replace_extension(".html");
       output.write_text(relative_destination,
                         sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(
                             configuration, entry.path()));
+      output.write_json(relative_destination.string() + ".meta",
+                        sourcemeta::registry::GENERATE_META(
+                            output.path() / relative_destination, "text/html"));
+    } else {
+      output.write_text(relative_destination,
+                        sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
+                            configuration, entry.path(),
+                            (output.path() / "schemas").string() +
+                                meta.at("url").to_string() + ".schema"));
       output.write_json(relative_destination.string() + ".meta",
                         sourcemeta::registry::GENERATE_META(
                             output.path() / relative_destination, "text/html"));

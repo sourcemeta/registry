@@ -213,6 +213,12 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
       // No need to show breadcrumbs of children
       entry_json.erase("breadcrumb");
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});
+
+      assert(entry_json.defines("url"));
+      std::filesystem::path url{entry_json.at("url").to_string()};
+      url.replace_extension("");
+      entry_json.at("url").into(sourcemeta::core::JSON{url});
+
       entries.push_back(std::move(entry_json));
     }
   }
@@ -285,8 +291,10 @@ auto GENERATE_SEARCH_INDEX(
   for (const auto &absolute_path : absolute_paths) {
     auto metadata{sourcemeta::core::read_json(absolute_path)};
     auto entry{sourcemeta::core::JSON::make_array()};
-    // TODO: Can we move all of these?
-    entry.push_back(metadata.at("url"));
+    std::filesystem::path url = metadata.at("url").to_string();
+    url.replace_extension("");
+    entry.push_back(sourcemeta::core::JSON{url});
+    // TODO: Can we move these?
     entry.push_back(metadata.at_or("title", sourcemeta::core::JSON{""}));
     entry.push_back(metadata.at_or("description", sourcemeta::core::JSON{""}));
     result.push_back(std::move(entry));
@@ -402,6 +410,131 @@ auto GENERATE_EXPLORER_DIRECTORY_PAGE(
           : ("Schemas located at " + meta.at("url").to_string()),
       meta.at("url").to_string());
   sourcemeta::registry::html::partials::html_file_manager(html, meta);
+  sourcemeta::registry::html::partials::html_end(
+      output_html, sourcemeta::registry::PROJECT_VERSION);
+  return html.str();
+}
+
+auto GENERATE_EXPLORER_SCHEMA_PAGE(const sourcemeta::core::JSON &configuration,
+                                   const std::filesystem::path &navigation_path,
+                                   const std::filesystem::path &schema_path)
+    -> std::string {
+  const auto meta{sourcemeta::core::read_json(navigation_path)};
+  std::ostringstream html;
+
+  const auto &title{meta.defines("title") ? meta.at("title").to_string()
+                                          : meta.at("url").to_string()};
+
+  sourcemeta::registry::html::SafeOutput output_html{html};
+  const auto head{
+      configuration.at_or("head", sourcemeta::core::JSON{""}).to_string()};
+  sourcemeta::registry::html::partials::html_start(
+      output_html, meta.at("canonical").to_string(), head, configuration, title,
+      meta.defines("description")
+          ? meta.at("description").to_string()
+          : ("Schemas located at " + meta.at("url").to_string()),
+      meta.at("url").to_string());
+
+  sourcemeta::registry::html::partials::breadcrumb(html, meta);
+
+  output_html.open("div", {{"class", "container-fluid p-4"}});
+  output_html.open("div");
+
+  output_html.open("div");
+
+  if (meta.defines("title")) {
+    output_html.open("h2", {{"class", "fw-bold h4"}});
+    output_html.text(title);
+    output_html.close("h2");
+  }
+
+  if (meta.defines("description")) {
+    output_html.open("p", {{"class", "text-secondary"}})
+        .text(meta.at("description").to_string())
+        .close("p");
+  }
+
+  output_html
+      .open("a", {{"href", meta.at("url").to_string()},
+                  {"class", "btn btn-primary me-2"},
+                  {"role", "button"}})
+      .text("Get JSON Schema")
+      .close("a");
+
+  output_html
+      .open("a", {{"href", meta.at("url").to_string() + "?bundle=1"},
+                  {"class", "btn btn-secondary"},
+                  {"role", "button"}})
+      .text("Bundle")
+      .close("a");
+  output_html.close("div");
+
+  output_html.open("table", {{"class", "table table-bordered my-4"}});
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Identifier")
+      .close("th");
+  output_html.open("td")
+      .open("code")
+      .open("a", {{"href", meta.at("id").to_string()}})
+      .text(meta.at("id").to_string())
+      .close("a")
+      .close("code")
+      .close("td");
+  output_html.close("tr");
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Base Dialect")
+      .close("th");
+  output_html.open("td");
+  sourcemeta::registry::html::partials::dialect_badge(
+      html, meta.at("baseDialect").to_string());
+  output_html.close("td");
+  output_html.close("tr");
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Dialect")
+      .close("th");
+  output_html.open("td")
+      .open("code")
+      .text(meta.at("dialect").to_string())
+      .close("code")
+      .close("td");
+  output_html.close("tr");
+
+  output_html.close("table");
+  output_html.close("div");
+
+  output_html.open("pre", {{"class", "bg-light p-3 border"}});
+  output_html.open("code");
+  std::ostringstream schema_summary;
+  std::ifstream file{schema_path};
+  assert(file);
+  std::string line;
+  int count = 0;
+  while (count < 20 && std::getline(file, line)) {
+    schema_summary << line << "\n";
+    count += 1;
+  }
+  const auto has_more_lines{file && std::getline(file, line)};
+  if (has_more_lines) {
+    schema_summary << "...\n";
+  }
+  output_html.text(schema_summary.str());
+  output_html.close("code");
+  output_html.close("pre");
+
+  if (has_more_lines) {
+    output_html.open("a", {{"href", meta.at("url").to_string()}})
+        .text("See the full schema")
+        .close("a");
+  }
+
+  output_html.close("div");
+
   sourcemeta::registry::html::partials::html_end(
       output_html, sourcemeta::registry::PROJECT_VERSION);
   return html.str();
