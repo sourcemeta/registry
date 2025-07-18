@@ -12,53 +12,150 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # See https://github.com/sredevopsorg/multi-arch-docker-github-workflow/blob/main/.github/workflows/multi-build.yaml
   docker:
-    runs-on: ubuntu-latest
     permissions:
       packages: write
     strategy:
       fail-fast: false
       matrix:
         edition:
+
+          # x64
           - name: starter
             package: registry
+            os: ubuntu-24.04
+            arch: amd64
           - name: pro
             package: registry-pro
+            os: ubuntu-24.04
+            arch: amd64
           - name: enterprise
             package: registry-enterprise
+            os: ubuntu-24.04
+            arch: amd64
 
+          # arm64
+          - name: starter
+            package: registry
+            os: ubuntu-24.04-arm
+            arch: arm64
+          - name: pro
+            package: registry-pro
+            os: ubuntu-24.04-arm
+            arch: arm64
+          - name: enterprise
+            package: registry-enterprise
+            os: ubuntu-24.04-arm
+            arch: arm64
+
+    runs-on: ${{ matrix.edition.os }}
     steps:
       - uses: actions/checkout@v4
 
-      # See https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
-      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      - id: buildx-context
+        run: docker context create builders
+
+      - uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }}
+
+      - uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
+        with:
+          endpoint: builders
+          platforms: linux/${{ matrix.edition.arch }}
+
+      - uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # For cross-architecture builds
-      - uses: docker/setup-qemu-action@v3
-      - uses: docker/setup-buildx-action@v3
-
-      # Build and push
-      - uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        id: meta
-        with:
-          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }}
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        id: push
+      - id: build
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        env:
+          DOCKER_BUILDKIT: 1
         with:
           context: .
           file: Dockerfile
           build-args: "SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }}"
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
+          platforms: linux/${{ matrix.edition.arch }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          outputs: type=image,name=ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }},push-by-digest=true,name-canonical=true,push=true,oci-mediatypes=true
+          cache-from: type=gha,scope=ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }}-${{ github.ref_name }}-linux/${{ matrix.edition.arch }}
+          cache-to: type=gha,scope=ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }}-${{ github.ref_name }}-linux/${{ matrix.edition.arch }}
+
+      - run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: digests-${{ matrix.edition.package }}--${{ matrix.edition.arch }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  docker-merge:
+    needs: docker
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        edition:
+          - package: registry
+          - package: registry-pro
+          - package: registry-enterprise
+
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          path: /tmp/digests
+          pattern: digests-${{ matrix.edition.package }}--*
+          merge-multiple: true
+
+      - uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }}
+          annotations: |
+            type=org.opencontainers.image.description,value=${{ github.event.repository.description }}
+          tags: |
+            type=raw,value=main,enable=${{ github.ref_name == 'main' }}
+            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
+
+      - uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
+        with:
+          driver-opts: network=host
+
+      - uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: timestamp
+        run: echo "timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_OUTPUT
+
+      - working-directory: /tmp/digests
+        run: >
+          docker buildx imagetools create
+          $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          --annotation='index:org.opencontainers.image.description=${{ github.event.repository.description }}'
+          --annotation='index:org.opencontainers.image.created=${{ steps.timestamp.outputs.timestamp }}'
+          --annotation='index:org.opencontainers.image.url=${{ github.event.repository.url }}'
+          --annotation='index:org.opencontainers.image.source=${{ github.event.repository.url }}'
+          $(printf 'ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }}@sha256:%s ' *)
+
+      - run: docker buildx imagetools inspect 'ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }}:${{ steps.meta.outputs.version }}'
 
   release:
-    needs: docker
+    needs: docker-merge
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -74,7 +171,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
   public:
-    needs: docker
+    needs: docker-merge
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -102,7 +199,6 @@ jobs:
           file: public/Dockerfile
           build-args: "SOURCEMETA_REGISTRY=ghcr.io/sourcemeta/registry-enterprise:main"
           push: true
-          platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
