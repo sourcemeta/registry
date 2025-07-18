@@ -10,6 +10,18 @@ Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "A sample schema folder"
 
+GET {{base}}/doc/string-1
+HTTP 200
+Content-Type: text/html
+[Asserts]
+xpath "string(/html/head/title)" == "Non-blank string"
+
+GET {{base}}/doc/string-1.html
+HTTP 404
+Content-Type: text/html
+[Asserts]
+xpath "string(/html/head/title)" == "Not Found"
+
 GET {{base}}/example/v2.0
 HTTP 200
 Content-Type: text/html

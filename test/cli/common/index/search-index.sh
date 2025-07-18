@@ -42,8 +42,8 @@ export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 "$1" "$TMP/registry.json" "$TMP/output"
 
 cat << 'EOF' > "$TMP/expected.json"
-["/example/schemas/test.json","My title","My description"]
-["/example/schemas/no-title.json","",""]
+["/example/schemas/test","My title","My description"]
+["/example/schemas/no-title","",""]
 EOF
 
 cat "$TMP/output/explorer/search.jsonl"

@@ -34,7 +34,7 @@ HTTP 200
 Content-Type: application/jsonl
 [
   {
-    "url": "/example/bundling/single.json",
+    "url": "/example/bundling/single",
     "title": "Bundling",
     "description": "A bundling example"
   }
@@ -46,19 +46,19 @@ HTTP 200
 Content-Type: application/jsonl
 [
   {
-    "url": "/example/bundling/single.json",
+    "url": "/example/bundling/single",
     "title": "Bundling",
     "description": "A bundling example"
   }
 ]
 
 # Results without title/description
-GET {{base}}/api/search?q=camelcase.json
+GET {{base}}/api/search?q=schemas/camelcase
 HTTP 200
 Content-Type: application/jsonl
 [
   {
-    "url": "/example/schemas/camelcase.json",
+    "url": "/example/schemas/camelcase",
     "title": "",
     "description": ""
   }

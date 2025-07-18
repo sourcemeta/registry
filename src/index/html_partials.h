@@ -239,9 +239,8 @@ static auto profile_picture(T &html, const sourcemeta::core::JSON &meta,
   return false;
 }
 
-// TODO: Refactor this function to use new HTML utilities
 template <typename T>
-auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
+auto breadcrumb(T &html, const sourcemeta::core::JSON &meta) -> void {
   assert(meta.defines("breadcrumb"));
   assert(meta.at("breadcrumb").is_array());
   if (!meta.at("breadcrumb").empty()) {
@@ -278,6 +277,42 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
     html << "</ol>";
     html << "</nav>";
   }
+}
+
+template <typename T>
+auto dialect_badge(T &html, const sourcemeta::core::JSON::String &base_dialect)
+    -> void {
+  html << "<a "
+          "href=\"https://www.learnjsonschema.com/";
+  html << base_dialect;
+  html << "\" target=\"_blank\">";
+  html << "<span class=\"align-middle badge ";
+
+  // Highlight the latest version in a different manner
+  if (base_dialect == "2020-12") {
+    html << "text-bg-primary";
+  } else {
+    html << "text-bg-danger";
+  }
+
+  html << "\">";
+  for (auto iterator = base_dialect.cbegin(); iterator != base_dialect.cend();
+       ++iterator) {
+    if (iterator == base_dialect.cbegin()) {
+      html << static_cast<char>(std::toupper(*iterator));
+    } else {
+      html << *iterator;
+    }
+  }
+
+  html << "</span>";
+  html << "</a>";
+}
+
+// TODO: Refactor this function to use new HTML utilities
+template <typename T>
+auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
+  breadcrumb(html, meta);
 
   html << "<div class=\"container-fluid p-4 flex-grow-1\">";
   html << "<table class=\"table table-bordered border-light-subtle "
@@ -369,32 +404,7 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
       }
     } else {
       const auto &base_dialect{entry.at("baseDialect").to_string()};
-      html << "<a "
-              "href=\"https://www.learnjsonschema.com/";
-      html << base_dialect;
-      html << "\" target=\"_blank\">";
-      html << "<span class=\"align-middle badge ";
-
-      // Highlight the latest version in a different manner
-      if (base_dialect == "2020-12") {
-        html << "text-bg-primary";
-      } else {
-        html << "text-bg-danger";
-      }
-
-      html << "\">";
-
-      for (auto iterator = base_dialect.cbegin();
-           iterator != base_dialect.cend(); ++iterator) {
-        if (iterator == base_dialect.cbegin()) {
-          html << static_cast<char>(std::toupper(*iterator));
-        } else {
-          html << *iterator;
-        }
-      }
-
-      html << "</span>";
-      html << "</a>";
+      dialect_badge(html, base_dialect);
     }
     html << "</td>";
 
