@@ -99,7 +99,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  docker-merge:
+  docker-multi-arch:
     needs: docker
     permissions:
       packages: write
@@ -155,7 +155,7 @@ jobs:
       - run: docker buildx imagetools inspect 'ghcr.io/${{ github.repository_owner }}/${{ matrix.edition.package }}:${{ steps.meta.outputs.version }}'
 
   release:
-    needs: docker-merge
+    needs: docker-multi-arch
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -171,7 +171,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
   public:
-    needs: docker-merge
+    needs: docker-multi-arch
     runs-on: ubuntu-latest
     permissions:
       packages: write
