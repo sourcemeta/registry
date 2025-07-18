@@ -1,4 +1,4 @@
-FROM ghcr.io/sourcemeta/registry-public:main AS builder
+FROM ghcr.io/sourcemeta/sourcemeta-schemas:main AS builder
 FROM scratch
 COPY --from=builder /usr/bin/sourcemeta-registry-server \
   /usr/bin/sourcemeta-registry-server
