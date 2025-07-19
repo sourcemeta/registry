@@ -115,6 +115,9 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
       })};
   assert(id.has_value());
   auto result{sourcemeta::core::JSON::make_object()};
+
+  result.assign("bytes", sourcemeta::core::JSON{
+                             std::filesystem::file_size(absolute_path)});
   result.assign("id", sourcemeta::core::JSON{std::move(id).value()});
   result.assign("url", sourcemeta::core::JSON{"/" + relative_path.string()});
   result.assign("canonical",
@@ -502,6 +505,15 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(const sourcemeta::core::JSON &configuration,
       .open("code")
       .text(meta.at("dialect").to_string())
       .close("code")
+      .close("td");
+  output_html.close("tr");
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Size")
+      .close("th");
+  output_html.open("td")
+      .text(std::to_string(meta.at("bytes").as_real() / (1024 * 1024)) + " MB")
       .close("td");
   output_html.close("tr");
 

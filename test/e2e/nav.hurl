@@ -85,6 +85,7 @@ jsonpath "$.breadcrumb[0].url" == "/example"
 jsonpath "$.breadcrumb[1].name" == "v2.0"
 jsonpath "$.breadcrumb[1].url" == "/example/v2.0"
 jsonpath "$.entries" count == 1
+jsonpath "$.entries[0].bytes" == 138
 jsonpath "$.entries[0].baseDialect" == "draft7"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
@@ -106,6 +107,7 @@ jsonpath "$.breadcrumb[0].url" == "/example"
 jsonpath "$.breadcrumb[1].name" == "v2.0"
 jsonpath "$.breadcrumb[1].url" == "/example/v2.0"
 jsonpath "$.entries" count == 1
+jsonpath "$.entries[0].bytes" == 138
 jsonpath "$.entries[0].baseDialect" == "draft7"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
@@ -128,6 +130,7 @@ jsonpath "$.breadcrumb[0].url" == "/example"
 jsonpath "$.breadcrumb[1].name" == "v2.0"
 jsonpath "$.breadcrumb[1].url" == "/example/v2.0"
 jsonpath "$.entries" count == 1
+jsonpath "$.entries[0].bytes" == 138
 jsonpath "$.entries[0].baseDialect" == "draft7"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
@@ -142,6 +145,7 @@ Content-Type: application/json
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
+jsonpath "$.bytes" == 138
 jsonpath "$.baseDialect" == "draft7"
 jsonpath "$.canonical" == "{{base}}/example/v2.0/schema.json"
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
