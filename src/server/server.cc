@@ -234,7 +234,7 @@ static auto serve_static_file(uWS::HttpRequest *request,
 }
 
 static auto on_request(const std::filesystem::path &base,
-                       uWS::HttpRequest *request,
+                       const std::string &server_url, uWS::HttpRequest *request,
                        uWS::HttpResponse<true> *response,
                        const ServerContentEncoding encoding) -> void {
   if (request->getUrl() == "/") {
@@ -310,8 +310,9 @@ static auto on_request(const std::filesystem::path &base,
       response->onData([response, encoding, buffer = std::move(buffer),
                         template_path = std::move(template_path),
                         trace = !request->getQuery("trace").empty(),
-                        url = std::move(url)](const std::string_view chunk,
-                                              const bool is_last) mutable {
+                        url = std::move(url),
+                        server_url](const std::string_view chunk,
+                                    const bool is_last) mutable {
         try {
           if (!buffer.get()) {
             buffer = std::make_unique<std::string>(chunk);
@@ -328,7 +329,7 @@ static auto on_request(const std::filesystem::path &base,
             } else {
               const auto instance{sourcemeta::core::parse_json(*buffer)};
               const auto result{sourcemeta::registry::evaluate(
-                  template_path, instance,
+                  template_path, instance, server_url,
                   trace ? sourcemeta::registry::EvaluateType::Trace
                         : sourcemeta::registry::EvaluateType::Standard)};
               response->writeStatus(sourcemeta::registry::STATUS_OK);
@@ -414,6 +415,7 @@ static auto on_request(const std::filesystem::path &base,
 }
 
 static auto dispatch(const std::filesystem::path &base,
+                     const std::string &server_url,
                      uWS::HttpResponse<true> *const response,
                      uWS::HttpRequest *const request) noexcept -> void {
   try {
@@ -448,7 +450,7 @@ static auto dispatch(const std::filesystem::path &base,
     }
 
     if (encoding.has_value()) {
-      on_request(base, request, response, encoding.value());
+      on_request(base, server_url, request, response, encoding.value());
     } else {
       json_error(request->getMethod(), request->getUrl(), response,
                  ServerContentEncoding::Identity,
@@ -497,15 +499,16 @@ auto main(int argc, char *argv[]) noexcept -> int {
     assert(configuration.defines("port"));
     assert(configuration.at("port").is_integer());
     assert(configuration.at("port").is_positive());
+    assert(configuration.defines("url"));
+    assert(configuration.at("url").is_string());
+    const auto &url{configuration.at("url").to_string()};
     const auto port{
         static_cast<std::uint32_t>(configuration.at("port").to_integer())};
 
-    uWS::LocalCluster({}, [&base, port](uWS::SSLApp &app) -> void {
-      app.any(
-          "/*",
-          [&base](auto *const response, auto *const request) noexcept -> void {
-            dispatch(base, response, request);
-          });
+    uWS::LocalCluster({}, [&base, port, &url](uWS::SSLApp &app) -> void {
+      app.any("/*",
+              [&base, &url](auto *const response, auto *const request) noexcept
+                  -> void { dispatch(base, url, response, request); });
 
       app.listen(static_cast<int>(port),
                  [port](us_listen_socket_t *const socket) -> void {

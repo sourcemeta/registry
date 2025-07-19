@@ -2,6 +2,7 @@
 #define SOURCEMETA_REGISTRY_SERVER_EVALUATE_H
 
 #include <sourcemeta/core/json.h>
+#include <sourcemeta/core/uri.h>
 
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
@@ -15,16 +16,18 @@ namespace {
 
 auto trace(sourcemeta::blaze::Evaluator &evaluator,
            const sourcemeta::blaze::Template &schema_template,
+           const std::string &server_url,
            const sourcemeta::core::JSON &instance) -> sourcemeta::core::JSON {
   auto steps{sourcemeta::core::JSON::make_array()};
 
   const auto result{evaluator.validate(
       schema_template, instance,
-      [&steps](const sourcemeta::blaze::EvaluationType type, const bool valid,
-               const sourcemeta::blaze::Instruction &instruction,
-               const sourcemeta::core::WeakPointer &evaluate_path,
-               const sourcemeta::core::WeakPointer &instance_location,
-               const sourcemeta::core::JSON &annotation) {
+      [&steps, &server_url](
+          const sourcemeta::blaze::EvaluationType type, const bool valid,
+          const sourcemeta::blaze::Instruction &instruction,
+          const sourcemeta::core::WeakPointer &evaluate_path,
+          const sourcemeta::core::WeakPointer &instance_location,
+          const sourcemeta::core::JSON &annotation) {
         auto step{sourcemeta::core::JSON::make_object()};
 
         if (type == sourcemeta::blaze::EvaluationType::Pre) {
@@ -45,6 +48,26 @@ auto trace(sourcemeta::blaze::Evaluator &evaluator,
                     sourcemeta::core::to_json(instance_location));
         step.assign("keywordLocation",
                     sourcemeta::core::to_json(instruction.keyword_location));
+
+        // TODO: Can we simplify the crazy dance we do here to get
+        // the schema path and schema location pointers?
+        sourcemeta::core::URI schema_location{instruction.keyword_location};
+        step.assign("schemaLocation",
+                    sourcemeta::core::to_json(
+                        std::string{schema_location.fragment().value_or("")}));
+        auto without_fragment{schema_location.recompose_without_fragment()};
+        assert(without_fragment.has_value());
+        if (without_fragment.value().starts_with(server_url)) {
+          std::filesystem::path schema_path{
+              std::move(without_fragment).value().substr(server_url.size())};
+          schema_path.replace_extension("");
+          // TODO: Here we can read the `.positions` file to get line/columns
+          step.assign("schemaUrl", sourcemeta::core::to_json(schema_path));
+        } else {
+          // Means the schema doesn't belong to us
+          step.assign("schemaUrl", sourcemeta::core::JSON{nullptr});
+        }
+
         step.assign("annotation", annotation);
 
         steps.push_back(std::move(step));
@@ -63,7 +86,8 @@ namespace sourcemeta::registry {
 enum class EvaluateType { Standard, Trace };
 
 auto evaluate(const std::filesystem::path &template_path,
-              const sourcemeta::core::JSON &instance, const EvaluateType type)
+              const sourcemeta::core::JSON &instance,
+              const std::string &server_url, const EvaluateType type)
     -> sourcemeta::core::JSON {
   assert(std::filesystem::exists(template_path));
 
@@ -81,7 +105,7 @@ auto evaluate(const std::filesystem::path &template_path,
           evaluator, schema_template.value(), instance,
           sourcemeta::blaze::StandardOutput::Basic);
     case EvaluateType::Trace:
-      return trace(evaluator, schema_template.value(), instance);
+      return trace(evaluator, schema_template.value(), server_url, instance);
     default:
       // We should never get here
       assert(false);
