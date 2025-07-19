@@ -33,6 +33,7 @@ namespace sourcemeta::registry {
 auto GENERATE_SERVER_CONFIGURATION(const sourcemeta::core::JSON &configuration)
     -> sourcemeta::core::JSON {
   auto summary{sourcemeta::core::JSON::make_object()};
+  summary.assign("url", configuration.at("url"));
   summary.assign("port", configuration.at("port"));
   return summary;
 }

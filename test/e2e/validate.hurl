@@ -36,12 +36,16 @@ jsonpath "$.steps[0].annotation" == null
 jsonpath "$.steps[0].evaluatePath" == "/type"
 jsonpath "$.steps[0].instanceLocation" == ""
 jsonpath "$.steps[0].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
+jsonpath "$.steps[0].schemaLocation" == "/type"
+jsonpath "$.steps[0].schemaUrl" == "/example/schemas/string"
 jsonpath "$.steps[0].name" == "AssertionTypeStrict"
 jsonpath "$.steps[0].type" == "push"
 jsonpath "$.steps[1].annotation" == null
 jsonpath "$.steps[1].evaluatePath" == "/type"
 jsonpath "$.steps[1].instanceLocation" == ""
 jsonpath "$.steps[1].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
+jsonpath "$.steps[1].schemaLocation" == "/type"
+jsonpath "$.steps[0].schemaUrl" == "/example/schemas/string"
 jsonpath "$.steps[1].name" == "AssertionTypeStrict"
 jsonpath "$.steps[1].type" == "pass"
 
