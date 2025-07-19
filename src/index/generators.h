@@ -4,6 +4,7 @@
 #include <sourcemeta/registry/resolver.h>
 
 #include <sourcemeta/core/json.h>
+#include <sourcemeta/core/jsonpointer.h>
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/time.h>
@@ -99,6 +100,14 @@ auto GENERATE_BLAZE_TEMPLATE(const std::filesystem::path &absolute_path,
       sourcemeta::core::schema_official_resolver,
       sourcemeta::blaze::default_schema_compiler, mode)};
   return sourcemeta::blaze::to_json(schema_template);
+}
+
+auto GENERATE_POINTER_POSITIONS(const std::filesystem::path &absolute_path)
+    -> sourcemeta::core::JSON {
+  sourcemeta::core::PointerPositionTracker tracker;
+  const auto schema{
+      sourcemeta::core::read_json(absolute_path, std::ref(tracker))};
+  return sourcemeta::core::to_json(tracker);
 }
 
 // TODO: Put breadcrumb inside this metadata

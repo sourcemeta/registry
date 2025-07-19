@@ -208,6 +208,16 @@ static auto index_main(const std::string_view &program,
             sourcemeta::registry::GENERATE_SCHEMA_META(
                 output.path() / (base_path.string() + ".unidentified"),
                 output.path() / (base_path.string() + ".schema")));
+
+        output.write_json(
+            base_path.string() + ".positions",
+            sourcemeta::registry::GENERATE_POINTER_POSITIONS(
+                output.path() / (base_path.string() + ".schema")));
+        output.write_json(
+            base_path.string() + ".positions.meta",
+            sourcemeta::registry::GENERATE_META(
+                output.path() / (base_path.string() + ".positions"),
+                "application/json"));
       },
       THREAD_STACK_SIZE);
 
