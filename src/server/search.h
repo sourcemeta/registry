@@ -1,6 +1,7 @@
 #ifndef SOURCEMETA_REGISTRY_SERVER_SEARCH_H
 #define SOURCEMETA_REGISTRY_SERVER_SEARCH_H
 
+#include <sourcemeta/core/io.h>
 #include <sourcemeta/core/json.h>
 
 #include <algorithm>   // std::search

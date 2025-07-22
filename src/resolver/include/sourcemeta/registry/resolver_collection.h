@@ -13,7 +13,7 @@ namespace sourcemeta::registry {
 
 struct ResolverCollection {
   ResolverCollection(const std::filesystem::path &base_path,
-                     const sourcemeta::core::JSON::String &entry_name,
+                     sourcemeta::core::JSON::String entry_name,
                      const sourcemeta::core::JSON &entry);
 
   // Just to prevent mistakes

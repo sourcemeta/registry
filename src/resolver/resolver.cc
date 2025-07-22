@@ -11,10 +11,9 @@
 
 static auto to_lowercase(const std::string_view input) -> std::string {
   std::string result{input};
-  std::transform(result.cbegin(), result.cend(), result.begin(),
-                 [](const auto character) {
-                   return static_cast<char>(std::tolower(character));
-                 });
+  std::ranges::transform(result, result.begin(), [](const auto character) {
+    return static_cast<char>(std::tolower(character));
+  });
   return result;
 }
 
@@ -150,39 +149,44 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
 
   auto result{this->views.emplace(
       effective_identifier,
-      Entry{std::nullopt, canonical, current_dialect, "", effective_identifier,
-            collection.name,
+      Entry{.cache_path = std::nullopt,
+            .path = canonical,
+            .dialect = current_dialect,
+            .relative_path = "",
+            .original_identifier = effective_identifier,
+            .collection_name = collection.name,
             // TODO: We should avoid this vector / string copy
-            [rebases = collection.rebase](
-                sourcemeta::core::JSON &subschema,
-                const sourcemeta::core::URI &base,
-                const sourcemeta::core::JSON::String &vocabulary,
-                const sourcemeta::core::JSON::String &keyword,
-                sourcemeta::core::URI &value) {
-              const auto current_path{value.path()};
-              if (current_path.has_value()) {
-                value.path(to_lowercase(current_path.value()));
-                subschema.assign(keyword,
-                                 sourcemeta::core::JSON{value.recompose()});
-              }
+            .reference_visitor =
+                [rebases = collection.rebase](
+                    sourcemeta::core::JSON &subschema,
+                    const sourcemeta::core::URI &base,
+                    const sourcemeta::core::JSON::String &vocabulary,
+                    const sourcemeta::core::JSON::String &keyword,
+                    sourcemeta::core::URI &value) {
+                  const auto current_path{value.path()};
+                  if (current_path.has_value()) {
+                    value.path(to_lowercase(current_path.value()));
+                    subschema.assign(keyword,
+                                     sourcemeta::core::JSON{value.recompose()});
+                  }
 
-              sourcemeta::core::reference_visitor_relativize(
-                  subschema, base, vocabulary, keyword, value);
+                  sourcemeta::core::reference_visitor_relativize(
+                      subschema, base, vocabulary, keyword, value);
 
-              if (!value.is_absolute()) {
-                return;
-              }
+                  if (!value.is_absolute()) {
+                    return;
+                  }
 
-              for (const auto &rebase : rebases) {
-                auto value_other = value;
-                value_other.rebase(rebase.first, rebase.second);
-                if (value_other != value) {
-                  subschema.assign(
-                      keyword, sourcemeta::core::JSON{value_other.recompose()});
-                  return;
-                }
-              }
-            }})};
+                  for (const auto &rebase : rebases) {
+                    auto value_other = value;
+                    value_other.rebase(rebase.first, rebase.second);
+                    if (value_other != value) {
+                      subschema.assign(keyword, sourcemeta::core::JSON{
+                                                    value_other.recompose()});
+                      return;
+                    }
+                  }
+                }})};
 
   if (!result.second && result.first->second.path != canonical) {
     std::ostringstream error;
