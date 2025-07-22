@@ -175,15 +175,23 @@ static auto index_main(const std::string_view &program,
       [&output, &resolver, &configuration](const auto &schema) {
         const auto base_path{std::filesystem::path{"schemas"} /
                              schema.second.relative_path};
-        output.write_jsonschema(
-            base_path.string() + ".bundle",
-            sourcemeta::registry::GENERATE_BUNDLE(
-                resolver, output.path() / (base_path.string() + ".schema")));
+        const auto bundle_result{sourcemeta::registry::GENERATE_BUNDLE(
+            resolver, output.path() / (base_path.string() + ".schema"))};
+        output.write_jsonschema(base_path.string() + ".bundle",
+                                bundle_result.first);
         output.write_json(
             base_path.string() + ".bundle.meta",
             sourcemeta::registry::GENERATE_SCHEMA_META(
                 output.path() / (base_path.string() + ".bundle"),
                 output.path() / (base_path.string() + ".schema")));
+
+        output.write_json(base_path.string() + ".dependencies",
+                          bundle_result.second);
+        output.write_json(
+            base_path.string() + ".dependencies.meta",
+            sourcemeta::registry::GENERATE_META(
+                output.path() / (base_path.string() + ".dependencies"),
+                "application/json"));
 
         if (attribute(configuration, schema.second.collection_name,
                       "x-sourcemeta-registry:blaze-exhaustive")) {
