@@ -21,11 +21,11 @@ namespace sourcemeta::registry {
 
 ResolverCollection::ResolverCollection(
     const std::filesystem::path &base_path,
-    const sourcemeta::core::JSON::String &entry_name,
+    sourcemeta::core::JSON::String entry_name,
     const sourcemeta::core::JSON &entry)
     : path{std::filesystem::canonical(base_path /
                                       entry.at("path").to_string())},
-      name{entry_name},
+      name{std::move(entry_name)},
       base_uri{
           sourcemeta::core::URI{entry.at("base").to_string()}.canonicalize()},
       default_dialect{
