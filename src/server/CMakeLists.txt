@@ -7,6 +7,7 @@ set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourceme
 
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::io)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::json)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::jsonpointer)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uuid)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::gzip)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::time)

@@ -2,6 +2,7 @@
 #define SOURCEMETA_REGISTRY_SERVER_EVALUATE_H
 
 #include <sourcemeta/core/json.h>
+#include <sourcemeta/core/jsonpointer.h>
 
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
@@ -15,16 +16,20 @@ namespace {
 
 auto trace(sourcemeta::blaze::Evaluator &evaluator,
            const sourcemeta::blaze::Template &schema_template,
-           const sourcemeta::core::JSON &instance) -> sourcemeta::core::JSON {
+           const std::string &instance) -> sourcemeta::core::JSON {
   auto steps{sourcemeta::core::JSON::make_array()};
 
+  sourcemeta::core::PointerPositionTracker tracker;
+  const auto instance_json{
+      sourcemeta::core::parse_json(instance, std::ref(tracker))};
   const auto result{evaluator.validate(
-      schema_template, instance,
-      [&steps](const sourcemeta::blaze::EvaluationType type, const bool valid,
-               const sourcemeta::blaze::Instruction &instruction,
-               const sourcemeta::core::WeakPointer &evaluate_path,
-               const sourcemeta::core::WeakPointer &instance_location,
-               const sourcemeta::core::JSON &annotation) {
+      schema_template, instance_json,
+      [&steps, &tracker](const sourcemeta::blaze::EvaluationType type,
+                         const bool valid,
+                         const sourcemeta::blaze::Instruction &instruction,
+                         const sourcemeta::core::WeakPointer &evaluate_path,
+                         const sourcemeta::core::WeakPointer &instance_location,
+                         const sourcemeta::core::JSON &annotation) {
         auto step{sourcemeta::core::JSON::make_object()};
 
         if (type == sourcemeta::blaze::EvaluationType::Pre) {
@@ -43,6 +48,14 @@ auto trace(sourcemeta::blaze::Evaluator &evaluator,
         step.assign("evaluatePath", sourcemeta::core::to_json(evaluate_path));
         step.assign("instanceLocation",
                     sourcemeta::core::to_json(instance_location));
+        auto instance_positions{tracker.get(
+            // TODO: Can we avoid converting the weak pointer into a pointer
+            // here?
+            sourcemeta::core::to_pointer(instance_location))};
+        assert(instance_positions.has_value());
+        step.assign(
+            "instancePositions",
+            sourcemeta::core::to_json(std::move(instance_positions).value()));
         step.assign("keywordLocation",
                     sourcemeta::core::to_json(instruction.keyword_location));
         step.assign("annotation", annotation);
@@ -63,7 +76,7 @@ namespace sourcemeta::registry {
 enum class EvaluateType { Standard, Trace };
 
 auto evaluate(const std::filesystem::path &template_path,
-              const sourcemeta::core::JSON &instance, const EvaluateType type)
+              const std::string &instance, const EvaluateType type)
     -> sourcemeta::core::JSON {
   assert(std::filesystem::exists(template_path));
 
@@ -78,7 +91,8 @@ auto evaluate(const std::filesystem::path &template_path,
   switch (type) {
     case EvaluateType::Standard:
       return sourcemeta::blaze::standard(
-          evaluator, schema_template.value(), instance,
+          evaluator, schema_template.value(),
+          sourcemeta::core::parse_json(instance),
           sourcemeta::blaze::StandardOutput::Basic);
     case EvaluateType::Trace:
       return trace(evaluator, schema_template.value(), instance);

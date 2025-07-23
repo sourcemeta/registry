@@ -35,12 +35,22 @@ jsonpath "$.steps" count == 2
 jsonpath "$.steps[0].annotation" == null
 jsonpath "$.steps[0].evaluatePath" == "/type"
 jsonpath "$.steps[0].instanceLocation" == ""
+jsonpath "$.steps[0].instancePositions" count == 4
+jsonpath "$.steps[0].instancePositions[0]" == 1
+jsonpath "$.steps[0].instancePositions[1]" == 1
+jsonpath "$.steps[0].instancePositions[2]" == 1
+jsonpath "$.steps[0].instancePositions[3]" == 13
 jsonpath "$.steps[0].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
 jsonpath "$.steps[0].name" == "AssertionTypeStrict"
 jsonpath "$.steps[0].type" == "push"
 jsonpath "$.steps[1].annotation" == null
 jsonpath "$.steps[1].evaluatePath" == "/type"
 jsonpath "$.steps[1].instanceLocation" == ""
+jsonpath "$.steps[1].instancePositions" count == 4
+jsonpath "$.steps[1].instancePositions[0]" == 1
+jsonpath "$.steps[1].instancePositions[1]" == 1
+jsonpath "$.steps[1].instancePositions[2]" == 1
+jsonpath "$.steps[1].instancePositions[3]" == 13
 jsonpath "$.steps[1].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
 jsonpath "$.steps[1].name" == "AssertionTypeStrict"
 jsonpath "$.steps[1].type" == "pass"
