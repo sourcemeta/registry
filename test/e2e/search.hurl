@@ -1,6 +1,7 @@
 GET {{base}}/api/search
 HTTP 400
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]  
 jsonpath "$.code" == 400
 jsonpath "$.error" == "missing-query"
@@ -9,6 +10,7 @@ jsonpath "$.message" == "You must provide a query parameter to search for"
 GET {{base}}/api/search?q=
 HTTP 400
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]  
 jsonpath "$.code" == 400
 jsonpath "$.error" == "missing-query"
@@ -17,6 +19,7 @@ jsonpath "$.message" == "You must provide a query parameter to search for"
 POST {{base}}/api/search?q=foo
 HTTP 405
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]  
 jsonpath "$.code" == 405
 jsonpath "$.error" == "method-not-allowed"
@@ -26,12 +29,14 @@ jsonpath "$.message" == "This HTTP method is invalid for this URL"
 GET {{base}}/api/search?q=xxxxxxxxxxxx
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 []
 
 # Results with title/description
 GET {{base}}/api/search?q=bundling
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [
   {
     "url": "/example/bundling/single",
@@ -49,6 +54,7 @@ Content-Type: application/json
 GET {{base}}/api/search?q=bUNdLing
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [
   {
     "url": "/example/bundling/single",
@@ -66,6 +72,7 @@ Content-Type: application/json
 GET {{base}}/api/search?q=schemas/camelcase
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [
   {
     "url": "/example/schemas/camelcase",
@@ -78,5 +85,6 @@ Content-Type: application/json
 GET {{base}}/api/search?q=e
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]
 jsonpath "$" count <= 10

@@ -96,6 +96,7 @@ static auto json_error(const std::string_view method,
   object.assign("code", sourcemeta::core::JSON{std::atoi(code)});
   response->writeStatus(code);
   response->writeHeader("Content-Type", "application/json");
+  response->writeHeader("Access-Control-Allow-Origin", "*");
 
   std::ostringstream output;
   sourcemeta::core::prettify(object, output);
@@ -142,7 +143,8 @@ static auto serve_static_file(uWS::HttpRequest *request,
                               uWS::HttpResponse<true> *response,
                               const ServerContentEncoding encoding,
                               const std::filesystem::path &absolute_path,
-                              const char *const code) -> void {
+                              const char *const code,
+                              const bool enable_cors = false) -> void {
   if (request->getMethod() != "get" && request->getMethod() != "head") {
     if (std::filesystem::exists(absolute_path)) {
       json_error(request->getMethod(), request->getUrl(), response, encoding,
@@ -179,6 +181,10 @@ static auto serve_static_file(uWS::HttpRequest *request,
            std::chrono::seconds(1)) >=
           sourcemeta::core::from_gmt(last_modified)) {
         response->writeStatus(sourcemeta::registry::STATUS_NOT_MODIFIED);
+        if (enable_cors) {
+          response->writeHeader("Access-Control-Allow-Origin", "*");
+        }
+
         send_response(sourcemeta::registry::STATUS_NOT_MODIFIED,
                       request->getMethod(), request->getUrl(), response);
         return;
@@ -202,6 +208,10 @@ static auto serve_static_file(uWS::HttpRequest *request,
       if (match.first == "*" || match.first == etag_value_weak.str() ||
           match.first == etag_value_strong.str()) {
         response->writeStatus(sourcemeta::registry::STATUS_NOT_MODIFIED);
+        if (enable_cors) {
+          response->writeHeader("Access-Control-Allow-Origin", "*");
+        }
+
         send_response(sourcemeta::registry::STATUS_NOT_MODIFIED,
                       request->getMethod(), request->getUrl(), response);
         return;
@@ -210,6 +220,12 @@ static auto serve_static_file(uWS::HttpRequest *request,
   }
 
   response->writeStatus(code);
+
+  // To support requests from web browsers
+  if (enable_cors) {
+    response->writeHeader("Access-Control-Allow-Origin", "*");
+  }
+
   response->writeHeader("Content-Type",
                         file.value().meta.at("mime").to_string());
   response->writeHeader("Last-Modified", last_modified);
@@ -242,7 +258,7 @@ static auto on_request(const std::filesystem::path &base,
     if (accept == "application/json") {
       serve_static_file(request, response, encoding,
                         base / "explorer" / "pages.nav",
-                        sourcemeta::registry::STATUS_OK);
+                        sourcemeta::registry::STATUS_OK, true);
     } else {
       serve_static_file(request, response, encoding,
                         base / "explorer" / "pages.html",
@@ -259,6 +275,7 @@ static auto on_request(const std::filesystem::path &base,
         auto result{sourcemeta::registry::search(
             base / "explorer" / "search.jsonl", query)};
         response->writeStatus(sourcemeta::registry::STATUS_OK);
+        response->writeHeader("Access-Control-Allow-Origin", "*");
         response->writeHeader("Content-Type", "application/json");
         std::ostringstream output;
         sourcemeta::core::prettify(result, output);
@@ -348,7 +365,7 @@ static auto on_request(const std::filesystem::path &base,
       auto absolute_path{base / "explorer" / "pages" / lowercase_path};
       absolute_path.replace_extension(".nav");
       serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK);
+                        sourcemeta::registry::STATUS_OK, true);
     } else {
       // Because Visual Studio Code famously does not support `$id` or `id`
       // See
@@ -379,13 +396,13 @@ static auto on_request(const std::filesystem::path &base,
         nav_path.replace_extension(".nav");
         if (std::filesystem::exists(nav_path)) {
           serve_static_file(request, response, encoding, nav_path,
-                            sourcemeta::registry::STATUS_OK);
+                            sourcemeta::registry::STATUS_OK, true);
           return;
         }
       }
 
       serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK);
+                        sourcemeta::registry::STATUS_OK, true);
     }
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
     const auto accept{request->getHeader("accept")};
@@ -394,7 +411,7 @@ static auto on_request(const std::filesystem::path &base,
           base / "explorer" / "pages" /
           (std::string{request->getUrl().substr(1)} + ".nav")};
       serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK);
+                        sourcemeta::registry::STATUS_OK, true);
     } else {
       const auto absolute_path{
           base / "explorer" / "pages" /

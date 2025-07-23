@@ -2,6 +2,7 @@ GET {{base}}/example/schemas/string.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 
@@ -117,6 +118,7 @@ GET {{base}}/example/v2.0/schema.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/example/v2.0/schema.json",
@@ -128,6 +130,7 @@ GET {{base}}/example/extension/with.schema.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/example/extension/with.schema.json",
@@ -139,6 +142,7 @@ GET {{base}}/example/extension/without.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/example/extension/without.json",
@@ -150,6 +154,7 @@ GET {{base}}/example/schemas/CamelCase.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/example/schemas/camelcase.json",
@@ -161,6 +166,7 @@ GET {{base}}/example/schemas/camelcase.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/example/schemas/camelcase.json",
@@ -171,6 +177,7 @@ GET {{base}}/example/schemas/html.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/example/schemas/html.json"
@@ -180,6 +187,7 @@ GET {{base}}/example/schemas/index.html.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/example/schemas/index.html.json"

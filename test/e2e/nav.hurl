@@ -5,6 +5,7 @@ GET {{base}}
 Accept: application/json
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -40,6 +41,7 @@ GET {{base}}/example
 Accept: application/json
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -74,6 +76,7 @@ GET {{base}}/example/v2.0
 Accept: application/json
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -96,6 +99,7 @@ jsonpath "$.entries[0].url" == "/example/v2.0/schema"
 GET {{base}}/example/v2.0.json
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -119,6 +123,7 @@ GET {{base}}/example/v2.0.json
 Accept: application/json
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -142,6 +147,7 @@ GET {{base}}/example/v2.0/schema.json?meta=1
 Accept: application/json
 HTTP 200
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -163,6 +169,7 @@ GET {{base}}/example/v2.0/xxxxx.json?meta=1
 Accept: application/json
 HTTP 404
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]  
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
