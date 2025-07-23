@@ -317,7 +317,9 @@ static auto index_main(const std::string_view &program,
                         sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
                             configuration, entry.path(),
                             (output.path() / "schemas").string() +
-                                meta.at("url").to_string() + ".schema"));
+                                meta.at("url").to_string() + ".schema",
+                            (output.path() / "schemas").string() +
+                                meta.at("url").to_string() + ".dependencies"));
       output.write_json(relative_destination.string() + ".meta",
                         sourcemeta::registry::GENERATE_META(
                             output.path() / relative_destination, "text/html"));
