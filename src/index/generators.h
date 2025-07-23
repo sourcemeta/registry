@@ -447,10 +447,11 @@ auto GENERATE_EXPLORER_DIRECTORY_PAGE(
   return html.str();
 }
 
-auto GENERATE_EXPLORER_SCHEMA_PAGE(const sourcemeta::core::JSON &configuration,
-                                   const std::filesystem::path &navigation_path,
-                                   const std::filesystem::path &schema_path)
-    -> std::string {
+auto GENERATE_EXPLORER_SCHEMA_PAGE(
+    const sourcemeta::core::JSON &configuration,
+    const std::filesystem::path &navigation_path,
+    const std::filesystem::path &schema_path,
+    const std::filesystem::path &dependencies_path) -> std::string {
   const auto meta{sourcemeta::core::read_json(navigation_path)};
   std::ostringstream html;
 
@@ -572,6 +573,85 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(const sourcemeta::core::JSON &configuration,
     output_html.open("a", {{"href", meta.at("url").to_string()}})
         .text("See the full schema")
         .close("a");
+  }
+
+  output_html.open("h3", {{"class", "fw-bold h5 mt-4"}})
+      .text("Dependencies")
+      .close("h3");
+
+  const auto dependencies{sourcemeta::core::read_json(dependencies_path)};
+  assert(dependencies.is_array());
+  std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> direct;
+  std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> indirect;
+  for (const auto &dependency : dependencies.as_array()) {
+    if (dependency.at("from") == meta.at("id")) {
+      direct.emplace_back(dependency);
+    } else {
+      indirect.emplace_back(dependency);
+    }
+  }
+
+  std::ostringstream dependency_summary;
+  dependency_summary << "This schema has " << direct.size() << " direct "
+                     << (direct.size() == 1 ? "dependency" : "dependencies")
+                     << " and " << indirect.size() << " indirect "
+                     << (indirect.size() == 1 ? "dependency" : "dependencies")
+                     << ".";
+  output_html.open("p").text(dependency_summary.str()).close("p");
+
+  if (direct.size() + indirect.size() > 0) {
+    output_html.open("table", {{"class", "table"}});
+    output_html.open("thead");
+    output_html.open("tr");
+    output_html.open("th", {{"scope", "col"}}).text("Origin").close("th");
+    output_html.open("th", {{"scope", "col"}}).text("Dependency").close("th");
+    output_html.close("tr");
+    output_html.close("thead");
+    output_html.open("tbody");
+
+    for (const auto &dependency : dependencies.as_array()) {
+      output_html.open("tr");
+
+      if (dependency.at("from") == meta.at("id")) {
+        output_html.open("td")
+            .open("code")
+            .text(dependency.at("at").to_string())
+            .close("code")
+            .close("td");
+      } else {
+        output_html.open("td")
+            .open("span", {{"class", "badge text-bg-dark"}})
+            .text("Indirect")
+            .close("span")
+            .close("td");
+      }
+
+      if (dependency.at("to").to_string().starts_with(
+              configuration.at("url").to_string())) {
+        std::filesystem::path dependency_schema_url{
+            dependency.at("to").to_string().substr(
+                configuration.at("url").to_string().size())};
+        dependency_schema_url.replace_extension("");
+        output_html.open("td")
+            .open("code")
+            .open("a", {{"href", dependency_schema_url.string()}})
+            .text(dependency_schema_url.string())
+            .close("a")
+            .close("code")
+            .close("td");
+      } else {
+        output_html.open("td")
+            .open("code")
+            .text(dependency.at("to").to_string())
+            .close("code")
+            .close("td");
+      }
+
+      output_html.close("tr");
+    }
+
+    output_html.close("tbody");
+    output_html.close("table");
   }
 
   output_html.close("div");
