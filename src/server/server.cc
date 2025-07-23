@@ -326,9 +326,8 @@ static auto on_request(const std::filesystem::path &base,
                          "no-instance",
                          "You must pass an instance to validate against");
             } else {
-              const auto instance{sourcemeta::core::parse_json(*buffer)};
               const auto result{sourcemeta::registry::evaluate(
-                  template_path, instance,
+                  template_path, *buffer,
                   trace ? sourcemeta::registry::EvaluateType::Trace
                         : sourcemeta::registry::EvaluateType::Standard)};
               response->writeStatus(sourcemeta::registry::STATUS_OK);
