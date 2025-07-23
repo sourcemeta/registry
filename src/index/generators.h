@@ -74,27 +74,31 @@ auto GENERATE_SCHEMA_META(const std::filesystem::path &absolute_path,
 
 auto GENERATE_BUNDLE(const sourcemeta::registry::Resolver &resolver,
                      const std::filesystem::path &absolute_path)
-    -> std::pair<sourcemeta::core::JSON, sourcemeta::core::JSON> {
+    -> sourcemeta::core::JSON {
   const auto schema{sourcemeta::core::read_json(absolute_path)};
+  return sourcemeta::core::bundle(
+      schema, sourcemeta::core::schema_official_walker,
+      [&resolver](const auto identifier) { return resolver(identifier); });
+}
 
-  auto traces{sourcemeta::core::JSON::make_array()};
-  auto bundle{sourcemeta::core::bundle(
+auto GENERATE_DEPENDENCIES(const sourcemeta::registry::Resolver &resolver,
+                           const std::filesystem::path &absolute_path)
+    -> sourcemeta::core::JSON {
+  const auto schema{sourcemeta::core::read_json(absolute_path)};
+  auto result{sourcemeta::core::JSON::make_array()};
+  sourcemeta::core::dependencies(
       schema, sourcemeta::core::schema_official_walker,
       [&resolver](const auto identifier) { return resolver(identifier); },
-      std::nullopt, std::nullopt, std::nullopt,
-      {sourcemeta::core::empty_pointer},
-      [&traces](const std::optional<sourcemeta::core::JSON::String> &origin,
-                const sourcemeta::core::Pointer &pointer,
-                const sourcemeta::core::JSON::String &target,
-                const sourcemeta::core::Pointer &) {
+      [&result](const auto &origin, const auto &pointer, const auto &target,
+                const auto &) {
         auto trace{sourcemeta::core::JSON::make_object()};
         trace.assign("from", sourcemeta::core::to_json(origin));
         trace.assign("to", sourcemeta::core::to_json(target));
         trace.assign("at", sourcemeta::core::to_json(pointer));
-        traces.push_back(std::move(trace));
-      })};
+        result.push_back(std::move(trace));
+      });
 
-  return {std::move(bundle), std::move(traces)};
+  return result;
 }
 
 auto GENERATE_UNIDENTIFIED(const sourcemeta::registry::Resolver &resolver,
