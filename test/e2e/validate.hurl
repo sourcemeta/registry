@@ -1,6 +1,14 @@
+OPTIONS {{base}}/example/schemas/string.json
+HTTP 204
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: POST, OPTIONS
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Max-Age: 3600
+
 POST {{base}}/example/schemas/string.json
 HTTP 400
 Content-Type: application/json
+Access-Control-Allow-Origin: *
 [Asserts]  
 jsonpath "$.code" == 400
 jsonpath "$.error" == "no-instance"
@@ -10,6 +18,7 @@ POST {{base}}/example/schemas/string.json
 Content-Type: application/json
 "Hello World"
 HTTP 200
+Access-Control-Allow-Origin: *
 [Asserts]
 jsonpath "$.valid" == true
 
@@ -17,6 +26,7 @@ POST {{base}}/example/schemas/string.json
 Content-Type: application/json
 1234
 HTTP 200
+Access-Control-Allow-Origin: *
 [Asserts]
 jsonpath "$.valid" == false
 jsonpath "$.errors" count == 1
@@ -29,6 +39,7 @@ POST {{base}}/example/schemas/string.json?trace=1
 Content-Type: application/json
 "Hello World"
 HTTP 200
+Access-Control-Allow-Origin: *
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 2
@@ -59,6 +70,7 @@ POST {{base}}/no-blaze/string.json
 Content-Type: application/json
 "Hello World"
 HTTP 405
+Access-Control-Allow-Origin: *
 [Asserts]  
 jsonpath "$.code" == 405
 jsonpath "$.error" == "no-template"
