@@ -301,7 +301,16 @@ static auto on_request(const std::filesystem::path &base,
         lowercase_path.begin(), lowercase_path.end(), lowercase_path.begin(),
         [](const unsigned char character) { return std::tolower(character); });
 
-    if (request->getMethod() == "post") {
+    // A CORS pre-flight request
+    if (request->getMethod() == "options") {
+      response->writeStatus(sourcemeta::registry::STATUS_NO_CONTENT);
+      response->writeHeader("Access-Control-Allow-Origin", "*");
+      response->writeHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+      response->writeHeader("Access-Control-Allow-Headers", "Content-Type");
+      response->writeHeader("Access-Control-Max-Age", "3600");
+      send_response(sourcemeta::registry::STATUS_NO_CONTENT,
+                    request->getMethod(), request->getUrl(), response);
+    } else if (request->getMethod() == "post") {
       auto template_path{base / "schemas" /
                          (lowercase_path + ".blaze-exhaustive")};
       if (!std::filesystem::exists(template_path)) {
@@ -349,6 +358,7 @@ static auto on_request(const std::filesystem::path &base,
                         : sourcemeta::registry::EvaluateType::Standard)};
               response->writeStatus(sourcemeta::registry::STATUS_OK);
               response->writeHeader("Content-Type", "application/json");
+              response->writeHeader("Access-Control-Allow-Origin", "*");
               std::ostringstream payload;
               sourcemeta::core::prettify(result, payload);
               send_response(sourcemeta::registry::STATUS_OK, "post", url,

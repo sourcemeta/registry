@@ -1,3 +1,6 @@
+OPTIONS {{base}}
+HTTP 405
+
 GET {{base}}
 HTTP 200
 Content-Type: text/html
