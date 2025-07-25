@@ -2,6 +2,7 @@
 #include <sourcemeta/core/jsonschema.h>
 
 #include <sourcemeta/registry/license.h>
+#include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
 #include "configure.h"
@@ -78,8 +79,8 @@ static auto index_main(const std::string_view &program,
         configuration_schema.at("properties").at("description").at("default"));
   }
 
-  output.write_json(
-      "configuration.json",
+  output.write_metapack_json(
+      "configuration.json", sourcemeta::registry::MetaPackEncoding::Identity,
       sourcemeta::registry::GENERATE_SERVER_CONFIGURATION(configuration));
 
   const auto server_url{
@@ -152,13 +153,10 @@ static auto index_main(const std::string_view &program,
             "The schema does not adhere to its metaschema");
         const auto base_path{std::filesystem::path{"schemas"} /
                              schema.second.relative_path};
-        const auto destination{output.write_jsonschema(
-            base_path.string() + ".schema", subresult.value())};
-        output.write_json(
-            base_path.string() + ".schema.meta",
-            sourcemeta::registry::GENERATE_SCHEMA_META(
-                output.path() / (base_path.string() + ".schema"),
-                output.path() / (base_path.string() + ".schema")));
+        const auto destination{output.write_metapack_jsonschema(
+            base_path.string() + ".schema",
+            sourcemeta::registry::MetaPackEncoding::Identity, subresult.value(),
+            dialect_identifier.value())};
         resolver.materialise(schema.first, destination);
       },
       THREAD_STACK_SIZE);
@@ -175,59 +173,45 @@ static auto index_main(const std::string_view &program,
       [&output, &resolver, &configuration](const auto &schema) {
         const auto base_path{std::filesystem::path{"schemas"} /
                              schema.second.relative_path};
-        output.write_jsonschema(
-            base_path.string() + ".bundle",
-            sourcemeta::registry::GENERATE_BUNDLE(
-                resolver, output.path() / (base_path.string() + ".schema")));
-        output.write_json(
-            base_path.string() + ".bundle.meta",
-            sourcemeta::registry::GENERATE_SCHEMA_META(
-                output.path() / (base_path.string() + ".bundle"),
-                output.path() / (base_path.string() + ".schema")));
+        const auto dialect_identifier{
+            sourcemeta::core::dialect(resolver(schema.first).value())};
+        assert(dialect_identifier.has_value());
 
-        output.write_json(
+        output.write_metapack_jsonschema(
+            base_path.string() + ".bundle",
+            sourcemeta::registry::MetaPackEncoding::Identity,
+            sourcemeta::registry::GENERATE_BUNDLE(
+                resolver, output.path() / (base_path.string() + ".schema")),
+            dialect_identifier.value());
+
+        output.write_metapack_json(
             base_path.string() + ".dependencies",
+            sourcemeta::registry::MetaPackEncoding::Identity,
             sourcemeta::registry::GENERATE_DEPENDENCIES(
                 resolver, output.path() / (base_path.string() + ".schema")));
-        output.write_json(
-            base_path.string() + ".dependencies.meta",
-            sourcemeta::registry::GENERATE_META(
-                output.path() / (base_path.string() + ".dependencies"),
-                "application/json"));
 
         if (attribute(configuration, schema.second.collection_name,
                       "x-sourcemeta-registry:blaze-exhaustive")) {
-          output.write_json(
+          output.write_metapack_json(
               base_path.string() + ".blaze-exhaustive",
+              sourcemeta::registry::MetaPackEncoding::Identity,
               sourcemeta::registry::GENERATE_BLAZE_TEMPLATE(
                   output.path() / (base_path.string() + ".bundle"),
                   sourcemeta::blaze::Mode::Exhaustive));
-          output.write_json(
-              base_path.string() + ".blaze-exhaustive.meta",
-              sourcemeta::registry::GENERATE_SCHEMA_META(
-                  output.path() / (base_path.string() + ".blaze-exhaustive"),
-                  output.path() / (base_path.string() + ".schema")));
         }
 
-        output.write_jsonschema(
+        output.write_metapack_jsonschema(
             base_path.string() + ".unidentified",
+            sourcemeta::registry::MetaPackEncoding::Identity,
             sourcemeta::registry::GENERATE_UNIDENTIFIED(
-                resolver, output.path() / (base_path.string() + ".bundle")));
-        output.write_json(
-            base_path.string() + ".unidentified.meta",
-            sourcemeta::registry::GENERATE_SCHEMA_META(
-                output.path() / (base_path.string() + ".unidentified"),
-                output.path() / (base_path.string() + ".schema")));
+                resolver, output.path() / (base_path.string() + ".bundle")),
+            dialect_identifier.value());
 
-        output.write_json(
+        output.write_metapack_json(
             base_path.string() + ".positions",
+            sourcemeta::registry::MetaPackEncoding::Identity,
             sourcemeta::registry::GENERATE_POINTER_POSITIONS(
                 output.path() / (base_path.string() + ".schema")));
-        output.write_json(
-            base_path.string() + ".positions.meta",
-            sourcemeta::registry::GENERATE_META(
-                output.path() / (base_path.string() + ".positions"),
-                "application/json"));
       },
       THREAD_STACK_SIZE);
 
@@ -237,28 +221,21 @@ static auto index_main(const std::string_view &program,
     auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
                          schema.second.relative_path};
     schema_nav_path.replace_extension("nav");
-    output.write_json(
-        schema_nav_path,
+    output.write_metapack_json(
+        schema_nav_path, sourcemeta::registry::MetaPackEncoding::Identity,
         sourcemeta::registry::GENERATE_NAV_SCHEMA(
             configuration, resolver,
             output.path() / "schemas" /
                 (schema.second.relative_path.string() + ".schema"),
             schema.second.relative_path));
-    output.write_json(schema_nav_path.string() + ".meta",
-                      sourcemeta::registry::GENERATE_META(
-                          output.path() / schema_nav_path, "application/json"));
   }
 
   const auto base{output.path() / "schemas"};
   const auto navigation_base{output.path() / "explorer" / "pages"};
-  output.write_json(std::filesystem::path{"explorer"} / "pages.nav",
-                    sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-                        configuration, navigation_base, base, base));
-  output.write_json(
-      std::filesystem::path{"explorer"} / "pages.nav.meta",
-      sourcemeta::registry::GENERATE_META(
-          output.path() / std::filesystem::path{"explorer"} / "pages.nav",
-          "application/json"));
+  output.write_metapack_json(std::filesystem::path{"explorer"} / "pages.nav",
+                             sourcemeta::registry::MetaPackEncoding::Identity,
+                             sourcemeta::registry::GENERATE_NAV_DIRECTORY(
+                                 configuration, navigation_base, base, base));
 
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
@@ -266,13 +243,10 @@ static auto index_main(const std::string_view &program,
       auto relative_path{
           std::filesystem::path{"explorer"} / std::filesystem::path{"pages"} /
           (std::filesystem::relative(entry.path(), base).string() + ".nav")};
-      output.write_json(
-          relative_path,
+      output.write_metapack_json(
+          relative_path, sourcemeta::registry::MetaPackEncoding::Identity,
           sourcemeta::registry::GENERATE_NAV_DIRECTORY(
               configuration, navigation_base, base, entry.path()));
-      output.write_json(relative_path.string() + ".meta",
-                        sourcemeta::registry::GENERATE_META(
-                            output.path() / relative_path, "application/json"));
     }
   }
 
@@ -286,13 +260,10 @@ static auto index_main(const std::string_view &program,
   }
 
   const auto search_index{sourcemeta::registry::GENERATE_SEARCH_INDEX(navs)};
-  output.write_jsonl(std::filesystem::path{"explorer"} / "search.jsonl",
-                     search_index.cbegin(), search_index.cend());
-  output.write_json(
-      std::filesystem::path{"explorer"} / "search.jsonl.meta",
-      sourcemeta::registry::GENERATE_META(
-          output.path() / std::filesystem::path{"explorer"} / "search.jsonl",
-          "application/jsonl"));
+  output.write_metapack_jsonl(std::filesystem::path{"explorer"} /
+                                  "search.jsonl",
+                              sourcemeta::registry::MetaPackEncoding::Identity,
+                              search_index.cbegin(), search_index.cend());
 
   const auto explorer_base{output.path() / "explorer" / "pages"};
   for (const auto &entry :
@@ -301,49 +272,41 @@ static auto index_main(const std::string_view &program,
       continue;
     }
 
-    const auto meta{sourcemeta::core::read_json(entry.path())};
+    const auto meta{sourcemeta::registry::read_json(entry.path())};
+    assert(meta.has_value());
     auto relative_destination{
         std::filesystem::relative(entry.path(), output.path())};
     relative_destination.replace_extension(".html");
-    if (meta.defines("entries")) {
-      output.write_text(relative_destination,
-                        sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(
-                            configuration, entry.path()));
-      output.write_json(relative_destination.string() + ".meta",
-                        sourcemeta::registry::GENERATE_META(
-                            output.path() / relative_destination, "text/html"));
+    if (meta.value().data.defines("entries")) {
+      output.write_metapack_html(
+          relative_destination,
+          sourcemeta::registry::MetaPackEncoding::Identity,
+          sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(configuration,
+                                                                 entry.path()));
     } else {
-      output.write_text(relative_destination,
-                        sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
-                            configuration, entry.path(),
-                            (output.path() / "schemas").string() +
-                                meta.at("url").to_string() + ".schema",
-                            (output.path() / "schemas").string() +
-                                meta.at("url").to_string() + ".dependencies"));
-      output.write_json(relative_destination.string() + ".meta",
-                        sourcemeta::registry::GENERATE_META(
-                            output.path() / relative_destination, "text/html"));
+      output.write_metapack_html(
+          relative_destination,
+          sourcemeta::registry::MetaPackEncoding::Identity,
+          sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
+              configuration, entry.path(),
+              (output.path() / "schemas").string() +
+                  meta.value().data.at("url").to_string() + ".schema",
+              (output.path() / "schemas").string() +
+                  meta.value().data.at("url").to_string() + ".dependencies"));
     }
   }
 
-  output.write_text(
+  output.write_metapack_html(
       std::filesystem::path{"explorer"} / "pages.html",
+      sourcemeta::registry::MetaPackEncoding::Identity,
       sourcemeta::registry::GENERATE_EXPLORER_INDEX(
           configuration,
           output.path() / std::filesystem::path{"explorer"} / "pages.nav"));
-  output.write_json(
-      std::filesystem::path{"explorer"} / "pages.html.meta",
-      sourcemeta::registry::GENERATE_META(
-          output.path() / std::filesystem::path{"explorer"} / "pages.html",
-          "text/html"));
 
-  output.write_text(std::filesystem::path{"explorer"} / "404.html",
-                    sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
-  output.write_json(
-      std::filesystem::path{"explorer"} / "404.html.meta",
-      sourcemeta::registry::GENERATE_META(
-          output.path() / std::filesystem::path{"explorer"} / "404.html",
-          "text/html"));
+  output.write_metapack_html(
+      std::filesystem::path{"explorer"} / "404.html",
+      sourcemeta::registry::MetaPackEncoding::Identity,
+      sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
 
   return EXIT_SUCCESS;
 }

@@ -4,12 +4,12 @@
 #include <sourcemeta/core/uuid.h>
 
 #include <sourcemeta/registry/license.h>
+#include <sourcemeta/registry/metapack.h>
 
 #include "uwebsockets.h"
 
 #include "configure.h"
 #include "evaluate.h"
-#include "reader.h"
 #include "search.h"
 #include "status.h"
 
@@ -232,7 +232,7 @@ static auto serve_static_file(uWS::HttpRequest *request,
 
   // See
   // https://json-schema.org/draft/2020-12/json-schema-core.html#section-9.5.1.1
-  const auto dialect{file.value().meta.try_at("dialect")};
+  const auto dialect{file.value().meta.try_at("extension")};
   if (dialect) {
     std::ostringstream link;
     link << "<" << dialect->to_string() << ">; rel=\"describedby\"";

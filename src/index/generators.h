@@ -1,6 +1,7 @@
 #ifndef SOURCEMETA_REGISTRY_INDEX_GENERATORS_H_
 #define SOURCEMETA_REGISTRY_INDEX_GENERATORS_H_
 
+#include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
 #include <sourcemeta/core/json.h>
@@ -37,57 +38,24 @@ auto GENERATE_SERVER_CONFIGURATION(const sourcemeta::core::JSON &configuration)
   return summary;
 }
 
-auto GENERATE_META(const std::filesystem::path &absolute_path,
-                   const std::string &mime) -> sourcemeta::core::JSON {
-  auto metadata{sourcemeta::core::JSON::make_object()};
-  std::ifstream stream{absolute_path};
-  stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-  assert(!stream.fail());
-  assert(stream.is_open());
-  std::ostringstream contents;
-  contents << stream.rdbuf();
-  std::ostringstream md5;
-  sourcemeta::core::md5(contents.str(), md5);
-  metadata.assign("md5", sourcemeta::core::JSON{md5.str()});
-  const auto last_write_time{std::filesystem::last_write_time(absolute_path)};
-  const auto last_modified{
-      std::chrono::time_point_cast<std::chrono::system_clock::duration>(
-          last_write_time - std::filesystem::file_time_type::clock::now() +
-          std::chrono::system_clock::now())};
-  metadata.assign("lastModified", sourcemeta::core::JSON{
-                                      sourcemeta::core::to_gmt(last_modified)});
-  metadata.assign("mime", sourcemeta::core::JSON{mime});
-  return metadata;
-}
-
-auto GENERATE_SCHEMA_META(const std::filesystem::path &absolute_path,
-                          const std::filesystem::path &canonical_schema_path)
-    -> sourcemeta::core::JSON {
-  const auto schema{sourcemeta::core::read_json(canonical_schema_path)};
-  const auto dialect_identifier{sourcemeta::core::dialect(schema)};
-  assert(dialect_identifier.has_value());
-  auto metadata{GENERATE_META(absolute_path, "application/schema+json")};
-  metadata.assign("dialect",
-                  sourcemeta::core::JSON{dialect_identifier.value()});
-  return metadata;
-}
-
 auto GENERATE_BUNDLE(const sourcemeta::registry::Resolver &resolver,
                      const std::filesystem::path &absolute_path)
     -> sourcemeta::core::JSON {
-  const auto schema{sourcemeta::core::read_json(absolute_path)};
+  const auto schema{sourcemeta::registry::read_json(absolute_path)};
+  assert(schema.has_value());
   return sourcemeta::core::bundle(
-      schema, sourcemeta::core::schema_official_walker,
+      schema.value().data, sourcemeta::core::schema_official_walker,
       [&resolver](const auto identifier) { return resolver(identifier); });
 }
 
 auto GENERATE_DEPENDENCIES(const sourcemeta::registry::Resolver &resolver,
                            const std::filesystem::path &absolute_path)
     -> sourcemeta::core::JSON {
-  const auto schema{sourcemeta::core::read_json(absolute_path)};
+  const auto schema{sourcemeta::registry::read_json(absolute_path)};
+  assert(schema.has_value());
   auto result{sourcemeta::core::JSON::make_array()};
   sourcemeta::core::dependencies(
-      schema, sourcemeta::core::schema_official_walker,
+      schema.value().data, sourcemeta::core::schema_official_walker,
       [&resolver](const auto identifier) { return resolver(identifier); },
       [&result](const auto &origin, const auto &pointer, const auto &target,
                 const auto &) {
@@ -104,19 +72,21 @@ auto GENERATE_DEPENDENCIES(const sourcemeta::registry::Resolver &resolver,
 auto GENERATE_UNIDENTIFIED(const sourcemeta::registry::Resolver &resolver,
                            const std::filesystem::path &absolute_path)
     -> sourcemeta::core::JSON {
-  auto schema{sourcemeta::core::read_json(absolute_path)};
+  auto schema{sourcemeta::registry::read_json(absolute_path)};
+  assert(schema.has_value());
   sourcemeta::core::unidentify(
-      schema, sourcemeta::core::schema_official_walker,
+      schema.value().data, sourcemeta::core::schema_official_walker,
       [&resolver](const auto identifier) { return resolver(identifier); });
-  return schema;
+  return schema.value().data;
 }
 
 auto GENERATE_BLAZE_TEMPLATE(const std::filesystem::path &absolute_path,
                              const sourcemeta::blaze::Mode mode)
     -> sourcemeta::core::JSON {
-  const auto schema{sourcemeta::core::read_json(absolute_path)};
+  const auto schema{sourcemeta::registry::read_json(absolute_path)};
+  assert(schema.has_value());
   const auto schema_template{sourcemeta::blaze::compile(
-      schema, sourcemeta::core::schema_official_walker,
+      schema.value().data, sourcemeta::core::schema_official_walker,
       sourcemeta::core::schema_official_resolver,
       sourcemeta::blaze::default_schema_compiler, mode)};
   return sourcemeta::blaze::to_json(schema_template);
@@ -125,8 +95,11 @@ auto GENERATE_BLAZE_TEMPLATE(const std::filesystem::path &absolute_path,
 auto GENERATE_POINTER_POSITIONS(const std::filesystem::path &absolute_path)
     -> sourcemeta::core::JSON {
   sourcemeta::core::PointerPositionTracker tracker;
-  const auto schema{
-      sourcemeta::core::read_json(absolute_path, std::ref(tracker))};
+  const auto file{sourcemeta::registry::read_stream(absolute_path)};
+  assert(file.has_value());
+  std::stringstream buffer;
+  buffer << file.value().data.rdbuf();
+  const auto schema{sourcemeta::core::parse_json(buffer, std::ref(tracker))};
   return sourcemeta::core::to_json(tracker);
 }
 
@@ -137,11 +110,11 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
                          // TODO: Compute this argument instead
                          const std::filesystem::path &relative_path)
     -> sourcemeta::core::JSON {
-  const auto schema{sourcemeta::core::read_json(absolute_path)};
-  auto id{
-      sourcemeta::core::identify(schema, [&resolver](const auto identifier) {
-        return resolver(identifier);
-      })};
+  const auto schema{sourcemeta::registry::read_json(absolute_path)};
+  assert(schema.has_value());
+  auto id{sourcemeta::core::identify(
+      schema.value().data,
+      [&resolver](const auto identifier) { return resolver(identifier); })};
   assert(id.has_value());
   auto result{sourcemeta::core::JSON::make_object()};
 
@@ -153,7 +126,7 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
                 sourcemeta::core::JSON{configuration.at("url").to_string() +
                                        "/" + relative_path.string()});
   const auto base_dialect{sourcemeta::core::base_dialect(
-      schema,
+      schema.value().data,
       [&resolver](const auto identifier) { return resolver(identifier); })};
   assert(base_dialect.has_value());
   // The idea is to match the URLs from https://www.learnjsonschema.com
@@ -172,15 +145,16 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
     result.assign("baseDialect", sourcemeta::core::JSON{"unknown"});
   }
 
-  const auto dialect{sourcemeta::core::dialect(schema, base_dialect)};
+  const auto dialect{
+      sourcemeta::core::dialect(schema.value().data, base_dialect)};
   assert(dialect.has_value());
   result.assign("dialect", sourcemeta::core::JSON{dialect.value()});
-  if (schema.is_object()) {
-    const auto title{schema.try_at("title")};
+  if (schema.value().data.is_object()) {
+    const auto title{schema.value().data.try_at("title")};
     if (title && title->is_string()) {
       result.assign("title", sourcemeta::core::JSON{title->trim()});
     }
-    const auto description{schema.try_at("description")};
+    const auto description{schema.value().data.try_at("description")};
     if (description && description->is_string()) {
       result.assign("description", sourcemeta::core::JSON{description->trim()});
     }
@@ -240,8 +214,9 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
       // we use a .nav extension on the actual file?
       schema_nav_path.replace_extension("nav");
 
-      entry_json.merge(
-          sourcemeta::core::read_json(schema_nav_path).as_object());
+      const auto nav{sourcemeta::registry::read_json(schema_nav_path)};
+      assert(nav.has_value());
+      entry_json.merge(nav.value().data.as_object());
       // No need to show breadcrumbs of children
       entry_json.erase("breadcrumb");
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});
@@ -321,14 +296,17 @@ auto GENERATE_SEARCH_INDEX(
   std::vector<sourcemeta::core::JSON> result;
   result.reserve(absolute_paths.size());
   for (const auto &absolute_path : absolute_paths) {
-    auto metadata{sourcemeta::core::read_json(absolute_path)};
+    auto metadata{sourcemeta::registry::read_json(absolute_path)};
+    assert(metadata.has_value());
     auto entry{sourcemeta::core::JSON::make_array()};
-    std::filesystem::path url = metadata.at("url").to_string();
+    std::filesystem::path url = metadata.value().data.at("url").to_string();
     url.replace_extension("");
     entry.push_back(sourcemeta::core::JSON{url});
     // TODO: Can we move these?
-    entry.push_back(metadata.at_or("title", sourcemeta::core::JSON{""}));
-    entry.push_back(metadata.at_or("description", sourcemeta::core::JSON{""}));
+    entry.push_back(
+        metadata.value().data.at_or("title", sourcemeta::core::JSON{""}));
+    entry.push_back(
+        metadata.value().data.at_or("description", sourcemeta::core::JSON{""}));
     result.push_back(std::move(entry));
   }
 
@@ -396,7 +374,8 @@ auto GENERATE_EXPLORER_404(const sourcemeta::core::JSON &configuration)
 auto GENERATE_EXPLORER_INDEX(const sourcemeta::core::JSON &configuration,
                              const std::filesystem::path &navigation_path)
     -> std::string {
-  const auto meta{sourcemeta::core::read_json(navigation_path)};
+  const auto meta{sourcemeta::registry::read_json(navigation_path)};
+  assert(meta.has_value());
   std::ostringstream html;
   sourcemeta::registry::html::SafeOutput output_html{html};
 
@@ -404,8 +383,8 @@ auto GENERATE_EXPLORER_INDEX(const sourcemeta::core::JSON &configuration,
       configuration.at_or("head", sourcemeta::core::JSON{""}).to_string()};
 
   sourcemeta::registry::html::partials::html_start(
-      output_html, meta.at("canonical").to_string(), head, configuration,
-      configuration.at("title").to_string() + " Schemas",
+      output_html, meta.value().data.at("canonical").to_string(), head,
+      configuration, configuration.at("title").to_string() + " Schemas",
       configuration.at("description").to_string(), "");
 
   if (configuration.defines("hero")) {
@@ -416,7 +395,8 @@ auto GENERATE_EXPLORER_INDEX(const sourcemeta::core::JSON &configuration,
     output_html.close("div").close("div");
   }
 
-  sourcemeta::registry::html::partials::html_file_manager(html, meta);
+  sourcemeta::registry::html::partials::html_file_manager(html,
+                                                          meta.value().data);
   sourcemeta::registry::html::partials::html_end(
       output_html, sourcemeta::registry::PROJECT_VERSION);
   return html.str();
@@ -427,21 +407,25 @@ auto GENERATE_EXPLORER_INDEX(const sourcemeta::core::JSON &configuration,
 auto GENERATE_EXPLORER_DIRECTORY_PAGE(
     const sourcemeta::core::JSON &configuration,
     const std::filesystem::path &navigation_path) -> std::string {
-  const auto meta{sourcemeta::core::read_json(navigation_path)};
+  const auto meta{sourcemeta::registry::read_json(navigation_path)};
+  assert(meta.has_value());
   std::ostringstream html;
 
   sourcemeta::registry::html::SafeOutput output_html{html};
   const auto head{
       configuration.at_or("head", sourcemeta::core::JSON{""}).to_string()};
   sourcemeta::registry::html::partials::html_start(
-      output_html, meta.at("canonical").to_string(), head, configuration,
-      meta.defines("title") ? meta.at("title").to_string()
-                            : meta.at("url").to_string(),
-      meta.defines("description")
-          ? meta.at("description").to_string()
-          : ("Schemas located at " + meta.at("url").to_string()),
-      meta.at("url").to_string());
-  sourcemeta::registry::html::partials::html_file_manager(html, meta);
+      output_html, meta.value().data.at("canonical").to_string(), head,
+      configuration,
+      meta.value().data.defines("title")
+          ? meta.value().data.at("title").to_string()
+          : meta.value().data.at("url").to_string(),
+      meta.value().data.defines("description")
+          ? meta.value().data.at("description").to_string()
+          : ("Schemas located at " + meta.value().data.at("url").to_string()),
+      meta.value().data.at("url").to_string());
+  sourcemeta::registry::html::partials::html_file_manager(html,
+                                                          meta.value().data);
   sourcemeta::registry::html::partials::html_end(
       output_html, sourcemeta::registry::PROJECT_VERSION);
   return html.str();
@@ -452,52 +436,56 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
     const std::filesystem::path &navigation_path,
     const std::filesystem::path &schema_path,
     const std::filesystem::path &dependencies_path) -> std::string {
-  const auto meta{sourcemeta::core::read_json(navigation_path)};
+  const auto meta{sourcemeta::registry::read_json(navigation_path)};
+  assert(meta.has_value());
   std::ostringstream html;
 
-  const auto &title{meta.defines("title") ? meta.at("title").to_string()
-                                          : meta.at("url").to_string()};
+  const auto &title{meta.value().data.defines("title")
+                        ? meta.value().data.at("title").to_string()
+                        : meta.value().data.at("url").to_string()};
 
   sourcemeta::registry::html::SafeOutput output_html{html};
   const auto head{
       configuration.at_or("head", sourcemeta::core::JSON{""}).to_string()};
   sourcemeta::registry::html::partials::html_start(
-      output_html, meta.at("canonical").to_string(), head, configuration, title,
-      meta.defines("description")
-          ? meta.at("description").to_string()
-          : ("Schemas located at " + meta.at("url").to_string()),
-      meta.at("url").to_string());
+      output_html, meta.value().data.at("canonical").to_string(), head,
+      configuration, title,
+      meta.value().data.defines("description")
+          ? meta.value().data.at("description").to_string()
+          : ("Schemas located at " + meta.value().data.at("url").to_string()),
+      meta.value().data.at("url").to_string());
 
-  sourcemeta::registry::html::partials::breadcrumb(html, meta);
+  sourcemeta::registry::html::partials::breadcrumb(html, meta.value().data);
 
   output_html.open("div", {{"class", "container-fluid p-4"}});
   output_html.open("div");
 
   output_html.open("div");
 
-  if (meta.defines("title")) {
+  if (meta.value().data.defines("title")) {
     output_html.open("h2", {{"class", "fw-bold h4"}});
     output_html.text(title);
     output_html.close("h2");
   }
 
-  if (meta.defines("description")) {
+  if (meta.value().data.defines("description")) {
     output_html.open("p", {{"class", "text-secondary"}})
-        .text(meta.at("description").to_string())
+        .text(meta.value().data.at("description").to_string())
         .close("p");
   }
 
   output_html
-      .open("a", {{"href", meta.at("url").to_string()},
+      .open("a", {{"href", meta.value().data.at("url").to_string()},
                   {"class", "btn btn-primary me-2"},
                   {"role", "button"}})
       .text("Get JSON Schema")
       .close("a");
 
   output_html
-      .open("a", {{"href", meta.at("url").to_string() + "?bundle=1"},
-                  {"class", "btn btn-secondary"},
-                  {"role", "button"}})
+      .open("a",
+            {{"href", meta.value().data.at("url").to_string() + "?bundle=1"},
+             {"class", "btn btn-secondary"},
+             {"role", "button"}})
       .text("Bundle")
       .close("a");
   output_html.close("div");
@@ -510,8 +498,8 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       .close("th");
   output_html.open("td")
       .open("code")
-      .open("a", {{"href", meta.at("id").to_string()}})
-      .text(meta.at("id").to_string())
+      .open("a", {{"href", meta.value().data.at("id").to_string()}})
+      .text(meta.value().data.at("id").to_string())
       .close("a")
       .close("code")
       .close("td");
@@ -523,7 +511,7 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       .close("th");
   output_html.open("td");
   sourcemeta::registry::html::partials::dialect_badge(
-      html, meta.at("baseDialect").to_string());
+      html, meta.value().data.at("baseDialect").to_string());
   output_html.close("td");
   output_html.close("tr");
 
@@ -533,7 +521,7 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       .close("th");
   output_html.open("td")
       .open("code")
-      .text(meta.at("dialect").to_string())
+      .text(meta.value().data.at("dialect").to_string())
       .close("code")
       .close("td");
   output_html.close("tr");
@@ -543,7 +531,9 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       .text("Size")
       .close("th");
   output_html.open("td")
-      .text(std::to_string(meta.at("bytes").as_real() / (1024 * 1024)) + " MB")
+      .text(std::to_string(meta.value().data.at("bytes").as_real() /
+                           (1024 * 1024)) +
+            " MB")
       .close("td");
   output_html.close("tr");
 
@@ -570,7 +560,7 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.close("pre");
 
   if (has_more_lines) {
-    output_html.open("a", {{"href", meta.at("url").to_string()}})
+    output_html.open("a", {{"href", meta.value().data.at("url").to_string()}})
         .text("See the full schema")
         .close("a");
   }
@@ -579,12 +569,13 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       .text("Dependencies")
       .close("h3");
 
-  const auto dependencies{sourcemeta::core::read_json(dependencies_path)};
-  assert(dependencies.is_array());
+  const auto dependencies{sourcemeta::registry::read_json(dependencies_path)};
+  assert(dependencies.has_value());
+  assert(dependencies.value().data.is_array());
   std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> direct;
   std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> indirect;
-  for (const auto &dependency : dependencies.as_array()) {
-    if (dependency.at("from") == meta.at("id")) {
+  for (const auto &dependency : dependencies.value().data.as_array()) {
+    if (dependency.at("from") == meta.value().data.at("id")) {
       direct.emplace_back(dependency);
     } else {
       indirect.emplace_back(dependency);
@@ -609,10 +600,10 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
     output_html.close("thead");
     output_html.open("tbody");
 
-    for (const auto &dependency : dependencies.as_array()) {
+    for (const auto &dependency : dependencies.value().data.as_array()) {
       output_html.open("tr");
 
-      if (dependency.at("from") == meta.at("id")) {
+      if (dependency.at("from") == meta.value().data.at("id")) {
         output_html.open("td")
             .open("code")
             .text(dependency.at("at").to_string())

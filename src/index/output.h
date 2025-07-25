@@ -3,10 +3,10 @@
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/registry/metapack.h>
 
 #include <cassert>       // assert
 #include <filesystem>    // std::filesystem
-#include <fstream>       // std::ofstream
 #include <string_view>   // std::string_view
 #include <unordered_map> // std::unordered_map
 
@@ -41,49 +41,75 @@ public:
 
   auto path() const -> const std::filesystem::path & { return this->path_; }
 
-  auto write_json(const std::filesystem::path &path,
-                  const sourcemeta::core::JSON &document)
+  auto
+  write_metapack_json(const std::filesystem::path &path,
+                      const sourcemeta::registry::MetaPackEncoding encoding,
+                      const sourcemeta::core::JSON &document)
       -> const std::filesystem::path & {
     const auto absolute_path{this->resolve(path)};
     std::filesystem::create_directories(absolute_path.parent_path());
-    auto stream{this->open(absolute_path)};
-    sourcemeta::core::stringify(document, stream);
+    sourcemeta::registry::write_json(absolute_path, document, encoding,
+                                     sourcemeta::core::JSON{nullptr});
+
+    this->track(absolute_path.string() + ".meta");
     return this->track(absolute_path);
   }
 
-  auto write_jsonschema(const std::filesystem::path &path,
-                        const sourcemeta::core::JSON &schema)
+  auto write_metapack_jsonschema(
+      const std::filesystem::path &path,
+      const sourcemeta::registry::MetaPackEncoding encoding,
+      const sourcemeta::core::JSON &schema,
+      const sourcemeta::core::JSON::String &dialect)
       -> const std::filesystem::path & {
     const auto absolute_path{this->resolve(path)};
     std::filesystem::create_directories(absolute_path.parent_path());
-    auto stream{this->open(absolute_path)};
-    sourcemeta::core::prettify(schema, stream,
-                               sourcemeta::core::schema_format_compare);
+    sourcemeta::registry::write_stream(
+        absolute_path, "application/schema+json", encoding,
+        sourcemeta::core::JSON{dialect}, [&schema](auto &stream) {
+          sourcemeta::core::prettify(schema, stream,
+                                     sourcemeta::core::schema_format_compare);
+        });
+
+    this->track(absolute_path.string() + ".meta");
     return this->track(absolute_path);
   }
 
   template <typename Iterator>
-  auto write_jsonl(const std::filesystem::path &path, Iterator begin,
-                   Iterator end) -> const std::filesystem::path & {
-    const auto absolute_path{this->resolve(path)};
-    std::filesystem::create_directories(absolute_path.parent_path());
-    auto stream{this->open(absolute_path)};
-    for (auto iterator = begin; iterator != end; ++iterator) {
-      sourcemeta::core::stringify(*iterator, stream);
-      stream << "\n";
-    }
-
-    return this->track(absolute_path);
-  }
-
-  auto write_text(const std::filesystem::path &path,
-                  const std::string_view contents)
+  auto
+  write_metapack_jsonl(const std::filesystem::path &path,
+                       const sourcemeta::registry::MetaPackEncoding encoding,
+                       Iterator begin, Iterator end)
       -> const std::filesystem::path & {
     const auto absolute_path{this->resolve(path)};
     std::filesystem::create_directories(absolute_path.parent_path());
-    auto stream{this->open(absolute_path)};
-    stream << contents;
-    stream << "\n";
+    sourcemeta::registry::write_stream(
+        absolute_path, "application/jsonl", encoding,
+        sourcemeta::core::JSON{nullptr}, [&begin, &end](auto &stream) {
+          for (auto iterator = begin; iterator != end; ++iterator) {
+            sourcemeta::core::stringify(*iterator, stream);
+            stream << "\n";
+          }
+        });
+
+    this->track(absolute_path.string() + ".meta");
+    return this->track(absolute_path);
+  }
+
+  auto
+  write_metapack_html(const std::filesystem::path &path,
+                      const sourcemeta::registry::MetaPackEncoding encoding,
+                      const std::string_view contents)
+      -> const std::filesystem::path & {
+    const auto absolute_path{this->resolve(path)};
+    std::filesystem::create_directories(absolute_path.parent_path());
+    sourcemeta::registry::write_stream(absolute_path, "text/html", encoding,
+                                       sourcemeta::core::JSON{nullptr},
+                                       [&contents](auto &stream) {
+                                         stream << contents;
+                                         stream << "\n";
+                                       });
+
+    this->track(absolute_path.string() + ".meta");
     return this->track(absolute_path);
   }
 
@@ -94,13 +120,6 @@ private:
     // TODO: We need to have a "safe" path concat function that does not allow
     // the path to escape the parent. Make it part of Core
     return this->path_ / relative_path;
-  }
-
-  auto open(const std::filesystem::path &absolute_path) const -> std::ofstream {
-    assert(absolute_path.is_absolute());
-    std::ofstream stream{absolute_path};
-    assert(!stream.fail());
-    return stream;
   }
 
   auto track(const std::filesystem::path &path)

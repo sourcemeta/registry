@@ -1,5 +1,4 @@
 file(MD5 "${INPUT}" MD5_HASH)
-
 get_filename_component(INPUT_EXTENSION "${INPUT}" EXT)
 string(TOLOWER "${INPUT_EXTENSION}" INPUT_EXTENSION)
 
@@ -28,5 +27,5 @@ execute_process(
   OUTPUT_VARIABLE LAST_MODIFIED
   OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-set(JSON_CONTENT "{ \"md5\": \"${MD5_HASH}\", \"mime\": \"${MIME}\", \"lastModified\": \"${LAST_MODIFIED}\" }")
+set(JSON_CONTENT "{ \"md5\": \"${MD5_HASH}\", \"mime\": \"${MIME}\", \"lastModified\": \"${LAST_MODIFIED}\", \"encoding\": \"identity\" }")
 file(WRITE "${OUTPUT}" "${JSON_CONTENT}\n")
