@@ -32,6 +32,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=native")
 
 if(REGISTRY_INDEX OR REGISTRY_SERVER)
+  add_subdirectory(src/metapack)
   add_subdirectory(src/license)
 endif()
 

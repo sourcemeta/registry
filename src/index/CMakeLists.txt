@@ -8,6 +8,7 @@ set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemet
 
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::resolver)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::metapack)
 
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::uri)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::json)
@@ -67,6 +68,7 @@ set(REGISTRY_STATIC
 set(REGISTRY_STATIC_META)
 foreach(file_path IN LISTS REGISTRY_STATIC)
   get_filename_component(file_name "${file_path}" NAME)
+  # TODO: Come up with a MetaPack contrib CLI for this instead
   add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta"
     COMMAND "${CMAKE_COMMAND}" 
       -DINPUT="${file_path}" 

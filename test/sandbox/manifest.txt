@@ -1,4 +1,5 @@
 ./configuration.json
+./configuration.json.meta
 ./explorer
 ./explorer/404.html
 ./explorer/404.html.meta

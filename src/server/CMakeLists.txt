@@ -1,11 +1,10 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server 
   FOLDER "Registry/Server" 
-  SOURCES reader.h search.h status.h evaluate.h
+  SOURCES search.h status.h evaluate.h
     server.cc uwebsockets.h configure.h.in)
 
 set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourcemeta-registry-server)
 
-target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::io)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::jsonpointer)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::uuid)
@@ -14,6 +13,7 @@ target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uSockets)
 target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uWebSockets)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::license)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::metapack)
 
 # TODO: We should only need to link against the evaluator. The fact that we need
 # to link to both seems like a deficiency of the Blaze modular design

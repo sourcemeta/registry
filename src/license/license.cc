@@ -8,6 +8,8 @@ namespace sourcemeta::registry {
 auto license_permitted() -> bool { return true; }
 #else
 auto license_permitted() -> bool {
+  // TODO: Investigate this warning
+  // NOLINTNEXTLINE(concurrency-mt-unsafe)
   return std::getenv("SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE") !=
          nullptr;
 }

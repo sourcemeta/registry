@@ -34,17 +34,17 @@ export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 
 CHECKSUM_SCHEMA="$(md5sum "$TMP/output/schemas/example/schemas/test.json.schema" | cut -d ' ' -f 1)"
 TIMESTAMP_SCHEMA="$(date -u -r "$TMP/output/schemas/example/schemas/test.json.schema" "+%a, %d %b %Y %H:%M:%S GMT")"
-printf '{"md5":"%s","lastModified":"%s","mime":"application/schema+json","dialect":"http://json-schema.org/draft-07/schema#"}' \
+printf '{"md5":"%s","lastModified":"%s","mime":"application/schema+json","encoding":"identity","extension":"http://json-schema.org/draft-07/schema#"}' \
   "$CHECKSUM_SCHEMA" "$TIMESTAMP_SCHEMA" > "$TMP/schema.json"
 
 CHECKSUM_BUNDLE="$(md5sum "$TMP/output/schemas/example/schemas/test.json.bundle" | cut -d ' ' -f 1)"
 TIMESTAMP_BUNDLE="$(date -u -r "$TMP/output/schemas/example/schemas/test.json.bundle" "+%a, %d %b %Y %H:%M:%S GMT")"
-printf '{"md5":"%s","lastModified":"%s","mime":"application/schema+json","dialect":"http://json-schema.org/draft-07/schema#"}' \
+printf '{"md5":"%s","lastModified":"%s","mime":"application/schema+json","encoding":"identity","extension":"http://json-schema.org/draft-07/schema#"}' \
   "$CHECKSUM_BUNDLE" "$TIMESTAMP_BUNDLE" > "$TMP/bundle.json"
 
 CHECKSUM_UNIDENTIFIED="$(md5sum "$TMP/output/schemas/example/schemas/test.json.unidentified" | cut -d ' ' -f 1)"
 TIMESTAMP_UNIDENTIFIED="$(date -u -r "$TMP/output/schemas/example/schemas/test.json.unidentified" "+%a, %d %b %Y %H:%M:%S GMT")"
-printf '{"md5":"%s","lastModified":"%s","mime":"application/schema+json","dialect":"http://json-schema.org/draft-07/schema#"}' \
+printf '{"md5":"%s","lastModified":"%s","mime":"application/schema+json","encoding":"identity","extension":"http://json-schema.org/draft-07/schema#"}' \
   "$CHECKSUM_UNIDENTIFIED" "$TIMESTAMP_UNIDENTIFIED" > "$TMP/unidentified.json"
 
 diff "$TMP/output/schemas/example/schemas/test.json.schema.meta" "$TMP/schema.json"
