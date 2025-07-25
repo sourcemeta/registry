@@ -1,3 +1,4 @@
+#include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
 #include <sourcemeta/core/yaml.h>
@@ -61,7 +62,10 @@ auto Resolver::operator()(std::string_view identifier) const
 
   if (result != this->views.cend()) {
     if (result->second.cache_path.has_value()) {
-      return sourcemeta::core::read_json(result->second.cache_path.value());
+      const auto schema{
+          sourcemeta::registry::read_json(result->second.cache_path.value())};
+      assert(schema.has_value());
+      return schema.value().data;
     } else if (!result->second.path.has_value()) {
       return std::nullopt;
     }

@@ -38,4 +38,5 @@ printf '%s' '{
   "$id": "https://sourcemeta.com/example/schemas/test.json"
 }' > "$TMP/expected.json"
 
-diff "$TMP/output/schemas/example/schemas/test.json.schema" "$TMP/expected.json"
+gzip --decompress --to-stdout "$TMP/output/schemas/example/schemas/test.json.schema" > "$TMP/test.json.schema"
+diff "$TMP/test.json.schema" "$TMP/expected.json"
