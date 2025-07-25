@@ -54,20 +54,16 @@ enum class ServerContentEncoding { Identity, GZIP };
 static auto send_response(const char *const code, const std::string_view method,
                           const std::string_view url,
                           uWS::HttpResponse<true> *response,
-                          const std::string_view message,
+                          const std::string &message,
                           const ServerContentEncoding encoding) -> void {
   if (encoding == ServerContentEncoding::GZIP) {
     response->writeHeader("Content-Encoding", "gzip");
     auto result{sourcemeta::core::gzip(message)};
-    if (!result.has_value()) {
-      throw std::runtime_error("Compression failed");
-    }
-
     if (method == "head") {
-      response->endWithoutBody(result.value().size());
+      response->endWithoutBody(result.size());
       response->end();
     } else {
-      response->end(result.value());
+      response->end(std::move(result));
     }
   } else if (encoding == ServerContentEncoding::Identity) {
     if (method == "head") {
