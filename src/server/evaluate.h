@@ -83,7 +83,8 @@ auto evaluate(const std::filesystem::path &template_path,
   assert(std::filesystem::exists(template_path));
 
   // TODO: Cache this conversion across runs, potentially using the schema file
-  // "md5" as the cache key
+  // "md5" as the cache key. This is important as the template might be
+  // compressed
   const auto template_json{read_json(template_path)};
   assert(template_json.has_value());
   const auto schema_template{

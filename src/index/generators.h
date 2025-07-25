@@ -4,6 +4,7 @@
 #include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
+#include <sourcemeta/core/gzip.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonpointer.h>
 #include <sourcemeta/core/jsonschema.h>
@@ -99,8 +100,16 @@ auto GENERATE_POINTER_POSITIONS(const std::filesystem::path &absolute_path)
   assert(file.has_value());
   std::stringstream buffer;
   buffer << file.value().data.rdbuf();
-  const auto schema{sourcemeta::core::parse_json(buffer, std::ref(tracker))};
-  return sourcemeta::core::to_json(tracker);
+  if (file.value().meta.at("encoding").to_string() == "gzip") {
+    std::stringstream decompressed;
+    sourcemeta::core::gunzip(buffer, decompressed);
+    const auto schema{
+        sourcemeta::core::parse_json(decompressed, std::ref(tracker))};
+    return sourcemeta::core::to_json(tracker);
+  } else {
+    const auto schema{sourcemeta::core::parse_json(buffer, std::ref(tracker))};
+    return sourcemeta::core::to_json(tracker);
+  }
 }
 
 // TODO: Put breadcrumb inside this metadata

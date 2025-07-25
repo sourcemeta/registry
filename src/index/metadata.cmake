@@ -27,5 +27,7 @@ execute_process(
   OUTPUT_VARIABLE LAST_MODIFIED
   OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+# TODO: Pre-compress these static files with GZIP
+
 set(JSON_CONTENT "{ \"md5\": \"${MD5_HASH}\", \"mime\": \"${MIME}\", \"lastModified\": \"${LAST_MODIFIED}\", \"encoding\": \"identity\" }")
 file(WRITE "${OUTPUT}" "${JSON_CONTENT}\n")
