@@ -4,6 +4,8 @@
 #include <sourcemeta/core/io.h>
 #include <sourcemeta/core/json.h>
 
+#include "reader.h"
+
 #include <algorithm>   // std::search
 #include <cassert>     // assert
 #include <filesystem>  // std::filesystem
@@ -16,8 +18,8 @@ static auto search(const std::filesystem::path &search_index,
                    const std::string_view query) -> sourcemeta::core::JSON {
   assert(std::filesystem::exists(search_index));
   assert(search_index.is_absolute());
-  auto stream = sourcemeta::core::read_file(search_index);
-  stream.exceptions(std::ifstream::badbit);
+  auto file{read_stream(search_index)};
+  assert(file.has_value());
 
   auto result{sourcemeta::core::JSON::make_array()};
   // TODO: Extend the Core JSONL iterators to be able
@@ -25,7 +27,7 @@ static auto search(const std::filesystem::path &search_index,
   // BEFORE parsing it as JSON, letting the client decide
   // whether to parse or not.
   std::string line;
-  while (std::getline(stream, line)) {
+  while (std::getline(file.value().data, line)) {
     if (std::search(line.cbegin(), line.cend(), query.begin(), query.end(),
                     [](const auto left, const auto right) {
                       return std::tolower(left) == std::tolower(right);

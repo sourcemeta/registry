@@ -156,7 +156,7 @@ static auto serve_static_file(uWS::HttpRequest *request,
     return;
   }
 
-  auto file{sourcemeta::registry::read_file(absolute_path)};
+  auto file{sourcemeta::registry::read_stream(absolute_path)};
   if (!file.has_value()) {
     json_error(request->getMethod(), request->getUrl(), response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
@@ -240,7 +240,7 @@ static auto serve_static_file(uWS::HttpRequest *request,
   }
 
   std::ostringstream contents;
-  contents << file.value().stream.rdbuf();
+  contents << file.value().data.rdbuf();
   send_response(code, request->getMethod(), request->getUrl(), response,
                 contents.str(), encoding);
 }

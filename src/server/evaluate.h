@@ -7,6 +7,8 @@
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
 
+#include "reader.h"
+
 #include <cassert>     // assert
 #include <filesystem>  // std::filesystem::path
 #include <type_traits> // std::underlying_type_t
@@ -82,8 +84,10 @@ auto evaluate(const std::filesystem::path &template_path,
 
   // TODO: Cache this conversion across runs, potentially using the schema file
   // "md5" as the cache key
-  const auto template_json{sourcemeta::core::read_json(template_path)};
-  const auto schema_template{sourcemeta::blaze::from_json(template_json)};
+  const auto template_json{read_json(template_path)};
+  assert(template_json.has_value());
+  const auto schema_template{
+      sourcemeta::blaze::from_json(template_json.value().data)};
   assert(schema_template.has_value());
 
   sourcemeta::blaze::Evaluator evaluator;
