@@ -41,6 +41,17 @@ public:
 
   auto path() const -> const std::filesystem::path & { return this->path_; }
 
+  auto write_json(const std::filesystem::path &path,
+                  const sourcemeta::core::JSON &document)
+      -> const std::filesystem::path & {
+    const auto absolute_path{this->resolve(path)};
+    std::filesystem::create_directories(absolute_path.parent_path());
+    std::ofstream stream{absolute_path};
+    assert(!stream.fail());
+    sourcemeta::core::stringify(document, stream);
+    return this->track(absolute_path);
+  }
+
   auto
   write_metapack_json(const std::filesystem::path &path,
                       const sourcemeta::registry::MetaPackEncoding encoding,
@@ -48,10 +59,12 @@ public:
       -> const std::filesystem::path & {
     const auto absolute_path{this->resolve(path)};
     std::filesystem::create_directories(absolute_path.parent_path());
-    sourcemeta::registry::write_json(absolute_path, document, encoding,
-                                     sourcemeta::core::JSON{nullptr});
+    sourcemeta::registry::write_stream(
+        absolute_path, "application/json", encoding,
+        sourcemeta::core::JSON{nullptr}, [&document](auto &stream) {
+          sourcemeta::core::stringify(document, stream);
+        });
 
-    this->track(absolute_path.string() + ".meta");
     return this->track(absolute_path);
   }
 
@@ -70,7 +83,6 @@ public:
                                      sourcemeta::core::schema_format_compare);
         });
 
-    this->track(absolute_path.string() + ".meta");
     return this->track(absolute_path);
   }
 
@@ -91,7 +103,6 @@ public:
           }
         });
 
-    this->track(absolute_path.string() + ".meta");
     return this->track(absolute_path);
   }
 
@@ -109,7 +120,6 @@ public:
                                          stream << "\n";
                                        });
 
-    this->track(absolute_path.string() + ".meta");
     return this->track(absolute_path);
   }
 

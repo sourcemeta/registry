@@ -62,10 +62,10 @@ auto Resolver::operator()(std::string_view identifier) const
 
   if (result != this->views.cend()) {
     if (result->second.cache_path.has_value()) {
-      const auto schema{
-          sourcemeta::registry::read_json(result->second.cache_path.value())};
+      const auto schema{sourcemeta::registry::read_contents(
+          result->second.cache_path.value())};
       assert(schema.has_value());
-      return schema.value().data;
+      return sourcemeta::core::parse_json(schema.value().data);
     } else if (!result->second.path.has_value()) {
       return std::nullopt;
     }
