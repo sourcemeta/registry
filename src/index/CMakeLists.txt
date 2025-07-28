@@ -40,6 +40,16 @@ install(TARGETS sourcemeta_registry_index
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
   COMPONENT sourcemeta_registry)
 
+# Generate JS
+find_program(ESBUILD_BIN NAMES esbuild REQUIRED)
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
+  COMMAND "${ESBUILD_BIN}" --bundle 
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
+    --outfile="${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
+    --minify
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js")
+target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/main.min.js")
+
 # Generate CSS
 include(BootstrapFiles)
 find_program(SASSC_BIN NAMES sassc REQUIRED)
@@ -56,20 +66,19 @@ target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/st
 # Generate static files
 set(REGISTRY_STATIC
   "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
+  "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/favicon.ico"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon_192x192.png"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon_512x512.png"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.svg"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/apple-touch-icon.png"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/manifest.webmanifest"
-  "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff2")
 
 set(REGISTRY_STATIC_META)
 foreach(file_path IN LISTS REGISTRY_STATIC)
   get_filename_component(file_name "${file_path}" NAME)
-  # TODO: Come up with a MetaPack contrib CLI for this instead
   add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta"
     COMMAND "${CMAKE_COMMAND}" 
       -DINPUT="${file_path}" 
