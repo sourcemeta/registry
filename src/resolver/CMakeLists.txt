@@ -8,6 +8,7 @@ target_link_libraries(sourcemeta_registry_resolver PUBLIC
   sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_resolver PUBLIC
   sourcemeta::core::jsonschema)
-
 target_link_libraries(sourcemeta_registry_resolver PRIVATE
   sourcemeta::core::yaml)
+target_link_libraries(sourcemeta_registry_resolver PRIVATE
+  sourcemeta::registry::metapack)

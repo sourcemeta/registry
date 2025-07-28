@@ -4,6 +4,7 @@
 #include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
+#include <sourcemeta/core/gzip.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonpointer.h>
 #include <sourcemeta/core/jsonschema.h>
@@ -99,8 +100,16 @@ auto GENERATE_POINTER_POSITIONS(const std::filesystem::path &absolute_path)
   assert(file.has_value());
   std::stringstream buffer;
   buffer << file.value().data.rdbuf();
-  const auto schema{sourcemeta::core::parse_json(buffer, std::ref(tracker))};
-  return sourcemeta::core::to_json(tracker);
+  if (file.value().meta.at("encoding").to_string() == "gzip") {
+    std::stringstream decompressed;
+    sourcemeta::core::gunzip(buffer, decompressed);
+    const auto schema{
+        sourcemeta::core::parse_json(decompressed, std::ref(tracker))};
+    return sourcemeta::core::to_json(tracker);
+  } else {
+    const auto schema{sourcemeta::core::parse_json(buffer, std::ref(tracker))};
+    return sourcemeta::core::to_json(tracker);
+  }
 }
 
 // TODO: Put breadcrumb inside this metadata
@@ -118,8 +127,7 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
   assert(id.has_value());
   auto result{sourcemeta::core::JSON::make_object()};
 
-  result.assign("bytes", sourcemeta::core::JSON{
-                             std::filesystem::file_size(absolute_path)});
+  result.assign("bytes", schema.value().meta.at("bytes"));
   result.assign("id", sourcemeta::core::JSON{std::move(id).value()});
   result.assign("url", sourcemeta::core::JSON{"/" + relative_path.string()});
   result.assign("canonical",
@@ -543,15 +551,17 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.open("pre", {{"class", "bg-light p-3 border"}});
   output_html.open("code");
   std::ostringstream schema_summary;
-  std::ifstream file{schema_path};
-  assert(file);
+  auto file{sourcemeta::registry::read_stream(schema_path)};
+  assert(file.has_value());
+  std::stringstream file_contents;
+  sourcemeta::core::gunzip(file.value().data, file_contents);
   std::string line;
   int count = 0;
-  while (count < 20 && std::getline(file, line)) {
+  while (count < 20 && std::getline(file_contents, line)) {
     schema_summary << line << "\n";
     count += 1;
   }
-  const auto has_more_lines{file && std::getline(file, line)};
+  const auto has_more_lines{file_contents && std::getline(file_contents, line)};
   if (has_more_lines) {
     schema_summary << "...\n";
   }

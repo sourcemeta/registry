@@ -1,5 +1,6 @@
 #include <sourcemeta/registry/metapack.h>
 
+#include <sourcemeta/core/gzip.h>
 #include <sourcemeta/core/io.h>
 #include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/time.h>
@@ -59,12 +60,18 @@ auto write_stream(const std::filesystem::path &path,
                   const sourcemeta::core::JSON::String &mime,
                   const MetaPackEncoding encoding,
                   const sourcemeta::core::JSON &extension,
-                  const std::function<void(std::ofstream &)> &callback)
-    -> void {
-  {
-    std::ofstream stream{path};
-    assert(!stream.fail());
-    callback(stream);
+                  const std::function<void(std::ostream &)> &callback) -> void {
+  std::ofstream output{path};
+  assert(!output.fail());
+  std::size_t size{0};
+  if (encoding == MetaPackEncoding::GZIP) {
+    std::stringstream input;
+    callback(input);
+    size = input.str().size();
+    sourcemeta::core::gzip(input, output);
+  } else {
+    callback(output);
+    size = static_cast<std::size_t>(output.tellp());
   }
 
   auto metadata{sourcemeta::core::JSON::make_object()};
@@ -82,10 +89,14 @@ auto write_stream(const std::filesystem::path &path,
   metadata.assign("lastModified", sourcemeta::core::JSON{
                                       sourcemeta::core::to_gmt(last_modified)});
   metadata.assign("mime", sourcemeta::core::JSON{mime});
+  metadata.assign("bytes", sourcemeta::core::JSON{size});
 
   switch (encoding) {
     case MetaPackEncoding::Identity:
       metadata.assign("encoding", sourcemeta::core::JSON{"identity"});
+      break;
+    case MetaPackEncoding::GZIP:
+      metadata.assign("encoding", sourcemeta::core::JSON{"gzip"});
       break;
     default:
       assert(false);
@@ -99,15 +110,24 @@ auto write_stream(const std::filesystem::path &path,
   std::ofstream metadata_stream{path.string() + ".meta"};
   assert(!metadata_stream.fail());
   sourcemeta::core::stringify(metadata, metadata_stream);
+  metadata_stream << "\n";
 }
 
 auto read_json(const std::filesystem::path &path)
     -> std::optional<MetaPackFile<sourcemeta::core::JSON>> {
   auto file{read_stream(path)};
   if (file.has_value()) {
-    auto data{sourcemeta::core::parse_json(file.value().data)};
-    return MetaPackFile{.data = std::move(data),
-                        .meta = std::move(file).value().meta};
+    if (file.value().meta.at("encoding").to_string() == "gzip") {
+      std::stringstream buffer;
+      sourcemeta::core::gunzip(file.value().data, buffer);
+      auto data{sourcemeta::core::parse_json(buffer)};
+      return MetaPackFile{.data = std::move(data),
+                          .meta = std::move(file).value().meta};
+    } else {
+      auto data{sourcemeta::core::parse_json(file.value().data)};
+      return MetaPackFile{.data = std::move(data),
+                          .meta = std::move(file).value().meta};
+    }
   } else {
     return std::nullopt;
   }

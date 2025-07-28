@@ -80,7 +80,10 @@ static auto index_main(const std::string_view &program,
   }
 
   output.write_metapack_json(
-      "configuration.json", sourcemeta::registry::MetaPackEncoding::Identity,
+      "configuration.json",
+      // We want to keep this file uncompressed to that the server can quickly
+      // read on start
+      sourcemeta::registry::MetaPackEncoding::Identity,
       sourcemeta::registry::GENERATE_SERVER_CONFIGURATION(configuration));
 
   const auto server_url{
@@ -155,7 +158,7 @@ static auto index_main(const std::string_view &program,
                              schema.second.relative_path};
         const auto destination{output.write_metapack_jsonschema(
             base_path.string() + ".schema",
-            sourcemeta::registry::MetaPackEncoding::Identity, subresult.value(),
+            sourcemeta::registry::MetaPackEncoding::GZIP, subresult.value(),
             dialect_identifier.value())};
         resolver.materialise(schema.first, destination);
       },
@@ -179,14 +182,14 @@ static auto index_main(const std::string_view &program,
 
         output.write_metapack_jsonschema(
             base_path.string() + ".bundle",
-            sourcemeta::registry::MetaPackEncoding::Identity,
+            sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_BUNDLE(
                 resolver, output.path() / (base_path.string() + ".schema")),
             dialect_identifier.value());
 
         output.write_metapack_json(
             base_path.string() + ".dependencies",
-            sourcemeta::registry::MetaPackEncoding::Identity,
+            sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_DEPENDENCIES(
                 resolver, output.path() / (base_path.string() + ".schema")));
 
@@ -194,6 +197,7 @@ static auto index_main(const std::string_view &program,
                       "x-sourcemeta-registry:blaze-exhaustive")) {
           output.write_metapack_json(
               base_path.string() + ".blaze-exhaustive",
+              // Don't compress, as we need to internally read from disk
               sourcemeta::registry::MetaPackEncoding::Identity,
               sourcemeta::registry::GENERATE_BLAZE_TEMPLATE(
                   output.path() / (base_path.string() + ".bundle"),
@@ -202,14 +206,14 @@ static auto index_main(const std::string_view &program,
 
         output.write_metapack_jsonschema(
             base_path.string() + ".unidentified",
-            sourcemeta::registry::MetaPackEncoding::Identity,
+            sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_UNIDENTIFIED(
                 resolver, output.path() / (base_path.string() + ".bundle")),
             dialect_identifier.value());
 
         output.write_metapack_json(
             base_path.string() + ".positions",
-            sourcemeta::registry::MetaPackEncoding::Identity,
+            sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_POINTER_POSITIONS(
                 output.path() / (base_path.string() + ".schema")));
       },
@@ -222,7 +226,7 @@ static auto index_main(const std::string_view &program,
                          schema.second.relative_path};
     schema_nav_path.replace_extension("nav");
     output.write_metapack_json(
-        schema_nav_path, sourcemeta::registry::MetaPackEncoding::Identity,
+        schema_nav_path, sourcemeta::registry::MetaPackEncoding::GZIP,
         sourcemeta::registry::GENERATE_NAV_SCHEMA(
             configuration, resolver,
             output.path() / "schemas" /
@@ -233,7 +237,7 @@ static auto index_main(const std::string_view &program,
   const auto base{output.path() / "schemas"};
   const auto navigation_base{output.path() / "explorer" / "pages"};
   output.write_metapack_json(std::filesystem::path{"explorer"} / "pages.nav",
-                             sourcemeta::registry::MetaPackEncoding::Identity,
+                             sourcemeta::registry::MetaPackEncoding::GZIP,
                              sourcemeta::registry::GENERATE_NAV_DIRECTORY(
                                  configuration, navigation_base, base, base));
 
@@ -244,7 +248,7 @@ static auto index_main(const std::string_view &program,
           std::filesystem::path{"explorer"} / std::filesystem::path{"pages"} /
           (std::filesystem::relative(entry.path(), base).string() + ".nav")};
       output.write_metapack_json(
-          relative_path, sourcemeta::registry::MetaPackEncoding::Identity,
+          relative_path, sourcemeta::registry::MetaPackEncoding::GZIP,
           sourcemeta::registry::GENERATE_NAV_DIRECTORY(
               configuration, navigation_base, base, entry.path()));
     }
@@ -262,6 +266,8 @@ static auto index_main(const std::string_view &program,
   const auto search_index{sourcemeta::registry::GENERATE_SEARCH_INDEX(navs)};
   output.write_metapack_jsonl(std::filesystem::path{"explorer"} /
                                   "search.jsonl",
+                              // We don't want to compress this one so we can
+                              // quickly skim through it while streaming it
                               sourcemeta::registry::MetaPackEncoding::Identity,
                               search_index.cbegin(), search_index.cend());
 
@@ -279,14 +285,12 @@ static auto index_main(const std::string_view &program,
     relative_destination.replace_extension(".html");
     if (meta.value().data.defines("entries")) {
       output.write_metapack_html(
-          relative_destination,
-          sourcemeta::registry::MetaPackEncoding::Identity,
+          relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
           sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(configuration,
                                                                  entry.path()));
     } else {
       output.write_metapack_html(
-          relative_destination,
-          sourcemeta::registry::MetaPackEncoding::Identity,
+          relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
           sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
               configuration, entry.path(),
               (output.path() / "schemas").string() +
@@ -298,14 +302,14 @@ static auto index_main(const std::string_view &program,
 
   output.write_metapack_html(
       std::filesystem::path{"explorer"} / "pages.html",
-      sourcemeta::registry::MetaPackEncoding::Identity,
+      sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::registry::GENERATE_EXPLORER_INDEX(
           configuration,
           output.path() / std::filesystem::path{"explorer"} / "pages.nav"));
 
   output.write_metapack_html(
       std::filesystem::path{"explorer"} / "404.html",
-      sourcemeta::registry::MetaPackEncoding::Identity,
+      sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
 
   return EXIT_SUCCESS;

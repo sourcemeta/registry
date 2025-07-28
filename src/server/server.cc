@@ -55,22 +55,43 @@ static auto send_response(const char *const code, const std::string_view method,
                           const std::string_view url,
                           uWS::HttpResponse<true> *response,
                           const std::string &message,
-                          const ServerContentEncoding encoding) -> void {
-  if (encoding == ServerContentEncoding::GZIP) {
+                          const ServerContentEncoding expected_encoding,
+                          const ServerContentEncoding current_encoding)
+    -> void {
+  if (expected_encoding == ServerContentEncoding::GZIP) {
     response->writeHeader("Content-Encoding", "gzip");
-    auto result{sourcemeta::core::gzip(message)};
-    if (method == "head") {
-      response->endWithoutBody(result.size());
-      response->end();
+    if (current_encoding == ServerContentEncoding::Identity) {
+      auto effective_message{sourcemeta::core::gzip(message)};
+      if (method == "head") {
+        response->endWithoutBody(effective_message.size());
+        response->end();
+      } else {
+        response->end(std::move(effective_message));
+      }
     } else {
-      response->end(std::move(result));
+      if (method == "head") {
+        response->endWithoutBody(message.size());
+        response->end();
+      } else {
+        response->end(message);
+      }
     }
-  } else if (encoding == ServerContentEncoding::Identity) {
-    if (method == "head") {
-      response->endWithoutBody(message.size());
-      response->end();
+  } else if (expected_encoding == ServerContentEncoding::Identity) {
+    if (current_encoding == ServerContentEncoding::GZIP) {
+      auto effective_message{sourcemeta::core::gunzip(message)};
+      if (method == "head") {
+        response->endWithoutBody(effective_message.size());
+        response->end();
+      } else {
+        response->end(effective_message);
+      }
     } else {
-      response->end(message);
+      if (method == "head") {
+        response->endWithoutBody(message.size());
+        response->end();
+      } else {
+        response->end(message);
+      }
     }
   }
 
@@ -96,7 +117,8 @@ static auto json_error(const std::string_view method,
 
   std::ostringstream output;
   sourcemeta::core::prettify(object, output);
-  send_response(code, method, url, response, output.str(), encoding);
+  send_response(code, method, url, response, output.str(), encoding,
+                ServerContentEncoding::Identity);
 }
 
 /// A header list element consists of the element value and its quality value
@@ -241,8 +263,15 @@ static auto serve_static_file(uWS::HttpRequest *request,
 
   std::ostringstream contents;
   contents << file.value().data.rdbuf();
-  send_response(code, request->getMethod(), request->getUrl(), response,
-                contents.str(), encoding);
+
+  // TODO: Pre-parse this on MetaPack?
+  if (file.value().meta.at("encoding").to_string() == "gzip") {
+    send_response(code, request->getMethod(), request->getUrl(), response,
+                  contents.str(), encoding, ServerContentEncoding::GZIP);
+  } else {
+    send_response(code, request->getMethod(), request->getUrl(), response,
+                  contents.str(), encoding, ServerContentEncoding::Identity);
+  }
 }
 
 static auto on_request(const std::filesystem::path &base,
@@ -276,7 +305,8 @@ static auto on_request(const std::filesystem::path &base,
         std::ostringstream output;
         sourcemeta::core::prettify(result, output);
         send_response(sourcemeta::registry::STATUS_OK, request->getMethod(),
-                      request->getUrl(), response, output.str(), encoding);
+                      request->getUrl(), response, output.str(), encoding,
+                      ServerContentEncoding::Identity);
       }
     } else {
       json_error(request->getMethod(), request->getUrl(), response, encoding,
@@ -358,7 +388,8 @@ static auto on_request(const std::filesystem::path &base,
               std::ostringstream payload;
               sourcemeta::core::prettify(result, payload);
               send_response(sourcemeta::registry::STATUS_OK, "post", url,
-                            response, payload.str(), encoding);
+                            response, payload.str(), encoding,
+                            ServerContentEncoding::Identity);
             }
           }
         } catch (const std::exception &error) {
