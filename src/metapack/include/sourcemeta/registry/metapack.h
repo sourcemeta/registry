@@ -3,17 +3,13 @@
 
 #include <sourcemeta/core/json.h>
 
+#include <chrono>     // std::chrono
+#include <cstdint>    // std::uint64_t
 #include <filesystem> // std::filesystem
 #include <fstream>    // std::ifstream
 #include <functional> // std::functional
 #include <optional>   // std::optional
 #include <ostream>    // std::ostream
-
-// TODO: Eventually use JSON BinPack for the meta section and move this entire
-// module as a contrib library of JSON BinPack
-
-// TODO: Once all read/write operations are encapsulated here, concat the meta
-// and the data into a single file
 
 namespace sourcemeta::registry {
 
@@ -21,7 +17,13 @@ enum class MetaPackEncoding { Identity, GZIP };
 
 template <typename T> struct MetaPackFile {
   T data;
-  const sourcemeta::core::JSON meta;
+  std::uint64_t version;
+  sourcemeta::core::JSON::String checksum;
+  std::chrono::system_clock::time_point last_modified;
+  sourcemeta::core::JSON::String mime;
+  std::size_t bytes;
+  MetaPackEncoding encoding;
+  sourcemeta::core::JSON extension;
 };
 
 auto read_stream(const std::filesystem::path &path)
@@ -33,15 +35,8 @@ auto write_stream(const std::filesystem::path &path,
                   const sourcemeta::core::JSON &extension,
                   const std::function<void(std::ostream &)> &callback) -> void;
 
-// Just for convenience
-
-auto write_json(const std::filesystem::path &path,
-                const sourcemeta::core::JSON &document,
-                const MetaPackEncoding encoding,
-                const sourcemeta::core::JSON &extension) -> void;
-
-auto read_json(const std::filesystem::path &path)
-    -> std::optional<MetaPackFile<sourcemeta::core::JSON>>;
+auto read_contents(const std::filesystem::path &path)
+    -> std::optional<MetaPackFile<sourcemeta::core::JSON::String>>;
 
 } // namespace sourcemeta::registry
 

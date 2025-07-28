@@ -189,15 +189,13 @@ static auto serve_static_file(uWS::HttpRequest *request,
   // Note that `If-Modified-Since` can only be used with a `GET` or `HEAD`.
   // See
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since
-  const auto &last_modified{file.value().meta.at("lastModified").to_string()};
   const auto if_modified_since{request->getHeader("if-modified-since")};
   if (!if_modified_since.empty()) {
     try {
       // Time comparison can be flaky, but adding a bit of tolerance leads
       // to more consistent behavior.
       if ((sourcemeta::core::from_gmt(std::string{if_modified_since}) +
-           std::chrono::seconds(1)) >=
-          sourcemeta::core::from_gmt(last_modified)) {
+           std::chrono::seconds(1)) >= file.value().last_modified) {
         response->writeStatus(sourcemeta::registry::STATUS_NOT_MODIFIED);
         if (enable_cors) {
           response->writeHeader("Access-Control-Allow-Origin", "*");
@@ -214,13 +212,13 @@ static auto serve_static_file(uWS::HttpRequest *request,
     }
   }
 
-  const auto &md5{file.value().meta.at("md5").to_string()};
+  const auto &checksum{file.value().checksum};
   const auto if_none_match{request->getHeader("if-none-match")};
   if (!if_none_match.empty()) {
     std::ostringstream etag_value_strong;
     std::ostringstream etag_value_weak;
-    etag_value_strong << '"' << md5 << '"';
-    etag_value_weak << 'W' << '/' << '"' << md5 << '"';
+    etag_value_strong << '"' << checksum << '"';
+    etag_value_weak << 'W' << '/' << '"' << checksum << '"';
     for (const auto &match : header_list(if_none_match)) {
       // Cache hit
       if (match.first == "*" || match.first == etag_value_weak.str() ||
@@ -244,28 +242,27 @@ static auto serve_static_file(uWS::HttpRequest *request,
     response->writeHeader("Access-Control-Allow-Origin", "*");
   }
 
-  response->writeHeader("Content-Type",
-                        file.value().meta.at("mime").to_string());
-  response->writeHeader("Last-Modified", last_modified);
+  response->writeHeader("Content-Type", file.value().mime);
+  response->writeHeader("Last-Modified",
+                        sourcemeta::core::to_gmt(file.value().last_modified));
 
   std::ostringstream etag;
-  etag << '"' << md5 << '"';
+  etag << '"' << checksum << '"';
   response->writeHeader("ETag", std::move(etag).str());
 
   // See
   // https://json-schema.org/draft/2020-12/json-schema-core.html#section-9.5.1.1
-  const auto dialect{file.value().meta.try_at("extension")};
-  if (dialect) {
+  const auto &dialect{file.value().extension};
+  if (dialect.is_string()) {
     std::ostringstream link;
-    link << "<" << dialect->to_string() << ">; rel=\"describedby\"";
+    link << "<" << dialect.to_string() << ">; rel=\"describedby\"";
     response->writeHeader("Link", std::move(link).str());
   }
 
   std::ostringstream contents;
   contents << file.value().data.rdbuf();
 
-  // TODO: Pre-parse this on MetaPack?
-  if (file.value().meta.at("encoding").to_string() == "gzip") {
+  if (file.value().encoding == sourcemeta::registry::MetaPackEncoding::GZIP) {
     send_response(code, request->getMethod(), request->getUrl(), response,
                   contents.str(), encoding, ServerContentEncoding::GZIP);
   } else {

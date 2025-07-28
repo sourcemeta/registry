@@ -76,21 +76,43 @@ set(REGISTRY_STATIC
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff2")
 
-set(REGISTRY_STATIC_META)
+set(REGISTRY_STATIC_METAPACK)
 foreach(file_path IN LISTS REGISTRY_STATIC)
+  get_filename_component(file_extension "${file_path}" EXT)
+  string(TOLOWER "${file_extension}" file_extension)
+  if(file_extension STREQUAL ".png")
+    set(MIME "image/png")
+  elseif(file_extension STREQUAL ".svg")
+    set(MIME "image/svg+xml")
+  elseif(file_extension STREQUAL ".min.css")
+    set(MIME "text/css")
+  elseif(file_extension STREQUAL ".js")
+    set(MIME "text/javascript")
+  elseif(file_extension STREQUAL ".min.js")
+    set(MIME "text/javascript")
+  elseif(file_extension STREQUAL ".ico")
+    set(MIME "image/vnd.microsoft.icon")
+  elseif(file_extension STREQUAL ".webmanifest")
+    set(MIME "application/manifest+json")
+  elseif(file_extension STREQUAL ".woff")
+    set(MIME "font/woff")
+  elseif(file_extension STREQUAL ".woff2")
+    set(MIME "font/woff2")
+  else()
+    message(FATAL_ERROR "Cannot determine MIME type for ${file_extension}")
+  endif()
+
   get_filename_component(file_name "${file_path}" NAME)
-  add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta"
-    COMMAND "${CMAKE_COMMAND}" 
-      -DINPUT="${file_path}" 
-      -DOUTPUT="${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta"
-      -P "${CMAKE_CURRENT_SOURCE_DIR}/metadata.cmake"
-    DEPENDS "${file_path}" "${CMAKE_CURRENT_SOURCE_DIR}/metadata.cmake")
+  add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}"
+    COMMAND "$<TARGET_FILE:sourcemeta_registry_metapack_gzip_cli>"
+      "${file_path}" "${MIME}" "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}"
+    DEPENDS "${file_path}" "$<TARGET_FILE:sourcemeta_registry_metapack_gzip_cli>")
   target_sources(sourcemeta_registry_index 
-    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta")
-  list(APPEND REGISTRY_STATIC_META 
-    "${CMAKE_CURRENT_BINARY_DIR}/meta/${file_name}.meta")
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}")
+  list(APPEND REGISTRY_STATIC_METAPACK
+    "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}")
 endforeach()
 
-install(FILES ${REGISTRY_STATIC} ${REGISTRY_STATIC_META}
+install(FILES ${REGISTRY_STATIC_METAPACK}
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/static"
   COMPONENT sourcemeta_registry)

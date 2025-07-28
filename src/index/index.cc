@@ -79,11 +79,10 @@ static auto index_main(const std::string_view &program,
         configuration_schema.at("properties").at("description").at("default"));
   }
 
-  output.write_metapack_json(
+  // We want to keep this file uncompressed and without a leading header to that
+  // the server can quickly read on start
+  output.write_json(
       "configuration.json",
-      // We want to keep this file uncompressed to that the server can quickly
-      // read on start
-      sourcemeta::registry::MetaPackEncoding::Identity,
       sourcemeta::registry::GENERATE_SERVER_CONFIGURATION(configuration));
 
   const auto server_url{
@@ -278,12 +277,13 @@ static auto index_main(const std::string_view &program,
       continue;
     }
 
-    const auto meta{sourcemeta::registry::read_json(entry.path())};
+    const auto meta{sourcemeta::registry::read_contents(entry.path())};
     assert(meta.has_value());
+    const auto meta_json{sourcemeta::core::parse_json(meta.value().data)};
     auto relative_destination{
         std::filesystem::relative(entry.path(), output.path())};
     relative_destination.replace_extension(".html");
-    if (meta.value().data.defines("entries")) {
+    if (meta_json.defines("entries")) {
       output.write_metapack_html(
           relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
           sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(configuration,
@@ -294,9 +294,9 @@ static auto index_main(const std::string_view &program,
           sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
               configuration, entry.path(),
               (output.path() / "schemas").string() +
-                  meta.value().data.at("url").to_string() + ".schema",
+                  meta_json.at("url").to_string() + ".schema",
               (output.path() / "schemas").string() +
-                  meta.value().data.at("url").to_string() + ".dependencies"));
+                  meta_json.at("url").to_string() + ".dependencies"));
     }
   }
 

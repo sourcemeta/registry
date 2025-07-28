@@ -42,13 +42,8 @@ not_exists() {
 }
 
 exists "$TMP/output/explorer/pages/example/schemas/old.nav"
-exists "$TMP/output/explorer/pages/example/schemas/old.nav.meta"
 exists "$TMP/output/schemas/example/schemas/old.json.bundle"
-exists "$TMP/output/schemas/example/schemas/old.json.blaze-exhaustive.meta"
 exists "$TMP/output/schemas/example/schemas/old.json.unidentified"
-exists "$TMP/output/schemas/example/schemas/old.json.unidentified.meta"
-exists "$TMP/output/schemas/example/schemas/old.json.bundle.meta"
-exists "$TMP/output/schemas/example/schemas/old.json.schema.meta"
 exists "$TMP/output/schemas/example/schemas/old.json.blaze-exhaustive"
 exists "$TMP/output/schemas/example/schemas/old.json.schema"
 
@@ -62,23 +57,13 @@ EOF
 "$1" "$TMP/registry.json" "$TMP/output"
 
 exists "$TMP/output/explorer/pages/example/schemas/new.nav"
-exists "$TMP/output/explorer/pages/example/schemas/new.nav.meta"
 exists "$TMP/output/schemas/example/schemas/new.json.bundle"
-exists "$TMP/output/schemas/example/schemas/new.json.blaze-exhaustive.meta"
 exists "$TMP/output/schemas/example/schemas/new.json.unidentified"
-exists "$TMP/output/schemas/example/schemas/new.json.unidentified.meta"
-exists "$TMP/output/schemas/example/schemas/new.json.bundle.meta"
-exists "$TMP/output/schemas/example/schemas/new.json.schema.meta"
 exists "$TMP/output/schemas/example/schemas/new.json.blaze-exhaustive"
 exists "$TMP/output/schemas/example/schemas/new.json.schema"
 
 not_exists "$TMP/output/explorer/pages/example/schemas/old.nav"
-not_exists "$TMP/output/explorer/pages/example/schemas/old.nav.meta"
 not_exists "$TMP/output/schemas/example/schemas/old.json.bundle"
-not_exists "$TMP/output/schemas/example/schemas/old.json.blaze-exhaustive.meta"
 not_exists "$TMP/output/schemas/example/schemas/old.json.unidentified"
-not_exists "$TMP/output/schemas/example/schemas/old.json.unidentified.meta"
-not_exists "$TMP/output/schemas/example/schemas/old.json.bundle.meta"
-not_exists "$TMP/output/schemas/example/schemas/old.json.schema.meta"
 not_exists "$TMP/output/schemas/example/schemas/old.json.blaze-exhaustive"
 not_exists "$TMP/output/schemas/example/schemas/old.json.schema"
