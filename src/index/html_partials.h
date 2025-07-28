@@ -208,7 +208,7 @@ template <typename T>
 auto html_end(T &output, const std::string_view version) -> void {
   output
       .open("script",
-            {{"async", ""}, {"defer", ""}, {"src", "/static/main.js"}})
+            {{"async", ""}, {"defer", ""}, {"src", "/static/main.min.js"}})
       .close("script");
   output.open("div", {{"class", "container-fluid px-4 mb-2"}});
   html_footer(output, version);
