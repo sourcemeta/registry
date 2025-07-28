@@ -6,9 +6,8 @@
 #include <sourcemeta/registry/resolver.h>
 
 #include "configure.h"
+#include "explorer.h"
 #include "generators.h"
-#include "html_partials.h"
-#include "html_safe.h"
 #include "output.h"
 #include "parallel.h"
 #include "validator.h"
@@ -163,6 +162,9 @@ static auto index_main(const std::string_view &program,
       },
       THREAD_STACK_SIZE);
 
+  // TODO: Put file dependency information in the metapack extensions,
+  // as these are the files that want to be able to re-generate if something
+  // changes?
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
       [](const auto id, const auto threads, const auto percentage,
@@ -179,12 +181,11 @@ static auto index_main(const std::string_view &program,
             sourcemeta::core::dialect(resolver(schema.first).value())};
         assert(dialect_identifier.has_value());
 
-        output.write_metapack_jsonschema(
-            base_path.string() + ".bundle",
+        output.write_metapack_json(
+            base_path.string() + ".positions",
             sourcemeta::registry::MetaPackEncoding::GZIP,
-            sourcemeta::registry::GENERATE_BUNDLE(
-                resolver, output.path() / (base_path.string() + ".schema")),
-            dialect_identifier.value());
+            sourcemeta::registry::GENERATE_POINTER_POSITIONS(
+                resolver, output.path() / (base_path.string() + ".schema")));
 
         output.write_metapack_json(
             base_path.string() + ".dependencies",
@@ -192,15 +193,23 @@ static auto index_main(const std::string_view &program,
             sourcemeta::registry::GENERATE_DEPENDENCIES(
                 resolver, output.path() / (base_path.string() + ".schema")));
 
+        // TODO: The bundle target should depend on the .dependencies file
+
+        output.write_metapack_jsonschema(
+            base_path.string() + ".bundle",
+            sourcemeta::registry::MetaPackEncoding::GZIP,
+            sourcemeta::registry::GENERATE_BUNDLE(
+                resolver, output.path() / (base_path.string() + ".schema")),
+            dialect_identifier.value());
+
         if (attribute(configuration, schema.second.collection_name,
                       "x-sourcemeta-registry:blaze-exhaustive")) {
           output.write_metapack_json(
               base_path.string() + ".blaze-exhaustive",
               // Don't compress, as we need to internally read from disk
               sourcemeta::registry::MetaPackEncoding::Identity,
-              sourcemeta::registry::GENERATE_BLAZE_TEMPLATE(
-                  output.path() / (base_path.string() + ".bundle"),
-                  sourcemeta::blaze::Mode::Exhaustive));
+              sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
+                  resolver, output.path() / (base_path.string() + ".bundle")));
         }
 
         output.write_metapack_jsonschema(
@@ -209,12 +218,6 @@ static auto index_main(const std::string_view &program,
             sourcemeta::registry::GENERATE_UNIDENTIFIED(
                 resolver, output.path() / (base_path.string() + ".bundle")),
             dialect_identifier.value());
-
-        output.write_metapack_json(
-            base_path.string() + ".positions",
-            sourcemeta::registry::MetaPackEncoding::GZIP,
-            sourcemeta::registry::GENERATE_POINTER_POSITIONS(
-                output.path() / (base_path.string() + ".schema")));
       },
       THREAD_STACK_SIZE);
 
