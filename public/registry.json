@@ -4,7 +4,7 @@
   "description": "The universal JSON Schema index, bringing together and supercharging the world's open-source schemas",
   "port": 8000,
   "hero": "<p class=\"mb-1\">The universal JSON Schema index, bringing together and supercharging the world's open-source schemas</p> <small class=\"fw-light\">Are we missing any schema collection you know about? <a href=\"https://github.com/sourcemeta/schemas/issues/new\" target=\"_blank\">Let us know!</a></small>",
-  "head": "<script defer data-domain=\"schemas.sourcemeta.com\" src=\"https://plausible.io/js/script.js\"></script><script defer data-app-id=\"BBDECA33-5DA2-4309-B092-7EFC3D803B81\" src=\"https://cdn.telemetrydeck.com/websdk/telemetrydeck.min.js\"></script>",
+  "head": "<script defer data-app-id=\"BBDECA33-5DA2-4309-B092-7EFC3D803B81\" src=\"https://cdn.telemetrydeck.com/websdk/telemetrydeck.min.js\"></script>",
   "action": {
     "title": "Star on GitHub",
     "url": "https://github.com/sourcemeta/registry",
