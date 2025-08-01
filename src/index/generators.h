@@ -22,6 +22,20 @@
 
 namespace sourcemeta::registry {
 
+auto GENERATE_FRAME_LOCATIONS(const sourcemeta::registry::Resolver &resolver,
+                              const std::filesystem::path &absolute_path)
+    -> sourcemeta::core::JSON {
+  const auto schema{sourcemeta::registry::read_contents(absolute_path)};
+  assert(schema.has_value());
+  sourcemeta::core::SchemaFrame frame{
+      sourcemeta::core::SchemaFrame::Mode::Locations};
+  frame.analyse(
+      sourcemeta::core::parse_json(schema.value().data),
+      sourcemeta::core::schema_official_walker,
+      [&resolver](const auto identifier) { return resolver(identifier); });
+  return frame.to_json().at("locations");
+}
+
 auto GENERATE_BUNDLE(const sourcemeta::registry::Resolver &resolver,
                      const std::filesystem::path &absolute_path)
     -> sourcemeta::core::JSON {
