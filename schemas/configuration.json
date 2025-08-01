@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:sourcemeta:registry/configuration.json",
   "type": "object",
   "required": [ "url", "port", "schemas" ],
@@ -80,6 +80,9 @@
         "type": "object",
         "required": [ "base", "path" ],
         "properties": {
+          "x-sourcemeta-registry:blaze-exhaustive": {
+            "type": "boolean"
+          },
           "base": {
             "$ref": "#/definitions/uri"
           },
@@ -109,9 +112,6 @@
               },
               "additionalProperties": false
             }
-          },
-          "x-sourcemeta-registry:blaze-exhaustive": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false
