@@ -18,20 +18,33 @@ namespace {
 
 auto trace(sourcemeta::blaze::Evaluator &evaluator,
            const sourcemeta::blaze::Template &schema_template,
-           const std::string &instance) -> sourcemeta::core::JSON {
+           const std::string &instance,
+           const std::filesystem::path &template_path)
+    -> sourcemeta::core::JSON {
   auto steps{sourcemeta::core::JSON::make_array()};
+
+  auto locations_path{template_path};
+  locations_path.replace_extension("locations");
+  // TODO: Cache this across runs?
+  const auto locations_entry{
+      sourcemeta::registry::read_contents(locations_path)};
+  assert(locations_entry.has_value());
+  const auto locations{
+      sourcemeta::core::parse_json(locations_entry.value().data)};
+  assert(locations.defines("static"));
+  const auto &static_locations{locations.at("static")};
 
   sourcemeta::core::PointerPositionTracker tracker;
   const auto instance_json{
       sourcemeta::core::parse_json(instance, std::ref(tracker))};
   const auto result{evaluator.validate(
       schema_template, instance_json,
-      [&steps, &tracker](const sourcemeta::blaze::EvaluationType type,
-                         const bool valid,
-                         const sourcemeta::blaze::Instruction &instruction,
-                         const sourcemeta::core::WeakPointer &evaluate_path,
-                         const sourcemeta::core::WeakPointer &instance_location,
-                         const sourcemeta::core::JSON &annotation) {
+      [&steps, &tracker, &static_locations](
+          const sourcemeta::blaze::EvaluationType type, const bool valid,
+          const sourcemeta::blaze::Instruction &instruction,
+          const sourcemeta::core::WeakPointer &evaluate_path,
+          const sourcemeta::core::WeakPointer &instance_location,
+          const sourcemeta::core::JSON &annotation) {
         auto step{sourcemeta::core::JSON::make_object()};
 
         if (type == sourcemeta::blaze::EvaluationType::Pre) {
@@ -61,6 +74,18 @@ auto trace(sourcemeta::blaze::Evaluator &evaluator,
         step.assign("keywordLocation",
                     sourcemeta::core::to_json(instruction.keyword_location));
         step.assign("annotation", annotation);
+
+        // Determine keyword vocabulary
+        const auto &current_location{
+            static_locations.at(instruction.keyword_location)};
+        const auto vocabularies{sourcemeta::core::vocabularies(
+            sourcemeta::core::schema_official_resolver,
+            current_location.at("baseDialect").to_string(),
+            current_location.at("dialect").to_string())};
+        const auto walker_result{sourcemeta::core::schema_official_walker(
+            evaluate_path.back().to_property(), vocabularies)};
+        step.assign("vocabulary",
+                    sourcemeta::core::to_json(walker_result.vocabulary));
 
         steps.push_back(std::move(step));
       })};
@@ -100,7 +125,7 @@ auto evaluate(const std::filesystem::path &template_path,
           sourcemeta::core::parse_json(instance),
           sourcemeta::blaze::StandardOutput::Basic);
     case EvaluateType::Trace:
-      return trace(evaluator, schema_template.value(), instance);
+      return trace(evaluator, schema_template.value(), instance, template_path);
     default:
       // We should never get here
       assert(false);

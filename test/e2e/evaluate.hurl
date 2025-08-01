@@ -54,6 +54,7 @@ jsonpath "$.steps[0].instancePositions[3]" == 13
 jsonpath "$.steps[0].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
 jsonpath "$.steps[0].name" == "AssertionTypeStrict"
 jsonpath "$.steps[0].type" == "push"
+jsonpath "$.steps[0].vocabulary" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.steps[1].annotation" == null
 jsonpath "$.steps[1].evaluatePath" == "/type"
 jsonpath "$.steps[1].instanceLocation" == ""
@@ -65,6 +66,7 @@ jsonpath "$.steps[1].instancePositions[3]" == 13
 jsonpath "$.steps[1].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
 jsonpath "$.steps[1].name" == "AssertionTypeStrict"
 jsonpath "$.steps[1].type" == "pass"
+jsonpath "$.steps[1].vocabulary" == "http://json-schema.org/draft-07/schema#"
 
 POST {{base}}/no-blaze/string.json
 Content-Type: application/json
