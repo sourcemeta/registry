@@ -15,6 +15,8 @@ RUN ldd /usr/bin/sourcemeta-registry-index
 RUN ldd /usr/bin/sourcemeta-registry-server
 ENV SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 RUN /usr/bin/sourcemeta-registry-index /app/public/registry.json /app/index
+# For logging purposes
+RUN du -sh /app/index
 
 FROM ${SOURCEMETA_REGISTRY}
 COPY --from=builder /app/index /app/index
