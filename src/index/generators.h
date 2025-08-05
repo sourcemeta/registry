@@ -7,6 +7,8 @@
 #include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
+#include <sourcemeta/core/alterschema.h>
+
 #include <sourcemeta/core/gzip.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonpointer.h>
@@ -14,6 +16,7 @@
 
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
+#include <sourcemeta/blaze/linter.h>
 
 #include <cassert>    // assert
 #include <filesystem> // std::filesystem
@@ -21,6 +24,46 @@
 #include <utility>    // std::move
 
 namespace sourcemeta::registry {
+
+auto GENERATE_HEALTH(const sourcemeta::registry::Resolver &resolver,
+                     const std::filesystem::path &absolute_path)
+    -> sourcemeta::core::JSON {
+  const auto schema{sourcemeta::registry::read_contents(absolute_path)};
+  assert(schema.has_value());
+
+  sourcemeta::core::SchemaTransformer bundle;
+  sourcemeta::core::add(bundle, sourcemeta::core::AlterSchemaMode::Readability);
+  bundle.add<sourcemeta::blaze::ValidExamples>(
+      sourcemeta::blaze::default_schema_compiler);
+  bundle.add<sourcemeta::blaze::ValidDefault>(
+      sourcemeta::blaze::default_schema_compiler);
+
+  auto errors{sourcemeta::core::JSON::make_array()};
+  const auto result = bundle.check(
+      sourcemeta::core::parse_json(schema.value().data),
+      sourcemeta::core::schema_official_walker,
+      [&resolver](const auto identifier) { return resolver(identifier); },
+      [&errors](const auto &pointer, const auto &name, const auto &message,
+                const auto &description) {
+        auto entry{sourcemeta::core::JSON::make_object()};
+        entry.assign("pointer", sourcemeta::core::to_json(pointer));
+        entry.assign("name", sourcemeta::core::JSON{name});
+        entry.assign("message", sourcemeta::core::JSON{message});
+        if (description.empty()) {
+          entry.assign("description", sourcemeta::core::JSON{nullptr});
+        } else {
+          entry.assign("description", sourcemeta::core::JSON{description});
+        }
+
+        errors.push_back(std::move(entry));
+      });
+
+  auto report{sourcemeta::core::JSON::make_object()};
+  // TODO: Elevate just the score to the directory navs
+  report.assign("score", sourcemeta::core::to_json(result.second));
+  report.assign("errors", std::move(errors));
+  return report;
+}
 
 auto GENERATE_FRAME_LOCATIONS(const sourcemeta::registry::Resolver &resolver,
                               const std::filesystem::path &absolute_path)
