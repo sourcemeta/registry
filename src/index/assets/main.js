@@ -68,3 +68,13 @@ search.addEventListener('input', function(event) {
     xhr.send();
   }, 300);
 });
+
+document.querySelectorAll('[data-sourcemeta-ui-editor]').forEach(async (element) => {
+  const url = element.getAttribute('data-sourcemeta-ui-editor');
+  const response = await window.fetch(url);
+  if (response.ok) {
+    element.textContent = await response.text();
+  } else {
+    throw new Error(response.statusText);
+  }
+});

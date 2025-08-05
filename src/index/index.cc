@@ -301,8 +301,6 @@ static auto index_main(const std::filesystem::path &program,
           sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
               configuration, entry.path(),
               (output.path() / "schemas").string() +
-                  meta_json.at("url").to_string() + ".schema",
-              (output.path() / "schemas").string() +
                   meta_json.at("url").to_string() + ".dependencies"));
     }
   }
