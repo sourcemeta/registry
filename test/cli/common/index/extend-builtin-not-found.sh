@@ -24,7 +24,7 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 error: could not locate the requested file
-  at $(dirname "$(dirname "$1")")/share/sourcemeta/registry/collections/foo/bar/registry.json
+  at $REGISTRY_PREFIX/share/sourcemeta/registry/collections/foo/bar/registry.json
 EOF
 
 diff "$TMP/output.txt" "$TMP/expected.txt"

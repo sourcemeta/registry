@@ -5,7 +5,6 @@
 #include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
-#include "argv.h"
 #include "configuration.h"
 #include "configure.h"
 #include "explorer.h"
@@ -35,7 +34,7 @@ static auto attribute(const sourcemeta::core::JSON &configuration,
       .to_boolean();
 }
 
-static auto index_main(const std::filesystem::path &program,
+static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
 #if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
@@ -48,7 +47,7 @@ static auto index_main(const std::filesystem::path &program,
   std::cout << "Edition\n";
 
   if (arguments.size() < 2) {
-    std::cout << "Usage: " << program.filename().string()
+    std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
               << " <registry.json> <path/to/output/directory>\n";
     return EXIT_FAILURE;
   }
@@ -70,9 +69,8 @@ static auto index_main(const std::filesystem::path &program,
       std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
   auto configuration{sourcemeta::core::read_json(configuration_path)};
   sourcemeta::registry::preprocess_configuration(
-      std::filesystem::canonical(program).parent_path().parent_path() /
-          "share" / "sourcemeta" / "registry" / "collections",
-      configuration_path.parent_path(), configuration_schema, configuration);
+      SOURCEMETA_REGISTRY_COLLECTIONS, configuration_path.parent_path(),
+      configuration_schema, configuration);
   validator.validate_or_throw(configuration_schema, configuration,
                               "Invalid configuration");
 
@@ -322,7 +320,7 @@ static auto index_main(const std::filesystem::path &program,
 
 auto main(int argc, char *argv[]) noexcept -> int {
   try {
-    const auto &program{sourcemeta::registry::executable_path(argc, argv)};
+    const std::string_view program{argv[0]};
     const std::vector<std::string> arguments{argv + std::min(1, argc),
                                              argv + argc};
     if (!sourcemeta::registry::license_permitted()) {
