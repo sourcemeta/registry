@@ -1,3 +1,5 @@
+import { Editor } from "./editor.js"
+
 var search = document.getElementById('search');
 var searchResult = document.getElementById('search-result');
 var hasSearchResults = false;
@@ -73,7 +75,11 @@ document.querySelectorAll('[data-sourcemeta-ui-editor]').forEach(async (element)
   const url = element.getAttribute('data-sourcemeta-ui-editor');
   const response = await window.fetch(url);
   if (response.ok) {
-    element.textContent = await response.text();
+    element.innerHTML = "";
+    new Editor(element, await response.text(), {
+      readOnly: element.getAttribute('data-sourcemeta-ui-editor-mode') == "readonly",
+      json: element.getAttribute('data-sourcemeta-ui-editor-language') == "json"
+    });
   } else {
     throw new Error(response.statusText);
   }

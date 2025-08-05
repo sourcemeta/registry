@@ -962,14 +962,14 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.close("table");
   output_html.close("div");
 
-  output_html.open("pre", {{"class", "bg-light p-3 border"},
-                           {"style", "max-height: 400px;"}});
-  output_html.open("code",
-                   {{"data-sourcemeta-ui-editor", meta.at("url").to_string()},
-                    {"data-sourcemeta-ui-editor-mode", "readonly"}});
+  output_html.open("div",
+                   {{"class", "border overflow-auto"},
+                    {"style", "max-height: 400px;"},
+                    {"data-sourcemeta-ui-editor", meta.at("url").to_string()},
+                    {"data-sourcemeta-ui-editor-mode", "readonly"},
+                    {"data-sourcemeta-ui-editor-language", "json"}});
   output_html.text("Loading schema...");
-  output_html.close("code");
-  output_html.close("pre");
+  output_html.close("div");
 
   output_html.open("h3", {{"class", "fw-bold h5 mt-4"}})
       .text("Dependencies")

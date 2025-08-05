@@ -1,0 +1,13 @@
+{
+  "name": "@sourcemeta/registry",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "@codemirror/commands": "^6.8.1",
+    "@codemirror/highlight": "^0.19.8",
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/language": "^6.11.2",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.1"
+  }
+}

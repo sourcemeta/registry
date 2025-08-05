@@ -57,7 +57,9 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
     --outfile="${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
     --minify
-  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js")
+  DEPENDS 
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/editor.js")
 target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/main.min.js")
 
 # Generate CSS
