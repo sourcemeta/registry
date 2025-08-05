@@ -860,7 +860,6 @@ auto GENERATE_EXPLORER_DIRECTORY_PAGE(
 auto GENERATE_EXPLORER_SCHEMA_PAGE(
     const sourcemeta::core::JSON &configuration,
     const std::filesystem::path &navigation_path,
-    const std::filesystem::path &schema_path,
     const std::filesystem::path &dependencies_path) -> std::string {
   const auto navigation{sourcemeta::registry::read_contents(navigation_path)};
   assert(navigation.has_value());
@@ -963,32 +962,14 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.close("table");
   output_html.close("div");
 
-  output_html.open("pre", {{"class", "bg-light p-3 border"}});
-  output_html.open("code");
-  std::ostringstream schema_summary;
-  auto file{sourcemeta::registry::read_stream(schema_path)};
-  assert(file.has_value());
-  std::stringstream file_contents;
-  sourcemeta::core::gunzip(file.value().data, file_contents);
-  std::string line;
-  int count = 0;
-  while (count < 20 && std::getline(file_contents, line)) {
-    schema_summary << line << "\n";
-    count += 1;
-  }
-  const auto has_more_lines{file_contents && std::getline(file_contents, line)};
-  if (has_more_lines) {
-    schema_summary << "...\n";
-  }
-  output_html.text(schema_summary.str());
+  output_html.open("pre", {{"class", "bg-light p-3 border"},
+                           {"style", "max-height: 400px;"}});
+  output_html.open("code",
+                   {{"data-sourcemeta-ui-editor", meta.at("url").to_string()},
+                    {"data-sourcemeta-ui-editor-mode", "readonly"}});
+  output_html.text("Loading schema...");
   output_html.close("code");
   output_html.close("pre");
-
-  if (has_more_lines) {
-    output_html.open("a", {{"href", meta.at("url").to_string()}})
-        .text("See the full schema")
-        .close("a");
-  }
 
   output_html.open("h3", {{"class", "fw-bold h5 mt-4"}})
       .text("Dependencies")
