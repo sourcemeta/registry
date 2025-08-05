@@ -51,6 +51,7 @@ jsonpath "$.steps[0].instancePositions[0]" == 1
 jsonpath "$.steps[0].instancePositions[1]" == 1
 jsonpath "$.steps[0].instancePositions[2]" == 1
 jsonpath "$.steps[0].instancePositions[3]" == 13
+jsonpath "$.steps[0].message" == null
 jsonpath "$.steps[0].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
 jsonpath "$.steps[0].name" == "AssertionTypeStrict"
 jsonpath "$.steps[0].type" == "push"
@@ -67,6 +68,7 @@ jsonpath "$.steps[1].keywordLocation" == "http://localhost:8000/example/schemas/
 jsonpath "$.steps[1].name" == "AssertionTypeStrict"
 jsonpath "$.steps[1].type" == "pass"
 jsonpath "$.steps[1].vocabulary" == "http://json-schema.org/draft-07/schema#"
+jsonpath "$.steps[1].message" == "The value was expected to be of type string"
 
 POST {{base}}/no-blaze/string.json
 Content-Type: application/json
