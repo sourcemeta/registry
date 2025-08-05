@@ -7,6 +7,8 @@ RUN apt-get --yes update && apt-get install --yes --no-install-recommends \
   build-essential cmake sassc esbuild shellcheck nodejs \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+COPY package.json /source/package.json
+COPY package-lock.json /source/package-lock.json
 COPY cmake /source/cmake
 COPY src /source/src
 COPY schemas /source/schemas
@@ -22,6 +24,8 @@ COPY test/schemas /source/test/schemas
 # Commercial editions require a paid license
 # See https://github.com/sourcemeta/registry/blob/main/LICENSE
 ARG SOURCEMETA_REGISTRY_EDITION=starter
+
+RUN cd /source && npm ci
 
 RUN	cmake -S /source -B ./build \
   -DCMAKE_BUILD_TYPE:STRING=Release \

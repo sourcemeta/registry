@@ -6,6 +6,7 @@ DOCKER ?= docker
 SHELLCHECK ?= shellcheck
 MKDOCS ?= mkdocs
 JSONSCHEMA ?= ./build/dist/bin/jsonschema
+NPM ?= npm
 
 # Options
 INDEX ?= ON
@@ -20,8 +21,11 @@ PUBLIC ?= ./public
 .PHONY: all
 all: configure compile test 
 
+node_modules: package.json package-lock.json
+	$(NPM) ci
+
 .PHONY: configure
-configure: 
+configure: node_modules 
 	$(CMAKE) -S . -B $(OUTPUT) \
 		-DCMAKE_BUILD_TYPE:STRING=$(PRESET) \
 		-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON \
