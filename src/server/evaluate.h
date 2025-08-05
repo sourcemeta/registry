@@ -39,7 +39,7 @@ auto trace(sourcemeta::blaze::Evaluator &evaluator,
       sourcemeta::core::parse_json(instance, std::ref(tracker))};
   const auto result{evaluator.validate(
       schema_template, instance_json,
-      [&steps, &tracker, &static_locations](
+      [&steps, &tracker, &static_locations, &instance_json](
           const sourcemeta::blaze::EvaluationType type, const bool valid,
           const sourcemeta::blaze::Instruction &instruction,
           const sourcemeta::core::WeakPointer &evaluate_path,
@@ -74,6 +74,15 @@ auto trace(sourcemeta::blaze::Evaluator &evaluator,
         step.assign("keywordLocation",
                     sourcemeta::core::to_json(instruction.keyword_location));
         step.assign("annotation", annotation);
+
+        if (type == sourcemeta::blaze::EvaluationType::Pre) {
+          step.assign("message", sourcemeta::core::JSON{nullptr});
+        } else {
+          step.assign("message",
+                      sourcemeta::core::JSON{sourcemeta::blaze::describe(
+                          valid, instruction, evaluate_path, instance_location,
+                          instance_json, annotation)});
+        }
 
         // Determine keyword vocabulary
         const auto &current_location{
