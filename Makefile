@@ -6,8 +6,6 @@ DOCKER ?= docker
 SHELLCHECK ?= shellcheck
 MKDOCS ?= mkdocs
 JSONSCHEMA ?= ./build/dist/bin/jsonschema
-NODE ?= node
-MKDIR ?= mkdir
 
 # Options
 INDEX ?= ON
@@ -82,26 +80,8 @@ docker:
 docs: mkdocs.yml
 	$(MKDOCS) serve --config-file $< --strict --open
 
-define geojson_prepare
-$(OUTPUT)/geojson-$(1)/%.json: vendor/public/geojson-$(1)/bin/format.js vendor/public/geojson-$(1)/src/schema/%.js
-	$(MKDIR) -p $$(dir $$@) && $(NODE) $$< $$(word 2,$$^) > $$@
-endef
-$(eval $(call geojson_prepare,1-0-5))
-$(eval $(call geojson_prepare,1-0-4))
-$(eval $(call geojson_prepare,1-0-3))
-$(eval $(call geojson_prepare,1-0-2))
-$(eval $(call geojson_prepare,1-0-1))
-$(eval $(call geojson_prepare,1-0-0))
-.PHONY: public-prepare
-public-prepare: \
-	$(patsubst vendor/public/geojson-1-0-5/src/schema/%.js,$(OUTPUT)/geojson-1-0-5/%.json,$(wildcard vendor/public/geojson-1-0-5/src/schema/*.js)) \
-	$(patsubst vendor/public/geojson-1-0-4/src/schema/%.js,$(OUTPUT)/geojson-1-0-4/%.json,$(wildcard vendor/public/geojson-1-0-4/src/schema/*.js)) \
-	$(patsubst vendor/public/geojson-1-0-3/src/schema/%.js,$(OUTPUT)/geojson-1-0-3/%.json,$(wildcard vendor/public/geojson-1-0-3/src/schema/*.js)) \
-	$(patsubst vendor/public/geojson-1-0-2/src/schema/%.js,$(OUTPUT)/geojson-1-0-2/%.json,$(wildcard vendor/public/geojson-1-0-2/src/schema/*.js)) \
-	$(patsubst vendor/public/geojson-1-0-1/src/schema/%.js,$(OUTPUT)/geojson-1-0-1/%.json,$(wildcard vendor/public/geojson-1-0-1/src/schema/*.js)) \
-	$(patsubst vendor/public/geojson-1-0-0/src/schema/%.js,$(OUTPUT)/geojson-1-0-0/%.json,$(wildcard vendor/public/geojson-1-0-0/src/schema/*.js))
 .PHONY: public
-public: public-prepare
+public: 
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-index $(PUBLIC)/registry.json $(OUTPUT)/public
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \

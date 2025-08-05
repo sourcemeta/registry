@@ -18,6 +18,7 @@ endmacro()
 
 if(REGISTRY_INDEX)
   sourcemeta_registry_test_cli_common(index bundle-ref-no-fragment)
+  sourcemeta_registry_test_cli_common(index extend-builtin-not-found)
   sourcemeta_registry_test_cli_common(index external-reference)
   sourcemeta_registry_test_cli_common(index invalid-configuration)
   sourcemeta_registry_test_cli_common(index invalid-schema)

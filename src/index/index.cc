@@ -5,6 +5,8 @@
 #include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
+#include "argv.h"
+#include "configuration.h"
 #include "configure.h"
 #include "explorer.h"
 #include "generators.h"
@@ -33,7 +35,7 @@ static auto attribute(const sourcemeta::core::JSON &configuration,
       .to_boolean();
 }
 
-static auto index_main(const std::string_view &program,
+static auto index_main(const std::filesystem::path &program,
                        const std::span<const std::string> &arguments) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
 #if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
@@ -46,7 +48,7 @@ static auto index_main(const std::string_view &program,
   std::cout << "Edition\n";
 
   if (arguments.size() < 2) {
-    std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
+    std::cout << "Usage: " << program.filename().string()
               << " <registry.json> <path/to/output/directory>\n";
     return EXIT_FAILURE;
   }
@@ -67,16 +69,12 @@ static auto index_main(const std::string_view &program,
   const auto configuration_schema{sourcemeta::core::parse_json(
       std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
   auto configuration{sourcemeta::core::read_json(configuration_path)};
+  sourcemeta::registry::preprocess_configuration(
+      std::filesystem::canonical(program).parent_path().parent_path() /
+          "share" / "sourcemeta" / "registry" / "collections",
+      configuration_path.parent_path(), configuration_schema, configuration);
   validator.validate_or_throw(configuration_schema, configuration,
                               "Invalid configuration");
-  if (configuration.is_object()) {
-    configuration.assign_if_missing(
-        "title",
-        configuration_schema.at("properties").at("title").at("default"));
-    configuration.assign_if_missing(
-        "description",
-        configuration_schema.at("properties").at("description").at("default"));
-  }
 
   // We want to keep this file uncompressed and without a leading header to that
   // the server can quickly read on start
@@ -326,7 +324,7 @@ static auto index_main(const std::string_view &program,
 
 auto main(int argc, char *argv[]) noexcept -> int {
   try {
-    const std::string_view program{argv[0]};
+    const auto &program{sourcemeta::registry::executable_path(argc, argv)};
     const std::vector<std::string> arguments{argv + std::min(1, argc),
                                              argv + argc};
     if (!sourcemeta::registry::license_permitted()) {
@@ -358,8 +356,11 @@ auto main(int argc, char *argv[]) noexcept -> int {
         error.code() == std::make_error_condition(std::errc::not_a_directory)) {
       std::cerr << "error: file already exists\n  at " << error.path1().string()
                 << "\n";
+    } else if (error.code() == std::errc::no_such_file_or_directory) {
+      std::cerr << "error: could not locate the requested file\n  at "
+                << error.path1().string() << "\n";
     } else {
-      std::cerr << "filesystem error: " << error.what() << "\n";
+      std::cerr << error.what() << "\n";
     }
 
     return EXIT_FAILURE;

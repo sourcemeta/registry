@@ -1,0 +1,16 @@
+{
+  "pages": {
+    "geojson": {
+      "title": "GeoJSON",
+      "description": "A format for encoding a variety of geographic data structures",
+      "github": "geojson",
+      "website": "https://geojson.org"
+    }
+  },
+  "schemas": {
+    "geojson/v1.0.1": {
+      "base": "https://geojson.org/schema",
+      "path": "./schemas"
+    }
+  }
+}
