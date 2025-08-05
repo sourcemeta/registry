@@ -10,6 +10,14 @@
     "url": "https://github.com/sourcemeta/registry",
     "icon": "github"
   },
+  "extends": [ 
+    "@geojson/v1.0.5",
+    "@geojson/v1.0.4",
+    "@geojson/v1.0.3",
+    "@geojson/v1.0.2",    
+    "@geojson/v1.0.1",
+    "@geojson/v1.0.0" 
+  ],
   "pages": {
     "nasa": {
       "title": "National Aeronautics and Space Administration",
@@ -122,12 +130,6 @@
       "email": "tsc@openapi.groups.io",
       "github": "oai",
       "website": "https://openapis.org"
-    },
-    "geojson": {
-      "title": "GeoJSON",
-      "description": "A format for encoding a variety of geographic data structures",
-      "github": "geojson",
-      "website": "https://geojson.org"
     },
     "humancellatlas": {
       "title": "Human Cell Atlas",
@@ -380,30 +382,6 @@
     "openapi/v3.1": {
       "base": "https://spec.openapis.org/oas/3.1",
       "path": "../vendor/public/openapi/schemas/v3.1"
-    },
-    "geojson/v1.0.5": {
-      "base": "https://geojson.org/schema",
-      "path": "../build/geojson-1-0-5"
-    },
-    "geojson/v1.0.4": {
-      "base": "https://geojson.org/schema",
-      "path": "../build/geojson-1-0-4"
-    },
-    "geojson/v1.0.3": {
-      "base": "https://geojson.org/schema",
-      "path": "../build/geojson-1-0-3"
-    },
-    "geojson/v1.0.2": {
-      "base": "https://geojson.org/schema",
-      "path": "../build/geojson-1-0-2"
-    },
-    "geojson/v1.0.1": {
-      "base": "https://geojson.org/schema",
-      "path": "../build/geojson-1-0-1"
-    },
-    "geojson/v1.0.0": {
-      "base": "https://geojson.org/schema",
-      "path": "../build/geojson-1-0-0"
     },
     "humancellatlas/metadata/v5.0.0": {
       "base": "https://schema.humancellatlas.org",

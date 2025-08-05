@@ -6,6 +6,12 @@ jsonbinpack https://github.com/sourcemeta/jsonbinpack 3a5e2e37ad664be277a34145a9
 jsonschema https://github.com/sourcemeta/jsonschema 3a610171cbb0bf5ca1b224091ff555c0d44dcc05
 bootstrap https://github.com/twbs/bootstrap v5.3.3
 bootstrap-icons https://github.com/twbs/icons v1.11.3
+collections/geojson/v1.0.5 https://github.com/geojson/schema v1.0.5
+collections/geojson/v1.0.4 https://github.com/geojson/schema v1.0.4
+collections/geojson/v1.0.3 https://github.com/geojson/schema v1.0.3
+collections/geojson/v1.0.2 https://github.com/geojson/schema v1.0.2
+collections/geojson/v1.0.1 https://github.com/geojson/schema v1.0.1
+collections/geojson/v1.0.0 https://github.com/geojson/schema v1.0.0
 public/nasa-gcn-1-0-0 https://github.com/nasa-gcn/gcn-schema v1.0.0
 public/nasa-gcn-2-0-0 https://github.com/nasa-gcn/gcn-schema v2.0.0
 public/nasa-gcn-3-0-0 https://github.com/nasa-gcn/gcn-schema v3.0.0
@@ -47,12 +53,6 @@ public/jsonschema-draft7 https://github.com/json-schema-org/json-schema-spec 567
 public/jsonschema-draft6 https://github.com/json-schema-org/json-schema-spec 59ed5f6fc6f6386e23ca51d7f31d7fe9cf696713
 public/jsonschema-draft4 https://github.com/json-schema-org/json-schema-spec 955d185db846cfca84269d9d711b10f4f3353d38
 public/openapi https://github.com/OAI/OpenAPI-Specification 3.1.1
-public/geojson-1-0-5 https://github.com/geojson/schema v1.0.5
-public/geojson-1-0-4 https://github.com/geojson/schema v1.0.4
-public/geojson-1-0-3 https://github.com/geojson/schema v1.0.3
-public/geojson-1-0-2 https://github.com/geojson/schema v1.0.2
-public/geojson-1-0-1 https://github.com/geojson/schema v1.0.1
-public/geojson-1-0-0 https://github.com/geojson/schema v1.0.0
 public/hca-metadata-5-0-0 https://github.com/HumanCellAtlas/metadata-schema 5.0.0
 public/dats-1-0-0 https://github.com/datatagsuite/schema 1.0.0
 public/fhir https://github.com/FHIR/packages b401fbd45566006a21243a9b88f1391e32b1ed40

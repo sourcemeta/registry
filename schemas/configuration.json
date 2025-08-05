@@ -12,6 +12,13 @@
       "default": "The next-generation JSON Schema Registry",
       "$ref": "#/definitions/text"
     },
+    "extends": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
     "action": {
       "type": "object",
       "required": [ "title", "url" ],

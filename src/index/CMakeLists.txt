@@ -1,7 +1,7 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index 
   FOLDER "Registry/Index" 
-  SOURCES index.cc output.h generators.h parallel.h
-    configure.h.in validator.h explorer.h
+  SOURCES index.cc output.h generators.h parallel.h argv.h
+    configure.h.in validator.h explorer.h configuration.h
     "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
@@ -34,6 +34,16 @@ endif()
 file(READ "${PROJECT_SOURCE_DIR}/schemas/configuration.json" SCHEMA_CONFIGURATION)
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+
+# Load pre-made collections
+set(REGISTRY_COLLECTION_SOURCES)
+include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.0/registry.cmake")
+include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.1/registry.cmake")
+include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.2/registry.cmake")
+include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.3/registry.cmake")
+include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.4/registry.cmake")
+include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.5/registry.cmake")
+target_sources(sourcemeta_registry_index PRIVATE "${REGISTRY_COLLECTION_SOURCES}")
 
 include(GNUInstallDirs)
 install(TARGETS sourcemeta_registry_index
