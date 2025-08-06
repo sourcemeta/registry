@@ -1,0 +1,15 @@
+.bundle
+docs
+tools
+CHANGELOG.md
+README.md
+schema.md
+validation/README.md
+CHARTER.md
+bindings
+scripts
+.editorconfig
+ecosystems.json
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+GUIDING_PRINCIPLES.md
