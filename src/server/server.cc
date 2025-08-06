@@ -16,8 +16,9 @@
 #include <cassert>     // assert
 #include <cctype>      // std::tolower
 #include <chrono>      // std::chrono::system_clock
+#include <csignal>     // std::signal, SIGINT, SIGTERM
 #include <cstdint>     // std::uint32_t, std::atoi
-#include <cstdlib>     // EXIT_FAILURE
+#include <cstdlib>     // EXIT_FAILURE, std::exit
 #include <filesystem>  // std::filesystem
 #include <iostream>    // std::cerr, std::cout
 #include <memory>      // std::unique_ptr
@@ -524,6 +525,13 @@ static auto dispatch(const std::filesystem::path &base,
   }
 }
 
+auto terminate(int signal) -> void {
+  std::cerr << "Terminatting on signal: " << signal << "\n";
+  // TODO: Use `us_listen_socket_close` instead
+  // See https://github.com/uNetworking/uWebSockets/issues/1402
+  std::exit(EXIT_SUCCESS);
+}
+
 // We try to keep this function as straight to point as possible
 // with minimal input validation (outside debug builds). The intention
 // is for the server to start running and bind to the port as quickly
@@ -538,6 +546,10 @@ auto main(int argc, char *argv[]) noexcept -> int {
   std::cout << " Starter ";
 #endif
   std::cout << "Edition\n";
+
+  // Mainly for Docker Compose
+  std::signal(SIGINT, terminate);
+  std::signal(SIGTERM, terminate);
 
   try {
     if (argc < 2) {
