@@ -7,7 +7,7 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http%3A~1~1localhost%3A8000~1example~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1example~1v2.0~1schema.json"
     }
   },
   "definitions": {
@@ -27,7 +27,7 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http%3A~1~1localhost%3A8000~1example~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1example~1v2.0~1schema.json"
     }
   },
   "definitions": {
@@ -47,7 +47,7 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http%3A~1~1localhost%3A8000~1example~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1example~1v2.0~1schema.json"
     }
   },
   "definitions": {
@@ -67,7 +67,7 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http%3A~1~1localhost%3A8000~1example~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1example~1v2.0~1schema.json"
     }
   },
   "definitions": {
