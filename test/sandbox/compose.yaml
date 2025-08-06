@@ -7,3 +7,19 @@ services:
         SOURCEMETA_REGISTRY_EDITION: ${SOURCEMETA_REGISTRY_EDITION}
     ports:
       - 8000:8000
+
+  prism:
+    image: stoplight/prism:5
+    command: proxy /openapi.yaml http://sandbox:8000 --errors --host 0.0.0.0 --port 8001
+    ports:
+      - 8001:8001
+    volumes:
+      - ../../openapi.yaml:/openapi.yaml:ro
+    depends_on:
+      - sandbox
+    healthcheck:
+      test: [ "CMD", "true" ]
+      interval: 1s
+      timeout: 1s
+      retries: 1
+      start_period: 5s

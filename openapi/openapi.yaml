@@ -3,4 +3,89 @@ info:
   title: Sourcemeta Schema Registry
   # TODO: Fetch this from `CMakeLists.txt`
   version: 0.0.0
-paths: {}
+paths:
+  /{path_to_schema}.json:
+    parameters:
+      - name: path_to_schema
+        in: path
+        required: true
+        description: Path to the schema or directory (without .json extension)
+        style: simple
+        explode: false
+        schema:
+          type: string
+    get:
+      summary: Fetch a JSON Schema or directory
+      description: |
+        Returns a JSON Schema at the given path. If the path refers to a directory, 
+        a directory listing will be returned instead.
+
+        Supports optional query parameters to:
+        - Bundle/dereference the schema
+        - Return metadata about locations
+      parameters:
+        - name: bundle
+          in: query
+          description: If set to 1, returns a bundled/dereferenced schema.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: locations
+          in: query
+          description: If set to 1, returns location metadata.
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: JSON Schema or directory metadata
+          content:
+            application/schema+json:
+              schema: {}
+            application/json:
+              schema: {}  # Directory listing or metadata
+          headers:
+            ETag:
+              description: HTTP cache validator
+              schema:
+                type: string
+            Last-Modified:
+              description: Last modification timestamp
+              schema:
+                type: string
+        '404':
+          description: Schema or directory not found
+    post:
+      summary: Validate an instance against a schema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {}
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        instancePath:
+                          type: string
+                        schemaPath:
+                          type: string
+                        message:
+                          type: string
+        '400':
+          description: Invalid input instance
+        '404':
+          description: Schema not found
