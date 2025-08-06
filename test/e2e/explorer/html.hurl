@@ -42,3 +42,27 @@ Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "Not Found"
 header "Access-Control-Allow-Origin" not exists
+
+GET {{base}}/example/v2.0?locations=1
+Accept: text/html
+HTTP 200
+[Asserts]
+header "Access-Control-Allow-Origin" not exists
+
+GET {{base}}/example/v2.0?health=1
+Accept: text/html
+HTTP 200
+[Asserts]
+header "Access-Control-Allow-Origin" not exists
+
+GET {{base}}/example/v2.0?positions=1
+Accept: text/html
+HTTP 200
+[Asserts]
+header "Access-Control-Allow-Origin" not exists
+
+GET {{base}}/example/v2.0?positions=1
+Accept: text/html
+HTTP 200
+[Asserts]
+header "Access-Control-Allow-Origin" not exists

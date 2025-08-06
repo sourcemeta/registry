@@ -20,9 +20,3 @@ Access-Control-Allow-Origin: *
 header "ETag" exists
 header "Last-Modified" exists
 jsonpath "$" count == 0
-
-GET {{base}}/example/v2.0?positions=1
-Accept: text/html
-HTTP 200
-[Asserts]
-header "Access-Control-Allow-Origin" not exists

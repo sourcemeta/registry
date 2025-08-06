@@ -26,9 +26,3 @@ jsonpath "$['/type'][0]" == 4
 jsonpath "$['/type'][1]" == 11
 jsonpath "$['/type'][2]" == 4
 jsonpath "$['/type'][3]" == 19
-
-GET {{base}}/example/v2.0?positions=1
-Accept: text/html
-HTTP 200
-[Asserts]
-header "Access-Control-Allow-Origin" not exists
