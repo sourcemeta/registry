@@ -195,6 +195,12 @@ static auto index_main(const std::string_view &program,
             sourcemeta::registry::GENERATE_FRAME_LOCATIONS(
                 resolver, output.path() / (base_path.string() + ".schema")));
 
+        output.write_metapack_json(
+            base_path.string() + ".health",
+            sourcemeta::registry::MetaPackEncoding::GZIP,
+            sourcemeta::registry::GENERATE_HEALTH(
+                resolver, output.path() / (base_path.string() + ".schema")));
+
         // TODO: The bundle target should depend on the .dependencies file
 
         output.write_metapack_jsonschema(

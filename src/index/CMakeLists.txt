@@ -20,8 +20,10 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::yaml)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::gzip)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::time)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::alterschema)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evaluator)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::linter)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
   target_compile_definitions(sourcemeta_registry_index 

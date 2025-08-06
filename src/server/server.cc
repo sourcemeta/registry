@@ -407,13 +407,16 @@ static auto on_request(const std::filesystem::path &base,
       const auto &user_agent{request->getHeader("user-agent")};
       const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
                            user_agent.starts_with("VSCodium")};
+      const auto health{!request->getQuery("health").empty()};
       const auto locations{!request->getQuery("locations").empty()};
       const auto positions{!request->getQuery("positions").empty()};
       const auto dependencies{!request->getQuery("dependencies").empty()};
       const auto bundle{!request->getQuery("bundle").empty()};
       const auto unidentify{!request->getQuery("unidentify").empty()};
       auto absolute_path{base / "schemas" / lowercase_path};
-      if (locations) {
+      if (health) {
+        absolute_path += ".health";
+      } else if (locations) {
         absolute_path += ".locations";
       } else if (positions) {
         absolute_path += ".positions";
