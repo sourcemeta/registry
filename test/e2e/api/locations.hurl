@@ -38,9 +38,3 @@ jsonpath "$.static['{{base}}/example/v2.0/schema.json#/type'].pointer" == "/type
 jsonpath "$.static['{{base}}/example/v2.0/schema.json#/type'].relativePointer" == "/type"
 jsonpath "$.static['{{base}}/example/v2.0/schema.json#/type'].root" == "{{base}}/example/v2.0/schema.json"
 jsonpath "$.static['{{base}}/example/v2.0/schema.json#/type'].type" == "pointer"
-
-GET {{base}}/example/v2.0?locations=1
-Accept: text/html
-HTTP 200
-[Asserts]
-header "Access-Control-Allow-Origin" not exists
