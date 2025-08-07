@@ -614,6 +614,8 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::core::JSON::make_array()};
 
+  // TODO: Read deep entries first, so we can actually calculate health scores
+  // for the entire thing, including directories
   for (const auto &entry : std::filesystem::directory_iterator{directory}) {
     auto entry_json{sourcemeta::core::JSON::make_object()};
     const auto entry_relative_path{
@@ -650,6 +652,17 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
       // No need to show breadcrumbs of children
       entry_json.erase("breadcrumb");
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});
+
+      // TODO: Get health score for directories too and for the entire
+      // current entry by averaging them out
+      auto schema_health_path{entry.path()};
+      schema_health_path.replace_extension("health");
+      const auto health_contents{
+          sourcemeta::registry::read_contents(schema_health_path)};
+      assert(health_contents.has_value());
+      const auto health{
+          sourcemeta::core::parse_json(health_contents.value().data)};
+      entry_json.assign("health", health.at("score"));
 
       assert(entry_json.defines("url"));
       std::filesystem::path url{entry_json.at("url").to_string()};
