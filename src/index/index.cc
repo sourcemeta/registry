@@ -241,6 +241,8 @@ static auto index_main(const std::string_view &program,
             configuration, resolver,
             output.path() / "schemas" /
                 (schema.second.relative_path.string() + ".schema"),
+            output.path() / "schemas" /
+                (schema.second.relative_path.string() + ".health"),
             schema.second.relative_path));
   }
 

@@ -537,6 +537,7 @@ auto GENERATE_SERVER_CONFIGURATION(const sourcemeta::core::JSON &configuration)
 auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
                          const sourcemeta::registry::Resolver &resolver,
                          const std::filesystem::path &absolute_path,
+                         const std::filesystem::path &health_path,
                          // TODO: Compute this argument instead
                          const std::filesystem::path &relative_path)
     -> sourcemeta::core::JSON {
@@ -588,6 +589,11 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
       result.assign("description", sourcemeta::core::JSON{description->trim()});
     }
   }
+
+  const auto health_contents{sourcemeta::registry::read_contents(health_path)};
+  assert(health_contents.has_value());
+  const auto health{sourcemeta::core::parse_json(health_contents.value().data)};
+  result.assign("health", health.at("score"));
 
   // Precompute the breadcrumb
   result.assign("breadcrumb", sourcemeta::core::JSON::make_array());
