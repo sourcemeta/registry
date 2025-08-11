@@ -160,6 +160,7 @@ header "ETag" exists
 header "Last-Modified" exists
 jsonpath "$.bytes" == 138
 jsonpath "$.baseDialect" == "draft7"
+jsonpath "$.health" == 100
 jsonpath "$.canonical" == "{{base}}/example/v2.0/schema.json"
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.id" == "{{base}}/example/v2.0/schema.json"
