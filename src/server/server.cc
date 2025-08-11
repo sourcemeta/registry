@@ -398,7 +398,7 @@ static auto on_request(const std::filesystem::path &base,
       });
     } else if (!request->getQuery("meta").empty()) {
       auto absolute_path{base / "explorer" / "pages" / lowercase_path};
-      absolute_path.replace_extension(".nav");
+      absolute_path.replace_extension(".meta");
       serve_static_file(request, response, encoding, absolute_path,
                         sourcemeta::registry::STATUS_OK, true);
     } else {

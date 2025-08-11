@@ -647,12 +647,13 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
       schema_nav_path.replace_extension("");
       // TODO: This generator should not be aware of the fact that
       // we use a .nav extension on the actual file?
-      schema_nav_path.replace_extension("nav");
+      schema_nav_path.replace_extension("meta");
 
       const auto nav{sourcemeta::registry::read_contents(schema_nav_path)};
       assert(nav.has_value());
       entry_json.merge(
           sourcemeta::core::parse_json(nav.value().data).as_object());
+      assert(!entry_json.defines("entries"));
       // No need to show breadcrumbs of children
       entry_json.erase("breadcrumb");
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});

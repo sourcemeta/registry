@@ -234,7 +234,7 @@ static auto index_main(const std::string_view &program,
   for (const auto &schema : resolver) {
     auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
                          schema.second.relative_path};
-    schema_nav_path.replace_extension("nav");
+    schema_nav_path.replace_extension("meta");
     output.write_metapack_json(
         schema_nav_path, sourcemeta::registry::MetaPackEncoding::GZIP,
         sourcemeta::registry::GENERATE_NAV_SCHEMA(
@@ -271,7 +271,7 @@ static auto index_main(const std::string_view &program,
   for (const auto &schema : resolver) {
     auto schema_nav_path{output.path() / "explorer" / "pages" /
                          schema.second.relative_path};
-    schema_nav_path.replace_extension("nav");
+    schema_nav_path.replace_extension("meta");
     navs.push_back(std::move(schema_nav_path));
   }
 
@@ -293,22 +293,37 @@ static auto index_main(const std::string_view &program,
     const auto meta{sourcemeta::registry::read_contents(entry.path())};
     assert(meta.has_value());
     const auto meta_json{sourcemeta::core::parse_json(meta.value().data)};
+
     auto relative_destination{
         std::filesystem::relative(entry.path(), output.path())};
     relative_destination.replace_extension(".html");
-    if (meta_json.defines("entries")) {
-      output.write_metapack_html(
-          relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
-          sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(configuration,
-                                                                 entry.path()));
-    } else {
-      output.write_metapack_html(
-          relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
-          sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
-              configuration, entry.path(),
-              (output.path() / "schemas").string() +
-                  meta_json.at("url").to_string() + ".dependencies"));
+
+    output.write_metapack_html(
+        relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
+        sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(configuration,
+                                                               entry.path()));
+  }
+
+  for (const auto &entry :
+       std::filesystem::recursive_directory_iterator{explorer_base}) {
+    if (entry.is_directory() || entry.path().extension() != ".meta") {
+      continue;
     }
+
+    auto relative_destination{
+        std::filesystem::relative(entry.path(), output.path())};
+    relative_destination.replace_extension(".html");
+
+    const auto meta{sourcemeta::registry::read_contents(entry.path())};
+    assert(meta.has_value());
+    const auto meta_json{sourcemeta::core::parse_json(meta.value().data)};
+
+    output.write_metapack_html(
+        relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
+        sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
+            configuration, entry.path(),
+            (output.path() / "schemas").string() +
+                meta_json.at("url").to_string() + ".dependencies"));
   }
 
   output.write_metapack_html(

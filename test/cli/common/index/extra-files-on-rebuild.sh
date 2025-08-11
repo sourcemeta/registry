@@ -41,7 +41,7 @@ not_exists() {
   [ ! -f "$1" ] || (echo "File MUST NOT exists: $1" 1>&2 && exit 1)
 }
 
-exists "$TMP/output/explorer/pages/example/schemas/old.nav"
+exists "$TMP/output/explorer/pages/example/schemas/old.meta"
 exists "$TMP/output/schemas/example/schemas/old.json.bundle"
 exists "$TMP/output/schemas/example/schemas/old.json.unidentified"
 exists "$TMP/output/schemas/example/schemas/old.json.blaze-exhaustive"
@@ -56,13 +56,13 @@ EOF
 
 "$1" "$TMP/registry.json" "$TMP/output"
 
-exists "$TMP/output/explorer/pages/example/schemas/new.nav"
+exists "$TMP/output/explorer/pages/example/schemas/new.meta"
 exists "$TMP/output/schemas/example/schemas/new.json.bundle"
 exists "$TMP/output/schemas/example/schemas/new.json.unidentified"
 exists "$TMP/output/schemas/example/schemas/new.json.blaze-exhaustive"
 exists "$TMP/output/schemas/example/schemas/new.json.schema"
 
-not_exists "$TMP/output/explorer/pages/example/schemas/old.nav"
+not_exists "$TMP/output/explorer/pages/example/schemas/old.meta"
 not_exists "$TMP/output/schemas/example/schemas/old.json.bundle"
 not_exists "$TMP/output/schemas/example/schemas/old.json.unidentified"
 not_exists "$TMP/output/schemas/example/schemas/old.json.blaze-exhaustive"

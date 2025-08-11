@@ -135,6 +135,8 @@ private:
   auto track(const std::filesystem::path &path)
       -> const std::filesystem::path & {
     std::lock_guard<std::mutex> lock(this->tracker_mutex);
+    // Otherwise it means we wrote to the same place twice
+    assert(!this->tracker.contains(path) || !this->tracker.at(path));
     return this->tracker.insert_or_assign(path, true).first->first;
   }
 
