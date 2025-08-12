@@ -41,7 +41,7 @@ not_exists() {
   [ ! -f "$1" ] || (echo "File MUST NOT exists: $1" 1>&2 && exit 1)
 }
 
-exists "$TMP/output/explorer/example/schemas/old.json/%/schema.metapack"
+exists "$TMP/output/explorer/example/schemas/old/%/schema.metapack"
 exists "$TMP/output/schemas/example/schemas/old.json/%/bundle.metapack"
 exists "$TMP/output/schemas/example/schemas/old.json/%/unidentified.metapack"
 exists "$TMP/output/schemas/example/schemas/old.json/%/blaze-exhaustive.metapack"
@@ -56,13 +56,13 @@ EOF
 
 "$1" "$TMP/registry.json" "$TMP/output"
 
-exists "$TMP/output/explorer/example/schemas/new.json/%/schema.metapack"
+exists "$TMP/output/explorer/example/schemas/new/%/schema.metapack"
 exists "$TMP/output/schemas/example/schemas/new.json/%/bundle.metapack"
 exists "$TMP/output/schemas/example/schemas/new.json/%/unidentified.metapack"
 exists "$TMP/output/schemas/example/schemas/new.json/%/blaze-exhaustive.metapack"
 exists "$TMP/output/schemas/example/schemas/new.json/%/schema.metapack"
 
-not_exists "$TMP/output/explorer/example/schemas/old.json/%/schema.metapack"
+not_exists "$TMP/output/explorer/example/schemas/old/%/schema.metapack"
 not_exists "$TMP/output/schemas/example/schemas/old.json/%/bundle.metapack"
 not_exists "$TMP/output/schemas/example/schemas/old.json/%/unidentified.metapack"
 not_exists "$TMP/output/schemas/example/schemas/old.json/%/blaze-exhaustive.metapack"

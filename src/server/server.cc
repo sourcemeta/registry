@@ -286,7 +286,8 @@ static auto on_request(const std::filesystem::path &base,
                         sourcemeta::registry::STATUS_OK, true);
     } else {
       serve_static_file(request, response, encoding,
-                        base / "explorer" / SENTINEL / "html.metapack",
+                        base / "explorer" / SENTINEL /
+                            "directory-html.metapack",
                         sourcemeta::registry::STATUS_OK);
     }
   } else if (request->getUrl() == "/api/search") {
@@ -400,8 +401,10 @@ static auto on_request(const std::filesystem::path &base,
         }
       });
     } else if (!request->getQuery("meta").empty()) {
-      const auto absolute_path{base / "explorer" / lowercase_path / SENTINEL /
-                               "schema.metapack"};
+      auto absolute_path{base / "explorer" / lowercase_path};
+      absolute_path.replace_extension("");
+      absolute_path /= SENTINEL;
+      absolute_path /= "schema.metapack";
       serve_static_file(request, response, encoding, absolute_path,
                         sourcemeta::registry::STATUS_OK, true);
     } else {
@@ -452,19 +455,19 @@ static auto on_request(const std::filesystem::path &base,
     }
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
     const auto accept{request->getHeader("accept")};
-    auto absolute_path{base / "explorer" / request->getUrl().substr(1)};
-    if (!std::filesystem::exists(absolute_path)) {
-      absolute_path += ".json";
-    }
-
+    auto absolute_path{base / "explorer" / request->getUrl().substr(1) /
+                       SENTINEL};
     if (accept == "application/json") {
-      absolute_path /= SENTINEL;
       absolute_path /= "directory.metapack";
       serve_static_file(request, response, encoding, absolute_path,
                         sourcemeta::registry::STATUS_OK, true);
+    } else if (std::filesystem::exists(absolute_path /
+                                       "schema-html.metapack")) {
+      serve_static_file(request, response, encoding,
+                        absolute_path / "schema-html.metapack",
+                        sourcemeta::registry::STATUS_OK);
     } else {
-      absolute_path /= SENTINEL;
-      absolute_path /= "html.metapack";
+      absolute_path /= "directory-html.metapack";
       if (std::filesystem::exists(absolute_path)) {
         serve_static_file(request, response, encoding, absolute_path,
                           sourcemeta::registry::STATUS_OK);

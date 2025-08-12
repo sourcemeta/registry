@@ -646,8 +646,10 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
                                        "schema.metapack")) {
       entry_json.assign("name", sourcemeta::core::JSON{
                                     entry.path().stem().replace_extension("")});
-      const auto schema_nav_path{navigation_base / entry_relative_path / "%" /
-                                 "schema.metapack"};
+      auto schema_nav_path{navigation_base / entry_relative_path};
+      schema_nav_path.replace_extension("");
+      schema_nav_path /= "%";
+      schema_nav_path /= "schema.metapack";
 
       const auto nav{sourcemeta::registry::read_contents(schema_nav_path)};
       assert(nav.has_value());
