@@ -355,6 +355,29 @@ auto breadcrumb(T &html, const sourcemeta::core::JSON &meta) -> void {
 }
 
 template <typename T>
+auto schema_health_progress_bar(T &html,
+                                const sourcemeta::core::JSON::Integer health)
+    -> void {
+  const auto health_string{std::to_string(health)};
+  html << "<div class=\"progress\" role=\"progressbar\" aria-label=\"Schema "
+          "health score\" aria-valuenow="
+       << health << " aria-valuemin=0 aria-valuemax=100>";
+
+  if (health > 90) {
+    html << "<div class=\"progress-bar text-bg-success\" style=\"width:"
+         << health << "%\">";
+  } else if (health > 60) {
+    html << "<div class=\"progress-bar text-bg-warning\" style=\"width:"
+         << health << "%\">";
+  } else {
+    html << "<div class=\"progress-bar text-bg-danger\" style=\"width:"
+         << health << "%\">";
+  }
+
+  html << health_string << "%" << "</div></div>";
+}
+
+template <typename T>
 auto dialect_badge(T &html, const sourcemeta::core::JSON::String &base_dialect)
     -> void {
   html << "<a "
@@ -457,6 +480,7 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
   html << "<th scope=\"col\">Name</th>";
   html << "<th scope=\"col\">Title</th>";
   html << "<th scope=\"col\">Description</th>";
+  html << "<th scope=\"col\">Health</th>";
   html << "</tr>";
   html << "</thead>";
   html << "<tbody>";
@@ -511,6 +535,10 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
       html << "-";
     }
     html << "</small>";
+    html << "</td>";
+
+    html << "<td class=\"align-middle\">";
+    schema_health_progress_bar(html, entry.at("health").to_integer());
     html << "</td>";
 
     html << "</tr>";
@@ -983,6 +1011,18 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       .text(meta.at("dialect").to_string())
       .close("code")
       .close("td");
+  output_html.close("tr");
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Health")
+      .close("th");
+  output_html.open("td", {{"class", "align-middle"}});
+  output_html.open("div", {{"style", "max-width: 300px"}});
+  html::partials::schema_health_progress_bar(html,
+                                             meta.at("health").to_integer());
+  output_html.close("div");
+  output_html.close("td");
   output_html.close("tr");
 
   output_html.open("tr");
