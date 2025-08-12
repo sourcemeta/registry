@@ -625,7 +625,8 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
     const auto entry_relative_path{
         entry.path().string().substr(base.string().size() + 1)};
     assert(!entry_relative_path.starts_with('/'));
-    if (entry.is_directory()) {
+    if (entry.is_directory() &&
+        !std::filesystem::exists(entry.path() / "%" / "schema.metapack")) {
       entry_json.assign("name",
                         sourcemeta::core::JSON{entry.path().filename()});
       if (configuration.defines("pages") &&
@@ -639,15 +640,14 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
           "url", sourcemeta::core::JSON{
                      entry.path().string().substr(base.string().size())});
       entries.push_back(std::move(entry_json));
-    } else if (entry.path().extension() == ".schema") {
+
+    } else if (entry.is_directory() &&
+               std::filesystem::exists(entry.path() / "%" /
+                                       "schema.metapack")) {
       entry_json.assign("name", sourcemeta::core::JSON{
                                     entry.path().stem().replace_extension("")});
-
-      auto schema_nav_path{navigation_base / entry_relative_path};
-      schema_nav_path.replace_extension("");
-      // TODO: This generator should not be aware of the fact that
-      // we use a .nav extension on the actual file?
-      schema_nav_path.replace_extension("nav");
+      const auto schema_nav_path{navigation_base / entry_relative_path / "%" /
+                                 "schema.metapack"};
 
       const auto nav{sourcemeta::registry::read_contents(schema_nav_path)};
       assert(nav.has_value());

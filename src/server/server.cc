@@ -272,6 +272,8 @@ static auto serve_static_file(uWS::HttpRequest *request,
   }
 }
 
+constexpr auto SENTINEL{"%"};
+
 static auto on_request(const std::filesystem::path &base,
                        uWS::HttpRequest *request,
                        uWS::HttpResponse<true> *response,
@@ -280,11 +282,11 @@ static auto on_request(const std::filesystem::path &base,
     const auto accept{request->getHeader("accept")};
     if (accept == "application/json") {
       serve_static_file(request, response, encoding,
-                        base / "explorer" / "pages.nav",
+                        base / "explorer" / SENTINEL / "directory.metapack",
                         sourcemeta::registry::STATUS_OK, true);
     } else {
       serve_static_file(request, response, encoding,
-                        base / "explorer" / "pages.html",
+                        base / "explorer" / SENTINEL / "html.metapack",
                         sourcemeta::registry::STATUS_OK);
     }
   } else if (request->getUrl() == "/api/search") {
@@ -296,7 +298,7 @@ static auto on_request(const std::filesystem::path &base,
                    "You must provide a query parameter to search for");
       } else {
         auto result{sourcemeta::registry::search(
-            base / "explorer" / "search.jsonl", query)};
+            base / "explorer" / SENTINEL / "search.metapack", query)};
         response->writeStatus(sourcemeta::registry::STATUS_OK);
         response->writeHeader("Access-Control-Allow-Origin", "*");
         response->writeHeader("Content-Type", "application/json");
@@ -335,11 +337,12 @@ static auto on_request(const std::filesystem::path &base,
       send_response(sourcemeta::registry::STATUS_NO_CONTENT,
                     request->getMethod(), request->getUrl(), response);
     } else if (request->getMethod() == "post") {
-      auto template_path{base / "schemas" /
-                         (lowercase_path + ".blaze-exhaustive")};
+      const auto template_path{base / "schemas" / lowercase_path / SENTINEL /
+                               "blaze-exhaustive.metapack"};
       if (!std::filesystem::exists(template_path)) {
-        template_path.replace_extension(".schema");
-        if (std::filesystem::exists(template_path)) {
+        const auto schema_path{base / "schemas" / lowercase_path / SENTINEL /
+                               "schema.metapack"};
+        if (std::filesystem::exists(schema_path)) {
           json_error(request->getMethod(), request->getUrl(), response,
                      encoding, sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                      "no-template",
@@ -397,8 +400,8 @@ static auto on_request(const std::filesystem::path &base,
         }
       });
     } else if (!request->getQuery("meta").empty()) {
-      auto absolute_path{base / "explorer" / "pages" / lowercase_path};
-      absolute_path.replace_extension(".nav");
+      const auto absolute_path{base / "explorer" / lowercase_path / SENTINEL /
+                               "schema.metapack"};
       serve_static_file(request, response, encoding, absolute_path,
                         sourcemeta::registry::STATUS_OK, true);
     } else {
@@ -414,27 +417,29 @@ static auto on_request(const std::filesystem::path &base,
       const auto dependencies{!request->getQuery("dependencies").empty()};
       const auto bundle{!request->getQuery("bundle").empty()};
       const auto unidentify{!request->getQuery("unidentify").empty()};
-      auto absolute_path{base / "schemas" / lowercase_path};
+      auto absolute_path{base / "schemas" / lowercase_path / SENTINEL};
       if (health) {
-        absolute_path += ".health";
+        absolute_path /= "health.metapack";
       } else if (locations) {
-        absolute_path += ".locations";
+        absolute_path /= "locations.metapack";
       } else if (positions) {
-        absolute_path += ".positions";
+        absolute_path /= "positions.metapack";
       } else if (dependencies) {
-        absolute_path += ".dependencies";
+        absolute_path /= "dependencies.metapack";
       } else if (unidentify || is_vscode) {
-        absolute_path += ".unidentified";
+        absolute_path /= "unidentified.metapack";
       } else if (bundle) {
-        absolute_path += ".bundle";
+        absolute_path /= "bundle.metapack";
       } else {
-        absolute_path += ".schema";
+        absolute_path /= "schema.metapack";
       }
 
       // For convenience
       if (!std::filesystem::exists(absolute_path)) {
-        auto nav_path{base / "explorer" / "pages" / lowercase_path};
-        nav_path.replace_extension(".nav");
+        auto nav_path{base / "explorer" / lowercase_path};
+        nav_path.replace_extension("");
+        nav_path /= SENTINEL;
+        nav_path /= "directory.metapack";
         if (std::filesystem::exists(nav_path)) {
           serve_static_file(request, response, encoding, nav_path,
                             sourcemeta::registry::STATUS_OK, true);
@@ -447,22 +452,25 @@ static auto on_request(const std::filesystem::path &base,
     }
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
     const auto accept{request->getHeader("accept")};
+    auto absolute_path{base / "explorer" / request->getUrl().substr(1)};
+    if (!std::filesystem::exists(absolute_path)) {
+      absolute_path += ".json";
+    }
+
     if (accept == "application/json") {
-      const auto absolute_path{
-          base / "explorer" / "pages" /
-          (std::string{request->getUrl().substr(1)} + ".nav")};
+      absolute_path /= SENTINEL;
+      absolute_path /= "directory.metapack";
       serve_static_file(request, response, encoding, absolute_path,
                         sourcemeta::registry::STATUS_OK, true);
     } else {
-      const auto absolute_path{
-          base / "explorer" / "pages" /
-          (std::string{request->getUrl().substr(1)} + ".html")};
+      absolute_path /= SENTINEL;
+      absolute_path /= "html.metapack";
       if (std::filesystem::exists(absolute_path)) {
         serve_static_file(request, response, encoding, absolute_path,
                           sourcemeta::registry::STATUS_OK);
       } else {
         serve_static_file(request, response, encoding,
-                          base / "explorer" / "404.html",
+                          base / "explorer" / SENTINEL / "404.metapack",
                           sourcemeta::registry::STATUS_NOT_FOUND);
       }
     }
