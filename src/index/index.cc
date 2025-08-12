@@ -34,6 +34,12 @@ static auto attribute(const sourcemeta::core::JSON &configuration,
       .to_boolean();
 }
 
+// We rely on this special prefix to avoid file system collisions. The reason it
+// works is that URIs cannot have "%" without percent-encoding it as "%25", and
+// the resolver will not unescape it back when computing the relative path to an
+// entry
+constexpr auto SENTINEL{"%"};
+
 static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
@@ -149,9 +155,9 @@ static auto index_main(const std::string_view &program,
             dialect_identifier.value(), metaschema.value(), subresult.value(),
             "The schema does not adhere to its metaschema");
         const auto base_path{std::filesystem::path{"schemas"} /
-                             schema.second.relative_path};
+                             schema.second.relative_path / SENTINEL};
         const auto destination{output.write_metapack_jsonschema(
-            base_path.string() + ".schema",
+            base_path / "schema.metapack",
             sourcemeta::registry::MetaPackEncoding::GZIP, subresult.value(),
             dialect_identifier.value())};
         resolver.materialise(schema.first, destination);
@@ -172,59 +178,59 @@ static auto index_main(const std::string_view &program,
       },
       [&output, &resolver, &configuration](const auto &schema) {
         const auto base_path{std::filesystem::path{"schemas"} /
-                             schema.second.relative_path};
+                             schema.second.relative_path / SENTINEL};
         const auto dialect_identifier{
             sourcemeta::core::dialect(resolver(schema.first).value())};
         assert(dialect_identifier.has_value());
 
         output.write_metapack_json(
-            base_path.string() + ".positions",
+            base_path / "positions.metapack",
             sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_POINTER_POSITIONS(
-                resolver, output.path() / (base_path.string() + ".schema")));
+                resolver, output.path() / base_path / "schema.metapack"));
 
         output.write_metapack_json(
-            base_path.string() + ".dependencies",
+            base_path / "dependencies.metapack",
             sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_DEPENDENCIES(
-                resolver, output.path() / (base_path.string() + ".schema")));
+                resolver, output.path() / base_path / "schema.metapack"));
 
         output.write_metapack_json(
-            base_path.string() + ".locations",
+            base_path / "locations.metapack",
             sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_FRAME_LOCATIONS(
-                resolver, output.path() / (base_path.string() + ".schema")));
+                resolver, output.path() / base_path / "schema.metapack"));
 
         output.write_metapack_json(
-            base_path.string() + ".health",
+            base_path / "health.metapack",
             sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_HEALTH(
-                resolver, output.path() / (base_path.string() + ".schema")));
+                resolver, output.path() / base_path / "schema.metapack"));
 
         // TODO: The bundle target should depend on the .dependencies file
 
         output.write_metapack_jsonschema(
-            base_path.string() + ".bundle",
+            base_path / "bundle.metapack",
             sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_BUNDLE(
-                resolver, output.path() / (base_path.string() + ".schema")),
+                resolver, output.path() / base_path / "schema.metapack"),
             dialect_identifier.value());
 
         if (attribute(configuration, schema.second.collection_name,
                       "x-sourcemeta-registry:blaze-exhaustive")) {
           output.write_metapack_json(
-              base_path.string() + ".blaze-exhaustive",
+              base_path / "blaze-exhaustive.metapack",
               // Don't compress, as we need to internally read from disk
               sourcemeta::registry::MetaPackEncoding::Identity,
               sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
-                  resolver, output.path() / (base_path.string() + ".bundle")));
+                  resolver, output.path() / base_path / "bundle.metapack"));
         }
 
         output.write_metapack_jsonschema(
-            base_path.string() + ".unidentified",
+            base_path / "unidentified.metapack",
             sourcemeta::registry::MetaPackEncoding::GZIP,
             sourcemeta::registry::GENERATE_UNIDENTIFIED(
-                resolver, output.path() / (base_path.string() + ".bundle")),
+                resolver, output.path() / base_path / "bundle.metapack"),
             dialect_identifier.value());
       },
       THREAD_STACK_SIZE);
@@ -232,33 +238,37 @@ static auto index_main(const std::string_view &program,
   std::cerr << "Generating registry explorer\n";
 
   for (const auto &schema : resolver) {
-    auto schema_nav_path{std::filesystem::path{"explorer"} / "pages" /
+    auto schema_nav_path{std::filesystem::path{"explorer"} /
                          schema.second.relative_path};
-    schema_nav_path.replace_extension("nav");
+    schema_nav_path.replace_extension("");
+    schema_nav_path /= SENTINEL;
+    schema_nav_path /= "schema.metapack";
     output.write_metapack_json(
         schema_nav_path, sourcemeta::registry::MetaPackEncoding::GZIP,
         sourcemeta::registry::GENERATE_NAV_SCHEMA(
             configuration, resolver,
-            output.path() / "schemas" /
-                (schema.second.relative_path.string() + ".schema"),
-            output.path() / "schemas" /
-                (schema.second.relative_path.string() + ".health"),
+            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
+                "schema.metapack",
+            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
+                "health.metapack",
             schema.second.relative_path));
   }
 
   const auto base{output.path() / "schemas"};
-  const auto navigation_base{output.path() / "explorer" / "pages"};
-  output.write_metapack_json(std::filesystem::path{"explorer"} / "pages.nav",
+  const auto navigation_base{output.path() / "explorer"};
+  output.write_metapack_json(std::filesystem::path{"explorer"} / SENTINEL /
+                                 "directory.metapack",
                              sourcemeta::registry::MetaPackEncoding::GZIP,
                              sourcemeta::registry::GENERATE_NAV_DIRECTORY(
                                  configuration, navigation_base, base, base));
 
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
-    if (entry.is_directory()) {
-      auto relative_path{
-          std::filesystem::path{"explorer"} / std::filesystem::path{"pages"} /
-          (std::filesystem::relative(entry.path(), base).string() + ".nav")};
+    if (entry.is_directory() && entry.path().filename() != SENTINEL &&
+        !std::filesystem::exists(entry.path() / SENTINEL)) {
+      const auto relative_path{std::filesystem::path{"explorer"} /
+                               std::filesystem::relative(entry.path(), base) /
+                               SENTINEL / "directory.metapack"};
       output.write_metapack_json(
           relative_path, sourcemeta::registry::MetaPackEncoding::GZIP,
           sourcemeta::registry::GENERATE_NAV_DIRECTORY(
@@ -269,57 +279,65 @@ static auto index_main(const std::string_view &program,
   std::vector<std::filesystem::path> navs;
   navs.reserve(resolver.size());
   for (const auto &schema : resolver) {
-    auto schema_nav_path{output.path() / "explorer" / "pages" /
+    auto schema_nav_path{output.path() / "explorer" /
                          schema.second.relative_path};
-    schema_nav_path.replace_extension("nav");
+    schema_nav_path.replace_extension("");
+    schema_nav_path /= "%";
+    schema_nav_path /= "schema.metapack";
     navs.push_back(std::move(schema_nav_path));
   }
 
   const auto search_index{sourcemeta::registry::GENERATE_SEARCH_INDEX(navs)};
-  output.write_metapack_jsonl(std::filesystem::path{"explorer"} /
-                                  "search.jsonl",
+  output.write_metapack_jsonl(std::filesystem::path{"explorer"} / SENTINEL /
+                                  "search.metapack",
                               // We don't want to compress this one so we can
                               // quickly skim through it while streaming it
                               sourcemeta::registry::MetaPackEncoding::Identity,
                               search_index.cbegin(), search_index.cend());
 
-  const auto explorer_base{output.path() / "explorer" / "pages"};
+  const auto explorer_base{output.path() / "explorer"};
+
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{explorer_base}) {
-    if (entry.is_directory() || entry.path().extension() != ".nav") {
+    if (entry.path().parent_path() == explorer_base / SENTINEL) {
       continue;
-    }
-
-    const auto meta{sourcemeta::registry::read_contents(entry.path())};
-    assert(meta.has_value());
-    const auto meta_json{sourcemeta::core::parse_json(meta.value().data)};
-    auto relative_destination{
-        std::filesystem::relative(entry.path(), output.path())};
-    relative_destination.replace_extension(".html");
-    if (meta_json.defines("entries")) {
+    } else if (entry.path().filename() == "directory.metapack") {
+      const auto relative_destination{
+          std::filesystem::relative(entry.path().parent_path(), output.path()) /
+          "directory-html.metapack"};
       output.write_metapack_html(
           relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
           sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(configuration,
                                                                  entry.path()));
-    } else {
+    } else if (entry.path().filename() == "schema.metapack") {
+      const auto relative_destination{
+          std::filesystem::relative(entry.path().parent_path(), output.path()) /
+          "schema-html.metapack"};
+      const auto dependencies_path{
+          output.path() / "schemas" /
+          (std::filesystem::relative(entry.path().parent_path(),
+                                     output.path() / "explorer")
+               .parent_path()
+               .string() +
+           ".json") /
+          SENTINEL / "dependencies.metapack"};
+
       output.write_metapack_html(
           relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
           sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
-              configuration, entry.path(),
-              (output.path() / "schemas").string() +
-                  meta_json.at("url").to_string() + ".dependencies"));
+              configuration, entry.path(), dependencies_path));
     }
   }
 
   output.write_metapack_html(
-      std::filesystem::path{"explorer"} / "pages.html",
+      std::filesystem::path{"explorer"} / SENTINEL / "directory-html.metapack",
       sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::registry::GENERATE_EXPLORER_INDEX(
-          configuration,
-          output.path() / std::filesystem::path{"explorer"} / "pages.nav"));
+          configuration, output.path() / std::filesystem::path{"explorer"} /
+                             SENTINEL / "directory.metapack"));
 
   output.write_metapack_html(
-      std::filesystem::path{"explorer"} / "404.html",
+      std::filesystem::path{"explorer"} / SENTINEL / "404.metapack",
       sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
 

@@ -200,3 +200,10 @@ HTTP 200
   "$id": "{{base}}/doc/.period.json",
   "type": "string"
 }
+
+GET {{base}}/example/schemas/%25/test.json
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/example/schemas/%25/test.json"
+}

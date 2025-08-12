@@ -23,8 +23,7 @@ auto trace(sourcemeta::blaze::Evaluator &evaluator,
     -> sourcemeta::core::JSON {
   auto steps{sourcemeta::core::JSON::make_array()};
 
-  auto locations_path{template_path};
-  locations_path.replace_extension("locations");
+  auto locations_path{template_path.parent_path() / "locations.metapack"};
   // TODO: Cache this across runs?
   const auto locations_entry{
       sourcemeta::registry::read_contents(locations_path)};
