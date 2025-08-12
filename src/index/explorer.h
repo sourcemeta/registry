@@ -480,7 +480,7 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
   html << "<th scope=\"col\">Name</th>";
   html << "<th scope=\"col\">Title</th>";
   html << "<th scope=\"col\">Description</th>";
-  html << "<th scope=\"col\">Health</th>";
+  html << "<th scope=\"col\" style=\"width: 150px\">Health</th>";
   html << "</tr>";
   html << "</thead>";
   html << "<tbody>";
