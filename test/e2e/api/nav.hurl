@@ -102,6 +102,7 @@ jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
 jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/v2.0/schema"
+jsonpath "$.entries[0].health" == 100
 
 GET {{base}}/example/v2.0.json
 HTTP 200
@@ -125,6 +126,7 @@ jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
 jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/v2.0/schema"
+jsonpath "$.entries[0].health" == 100
 
 GET {{base}}/example/v2.0.json
 Accept: application/json
@@ -149,6 +151,7 @@ jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
 jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/v2.0/schema"
+jsonpath "$.entries[0].health" == 100
 
 GET {{base}}/example/v2.0/schema.json?meta=1
 Accept: application/json
