@@ -1006,9 +1006,16 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.text("Loading schema...");
   output_html.close("div");
 
-  output_html.open("h3", {{"class", "fw-bold h5 mt-4"}})
+  output_html.open("ul", {{"class", "nav nav-tabs mt-4 mb-3"}});
+  output_html.open("li", {{"class", "nav-item"}});
+  output_html
+      .open("a", {{"class", "nav-link active"},
+                  {"aria-current", "page"},
+                  {"href", "#"}})
       .text("Dependencies")
-      .close("h3");
+      .close("a");
+  output_html.close("li");
+  output_html.close("ul");
 
   const auto dependencies{
       sourcemeta::registry::read_contents(dependencies_path)};
@@ -1034,7 +1041,7 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.open("p").text(dependency_summary.str()).close("p");
 
   if (direct.size() + indirect.size() > 0) {
-    output_html.open("table", {{"class", "table"}});
+    output_html.open("table", {{"class", "table table-bordered"}});
     output_html.open("thead");
     output_html.open("tr");
     output_html.open("th", {{"scope", "col"}}).text("Origin").close("th");
