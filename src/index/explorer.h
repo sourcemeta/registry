@@ -11,9 +11,11 @@
 #include <algorithm>        // std::sort
 #include <cassert>          // assert
 #include <chrono>           // std::chrono::system_clock::time_point
+#include <cmath>            // std::lround
 #include <filesystem>       // std::filesystem
 #include <fstream>          // std::ifstream
 #include <initializer_list> // std::initializer_list
+#include <numeric>          // std::accumulate
 #include <optional>         // std::optional
 #include <regex>            // std::regex, std::regex_search, std::smatch
 #include <sstream>          // std::ostringstream
@@ -620,6 +622,7 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::core::JSON::make_array()};
 
+  std::vector<sourcemeta::core::JSON::Integer> scores;
   for (const auto &entry : std::filesystem::directory_iterator{directory}) {
     auto entry_json{sourcemeta::core::JSON::make_object()};
     const auto entry_relative_path{
@@ -627,6 +630,19 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
     assert(!entry_relative_path.starts_with('/'));
     if (entry.is_directory() &&
         !std::filesystem::exists(entry.path() / "%" / "schema.metapack")) {
+      const auto directory_nav_path{navigation_base / entry_relative_path /
+                                    "%" / "directory.metapack"};
+      const auto directory_nav{
+          sourcemeta::registry::read_contents(directory_nav_path)};
+      assert(directory_nav.has_value());
+      auto directory_nav_json{
+          sourcemeta::core::parse_json(directory_nav.value().data)};
+      assert(directory_nav_json.is_object());
+      assert(directory_nav_json.defines("health"));
+      assert(directory_nav_json.at("health").is_integer());
+      scores.emplace_back(directory_nav_json.at("health").to_integer());
+      entry_json.assign("health", directory_nav_json.at("health"));
+
       entry_json.assign("name",
                         sourcemeta::core::JSON{entry.path().filename()});
       if (configuration.defines("pages") &&
@@ -655,6 +671,7 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
       assert(nav.has_value());
       entry_json.merge(
           sourcemeta::core::parse_json(nav.value().data).as_object());
+      assert(!entry_json.defines("entries"));
       // No need to show breadcrumbs of children
       entry_json.erase("breadcrumb");
       entry_json.assign("type", sourcemeta::core::JSON{"schema"});
@@ -664,6 +681,9 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
       url.replace_extension("");
       entry_json.at("url").into(sourcemeta::core::JSON{url});
 
+      assert(entry_json.defines("health"));
+      assert(entry_json.at("health").is_integer());
+      scores.emplace_back(entry_json.at("health").to_integer());
       entries.push_back(std::move(entry_json));
     }
   }
@@ -696,6 +716,13 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
       configuration.at("pages").defines(page_key)) {
     meta.merge(configuration.at("pages").at(page_key).as_object());
   }
+
+  const auto accumulated_health =
+      static_cast<int>(std::lround(static_cast<double>(std::accumulate(
+                                       scores.cbegin(), scores.cend(), 0LL)) /
+                                   static_cast<double>(scores.size())));
+
+  meta.assign("health", sourcemeta::core::JSON{accumulated_health});
 
   meta.assign("entries", std::move(entries));
 

@@ -15,12 +15,15 @@ jsonpath "$.breadcrumb" count == 0
 jsonpath "$.entries" count == 6
 jsonpath "$.entries[0].name" == "same"
 jsonpath "$.entries[0].type" == "directory"
+jsonpath "$.entries[0].health" == 100
 jsonpath "$.entries[0].url" == "/same"
 jsonpath "$.entries[1].name" == "no-blaze"
 jsonpath "$.entries[1].type" == "directory"
+jsonpath "$.entries[1].health" == 100
 jsonpath "$.entries[1].url" == "/no-blaze"
 jsonpath "$.entries[2].name" == "hyper"
 jsonpath "$.entries[2].type" == "directory"
+jsonpath "$.entries[2].health" == 100
 jsonpath "$.entries[2].url" == "/hyper"
 jsonpath "$.entries[3].name" == "geojson"
 jsonpath "$.entries[3].title" == "GeoJSON"
@@ -28,6 +31,7 @@ jsonpath "$.entries[3].description" == "A format for encoding a variety of geogr
 jsonpath "$.entries[3].github" == "geojson"
 jsonpath "$.entries[3].website" == "https://geojson.org"
 jsonpath "$.entries[3].type" == "directory"
+jsonpath "$.entries[3].health" == 91
 jsonpath "$.entries[3].url" == "/geojson"
 jsonpath "$.entries[4].name" == "example"
 jsonpath "$.entries[4].title" == "Sourcemeta"
@@ -36,12 +40,14 @@ jsonpath "$.entries[4].email" == "hello@sourcemeta.com"
 jsonpath "$.entries[4].github" == "sourcemeta"
 jsonpath "$.entries[4].website" == "https://www.sourcemeta.com"
 jsonpath "$.entries[4].type" == "directory"
+jsonpath "$.entries[4].health" == 100
 jsonpath "$.entries[4].url" == "/example"
 jsonpath "$.entries[5].name" == "doc"
 jsonpath "$.entries[5].title" == "A sample schema folder"
 jsonpath "$.entries[5].description" == "For testing purposes"
 jsonpath "$.entries[5].github" == "sourcemeta/registry"
 jsonpath "$.entries[5].type" == "directory"
+jsonpath "$.entries[5].health" == 100
 jsonpath "$.entries[5].url" == "/doc"
 
 GET {{base}}/example
@@ -65,18 +71,23 @@ jsonpath "$.website" == "https://www.sourcemeta.com"
 jsonpath "$.entries" count == 5
 jsonpath "$.entries[0].name" == "v2.0"
 jsonpath "$.entries[0].type" == "directory"
+jsonpath "$.entries[0].health" == 100
 jsonpath "$.entries[0].url" == "/example/v2.0"
 jsonpath "$.entries[1].name" == "schemas"
 jsonpath "$.entries[1].type" == "directory"
+jsonpath "$.entries[1].health" == 100
 jsonpath "$.entries[1].url" == "/example/schemas"
 jsonpath "$.entries[2].name" == "extension"
 jsonpath "$.entries[2].type" == "directory"
+jsonpath "$.entries[2].health" == 100
 jsonpath "$.entries[2].url" == "/example/extension"
 jsonpath "$.entries[3].name" == "camelcase"
 jsonpath "$.entries[3].type" == "directory"
+jsonpath "$.entries[3].health" == 100
 jsonpath "$.entries[3].url" == "/example/camelcase"
 jsonpath "$.entries[4].name" == "bundling"
 jsonpath "$.entries[4].type" == "directory"
+jsonpath "$.entries[4].health" == 100
 jsonpath "$.entries[4].url" == "/example/bundling"
 
 GET {{base}}/example/v2.0
