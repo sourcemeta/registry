@@ -256,25 +256,43 @@ static auto index_main(const std::string_view &program,
 
   const auto base{output.path() / "schemas"};
   const auto navigation_base{output.path() / "explorer"};
+
+  std::vector<std::filesystem::path> schema_directories;
+  for (const auto &entry :
+       std::filesystem::recursive_directory_iterator{base}) {
+    if (entry.is_directory() && entry.path().filename() != SENTINEL &&
+        !std::filesystem::exists(entry.path() / SENTINEL)) {
+      schema_directories.push_back(entry.path());
+    }
+  }
+
+  // Handle deep directories first
+  std::ranges::sort(schema_directories, [](const std::filesystem::path &left,
+                                           const std::filesystem::path &right) {
+    const auto left_depth{std::distance(left.begin(), left.end())};
+    const auto right_depth{std::distance(right.begin(), right.end())};
+    if (left_depth == right_depth) {
+      return left < right;
+    } else {
+      return left_depth > right_depth;
+    }
+  });
+
+  for (const auto &entry : schema_directories) {
+    const auto relative_path{std::filesystem::path{"explorer"} /
+                             std::filesystem::relative(entry, base) / SENTINEL /
+                             "directory.metapack"};
+    output.write_metapack_json(
+        relative_path, sourcemeta::registry::MetaPackEncoding::GZIP,
+        sourcemeta::registry::GENERATE_NAV_DIRECTORY(
+            configuration, navigation_base, base, entry));
+  }
+
   output.write_metapack_json(std::filesystem::path{"explorer"} / SENTINEL /
                                  "directory.metapack",
                              sourcemeta::registry::MetaPackEncoding::GZIP,
                              sourcemeta::registry::GENERATE_NAV_DIRECTORY(
                                  configuration, navigation_base, base, base));
-
-  for (const auto &entry :
-       std::filesystem::recursive_directory_iterator{base}) {
-    if (entry.is_directory() && entry.path().filename() != SENTINEL &&
-        !std::filesystem::exists(entry.path() / SENTINEL)) {
-      const auto relative_path{std::filesystem::path{"explorer"} /
-                               std::filesystem::relative(entry.path(), base) /
-                               SENTINEL / "directory.metapack"};
-      output.write_metapack_json(
-          relative_path, sourcemeta::registry::MetaPackEncoding::GZIP,
-          sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-              configuration, navigation_base, base, entry.path()));
-    }
-  }
 
   std::vector<std::filesystem::path> navs;
   navs.reserve(resolver.size());
