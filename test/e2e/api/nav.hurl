@@ -158,10 +158,38 @@ jsonpath "$.entries" count == 1
 jsonpath "$.entries[0].bytes" == 138
 jsonpath "$.entries[0].baseDialect" == "draft7"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
+jsonpath "$.entries[0].id" == "{{base}}/example/v2.0/schema.json"
 jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/v2.0/schema"
+jsonpath "$.entries[0].health" == 100
+
+GET {{base}}/example/schemas/versions.json
+Accept: application/json
+HTTP 200
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]
+header "ETag" exists
+header "Last-Modified" exists
+jsonpath "$.url" == "/example/schemas/versions"
+jsonpath "$.canonical" == "{{base}}/example/schemas/versions"
+jsonpath "$.health" == 100
+jsonpath "$.breadcrumb" count == 3
+jsonpath "$.breadcrumb[0].name" == "example"
+jsonpath "$.breadcrumb[0].url" == "/example"
+jsonpath "$.breadcrumb[1].name" == "schemas"
+jsonpath "$.breadcrumb[1].url" == "/example/schemas"
+jsonpath "$.breadcrumb[2].name" == "versions"
+jsonpath "$.breadcrumb[2].url" == "/example/schemas/versions"
+jsonpath "$.entries" count == 1
+jsonpath "$.entries[0].bytes" == 149
+jsonpath "$.entries[0].baseDialect" == "draft7"
+jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
+jsonpath "$.entries[0].id" == "{{base}}/example/schemas/versions/v1.2.3.json"
+jsonpath "$.entries[0].name" == "v1.2.3"
+jsonpath "$.entries[0].type" == "schema"
+jsonpath "$.entries[0].url" == "/example/schemas/versions/v1.2.3"
 jsonpath "$.entries[0].health" == 100
 
 GET {{base}}/example/v2.0/schema.json?meta=1

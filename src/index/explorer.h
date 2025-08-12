@@ -688,8 +688,7 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
     } else if (entry.is_directory() &&
                std::filesystem::exists(entry.path() / "%" /
                                        "schema.metapack")) {
-      entry_json.assign("name", sourcemeta::core::JSON{
-                                    entry.path().stem().replace_extension("")});
+      entry_json.assign("name", sourcemeta::core::JSON{entry.path().stem()});
       auto schema_nav_path{navigation_base / entry_relative_path};
       schema_nav_path.replace_extension("");
       schema_nav_path /= "%";

@@ -27,6 +27,7 @@ public:
 
   ~Output() {
     for (const auto &entry : this->tracker) {
+      // TODO: Delete empty directories too
       if (!entry.second) {
         std::filesystem::remove(entry.first);
       }
