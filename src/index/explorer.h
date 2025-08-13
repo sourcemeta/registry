@@ -1109,9 +1109,15 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
 
       if (dependency.at("from") == meta.at("id")) {
         output_html.open("td")
+            .open("a", {{"href", "#"},
+                        {"data-sourcemeta-ui-editor-highlight",
+                         meta.at("url").to_string()},
+                        {"data-sourcemeta-ui-editor-highlight-pointer",
+                         dependency.at("at").to_string()}})
             .open("code")
             .text(dependency.at("at").to_string())
             .close("code")
+            .close("a")
             .close("td");
       } else {
         output_html.open("td")
@@ -1184,9 +1190,15 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
     for (const auto &error : health.at("errors").as_array()) {
       output_html.open("tr");
       output_html.open("td")
+          .open("a", {{"href", "#"},
+                      {"data-sourcemeta-ui-editor-highlight",
+                       meta.at("url").to_string()},
+                      {"data-sourcemeta-ui-editor-highlight-pointer",
+                       error.at("pointer").to_string()}})
           .open("code")
           .text(error.at("pointer").to_string())
           .close("code")
+          .close("a")
           .close("td");
       output_html.open("td")
           .open("code")
