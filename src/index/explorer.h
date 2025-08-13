@@ -927,7 +927,8 @@ auto GENERATE_EXPLORER_DIRECTORY_PAGE(
 auto GENERATE_EXPLORER_SCHEMA_PAGE(
     const sourcemeta::core::JSON &configuration,
     const std::filesystem::path &navigation_path,
-    const std::filesystem::path &dependencies_path) -> std::string {
+    const std::filesystem::path &dependencies_path,
+    const std::filesystem::path &health_path) -> std::string {
   const auto navigation{sourcemeta::registry::read_contents(navigation_path)};
   assert(navigation.has_value());
   const auto meta{sourcemeta::core::parse_json(navigation.value().data)};
@@ -1053,14 +1054,26 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.open("ul", {{"class", "nav nav-tabs mt-4 mb-3"}});
   output_html.open("li", {{"class", "nav-item"}});
   output_html
-      .open("a", {{"class", "nav-link active"},
-                  {"aria-current", "page"},
-                  {"href", "#"}})
+      .open("button", {{"class", "nav-link"},
+                       {"type", "button"},
+                       {"role", "tab"},
+                       {"data-sourcemeta-ui-tab-target", "dependencies"}})
       .text("Dependencies")
+      .close("a");
+  output_html.close("li");
+  output_html.open("li", {{"class", "nav-item"}});
+  output_html
+      .open("button", {{"class", "nav-link"},
+                       {"type", "button"},
+                       {"role", "tab"},
+                       {"data-sourcemeta-ui-tab-target", "health"}})
+      .text("Health")
       .close("a");
   output_html.close("li");
   output_html.close("ul");
 
+  output_html.open("div", {{"data-sourcemeta-ui-tab-id", "dependencies"},
+                           {"class", "d-none"}});
   const auto dependencies{
       sourcemeta::registry::read_contents(dependencies_path)};
   assert(dependencies.has_value());
@@ -1075,7 +1088,6 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       indirect.emplace_back(dependency);
     }
   }
-
   std::ostringstream dependency_summary;
   dependency_summary << "This schema has " << direct.size() << " direct "
                      << (direct.size() == 1 ? "dependency" : "dependencies")
@@ -1083,7 +1095,6 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
                      << (indirect.size() == 1 ? "dependency" : "dependencies")
                      << ".";
   output_html.open("p").text(dependency_summary.str()).close("p");
-
   if (direct.size() + indirect.size() > 0) {
     output_html.open("table", {{"class", "table table-bordered"}});
     output_html.open("thead");
@@ -1093,7 +1104,6 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
     output_html.close("tr");
     output_html.close("thead");
     output_html.open("tbody");
-
     for (const auto &dependency : dependencies_json.as_array()) {
       output_html.open("tr");
 
@@ -1138,6 +1148,68 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
     output_html.close("tbody");
     output_html.close("table");
   }
+  output_html.close("div");
+
+  output_html.open(
+      "div", {{"data-sourcemeta-ui-tab-id", "health"}, {"class", "d-none"}});
+
+  const auto health_contents{sourcemeta::registry::read_contents(health_path)};
+  assert(health_contents.has_value());
+  const auto health{sourcemeta::core::parse_json(health_contents.value().data)};
+  assert(health.is_object());
+  assert(health.defines("errors"));
+  const auto errors_count{health.at("errors").size()};
+  if (errors_count == 1) {
+    output_html.open("p")
+        .text("This schema has " + std::to_string(errors_count) +
+              " quality error.")
+        .close("p");
+  } else {
+    output_html.open("p")
+        .text("This schema has " + std::to_string(errors_count) +
+              " quality errors.")
+        .close("p");
+  }
+  if (errors_count > 0) {
+    output_html.open("table", {{"class", "table table-bordered"}});
+    output_html.open("thead");
+    output_html.open("tr");
+    output_html.open("th", {{"scope", "col"}}).text("Location").close("th");
+    output_html.open("th", {{"scope", "col"}}).text("Rule").close("th");
+    output_html.open("th", {{"scope", "col"}}).text("Message").close("th");
+    output_html.open("th", {{"scope", "col"}}).text("Description").close("th");
+    output_html.close("tr");
+    output_html.close("thead");
+    output_html.open("tbody");
+    for (const auto &error : health.at("errors").as_array()) {
+      output_html.open("tr");
+      output_html.open("td")
+          .open("code")
+          .text(error.at("pointer").to_string())
+          .close("code")
+          .close("td");
+      output_html.open("td")
+          .open("code")
+          .text(error.at("name").to_string())
+          .close("code")
+          .close("td");
+      output_html.open("td").text(error.at("message").to_string()).close("td");
+
+      if (error.at("description").is_string()) {
+        output_html.open("td")
+            .text(error.at("description").to_string())
+            .close("td");
+      } else {
+        output_html.open("td").close("td");
+      }
+
+      output_html.close("tr");
+    }
+
+    output_html.close("tbody");
+    output_html.close("table");
+  }
+  output_html.close("div");
 
   output_html.close("div");
 

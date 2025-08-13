@@ -331,19 +331,22 @@ static auto index_main(const std::string_view &program,
       const auto relative_destination{
           std::filesystem::relative(entry.path().parent_path(), output.path()) /
           "schema-html.metapack"};
-      const auto dependencies_path{
+      const auto schema_base_path{
           output.path() / "schemas" /
           (std::filesystem::relative(entry.path().parent_path(),
                                      output.path() / "explorer")
                .parent_path()
                .string() +
-           ".json") /
-          SENTINEL / "dependencies.metapack"};
+           ".json")};
+
+      const auto dependencies_path{schema_base_path / SENTINEL /
+                                   "dependencies.metapack"};
+      const auto health_path{schema_base_path / SENTINEL / "health.metapack"};
 
       output.write_metapack_html(
           relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
           sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
-              configuration, entry.path(), dependencies_path));
+              configuration, entry.path(), dependencies_path, health_path));
     }
   }
 
