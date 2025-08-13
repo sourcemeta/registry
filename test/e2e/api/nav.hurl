@@ -109,7 +109,7 @@ jsonpath "$.entries" count == 1
 jsonpath "$.entries[0].bytes" == 138
 jsonpath "$.entries[0].baseDialect" == "draft7"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
+jsonpath "$.entries[0].id" == "{{base}}/example/v2.0/schema.json"
 jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/v2.0/schema"
@@ -133,7 +133,7 @@ jsonpath "$.entries" count == 1
 jsonpath "$.entries[0].bytes" == 138
 jsonpath "$.entries[0].baseDialect" == "draft7"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[0].id" == "http://localhost:8000/example/v2.0/schema.json"
+jsonpath "$.entries[0].id" == "{{base}}/example/v2.0/schema.json"
 jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/v2.0/schema"
@@ -191,6 +191,48 @@ jsonpath "$.entries[0].name" == "v1.2.3"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/schemas/versions/v1.2.3"
 jsonpath "$.entries[0].health" == 100
+
+GET {{base}}/example/extension.json
+Accept: application/json
+HTTP 200
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]
+header "ETag" exists
+header "Last-Modified" exists
+jsonpath "$.url" == "/example/extension"
+jsonpath "$.canonical" == "{{base}}/example/extension"
+jsonpath "$.health" == 100
+jsonpath "$.breadcrumb" count == 2
+jsonpath "$.breadcrumb[0].name" == "example"
+jsonpath "$.breadcrumb[0].url" == "/example"
+jsonpath "$.breadcrumb[1].name" == "extension"
+jsonpath "$.breadcrumb[1].url" == "/example/extension"
+jsonpath "$.entries" count == 3
+jsonpath "$.entries[0].bytes" == 143
+jsonpath "$.entries[0].baseDialect" == "draft7"
+jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
+jsonpath "$.entries[0].id" == "{{base}}/example/extension/without.json"
+jsonpath "$.entries[0].name" == "without"
+jsonpath "$.entries[0].type" == "schema"
+jsonpath "$.entries[0].url" == "/example/extension/without"
+jsonpath "$.entries[0].health" == 100
+jsonpath "$.entries[1].bytes" == 147
+jsonpath "$.entries[1].baseDialect" == "draft7"
+jsonpath "$.entries[1].dialect" == "http://json-schema.org/draft-07/schema#"
+jsonpath "$.entries[1].id" == "{{base}}/example/extension/with.schema.json"
+jsonpath "$.entries[1].name" == "with"
+jsonpath "$.entries[1].type" == "schema"
+jsonpath "$.entries[1].url" == "/example/extension/with.schema"
+jsonpath "$.entries[1].health" == 100
+jsonpath "$.entries[2].bytes" == 180
+jsonpath "$.entries[2].baseDialect" == "draft7"
+jsonpath "$.entries[2].dialect" == "http://json-schema.org/draft-07/schema#"
+jsonpath "$.entries[2].id" == "{{base}}/example/extension/to-without.json"
+jsonpath "$.entries[2].name" == "to-without"
+jsonpath "$.entries[2].type" == "schema"
+jsonpath "$.entries[2].url" == "/example/extension/to-without"
+jsonpath "$.entries[2].health" == 100
 
 GET {{base}}/example/v2.0/schema.json?meta=1
 Accept: application/json
