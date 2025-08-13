@@ -556,13 +556,6 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
 
 namespace sourcemeta::registry {
 
-auto GENERATE_SERVER_CONFIGURATION(const sourcemeta::core::JSON &configuration)
-    -> sourcemeta::core::JSON {
-  auto summary{sourcemeta::core::JSON::make_object()};
-  summary.assign("port", configuration.at("port"));
-  return summary;
-}
-
 // TODO: Put breadcrumb inside this metadata
 auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
                          const sourcemeta::registry::Resolver &resolver,

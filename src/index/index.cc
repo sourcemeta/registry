@@ -82,9 +82,9 @@ static auto index_main(const std::string_view &program,
 
   // We want to keep this file uncompressed and without a leading header to that
   // the server can quickly read on start
-  output.write_json(
-      "configuration.json",
-      sourcemeta::registry::GENERATE_SERVER_CONFIGURATION(configuration));
+  auto summary{sourcemeta::core::JSON::make_object()};
+  summary.assign("port", configuration.at("port"));
+  output.write_json("configuration.json", summary);
 
   const auto server_url{
       sourcemeta::core::URI{configuration.at("url").to_string()}
@@ -134,18 +134,25 @@ static auto index_main(const std::string_view &program,
   // the small-by-default thread stack with Blaze
   constexpr auto THREAD_STACK_SIZE{8 * 1024 * 1024};
 
+  std::mutex log_mutex;
+
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [](const auto id, const auto threads, const auto percentage,
-         const auto &schema) {
-        std::cerr << "(" << std::setfill(' ') << std::setw(3)
-                  << static_cast<int>(percentage) << "%) "
-                  << "Ingesting: " << schema.first << " [" << id << "/"
-                  << threads << "]\n";
-      },
-      [&output, &resolver, &validator](const auto &schema) {
+      [&output, &resolver, &validator,
+       &log_mutex](const auto &schema, const auto id, const auto threads,
+                   const auto percentage) {
+        {
+          std::lock_guard<std::mutex> lock(log_mutex);
+          std::cerr << "(" << std::setfill(' ') << std::setw(3)
+                    << static_cast<int>(percentage) << "%) "
+                    << "Ingesting: " << schema.first << " [" << id << "/"
+                    << threads << "]\n";
+        }
+
         const auto subresult{resolver(schema.first)};
         assert(subresult.has_value());
+        // TODO: Validate inside GENERATE_MATERIALISED_SCHEMA, so
+        // we can avoid validating multiple times if there is a cache hit
         const auto dialect_identifier{
             sourcemeta::core::dialect(subresult.value())};
         assert(dialect_identifier.has_value());
@@ -154,84 +161,90 @@ static auto index_main(const std::string_view &program,
         validator.validate_or_throw(
             dialect_identifier.value(), metaschema.value(), subresult.value(),
             "The schema does not adhere to its metaschema");
-        const auto base_path{std::filesystem::path{"schemas"} /
+
+        const auto base_path{output.path() / std::filesystem::path{"schemas"} /
                              schema.second.relative_path / SENTINEL};
-        const auto destination{output.write_metapack_jsonschema(
-            base_path / "schema.metapack",
-            sourcemeta::registry::MetaPackEncoding::GZIP, subresult.value(),
-            dialect_identifier.value())};
+        const auto destination{base_path / "schema.metapack"};
+        assert(schema.second.path.has_value());
+        assert(schema.second.path.value().is_absolute());
+        build<sourcemeta::core::JSON>(
+            sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA,
+            [&output](const auto &path) { output.track(path); }, destination,
+            base_path / "schema.metapack.deps", {schema.second.path.value()},
+            subresult.value());
         resolver.materialise(schema.first, destination);
       },
       THREAD_STACK_SIZE);
 
-  // TODO: Put file dependency information in the metapack extensions,
-  // as these are the files that want to be able to re-generate if something
-  // changes?
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [](const auto id, const auto threads, const auto percentage,
-         const auto &schema) {
-        std::cerr << "(" << std::setfill(' ') << std::setw(3)
-                  << static_cast<int>(percentage) << "%) "
-                  << "Analysing: " << schema.first << " [" << id << "/"
-                  << threads << "]\n";
-      },
-      [&output, &resolver, &configuration](const auto &schema) {
-        const auto base_path{std::filesystem::path{"schemas"} /
+      [&output, &resolver, &configuration,
+       &log_mutex](const auto &schema, const auto id, const auto threads,
+                   const auto percentage) {
+        {
+          std::lock_guard<std::mutex> lock(log_mutex);
+          std::cerr << "(" << std::setfill(' ') << std::setw(3)
+                    << static_cast<int>(percentage) << "%) "
+                    << "Analysing: " << schema.first << " [" << id << "/"
+                    << threads << "]\n";
+        }
+
+        const auto base_path{output.path() / std::filesystem::path{"schemas"} /
                              schema.second.relative_path / SENTINEL};
-        const auto dialect_identifier{
-            sourcemeta::core::dialect(resolver(schema.first).value())};
-        assert(dialect_identifier.has_value());
 
-        output.write_metapack_json(
+        build<sourcemeta::registry::Resolver>(
+            sourcemeta::registry::GENERATE_POINTER_POSITIONS,
+            [&output](const auto &path) { output.track(path); },
             base_path / "positions.metapack",
-            sourcemeta::registry::MetaPackEncoding::GZIP,
-            sourcemeta::registry::GENERATE_POINTER_POSITIONS(
-                resolver, output.path() / base_path / "schema.metapack"));
+            base_path / "positions.metapack.deps",
+            {base_path / "schema.metapack"}, resolver);
 
-        output.write_metapack_json(
-            base_path / "dependencies.metapack",
-            sourcemeta::registry::MetaPackEncoding::GZIP,
-            sourcemeta::registry::GENERATE_DEPENDENCIES(
-                resolver, output.path() / base_path / "schema.metapack"));
-
-        output.write_metapack_json(
+        build<sourcemeta::registry::Resolver>(
+            sourcemeta::registry::GENERATE_FRAME_LOCATIONS,
+            [&output](const auto &path) { output.track(path); },
             base_path / "locations.metapack",
-            sourcemeta::registry::MetaPackEncoding::GZIP,
-            sourcemeta::registry::GENERATE_FRAME_LOCATIONS(
-                resolver, output.path() / base_path / "schema.metapack"));
+            base_path / "locations.metapack.deps",
+            {base_path / "schema.metapack"}, resolver);
 
-        output.write_metapack_json(
-            base_path / "health.metapack",
-            sourcemeta::registry::MetaPackEncoding::GZIP,
-            sourcemeta::registry::GENERATE_HEALTH(
-                resolver, output.path() / base_path / "schema.metapack"));
+        build<sourcemeta::registry::Resolver>(
+            sourcemeta::registry::GENERATE_DEPENDENCIES,
+            [&output](const auto &path) { output.track(path); },
+            base_path / "dependencies.metapack",
+            base_path / "dependencies.metapack.deps",
+            {base_path / "schema.metapack"}, resolver);
 
-        // TODO: The bundle target should depend on the .dependencies file
+        build<sourcemeta::registry::Resolver>(
+            sourcemeta::registry::GENERATE_HEALTH,
+            [&output](const auto &path) { output.track(path); },
+            base_path / "health.metapack", base_path / "health.metapack.deps",
+            {base_path / "schema.metapack",
+             base_path / "dependencies.metapack"},
+            resolver);
 
-        output.write_metapack_jsonschema(
-            base_path / "bundle.metapack",
-            sourcemeta::registry::MetaPackEncoding::GZIP,
-            sourcemeta::registry::GENERATE_BUNDLE(
-                resolver, output.path() / base_path / "schema.metapack"),
-            dialect_identifier.value());
+        build<sourcemeta::registry::Resolver>(
+            sourcemeta::registry::GENERATE_BUNDLE,
+            [&output](const auto &path) { output.track(path); },
+            base_path / "bundle.metapack", base_path / "bundle.metapack.deps",
+            {base_path / "schema.metapack",
+             base_path / "dependencies.metapack"},
+            resolver);
+
+        build<sourcemeta::registry::Resolver>(
+            sourcemeta::registry::GENERATE_UNIDENTIFIED,
+            [&output](const auto &path) { output.track(path); },
+            base_path / "unidentified.metapack",
+            base_path / "unidentified.metapack.deps",
+            {base_path / "bundle.metapack"}, resolver);
 
         if (attribute(configuration, schema.second.collection_name,
                       "x-sourcemeta-registry:blaze-exhaustive")) {
-          output.write_metapack_json(
+          build<sourcemeta::registry::Resolver>(
+              sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
+              [&output](const auto &path) { output.track(path); },
               base_path / "blaze-exhaustive.metapack",
-              // Don't compress, as we need to internally read from disk
-              sourcemeta::registry::MetaPackEncoding::Identity,
-              sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
-                  resolver, output.path() / base_path / "bundle.metapack"));
+              base_path / "blaze-exhaustive.metapack.deps",
+              {base_path / "bundle.metapack"}, resolver);
         }
-
-        output.write_metapack_jsonschema(
-            base_path / "unidentified.metapack",
-            sourcemeta::registry::MetaPackEncoding::GZIP,
-            sourcemeta::registry::GENERATE_UNIDENTIFIED(
-                resolver, output.path() / base_path / "bundle.metapack"),
-            dialect_identifier.value());
       },
       THREAD_STACK_SIZE);
 

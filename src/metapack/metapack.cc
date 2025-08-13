@@ -105,25 +105,30 @@ auto write_stream(const std::filesystem::path &path,
   }
 }
 
+auto read_contents(MetaPackFile<std::ifstream> &stream)
+    -> MetaPackFile<sourcemeta::core::JSON::String> {
+  std::ostringstream buffer;
+  if (stream.encoding == MetaPackEncoding::GZIP) {
+    sourcemeta::core::gunzip(stream.data, buffer);
+  } else {
+    buffer << stream.data.rdbuf();
+  }
+
+  return MetaPackFile{.data = std::move(buffer).str(),
+                      .version = stream.version,
+                      .checksum = stream.checksum,
+                      .last_modified = stream.last_modified,
+                      .mime = std::move(stream.mime),
+                      .bytes = stream.bytes,
+                      .encoding = stream.encoding,
+                      .extension = stream.extension};
+}
+
 auto read_contents(const std::filesystem::path &path)
     -> std::optional<MetaPackFile<sourcemeta::core::JSON::String>> {
   auto file{read_stream(path)};
   if (file.has_value()) {
-    std::ostringstream buffer;
-    if (file.value().encoding == MetaPackEncoding::GZIP) {
-      sourcemeta::core::gunzip(file.value().data, buffer);
-    } else {
-      buffer << file.value().data.rdbuf();
-    }
-
-    return MetaPackFile{.data = std::move(buffer).str(),
-                        .version = file.value().version,
-                        .checksum = std::move(file.value().checksum),
-                        .last_modified = file.value().last_modified,
-                        .mime = std::move(file.value().mime),
-                        .bytes = file.value().bytes,
-                        .encoding = file.value().encoding,
-                        .extension = std::move(file).value().extension};
+    return read_contents(file.value());
   } else {
     return std::nullopt;
   }

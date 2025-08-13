@@ -47,7 +47,9 @@ auto ResolverOutsideBaseError::base() const noexcept -> const std::string & {
   return this->base_;
 }
 
-auto Resolver::operator()(std::string_view identifier) const
+auto Resolver::operator()(
+    std::string_view identifier,
+    const std::function<void(const std::filesystem::path &)> &callback) const
     -> std::optional<sourcemeta::core::JSON> {
   const std::string string_identifier{to_lowercase(identifier)};
 
@@ -62,12 +64,20 @@ auto Resolver::operator()(std::string_view identifier) const
 
   if (result != this->views.cend()) {
     if (result->second.cache_path.has_value()) {
+      if (callback) {
+        callback(result->second.cache_path.value());
+      }
+
       const auto schema{sourcemeta::registry::read_contents(
           result->second.cache_path.value())};
       assert(schema.has_value());
       return sourcemeta::core::parse_json(schema.value().data);
     } else if (!result->second.path.has_value()) {
       return std::nullopt;
+    }
+
+    if (callback) {
+      callback(result->second.path.value());
     }
 
     auto schema{internal_schema_reader(result->second.path.value())};

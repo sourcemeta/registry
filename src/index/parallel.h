@@ -13,9 +13,8 @@
 
 namespace sourcemeta::registry {
 
-template <typename Iterator, typename LogCallback, typename WorkCallback>
+template <typename Iterator, typename WorkCallback>
 auto parallel_for_each(Iterator first, Iterator last,
-                       const LogCallback &log_callback,
                        const WorkCallback &work_callback,
                        const std::size_t stack_size_bytes) -> void {
   std::queue<Iterator> tasks;
@@ -24,7 +23,6 @@ auto parallel_for_each(Iterator first, Iterator last,
   }
 
   std::mutex queue_mutex;
-  std::mutex log_mutex;
   std::mutex exception_mutex;
 
   std::exception_ptr exception = nullptr;
@@ -61,8 +59,7 @@ auto parallel_for_each(Iterator first, Iterator last,
           delete fn;
           return nullptr;
         },
-        new std::function<void()>([&tasks, &queue_mutex, &log_mutex,
-                                   &log_callback, &work_callback,
+        new std::function<void()>([&tasks, &queue_mutex, &work_callback,
                                    &handle_exception, parallelism, total] {
           const auto thread_id{std::this_thread::get_id()};
           try {
@@ -78,12 +75,8 @@ auto parallel_for_each(Iterator first, Iterator last,
                 cursor = total - tasks.size() + 1;
                 tasks.pop();
               }
-              {
-                std::lock_guard<std::mutex> lock(log_mutex);
-                const auto percentage{cursor * 100 / total};
-                log_callback(thread_id, parallelism, percentage, *iterator);
-              }
-              work_callback(*iterator);
+              const auto percentage{cursor * 100 / total};
+              work_callback(*iterator, thread_id, parallelism, percentage);
             }
           } catch (...) {
             handle_exception(std::current_exception());

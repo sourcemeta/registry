@@ -27,7 +27,9 @@ public:
   Resolver(Resolver &&) = delete;
   Resolver &operator=(Resolver &&) = delete;
 
-  auto operator()(std::string_view identifier) const
+  auto operator()(std::string_view identifier,
+                  const std::function<void(const std::filesystem::path &)>
+                      &callback = nullptr) const
       -> std::optional<sourcemeta::core::JSON>;
 
   auto add(const sourcemeta::core::URI &server_url,

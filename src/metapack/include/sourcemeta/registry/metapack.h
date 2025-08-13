@@ -35,6 +35,9 @@ auto write_stream(const std::filesystem::path &path,
                   const sourcemeta::core::JSON &extension,
                   const std::function<void(std::ostream &)> &callback) -> void;
 
+auto read_contents(MetaPackFile<std::ifstream> &stream)
+    -> MetaPackFile<sourcemeta::core::JSON::String>;
+
 auto read_contents(const std::filesystem::path &path)
     -> std::optional<MetaPackFile<sourcemeta::core::JSON::String>>;
 
