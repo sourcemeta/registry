@@ -127,6 +127,7 @@ public:
   auto track(const std::filesystem::path &path)
       -> const std::filesystem::path & {
     assert(path.is_absolute());
+    assert(std::filesystem::exists(path));
     std::lock_guard<std::mutex> lock(this->tracker_mutex);
     // Otherwise it means we wrote to the same place twice
     assert(!this->tracker.contains(path) || !this->tracker.at(path));
