@@ -124,21 +124,26 @@ public:
     return this->track(absolute_path);
   }
 
-private:
-  auto resolve(const std::filesystem::path &relative_path) const
-      -> std::filesystem::path {
-    assert(relative_path.is_relative());
-    // TODO: We need to have a "safe" path concat function that does not allow
-    // the path to escape the parent. Make it part of Core
-    return this->path_ / relative_path;
-  }
-
   auto track(const std::filesystem::path &path)
       -> const std::filesystem::path & {
+    assert(path.is_absolute());
     std::lock_guard<std::mutex> lock(this->tracker_mutex);
     // Otherwise it means we wrote to the same place twice
     assert(!this->tracker.contains(path) || !this->tracker.at(path));
     return this->tracker.insert_or_assign(path, true).first->first;
+  }
+
+private:
+  auto resolve(const std::filesystem::path &relative_path) const
+      -> std::filesystem::path {
+    if (relative_path.is_absolute()) {
+      return relative_path;
+    }
+
+    assert(relative_path.is_relative());
+    // TODO: We need to have a "safe" path concat function that does not allow
+    // the path to escape the parent. Make it part of Core
+    return this->path_ / relative_path;
   }
 
   const std::filesystem::path path_;
