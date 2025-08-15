@@ -103,6 +103,8 @@ auto write_stream(const std::filesystem::path &path,
   } else {
     output << buffer.str();
   }
+
+  output.flush();
 }
 
 auto read_contents(MetaPackFile<std::ifstream> &stream)
