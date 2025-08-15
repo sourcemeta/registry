@@ -201,28 +201,19 @@ static auto index_main(const std::string_view &program,
                     << threads << "]\n";
         }
 
-        const auto subresult{resolver(schema.first)};
-        assert(subresult.has_value());
-        // TODO: Validate inside GENERATE_MATERIALISED_SCHEMA, so
-        // we can avoid validating multiple times if there is a cache hit
-        const auto dialect_identifier{
-            sourcemeta::core::dialect(subresult.value())};
-        assert(dialect_identifier.has_value());
-        const auto metaschema{resolver(dialect_identifier.value())};
-        assert(metaschema.has_value());
-        validator.validate_or_throw(
-            dialect_identifier.value(), metaschema.value(), subresult.value(),
-            "The schema does not adhere to its metaschema");
-
         const auto base_path{output.path() / std::filesystem::path{"schemas"} /
                              schema.second.relative_path / SENTINEL};
         const auto destination{base_path / "schema.metapack"};
         assert(schema.second.path.has_value());
         assert(schema.second.path.value().is_absolute());
 
-        if (!build<sourcemeta::core::JSON>(
+        if (!build<std::tuple<
+                std::string_view,
+                std::reference_wrapper<sourcemeta::registry::Validator>,
+                std::reference_wrapper<sourcemeta::registry::Resolver>>>(
                 adapter, sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA,
-                destination, {schema.second.path.value()}, subresult.value())) {
+                destination, {schema.second.path.value()},
+                {schema.first, validator, resolver})) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) "
                     << "Ingesting: " << schema.first << " [" << id << "/"

@@ -17,6 +17,8 @@
 #include <sourcemeta/blaze/evaluator.h>
 #include <sourcemeta/blaze/linter.h>
 
+#include "validator.h"
+
 #include <cassert>    // assert
 #include <chrono>     // std::chrono
 #include <filesystem> // std::filesystem
@@ -78,20 +80,30 @@ auto build(
 
 namespace sourcemeta::registry {
 
-auto GENERATE_MATERIALISED_SCHEMA(const std::filesystem::path &destination,
-                                  const std::vector<std::filesystem::path> &,
-                                  const DependencyCallback &,
-                                  const sourcemeta::core::JSON &schema)
-    -> void {
-  const auto dialect_identifier{sourcemeta::core::dialect(schema)};
+auto GENERATE_MATERIALISED_SCHEMA(
+    const std::filesystem::path &destination,
+    const std::vector<std::filesystem::path> &, const DependencyCallback &,
+    const std::tuple<std::string_view,
+                     std::reference_wrapper<sourcemeta::registry::Validator>,
+                     std::reference_wrapper<sourcemeta::registry::Resolver>>
+        &data) -> void {
+  const auto schema{std::get<2>(data).get()(std::get<0>(data))};
+  assert(schema.has_value());
+  const auto dialect_identifier{sourcemeta::core::dialect(schema.value())};
   assert(dialect_identifier.has_value());
+  const auto metaschema{std::get<2>(data).get()(dialect_identifier.value())};
+  assert(metaschema.has_value());
+  std::get<1>(data).get().validate_or_throw(
+      dialect_identifier.value(), metaschema.value(), schema.value(),
+      "The schema does not adhere to its metaschema");
+
   std::filesystem::create_directories(destination.parent_path());
   sourcemeta::registry::write_stream(
       destination, "application/schema+json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::core::JSON{dialect_identifier.value()},
       [&schema](auto &stream) {
-        sourcemeta::core::prettify(schema, stream,
+        sourcemeta::core::prettify(schema.value(), stream,
                                    sourcemeta::core::schema_format_compare);
       });
 }
