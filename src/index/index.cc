@@ -40,6 +40,56 @@ static auto attribute(const sourcemeta::core::JSON &configuration,
 // entry
 constexpr auto SENTINEL{"%"};
 
+class RegistryBuildAdapter {
+public:
+  using node_type = std::filesystem::path;
+  using mark_type = std::filesystem::file_time_type;
+  using dependencies_type = sourcemeta::core::JSON::Array;
+  using dependency_type = typename dependencies_type::value_type;
+
+  auto read_dependencies(const node_type &path) const
+      -> std::optional<dependencies_type> {
+    const std::filesystem::path deps_path{path.string() + ".deps"};
+    if (std::filesystem::exists(deps_path)) {
+      const auto deps{sourcemeta::core::read_json(deps_path)};
+      assert(deps.is_array());
+      assert(!deps.empty());
+      return deps.as_array();
+    } else {
+      return std::nullopt;
+    }
+  }
+
+  template <typename Collection, typename Iterator>
+  auto write_dependencies(const node_type &path, Iterator begin,
+                          Iterator end) const -> void {
+    const std::filesystem::path deps_path{path.string() + ".deps"};
+    std::filesystem::create_directories(deps_path.parent_path());
+    std::ofstream deps_stream{deps_path};
+    assert(!deps_stream.fail());
+    sourcemeta::core::stringify(
+        sourcemeta::core::to_json<Collection>(begin, end), deps_stream);
+  }
+
+  auto dependency_to_node(const dependency_type &dep) const -> node_type {
+    assert(dep.is_string());
+    return dep.to_string();
+  }
+
+  auto mark(const node_type &path) const -> std::optional<mark_type> {
+    if (std::filesystem::exists(path)) {
+      return std::filesystem::last_write_time(path);
+    } else {
+      return std::nullopt;
+    }
+  }
+
+  auto is_fresh_against(const mark_type current,
+                        const mark_type dependency) const -> bool {
+    return current >= dependency;
+  }
+};
+
 static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
@@ -134,15 +184,17 @@ static auto index_main(const std::string_view &program,
   // the small-by-default thread stack with Blaze
   constexpr auto THREAD_STACK_SIZE{8 * 1024 * 1024};
 
-  std::mutex log_mutex;
+  RegistryBuildAdapter adapter;
+
+  std::mutex mutex;
 
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [&output, &resolver, &validator,
-       &log_mutex](const auto &schema, const auto id, const auto threads,
-                   const auto percentage) {
+      [&output, &resolver, &validator, &mutex,
+       &adapter](const auto &schema, const auto id, const auto threads,
+                 const auto percentage) {
         {
-          std::lock_guard<std::mutex> lock(log_mutex);
+          std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(" << std::setfill(' ') << std::setw(3)
                     << static_cast<int>(percentage) << "%) "
                     << "Ingesting: " << schema.first << " [" << id << "/"
@@ -167,22 +219,30 @@ static auto index_main(const std::string_view &program,
         const auto destination{base_path / "schema.metapack"};
         assert(schema.second.path.has_value());
         assert(schema.second.path.value().is_absolute());
-        build<sourcemeta::core::JSON>(
-            sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA,
-            [&output](const auto &path) { output.track(path); }, destination,
-            base_path / "schema.metapack.deps", {schema.second.path.value()},
-            subresult.value());
+
+        if (!build<sourcemeta::core::JSON>(
+                adapter, sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA,
+                destination, {schema.second.path.value()}, subresult.value())) {
+          std::lock_guard<std::mutex> lock(mutex);
+          std::cerr << "(skip) "
+                    << "Ingesting: " << schema.first << " [" << id << "/"
+                    << threads << "]\n";
+        }
+
+        output.track(destination);
+        output.track(base_path / "schema.metapack.deps");
+
         resolver.materialise(schema.first, destination);
       },
       THREAD_STACK_SIZE);
 
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [&output, &resolver, &configuration,
-       &log_mutex](const auto &schema, const auto id, const auto threads,
-                   const auto percentage) {
+      [&output, &resolver, &configuration, &mutex,
+       &adapter](const auto &schema, const auto id, const auto threads,
+                 const auto percentage) {
         {
-          std::lock_guard<std::mutex> lock(log_mutex);
+          std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(" << std::setfill(' ') << std::setw(3)
                     << static_cast<int>(percentage) << "%) "
                     << "Analysing: " << schema.first << " [" << id << "/"
@@ -192,58 +252,92 @@ static auto index_main(const std::string_view &program,
         const auto base_path{output.path() / std::filesystem::path{"schemas"} /
                              schema.second.relative_path / SENTINEL};
 
-        build<sourcemeta::registry::Resolver>(
-            sourcemeta::registry::GENERATE_POINTER_POSITIONS,
-            [&output](const auto &path) { output.track(path); },
-            base_path / "positions.metapack",
-            base_path / "positions.metapack.deps",
-            {base_path / "schema.metapack"}, resolver);
+        if (!build<sourcemeta::registry::Resolver>(
+                adapter, sourcemeta::registry::GENERATE_POINTER_POSITIONS,
+                base_path / "positions.metapack",
+                {base_path / "schema.metapack"}, resolver)) {
+          std::lock_guard<std::mutex> lock(mutex);
+          std::cerr << "(skip) Analysing: " << schema.first << " [positions]\n";
+        }
 
-        build<sourcemeta::registry::Resolver>(
-            sourcemeta::registry::GENERATE_FRAME_LOCATIONS,
-            [&output](const auto &path) { output.track(path); },
-            base_path / "locations.metapack",
-            base_path / "locations.metapack.deps",
-            {base_path / "schema.metapack"}, resolver);
+        output.track(base_path / "positions.metapack");
+        output.track(base_path / "positions.metapack.deps");
 
-        build<sourcemeta::registry::Resolver>(
-            sourcemeta::registry::GENERATE_DEPENDENCIES,
-            [&output](const auto &path) { output.track(path); },
-            base_path / "dependencies.metapack",
-            base_path / "dependencies.metapack.deps",
-            {base_path / "schema.metapack"}, resolver);
+        if (!build<sourcemeta::registry::Resolver>(
+                adapter, sourcemeta::registry::GENERATE_FRAME_LOCATIONS,
+                base_path / "locations.metapack",
+                {base_path / "schema.metapack"}, resolver)) {
+          std::lock_guard<std::mutex> lock(mutex);
+          std::cerr << "(skip) Analysing: " << schema.first << " [locations]\n";
+        }
 
-        build<sourcemeta::registry::Resolver>(
-            sourcemeta::registry::GENERATE_HEALTH,
-            [&output](const auto &path) { output.track(path); },
-            base_path / "health.metapack", base_path / "health.metapack.deps",
-            {base_path / "schema.metapack",
-             base_path / "dependencies.metapack"},
-            resolver);
+        output.track(base_path / "locations.metapack");
+        output.track(base_path / "locations.metapack.deps");
 
-        build<sourcemeta::registry::Resolver>(
-            sourcemeta::registry::GENERATE_BUNDLE,
-            [&output](const auto &path) { output.track(path); },
-            base_path / "bundle.metapack", base_path / "bundle.metapack.deps",
-            {base_path / "schema.metapack",
-             base_path / "dependencies.metapack"},
-            resolver);
+        if (!build<sourcemeta::registry::Resolver>(
+                adapter, sourcemeta::registry::GENERATE_DEPENDENCIES,
+                base_path / "dependencies.metapack",
+                {base_path / "schema.metapack"}, resolver)) {
+          std::lock_guard<std::mutex> lock(mutex);
+          std::cerr << "(skip) Analysing: " << schema.first
+                    << " [dependencies]\n";
+        }
 
-        build<sourcemeta::registry::Resolver>(
-            sourcemeta::registry::GENERATE_UNIDENTIFIED,
-            [&output](const auto &path) { output.track(path); },
-            base_path / "unidentified.metapack",
-            base_path / "unidentified.metapack.deps",
-            {base_path / "bundle.metapack"}, resolver);
+        output.track(base_path / "dependencies.metapack");
+        output.track(base_path / "dependencies.metapack.deps");
+
+        if (!build<sourcemeta::registry::Resolver>(
+                adapter, sourcemeta::registry::GENERATE_HEALTH,
+                base_path / "health.metapack",
+                {base_path / "schema.metapack",
+                 base_path / "dependencies.metapack"},
+                resolver)) {
+          std::lock_guard<std::mutex> lock(mutex);
+          std::cerr << "(skip) Analysing: " << schema.first << " [health]\n";
+        }
+
+        output.track(base_path / "health.metapack");
+        output.track(base_path / "health.metapack.deps");
+
+        if (!build<sourcemeta::registry::Resolver>(
+                adapter, sourcemeta::registry::GENERATE_BUNDLE,
+                base_path / "bundle.metapack",
+                {base_path / "schema.metapack",
+                 base_path / "dependencies.metapack"},
+                resolver)) {
+          std::lock_guard<std::mutex> lock(mutex);
+          std::cerr << "(skip) Analysing: " << schema.first << " [bundle]\n";
+        }
+
+        output.track(base_path / "bundle.metapack");
+        output.track(base_path / "bundle.metapack.deps");
+
+        if (!build<sourcemeta::registry::Resolver>(
+                adapter, sourcemeta::registry::GENERATE_UNIDENTIFIED,
+                base_path / "unidentified.metapack",
+                {base_path / "bundle.metapack"}, resolver)) {
+          std::lock_guard<std::mutex> lock(mutex);
+          std::cerr << "(skip) Analysing: " << schema.first
+                    << " [unidentified]\n";
+        }
+
+        output.track(base_path / "unidentified.metapack");
+        output.track(base_path / "unidentified.metapack.deps");
 
         if (attribute(configuration, schema.second.collection_name,
                       "x-sourcemeta-registry:blaze-exhaustive")) {
-          build<sourcemeta::registry::Resolver>(
-              sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
-              [&output](const auto &path) { output.track(path); },
-              base_path / "blaze-exhaustive.metapack",
-              base_path / "blaze-exhaustive.metapack.deps",
-              {base_path / "bundle.metapack"}, resolver);
+          if (!build<sourcemeta::registry::Resolver>(
+                  adapter,
+                  sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
+                  base_path / "blaze-exhaustive.metapack",
+                  {base_path / "bundle.metapack"}, resolver)) {
+            std::lock_guard<std::mutex> lock(mutex);
+            std::cerr << "(skip) Analysing: " << schema.first
+                      << " [blaze-exhaustive]\n";
+          }
+
+          output.track(base_path / "blaze-exhaustive.metapack");
+          output.track(base_path / "blaze-exhaustive.metapack.deps");
         }
       },
       THREAD_STACK_SIZE);

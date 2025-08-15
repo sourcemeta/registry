@@ -24,67 +24,55 @@
 #include <utility>    // std::move
 #include <vector>     // std::vector
 
-using PathCallback = std::function<void(const std::filesystem::path &)>;
-
-template <typename Context>
-using Handler = std::function<void(const std::filesystem::path &,
-                                   const std::vector<std::filesystem::path> &,
-                                   const PathCallback &, const Context &)>;
-
-template <typename Context>
-auto build(const Handler<Context> &handler, const PathCallback &tracker,
-           const std::filesystem::path &destination,
-           const std::filesystem::path &deps_path,
-           const std::vector<std::filesystem::path> &dependencies,
-           const Context &context) -> bool {
-  if (std::filesystem::exists(deps_path) &&
-      std::filesystem::exists(destination)) {
-    const auto deps{sourcemeta::core::read_json(deps_path)};
-    assert(deps.is_array());
-    assert(!deps.empty());
-    bool must_rebuild{false};
-    const auto destination_last_write_time{
-        std::filesystem::last_write_time(destination)};
-
-    for (const auto &entry : deps.as_array()) {
-      if (!std::filesystem::exists(entry.to_string()) ||
-          std::filesystem::last_write_time(entry.to_string()) >
-              destination_last_write_time) {
-        must_rebuild = true;
+// TODO: Elevate all of this to Core
+using DependencyCallback = std::function<void(const std::filesystem::path &)>;
+template <typename Context, typename Adapter>
+auto build(
+    Adapter &configuration,
+    const std::function<void(const typename Adapter::node_type &,
+                             const std::vector<typename Adapter::node_type> &,
+                             const DependencyCallback &, const Context &)>
+        &handler,
+    const typename Adapter::node_type &destination,
+    const std::vector<typename Adapter::node_type> &dependencies,
+    const Context &context) -> bool {
+  const auto destination_mark{configuration.mark(destination)};
+  const auto current_deps{configuration.read_dependencies(destination)};
+  if (destination_mark.has_value() && current_deps.has_value()) {
+    bool outdated{false};
+    for (const auto &entry : current_deps.value()) {
+      const auto current_mark{
+          configuration.mark(configuration.dependency_to_node(entry))};
+      if (!current_mark.has_value() ||
+          !configuration.is_fresh_against(destination_mark.value(),
+                                          current_mark.value())) {
+        outdated = true;
         break;
       }
     }
 
-    if (!must_rebuild) {
-      tracker(deps_path);
-      tracker(destination);
+    if (!outdated) {
       return false;
     }
   }
 
-  auto deps = sourcemeta::core::JSON::make_array();
+  std::vector<typename Adapter::node_type> deps;
   for (const auto &dependency : dependencies) {
-    assert(std::filesystem::exists(dependency));
-    deps.push_back(sourcemeta::core::JSON{dependency.string()});
+    assert(configuration.mark(dependency).has_value());
+    deps.emplace_back(dependency);
   }
 
-  std::filesystem::create_directories(destination.parent_path());
   handler(
       destination, dependencies,
-      [&deps](const auto &new_dependency) {
-        assert(std::filesystem::exists(new_dependency));
-        deps.push_back(sourcemeta::core::JSON{new_dependency});
+      [&deps, &configuration](const auto &new_dependency) {
+        assert(configuration.mark(new_dependency).has_value());
+        deps.emplace_back(new_dependency);
       },
       context);
-  assert(std::filesystem::exists(destination));
-  tracker(destination);
 
-  std::filesystem::create_directories(deps_path.parent_path());
-  std::ofstream deps_stream{deps_path};
-  assert(!deps_stream.fail());
-  sourcemeta::core::stringify(deps, deps_stream);
-  tracker(deps_path);
-
+  configuration
+      .template write_dependencies<std::vector<typename Adapter::node_type>>(
+          destination, deps.cbegin(), deps.cend());
   return true;
 }
 
@@ -92,11 +80,12 @@ namespace sourcemeta::registry {
 
 auto GENERATE_MATERIALISED_SCHEMA(const std::filesystem::path &destination,
                                   const std::vector<std::filesystem::path> &,
-                                  const PathCallback &,
+                                  const DependencyCallback &,
                                   const sourcemeta::core::JSON &schema)
     -> void {
   const auto dialect_identifier{sourcemeta::core::dialect(schema)};
   assert(dialect_identifier.has_value());
+  std::filesystem::create_directories(destination.parent_path());
   sourcemeta::registry::write_stream(
       destination, "application/schema+json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
@@ -110,13 +99,15 @@ auto GENERATE_MATERIALISED_SCHEMA(const std::filesystem::path &destination,
 auto GENERATE_POINTER_POSITIONS(
     const std::filesystem::path &destination,
     const std::vector<std::filesystem::path> &dependencies,
-    const PathCallback &, const sourcemeta::registry::Resolver &) -> void {
+    const DependencyCallback &, const sourcemeta::registry::Resolver &)
+    -> void {
   assert(dependencies.size() == 1);
   sourcemeta::core::PointerPositionTracker tracker;
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
   sourcemeta::core::parse_json(contents.value().data, std::ref(tracker));
   const auto result{sourcemeta::core::to_json(tracker)};
+  std::filesystem::create_directories(destination.parent_path());
   sourcemeta::registry::write_stream(
       destination, "application/json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
@@ -127,7 +118,7 @@ auto GENERATE_POINTER_POSITIONS(
 auto GENERATE_FRAME_LOCATIONS(
     const std::filesystem::path &destination,
     const std::vector<std::filesystem::path> &dependencies,
-    const PathCallback &callback,
+    const DependencyCallback &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
@@ -140,6 +131,7 @@ auto GENERATE_FRAME_LOCATIONS(
                   return resolver(identifier, callback);
                 });
   const auto result{frame.to_json().at("locations")};
+  std::filesystem::create_directories(destination.parent_path());
   sourcemeta::registry::write_stream(
       destination, "application/json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
@@ -150,7 +142,7 @@ auto GENERATE_FRAME_LOCATIONS(
 auto GENERATE_DEPENDENCIES(
     const std::filesystem::path &destination,
     const std::vector<std::filesystem::path> &dependencies,
-    const PathCallback &callback,
+    const DependencyCallback &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
@@ -171,6 +163,7 @@ auto GENERATE_DEPENDENCIES(
         result.push_back(std::move(trace));
       });
 
+  std::filesystem::create_directories(destination.parent_path());
   sourcemeta::registry::write_stream(
       destination, "application/json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
@@ -180,7 +173,7 @@ auto GENERATE_DEPENDENCIES(
 
 auto GENERATE_HEALTH(const std::filesystem::path &destination,
                      const std::vector<std::filesystem::path> &dependencies,
-                     const PathCallback &callback,
+                     const DependencyCallback &callback,
                      const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 2);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
@@ -219,6 +212,7 @@ auto GENERATE_HEALTH(const std::filesystem::path &destination,
   report.assign("score", sourcemeta::core::to_json(result.second));
   report.assign("errors", std::move(errors));
 
+  std::filesystem::create_directories(destination.parent_path());
   sourcemeta::registry::write_stream(
       destination, "application/json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
@@ -228,7 +222,7 @@ auto GENERATE_HEALTH(const std::filesystem::path &destination,
 
 auto GENERATE_BUNDLE(const std::filesystem::path &destination,
                      const std::vector<std::filesystem::path> &dependencies,
-                     const PathCallback &callback,
+                     const DependencyCallback &callback,
                      const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 2);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
@@ -240,6 +234,7 @@ auto GENERATE_BUNDLE(const std::filesystem::path &destination,
                            });
   const auto dialect_identifier{sourcemeta::core::dialect(schema)};
   assert(dialect_identifier.has_value());
+  std::filesystem::create_directories(destination.parent_path());
   sourcemeta::registry::write_stream(
       destination, "application/schema+json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
@@ -253,7 +248,7 @@ auto GENERATE_BUNDLE(const std::filesystem::path &destination,
 auto GENERATE_UNIDENTIFIED(
     const std::filesystem::path &destination,
     const std::vector<std::filesystem::path> &dependencies,
-    const PathCallback &callback,
+    const DependencyCallback &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
@@ -265,6 +260,7 @@ auto GENERATE_UNIDENTIFIED(
                                });
   const auto dialect_identifier{sourcemeta::core::dialect(schema)};
   assert(dialect_identifier.has_value());
+  std::filesystem::create_directories(destination.parent_path());
   sourcemeta::registry::write_stream(
       destination, "application/schema+json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
@@ -278,7 +274,8 @@ auto GENERATE_UNIDENTIFIED(
 auto GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
     const std::filesystem::path &destination,
     const std::vector<std::filesystem::path> &dependencies,
-    const PathCallback &, const sourcemeta::registry::Resolver &) -> void {
+    const DependencyCallback &, const sourcemeta::registry::Resolver &)
+    -> void {
   assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
@@ -289,6 +286,7 @@ auto GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
       sourcemeta::blaze::default_schema_compiler,
       sourcemeta::blaze::Mode::Exhaustive)};
   const auto result{sourcemeta::blaze::to_json(schema_template)};
+  std::filesystem::create_directories(destination.parent_path());
   sourcemeta::registry::write_stream(
       destination, "application/json",
       // Don't compress, as we need to internally read from disk
