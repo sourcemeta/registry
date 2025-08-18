@@ -7,6 +7,7 @@
 
 #include <cassert>       // assert
 #include <filesystem>    // std::filesystem
+#include <iostream>      // std::cerr
 #include <string_view>   // std::string_view
 #include <unordered_map> // std::unordered_map
 
@@ -19,17 +20,15 @@ public:
     std::filesystem::create_directories(this->path_);
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator(this->path_)) {
-      if (!entry.is_directory()) {
-        this->tracker.emplace(entry.path(), false);
-      }
+      this->tracker.emplace(entry.path(), false);
     }
   }
 
-  ~Output() {
+  auto remove_unknown_files() const {
     for (const auto &entry : this->tracker) {
-      // TODO: Delete empty directories too
       if (!entry.second) {
-        std::filesystem::remove(entry.first);
+        std::cerr << "Removing unknown file: " << entry.first.string() << "\n";
+        std::filesystem::remove_all(entry.first);
       }
     }
   }
@@ -113,7 +112,19 @@ public:
     std::lock_guard<std::mutex> lock(this->tracker_mutex);
     // Otherwise it means we wrote to the same place twice
     assert(!this->tracker.contains(path) || !this->tracker.at(path));
-    return this->tracker.insert_or_assign(path, true).first->first;
+    const auto &result{this->tracker.insert_or_assign(path, true).first->first};
+    // Track parent directories too
+    for (auto current = path; !current.empty() && current != this->path_;
+         current = current.parent_path()) {
+      this->tracker.insert_or_assign(current, true);
+    }
+
+    return result;
+  }
+
+  auto is_untracked_file(const std::filesystem::path &path) const {
+    const auto match{this->tracker.find(path)};
+    return match == this->tracker.cend() || !match->second;
   }
 
 private:

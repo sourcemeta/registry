@@ -310,7 +310,8 @@ static auto index_main(const std::string_view &program,
   for (const auto &entry :
        std::filesystem::recursive_directory_iterator{base}) {
     if (entry.is_directory() && entry.path().filename() != SENTINEL &&
-        !std::filesystem::exists(entry.path() / SENTINEL)) {
+        !std::filesystem::exists(entry.path() / SENTINEL) &&
+        !output.is_untracked_file(entry.path())) {
       schema_directories.push_back(entry.path());
     }
   }
@@ -334,14 +335,14 @@ static auto index_main(const std::string_view &program,
     output.write_metapack_json(
         relative_path, sourcemeta::registry::MetaPackEncoding::GZIP,
         sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-            configuration, navigation_base, base, entry));
+            configuration, navigation_base, base, entry, output));
   }
 
-  output.write_metapack_json(std::filesystem::path{"explorer"} / SENTINEL /
-                                 "directory.metapack",
-                             sourcemeta::registry::MetaPackEncoding::GZIP,
-                             sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-                                 configuration, navigation_base, base, base));
+  output.write_metapack_json(
+      std::filesystem::path{"explorer"} / SENTINEL / "directory.metapack",
+      sourcemeta::registry::MetaPackEncoding::GZIP,
+      sourcemeta::registry::GENERATE_NAV_DIRECTORY(
+          configuration, navigation_base, base, base, output));
 
   std::vector<std::filesystem::path> navs;
   navs.reserve(resolver.size());
@@ -411,6 +412,7 @@ static auto index_main(const std::string_view &program,
       sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
 
+  output.remove_unknown_files();
   return EXIT_SUCCESS;
 }
 
