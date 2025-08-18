@@ -6,11 +6,11 @@
   "properties": {
     "title": {
       "default": "Sourcemeta",
-      "$ref": "#/definitions/text"
+      "$ref": "#/$defs/text"
     },
     "description": {
       "default": "The next-generation JSON Schema Registry",
-      "$ref": "#/definitions/text"
+      "$ref": "#/$defs/text"
     },
     "extends": {
       "type": "array",
@@ -24,13 +24,13 @@
       "required": [ "title", "url" ],
       "properties": {
         "title": {
-          "$ref": "#/definitions/text"
+          "$ref": "#/$defs/text"
         },
         "icon": {
           "enum": [ "github", "link" ]
         },
         "url": {
-          "$ref": "#/definitions/http-url"
+          "$ref": "#/$defs/http-url"
         }
       },
       "additionalProperties": false
@@ -45,17 +45,17 @@
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
-        "$ref": "#/definitions/entry-path"
+        "$ref": "#/$defs/entry-path"
       },
       "additionalProperties": {
         "type": "object",
         "minProperties": 1,
         "properties": {
           "title": {
-            "$ref": "#/definitions/text"
+            "$ref": "#/$defs/text"
           },
           "description": {
-            "$ref": "#/definitions/text"
+            "$ref": "#/$defs/text"
           },
           "email": {
             "type": "string",
@@ -67,7 +67,7 @@
             "pattern": "^[a-z0-9-]+(/[a-z0-9-]+)?$"
           },
           "website": {
-            "$ref": "#/definitions/http-url"
+            "$ref": "#/$defs/http-url"
           }
         },
         "additionalProperties": false
@@ -81,7 +81,7 @@
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
-        "$ref": "#/definitions/entry-path"
+        "$ref": "#/$defs/entry-path"
       },
       "additionalProperties": {
         "type": "object",
@@ -91,7 +91,7 @@
             "type": "boolean"
           },
           "base": {
-            "$ref": "#/definitions/uri"
+            "$ref": "#/$defs/uri"
           },
           "defaultDialect": {
             "type": "string",
@@ -111,10 +111,10 @@
               "required": [ "from", "to" ],
               "properties": {
                 "from": {
-                  "$ref": "#/definitions/uri"
+                  "$ref": "#/$defs/uri"
                 },
                 "to": {
-                  "$ref": "#/definitions/uri"
+                  "$ref": "#/$defs/uri"
                 }
               },
               "additionalProperties": false
@@ -125,11 +125,11 @@
       }
     },
     "url": {
-      "$ref": "#/definitions/http-url"
+      "$ref": "#/$defs/http-url"
     }
   },
   "additionalProperties": false,
-  "definitions": {
+  "$defs": {
     "entry-path": {
       "pattern": "^[a-z0-9][a-z0-9-/.]*$"
     },

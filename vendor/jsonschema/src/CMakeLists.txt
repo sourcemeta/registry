@@ -2,7 +2,7 @@ add_subdirectory(http)
 
 add_executable(jsonschema_cli
   main.cc configure.h.in command.h
-  utils.h utils.cc
+  utils.h utils.cc error.h
   command_fmt.cc
   command_inspect.cc
   command_bundle.cc
@@ -24,6 +24,7 @@ target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::jsonpointer)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::jsonschema)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::yaml)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::alterschema)
+target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::options)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::jsonbinpack::compiler)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::jsonbinpack::runtime)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::blaze::compiler)

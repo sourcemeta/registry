@@ -1,6 +1,8 @@
+#include <sourcemeta/core/io.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/uri.h>
+#include <sourcemeta/core/yaml.h>
 
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
@@ -25,35 +27,34 @@ static auto get_data(const sourcemeta::core::JSON &test_case,
   assert(test_case.defines("dataPath"));
   assert(test_case.at("dataPath").is_string());
 
-  const std::filesystem::path data_path{
-      sourcemeta::jsonschema::cli::safe_weakly_canonical(
-          base / test_case.at("dataPath").to_string())};
+  const std::filesystem::path data_path{sourcemeta::core::weakly_canonical(
+      base / test_case.at("dataPath").to_string())};
   if (verbose) {
     std::cerr << "Reading test instance file: " << data_path.string() << "\n";
   }
 
   try {
-    return sourcemeta::jsonschema::cli::read_file(data_path);
+    return sourcemeta::core::read_yaml_or_json(data_path);
   } catch (...) {
     std::cout << "\n";
     throw;
   }
 }
 
-auto sourcemeta::jsonschema::cli::test(
-    const std::span<const std::string> &arguments) -> int {
-  const auto options{parse_options(arguments, {"h", "http"})};
+auto sourcemeta::jsonschema::cli::test(const sourcemeta::core::Options &options)
+    -> int {
   bool result{true};
   const auto dialect{default_dialect(options)};
-  const auto test_resolver{resolver(
-      options, options.contains("h") || options.contains("http"), dialect)};
-  const auto verbose{options.contains("verbose") || options.contains("v")};
+  const auto test_resolver{
+      resolver(options, options.contains("http"), dialect)};
+  const auto verbose{options.contains("verbose")};
   sourcemeta::blaze::Evaluator evaluator;
 
-  for (const auto &entry : for_each_json(options.at(""), parse_ignore(options),
-                                         parse_extensions(options))) {
+  for (const auto &entry :
+       for_each_json(options.positional(), parse_ignore(options),
+                     parse_extensions(options))) {
     const sourcemeta::core::JSON test{
-        sourcemeta::jsonschema::cli::read_file(entry.first)};
+        sourcemeta::core::read_yaml_or_json(entry.first)};
 
     if (!test.is_object()) {
       std::cout << entry.first.string() << ":";

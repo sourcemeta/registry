@@ -1,5 +1,6 @@
 #include <sourcemeta/jsonschema/http.h>
 
+#include <sourcemeta/core/io.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/uri.h>
@@ -18,23 +19,6 @@
 
 namespace {
 
-bool path_starts_with(const std::filesystem::path &path,
-                      const std::filesystem::path &prefix) {
-  auto path_iterator = path.begin();
-  auto prefix_iterator = prefix.begin();
-
-  while (prefix_iterator != prefix.end()) {
-    if (path_iterator == path.end() || *path_iterator != *prefix_iterator) {
-      return false;
-    }
-
-    ++path_iterator;
-    ++prefix_iterator;
-  }
-
-  return true;
-}
-
 auto handle_json_entry(
     const std::filesystem::path &entry_path,
     const std::set<std::filesystem::path> &blacklist,
@@ -44,8 +28,7 @@ auto handle_json_entry(
   if (std::filesystem::is_directory(entry_path)) {
     for (auto const &entry :
          std::filesystem::recursive_directory_iterator{entry_path}) {
-      const auto canonical{
-          sourcemeta::jsonschema::cli::safe_weakly_canonical(entry.path())};
+      const auto canonical{sourcemeta::core::weakly_canonical(entry.path())};
       if (!std::filesystem::is_directory(entry) &&
           std::any_of(extensions.cbegin(), extensions.cend(),
                       [&canonical](const auto &extension) {
@@ -53,8 +36,8 @@ auto handle_json_entry(
                       }) &&
           std::none_of(blacklist.cbegin(), blacklist.cend(),
                        [&canonical](const auto &prefix) {
-                         return prefix == canonical ||
-                                path_starts_with(canonical, prefix);
+                         return sourcemeta::core::starts_with(canonical,
+                                                              prefix);
                        })) {
         if (std::filesystem::is_empty(canonical)) {
           continue;
@@ -62,12 +45,11 @@ auto handle_json_entry(
 
         // TODO: Print a verbose message for what is getting parsed
         result.emplace_back(canonical,
-                            sourcemeta::jsonschema::cli::read_file(canonical));
+                            sourcemeta::core::read_yaml_or_json(canonical));
       }
     }
   } else {
-    const auto canonical{
-        sourcemeta::jsonschema::cli::safe_weakly_canonical(entry_path)};
+    const auto canonical{sourcemeta::core::weakly_canonical(entry_path)};
     if (!std::filesystem::exists(canonical)) {
       std::ostringstream error;
       error << "No such file or directory\n  " << canonical.string();
@@ -76,8 +58,7 @@ auto handle_json_entry(
 
     if (std::none_of(blacklist.cbegin(), blacklist.cend(),
                      [&canonical](const auto &prefix) {
-                       return prefix == canonical ||
-                              path_starts_with(canonical, prefix);
+                       return sourcemeta::core::starts_with(canonical, prefix);
                      })) {
       if (std::filesystem::is_empty(canonical)) {
         return;
@@ -85,34 +66,16 @@ auto handle_json_entry(
 
       // TODO: Print a verbose message for what is getting parsed
       result.emplace_back(canonical,
-                          sourcemeta::jsonschema::cli::read_file(canonical));
+                          sourcemeta::core::read_yaml_or_json(canonical));
     }
   }
-}
-
-auto normalize_extension(const std::string &extension) -> std::string {
-  if (extension.starts_with('.')) {
-    return extension;
-  }
-
-  std::ostringstream result;
-  result << '.' << extension;
-  return result.str();
 }
 
 } // namespace
 
 namespace sourcemeta::jsonschema::cli {
 
-auto read_file(const std::filesystem::path &path) -> sourcemeta::core::JSON {
-  if (path.extension() == ".yaml" || path.extension() == ".yml") {
-    return sourcemeta::core::read_yaml(path);
-  }
-
-  return sourcemeta::core::read_json(path);
-}
-
-auto for_each_json(const std::vector<std::string> &arguments,
+auto for_each_json(const std::vector<std::string_view> &arguments,
                    const std::set<std::filesystem::path> &blacklist,
                    const std::set<std::string> &extensions)
     -> std::vector<std::pair<std::filesystem::path, sourcemeta::core::JSON>> {
@@ -133,65 +96,16 @@ auto for_each_json(const std::vector<std::string> &arguments,
   return result;
 }
 
-auto parse_options(const std::span<const std::string> &arguments,
-                   const std::set<std::string> &flags)
-    -> std::map<std::string, std::vector<std::string>> {
-  std::map<std::string, std::vector<std::string>> options;
-  std::set<std::string> effective_flags{flags};
-  effective_flags.insert("v");
-  effective_flags.insert("verbose");
-
-  options.insert({"", {}});
-  std::optional<std::string> current_option;
-  for (const auto &argument : arguments) {
-    // Long option
-    if (argument.starts_with("--") && argument.size() > 2) {
-      current_option = argument.substr(2);
-      assert(current_option.has_value());
-      assert(!current_option.value().empty());
-      options.insert({current_option.value(), {}});
-      assert(options.contains(current_option.value()));
-      if (effective_flags.contains(current_option.value())) {
-        current_option = std::nullopt;
-      }
-
-      // Short option
-    } else if (argument.starts_with("-") && argument.size() == 2) {
-      current_option = argument.substr(1);
-      assert(current_option.has_value());
-      assert(current_option.value().size() == 1);
-      options.insert({current_option.value(), {}});
-      assert(options.contains(current_option.value()));
-      if (effective_flags.contains(current_option.value())) {
-        current_option = std::nullopt;
-      }
-
-      // Option value
-    } else if (current_option.has_value()) {
-      assert(options.contains(current_option.value()));
-      options.at(current_option.value()).emplace_back(argument);
-      current_option = std::nullopt;
-      // Positional
-    } else {
-      assert(options.contains(""));
-      options.at("").emplace_back(argument);
-    }
-  }
-
-  return options;
-}
-
 auto print(const sourcemeta::blaze::SimpleOutput &output, std::ostream &stream)
     -> void {
   stream << "error: Schema validation failure\n";
   output.stacktrace(stream, "  ");
 }
 
-auto print_annotations(
-    const sourcemeta::blaze::SimpleOutput &output,
-    const std::map<std::string, std::vector<std::string>> &options,
-    std::ostream &stream) -> void {
-  if (options.contains("verbose") || options.contains("v")) {
+auto print_annotations(const sourcemeta::blaze::SimpleOutput &output,
+                       const sourcemeta::core::Options &options,
+                       std::ostream &stream) -> void {
+  if (options.contains("verbose")) {
     for (const auto &annotation : output.annotations()) {
       for (const auto &value : annotation.second) {
         stream << "annotation: ";
@@ -268,9 +182,9 @@ auto print(const sourcemeta::blaze::TraceOutput &output, std::ostream &stream)
   }
 }
 
-static auto fallback_resolver(
-    const std::map<std::string, std::vector<std::string>> &options,
-    std::string_view identifier) -> std::optional<sourcemeta::core::JSON> {
+static auto fallback_resolver(const sourcemeta::core::Options &options,
+                              std::string_view identifier)
+    -> std::optional<sourcemeta::core::JSON> {
   auto official_result{sourcemeta::core::schema_official_resolver(identifier)};
   if (official_result.has_value()) {
     return official_result;
@@ -302,12 +216,23 @@ static auto fallback_resolver(
   }
 }
 
-auto resolver(const std::map<std::string, std::vector<std::string>> &options,
-              const bool remote,
+auto resolver(const sourcemeta::core::Options &options, const bool remote,
               const std::optional<std::string> &default_dialect)
     -> sourcemeta::core::SchemaResolver {
   sourcemeta::core::SchemaMapResolver dynamic_resolver{
       [remote, &options](std::string_view identifier) {
+        const sourcemeta::core::URI uri{std::string{identifier}};
+        if (uri.is_file()) {
+          const auto path{uri.to_path()};
+          log_verbose(options)
+              << "Attempting to read file reference from disk: "
+              << path.string() << "\n";
+          if (std::filesystem::exists(path)) {
+            return std::optional<sourcemeta::core::JSON>{
+                sourcemeta::core::read_yaml_or_json(path)};
+          }
+        }
+
         if (remote) {
           return fallback_resolver(options, identifier);
         } else {
@@ -338,34 +263,11 @@ auto resolver(const std::map<std::string, std::vector<std::string>> &options,
     }
   }
 
-  if (options.contains("r")) {
-    for (const auto &entry :
-         for_each_json(options.at("r"), parse_ignore(options),
-                       parse_extensions(options))) {
-      log_verbose(options) << "Detecting schema resources from file: "
-                           << entry.first.string() << "\n";
-      const auto result = dynamic_resolver.add(
-          entry.second, default_dialect, std::nullopt,
-          [&options](const auto &identifier) {
-            log_verbose(options)
-                << "Importing schema into the resolution context: "
-                << identifier << "\n";
-          });
-      if (!result) {
-        std::cerr
-            << "warning: No schema resources were imported from this file\n";
-        std::cerr << "  at " << entry.first.string() << "\n";
-        std::cerr << "Are you sure this schema sets any identifiers?\n";
-      }
-    }
-  }
-
   return dynamic_resolver;
 }
 
-auto log_verbose(const std::map<std::string, std::vector<std::string>> &options)
-    -> std::ostream & {
-  if (options.contains("verbose") || options.contains("v")) {
+auto log_verbose(const sourcemeta::core::Options &options) -> std::ostream & {
+  if (options.contains("verbose")) {
     return std::cerr;
   }
 
@@ -373,22 +275,20 @@ auto log_verbose(const std::map<std::string, std::vector<std::string>> &options)
   return null_stream;
 }
 
-auto parse_extensions(
-    const std::map<std::string, std::vector<std::string>> &options)
+auto parse_extensions(const sourcemeta::core::Options &options)
     -> std::set<std::string> {
   std::set<std::string> result;
 
   if (options.contains("extension")) {
     for (const auto &extension : options.at("extension")) {
       log_verbose(options) << "Using extension: " << extension << "\n";
-      result.insert(normalize_extension(extension));
-    }
-  }
-
-  if (options.contains("e")) {
-    for (const auto &extension : options.at("e")) {
-      log_verbose(options) << "Using extension: " << extension << "\n";
-      result.insert(normalize_extension(extension));
+      if (extension.starts_with('.')) {
+        result.emplace(extension);
+      } else {
+        std::ostringstream normalised_extension;
+        normalised_extension << '.' << extension;
+        result.emplace(normalised_extension.str());
+      }
     }
   }
 
@@ -401,8 +301,7 @@ auto parse_extensions(
   return result;
 }
 
-auto parse_ignore(
-    const std::map<std::string, std::vector<std::string>> &options)
+auto parse_ignore(const sourcemeta::core::Options &options)
     -> std::set<std::filesystem::path> {
   std::set<std::filesystem::path> result;
 
@@ -414,34 +313,13 @@ auto parse_ignore(
     }
   }
 
-  if (options.contains("i")) {
-    for (const auto &ignore : options.at("i")) {
-      const auto canonical{std::filesystem::weakly_canonical(ignore)};
-      log_verbose(options) << "Ignoring path: " << canonical << "\n";
-      result.insert(canonical);
-    }
-  }
-
   return result;
 }
 
-auto safe_weakly_canonical(const std::filesystem::path &input)
-    -> std::filesystem::path {
-  return std::filesystem::is_fifo(input)
-             ? input
-             : std::filesystem::weakly_canonical(input);
-}
-
-auto default_dialect(
-    const std::map<std::string, std::vector<std::string>> &options)
+auto default_dialect(const sourcemeta::core::Options &options)
     -> std::optional<std::string> {
-
   if (options.contains("default-dialect")) {
-    return options.at("default-dialect").front();
-  }
-
-  if (options.contains("d")) {
-    return options.at("d").front();
+    return std::string{options.at("default-dialect").front()};
   }
 
   return std::nullopt;

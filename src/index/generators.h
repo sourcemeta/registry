@@ -1,14 +1,11 @@
 #ifndef SOURCEMETA_REGISTRY_INDEX_GENERATORS_H_
 #define SOURCEMETA_REGISTRY_INDEX_GENERATORS_H_
 
-// TODO: These are the only rules that in theory we should be able
-// to reload as needed based on user changes
-
 #include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
 #include <sourcemeta/core/alterschema.h>
-
+#include <sourcemeta/core/build.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonpointer.h>
 #include <sourcemeta/core/jsonschema.h>
@@ -20,69 +17,15 @@
 #include "validator.h"
 
 #include <cassert>    // assert
-#include <chrono>     // std::chrono
 #include <filesystem> // std::filesystem
-#include <sstream>    // std::stringstream
 #include <utility>    // std::move
-#include <vector>     // std::vector
-
-// TODO: Elevate all of this to Core
-using DependencyCallback = std::function<void(const std::filesystem::path &)>;
-template <typename Context, typename Adapter>
-auto build(
-    Adapter &configuration,
-    const std::function<void(const typename Adapter::node_type &,
-                             const std::vector<typename Adapter::node_type> &,
-                             const DependencyCallback &, const Context &)>
-        &handler,
-    const typename Adapter::node_type &destination,
-    const std::vector<typename Adapter::node_type> &dependencies,
-    const Context &context) -> bool {
-  const auto destination_mark{configuration.mark(destination)};
-  const auto current_deps{configuration.read_dependencies(destination)};
-  if (destination_mark.has_value() && current_deps.has_value()) {
-    bool outdated{false};
-    for (const auto &entry : current_deps.value()) {
-      const auto current_mark{
-          configuration.mark(configuration.dependency_to_node(entry))};
-      if (!current_mark.has_value() ||
-          !configuration.is_fresh_against(destination_mark.value(),
-                                          current_mark.value())) {
-        outdated = true;
-        break;
-      }
-    }
-
-    if (!outdated) {
-      return false;
-    }
-  }
-
-  std::vector<typename Adapter::node_type> deps;
-  for (const auto &dependency : dependencies) {
-    assert(configuration.mark(dependency).has_value());
-    deps.emplace_back(dependency);
-  }
-
-  handler(
-      destination, dependencies,
-      [&deps, &configuration](const auto &new_dependency) {
-        assert(configuration.mark(new_dependency).has_value());
-        deps.emplace_back(new_dependency);
-      },
-      context);
-
-  configuration
-      .template write_dependencies<std::vector<typename Adapter::node_type>>(
-          destination, deps.cbegin(), deps.cend());
-  return true;
-}
 
 namespace sourcemeta::registry {
 
 auto GENERATE_MATERIALISED_SCHEMA(
     const std::filesystem::path &destination,
-    const std::vector<std::filesystem::path> &, const DependencyCallback &,
+    const sourcemeta::core::BuildDependencies<std::filesystem::path> &,
+    const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
     const std::tuple<std::string_view,
                      std::reference_wrapper<sourcemeta::registry::Validator>,
                      std::reference_wrapper<sourcemeta::registry::Resolver>>
@@ -110,9 +53,10 @@ auto GENERATE_MATERIALISED_SCHEMA(
 
 auto GENERATE_POINTER_POSITIONS(
     const std::filesystem::path &destination,
-    const std::vector<std::filesystem::path> &dependencies,
-    const DependencyCallback &, const sourcemeta::registry::Resolver &)
-    -> void {
+    const sourcemeta::core::BuildDependencies<std::filesystem::path>
+        &dependencies,
+    const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
+    const sourcemeta::registry::Resolver &) -> void {
   assert(dependencies.size() == 1);
   sourcemeta::core::PointerPositionTracker tracker;
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
@@ -129,8 +73,10 @@ auto GENERATE_POINTER_POSITIONS(
 
 auto GENERATE_FRAME_LOCATIONS(
     const std::filesystem::path &destination,
-    const std::vector<std::filesystem::path> &dependencies,
-    const DependencyCallback &callback,
+    const sourcemeta::core::BuildDependencies<std::filesystem::path>
+        &dependencies,
+    const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
+        &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
@@ -153,8 +99,10 @@ auto GENERATE_FRAME_LOCATIONS(
 
 auto GENERATE_DEPENDENCIES(
     const std::filesystem::path &destination,
-    const std::vector<std::filesystem::path> &dependencies,
-    const DependencyCallback &callback,
+    const sourcemeta::core::BuildDependencies<std::filesystem::path>
+        &dependencies,
+    const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
+        &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
@@ -183,10 +131,13 @@ auto GENERATE_DEPENDENCIES(
       [&result](auto &stream) { sourcemeta::core::stringify(result, stream); });
 }
 
-auto GENERATE_HEALTH(const std::filesystem::path &destination,
-                     const std::vector<std::filesystem::path> &dependencies,
-                     const DependencyCallback &callback,
-                     const sourcemeta::registry::Resolver &resolver) -> void {
+auto GENERATE_HEALTH(
+    const std::filesystem::path &destination,
+    const sourcemeta::core::BuildDependencies<std::filesystem::path>
+        &dependencies,
+    const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
+        &callback,
+    const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 2);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
@@ -232,10 +183,13 @@ auto GENERATE_HEALTH(const std::filesystem::path &destination,
       [&report](auto &stream) { sourcemeta::core::stringify(report, stream); });
 }
 
-auto GENERATE_BUNDLE(const std::filesystem::path &destination,
-                     const std::vector<std::filesystem::path> &dependencies,
-                     const DependencyCallback &callback,
-                     const sourcemeta::registry::Resolver &resolver) -> void {
+auto GENERATE_BUNDLE(
+    const std::filesystem::path &destination,
+    const sourcemeta::core::BuildDependencies<std::filesystem::path>
+        &dependencies,
+    const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
+        &callback,
+    const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 2);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
@@ -259,8 +213,10 @@ auto GENERATE_BUNDLE(const std::filesystem::path &destination,
 
 auto GENERATE_UNIDENTIFIED(
     const std::filesystem::path &destination,
-    const std::vector<std::filesystem::path> &dependencies,
-    const DependencyCallback &callback,
+    const sourcemeta::core::BuildDependencies<std::filesystem::path>
+        &dependencies,
+    const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
+        &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
   assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
@@ -285,9 +241,10 @@ auto GENERATE_UNIDENTIFIED(
 
 auto GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
     const std::filesystem::path &destination,
-    const std::vector<std::filesystem::path> &dependencies,
-    const DependencyCallback &, const sourcemeta::registry::Resolver &)
-    -> void {
+    const sourcemeta::core::BuildDependencies<std::filesystem::path>
+        &dependencies,
+    const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
+    const sourcemeta::registry::Resolver &) -> void {
   assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
