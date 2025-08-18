@@ -83,9 +83,25 @@ static auto index_main(const std::string_view &program,
 
   // We want to keep this file uncompressed and without a leading header to that
   // the server can quickly read on start
+  const auto configuration_summary_path{output.path() / "configuration.json"};
   auto summary{sourcemeta::core::JSON::make_object()};
   summary.assign("port", configuration.at("port"));
-  output.write_json("configuration.json", summary);
+  summary.assign("version",
+                 sourcemeta::core::JSON{sourcemeta::registry::PROJECT_VERSION});
+  // We use this configuration file to track whether we should invalidate
+  // the cache if running on a different version. Therefore, we need to be
+  // careful to not update it unless its really necessary
+  if (std::filesystem::exists(configuration_summary_path)) {
+    const auto summary_contents{
+        sourcemeta::core::read_json(configuration_summary_path)};
+    if (summary_contents != summary) {
+      output.write_json(configuration_summary_path, summary);
+    } else {
+      output.track(configuration_summary_path);
+    }
+  } else {
+    output.write_json(configuration_summary_path, summary);
+  }
 
   const auto server_url{
       sourcemeta::core::URI{configuration.at("url").to_string()}
@@ -141,9 +157,9 @@ static auto index_main(const std::string_view &program,
 
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [&output, &resolver, &validator, &mutex,
-       &adapter](const auto &schema, const auto id, const auto threads,
-                 const auto percentage) {
+      [&output, &resolver, &validator, &mutex, &adapter,
+       &configuration_summary_path](const auto &schema, const auto id,
+                                    const auto threads, const auto percentage) {
         {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(" << std::setfill(' ') << std::setw(3)
@@ -163,7 +179,8 @@ static auto index_main(const std::string_view &program,
                 std::reference_wrapper<sourcemeta::registry::Validator>,
                 std::reference_wrapper<sourcemeta::registry::Resolver>>>(
                 adapter, sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA,
-                destination, {schema.second.path.value()},
+                destination,
+                {schema.second.path.value(), configuration_summary_path},
                 {schema.first, validator, resolver})) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) "
@@ -180,9 +197,9 @@ static auto index_main(const std::string_view &program,
 
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [&output, &resolver, &configuration, &mutex,
-       &adapter](const auto &schema, const auto id, const auto threads,
-                 const auto percentage) {
+      [&output, &resolver, &configuration, &mutex, &adapter,
+       &configuration_summary_path](const auto &schema, const auto id,
+                                    const auto threads, const auto percentage) {
         {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(" << std::setfill(' ') << std::setw(3)
@@ -197,7 +214,8 @@ static auto index_main(const std::string_view &program,
         if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_POINTER_POSITIONS,
                 base_path / "positions.metapack",
-                {base_path / "schema.metapack"}, resolver)) {
+                {base_path / "schema.metapack", configuration_summary_path},
+                resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first << " [positions]\n";
         }
@@ -208,7 +226,8 @@ static auto index_main(const std::string_view &program,
         if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_FRAME_LOCATIONS,
                 base_path / "locations.metapack",
-                {base_path / "schema.metapack"}, resolver)) {
+                {base_path / "schema.metapack", configuration_summary_path},
+                resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first << " [locations]\n";
         }
@@ -219,7 +238,8 @@ static auto index_main(const std::string_view &program,
         if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_DEPENDENCIES,
                 base_path / "dependencies.metapack",
-                {base_path / "schema.metapack"}, resolver)) {
+                {base_path / "schema.metapack", configuration_summary_path},
+                resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first
                     << " [dependencies]\n";
@@ -232,7 +252,8 @@ static auto index_main(const std::string_view &program,
                 adapter, sourcemeta::registry::GENERATE_HEALTH,
                 base_path / "health.metapack",
                 {base_path / "schema.metapack",
-                 base_path / "dependencies.metapack"},
+                 base_path / "dependencies.metapack",
+                 configuration_summary_path},
                 resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first << " [health]\n";
@@ -245,7 +266,8 @@ static auto index_main(const std::string_view &program,
                 adapter, sourcemeta::registry::GENERATE_BUNDLE,
                 base_path / "bundle.metapack",
                 {base_path / "schema.metapack",
-                 base_path / "dependencies.metapack"},
+                 base_path / "dependencies.metapack",
+                 configuration_summary_path},
                 resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first << " [bundle]\n";
@@ -257,7 +279,8 @@ static auto index_main(const std::string_view &program,
         if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_UNIDENTIFIED,
                 base_path / "unidentified.metapack",
-                {base_path / "bundle.metapack"}, resolver)) {
+                {base_path / "bundle.metapack", configuration_summary_path},
+                resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first
                     << " [unidentified]\n";
@@ -272,7 +295,8 @@ static auto index_main(const std::string_view &program,
                   adapter,
                   sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
                   base_path / "blaze-exhaustive.metapack",
-                  {base_path / "bundle.metapack"}, resolver)) {
+                  {base_path / "bundle.metapack", configuration_summary_path},
+                  resolver)) {
             std::lock_guard<std::mutex> lock(mutex);
             std::cerr << "(skip) Analysing: " << schema.first
                       << " [blaze-exhaustive]\n";

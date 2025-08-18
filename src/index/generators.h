@@ -57,7 +57,6 @@ auto GENERATE_POINTER_POSITIONS(
         &dependencies,
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
     const sourcemeta::registry::Resolver &) -> void {
-  assert(dependencies.size() == 1);
   sourcemeta::core::PointerPositionTracker tracker;
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
@@ -78,7 +77,6 @@ auto GENERATE_FRAME_LOCATIONS(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
   sourcemeta::core::SchemaFrame frame{
@@ -104,7 +102,6 @@ auto GENERATE_DEPENDENCIES(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
   auto result{sourcemeta::core::JSON::make_array()};
@@ -138,7 +135,6 @@ auto GENERATE_HEALTH(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  assert(dependencies.size() == 2);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
 
@@ -190,7 +186,6 @@ auto GENERATE_BUNDLE(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  assert(dependencies.size() == 2);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
   auto schema{sourcemeta::core::parse_json(contents.value().data)};
@@ -218,7 +213,6 @@ auto GENERATE_UNIDENTIFIED(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
   auto schema{sourcemeta::core::parse_json(contents.value().data)};
@@ -245,7 +239,6 @@ auto GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
         &dependencies,
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
     const sourcemeta::registry::Resolver &) -> void {
-  assert(dependencies.size() == 1);
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
   const auto schema_template{sourcemeta::blaze::compile(

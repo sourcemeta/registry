@@ -93,3 +93,17 @@ Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
+
+# Update the configuration summary
+touch "$TMP/output/configuration.json"
+"$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt"
+remove_threads_information "$TMP/output.txt"
+cat << EOF > "$TMP/expected.txt"
+Writing output to: $(realpath "$TMP")/output
+Using configuration: $(realpath "$TMP")/registry.json
+Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
+(100%) Ingesting: https://sourcemeta.com/example/schemas/foo.json
+(100%) Analysing: https://sourcemeta.com/example/schemas/foo.json
+Generating registry explorer
+EOF
+diff "$TMP/output.txt" "$TMP/expected.txt"
