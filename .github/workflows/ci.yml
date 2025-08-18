@@ -43,8 +43,22 @@ jobs:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
 
       # Public instance
-      - run: docker build . --file public/Dockerfile --progress plain --build-arg SOURCEMETA_REGISTRY=registry-${{ matrix.edition.name }}
+      - uses: docker/setup-buildx-action@v3
         if: matrix.edition.name == 'enterprise'
+        with:
+          install: true
+          driver: docker-container
+      - uses: docker/build-push-action@v6
+        if: matrix.edition.name == 'enterprise'
+        with:
+          context: .
+          file: public/Dockerfile
+          push: false
+          build-args: |
+            SOURCEMETA_REGISTRY=registry-${{ matrix.edition.name }}
+          # Store build cache in GitHub Actions
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   website:
     runs-on: ubuntu-latest
