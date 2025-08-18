@@ -8,6 +8,8 @@
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 
+#include "output.h"
+
 #include <algorithm>        // std::sort
 #include <cassert>          // assert
 #include <chrono>           // std::chrono::system_clock::time_point
@@ -638,7 +640,8 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
 auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
                             const std::filesystem::path &navigation_base,
                             const std::filesystem::path &base,
-                            const std::filesystem::path &directory)
+                            const std::filesystem::path &directory,
+                            const sourcemeta::registry::Output &output)
     -> sourcemeta::core::JSON {
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::core::JSON::make_array()};
@@ -650,7 +653,8 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
         entry.path().string().substr(base.string().size() + 1)};
     assert(!entry_relative_path.starts_with('/'));
     if (entry.is_directory() &&
-        !std::filesystem::exists(entry.path() / "%" / "schema.metapack")) {
+        !std::filesystem::exists(entry.path() / "%" / "schema.metapack") &&
+        !output.is_untracked_file(entry.path())) {
       const auto directory_nav_path{navigation_base / entry_relative_path /
                                     "%" / "directory.metapack"};
       const auto directory_nav{
