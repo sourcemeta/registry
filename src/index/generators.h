@@ -68,7 +68,7 @@ auto GENERATE_POINTER_POSITIONS(
       destination, "application/json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::core::JSON{nullptr},
-      [&result](auto &stream) { sourcemeta::core::stringify(result, stream); });
+      [&result](auto &stream) { sourcemeta::core::prettify(result, stream); });
 }
 
 auto GENERATE_FRAME_LOCATIONS(
@@ -94,7 +94,7 @@ auto GENERATE_FRAME_LOCATIONS(
       destination, "application/json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::core::JSON{nullptr},
-      [&result](auto &stream) { sourcemeta::core::stringify(result, stream); });
+      [&result](auto &stream) { sourcemeta::core::prettify(result, stream); });
 }
 
 auto GENERATE_DEPENDENCIES(
@@ -128,7 +128,7 @@ auto GENERATE_DEPENDENCIES(
       destination, "application/json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::core::JSON{nullptr},
-      [&result](auto &stream) { sourcemeta::core::stringify(result, stream); });
+      [&result](auto &stream) { sourcemeta::core::prettify(result, stream); });
 }
 
 auto GENERATE_HEALTH(
@@ -180,7 +180,7 @@ auto GENERATE_HEALTH(
       destination, "application/json",
       sourcemeta::registry::MetaPackEncoding::GZIP,
       sourcemeta::core::JSON{nullptr},
-      [&report](auto &stream) { sourcemeta::core::stringify(report, stream); });
+      [&report](auto &stream) { sourcemeta::core::prettify(report, stream); });
 }
 
 auto GENERATE_BUNDLE(

@@ -63,7 +63,7 @@ public:
     sourcemeta::registry::write_stream(
         absolute_path, "application/json", encoding,
         sourcemeta::core::JSON{nullptr}, [&document](auto &stream) {
-          sourcemeta::core::stringify(document, stream);
+          sourcemeta::core::prettify(document, stream);
         });
 
     return this->track(absolute_path);
