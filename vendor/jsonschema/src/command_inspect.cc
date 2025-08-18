@@ -1,5 +1,7 @@
+#include <sourcemeta/core/io.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/core/yaml.h>
 
 #include <cstdlib>  // EXIT_SUCCESS, EXIT_FAILURE
 #include <iostream> // std::cout
@@ -125,22 +127,21 @@ auto operator<<(std::ostream &stream,
 }
 
 auto sourcemeta::jsonschema::cli::inspect(
-    const std::span<const std::string> &arguments) -> int {
-  const auto options{parse_options(arguments, {})};
-  if (options.at("").size() < 1) {
+    const sourcemeta::core::Options &options) -> int {
+  if (options.positional().size() < 1) {
     std::cerr
         << "error: This command expects a path to a schema. For example:\n\n"
         << "  jsonschema inspect path/to/schema.json\n";
     return EXIT_FAILURE;
   }
 
-  const std::filesystem::path schema_path{options.at("").front()};
+  const std::filesystem::path schema_path{options.positional().front()};
   const sourcemeta::core::JSON schema{
-      sourcemeta::jsonschema::cli::read_file(schema_path)};
+      sourcemeta::core::read_yaml_or_json(schema_path)};
 
   const auto dialect{default_dialect(options)};
-  const auto custom_resolver{resolver(
-      options, options.contains("h") || options.contains("http"), dialect)};
+  const auto custom_resolver{
+      resolver(options, options.contains("http"), dialect)};
   const auto identifier{sourcemeta::core::identify(
       schema, custom_resolver,
       sourcemeta::core::SchemaIdentificationStrategy::Strict, dialect)};
@@ -158,10 +159,10 @@ auto sourcemeta::jsonschema::cli::inspect(
       identifier.has_value()
           ? std::optional<sourcemeta::core::JSON::String>(std::nullopt)
           : sourcemeta::core::URI::from_path(
-                sourcemeta::jsonschema::cli::safe_weakly_canonical(schema_path))
+                sourcemeta::core::weakly_canonical(schema_path))
                 .recompose());
 
-  if (options.contains("json") || options.contains("j")) {
+  if (options.contains("json")) {
     sourcemeta::core::prettify(frame.to_json(), std::cout);
     std::cout << "\n";
   } else {

@@ -69,24 +69,6 @@ public:
     return this->track(absolute_path);
   }
 
-  auto write_metapack_jsonschema(
-      const std::filesystem::path &path,
-      const sourcemeta::registry::MetaPackEncoding encoding,
-      const sourcemeta::core::JSON &schema,
-      const sourcemeta::core::JSON::String &dialect)
-      -> const std::filesystem::path & {
-    const auto absolute_path{this->resolve(path)};
-    std::filesystem::create_directories(absolute_path.parent_path());
-    sourcemeta::registry::write_stream(
-        absolute_path, "application/schema+json", encoding,
-        sourcemeta::core::JSON{dialect}, [&schema](auto &stream) {
-          sourcemeta::core::prettify(schema, stream,
-                                     sourcemeta::core::schema_format_compare);
-        });
-
-    return this->track(absolute_path);
-  }
-
   template <typename Iterator>
   auto
   write_metapack_jsonl(const std::filesystem::path &path,

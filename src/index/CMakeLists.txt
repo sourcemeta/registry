@@ -13,6 +13,7 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::re
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::metapack)
 
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::build)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::uri)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::jsonschema)

@@ -1,3 +1,4 @@
+#include <sourcemeta/core/build.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 
@@ -39,56 +40,6 @@ static auto attribute(const sourcemeta::core::JSON &configuration,
 // the resolver will not unescape it back when computing the relative path to an
 // entry
 constexpr auto SENTINEL{"%"};
-
-class RegistryBuildAdapter {
-public:
-  using node_type = std::filesystem::path;
-  using mark_type = std::filesystem::file_time_type;
-  using dependencies_type = sourcemeta::core::JSON::Array;
-  using dependency_type = typename dependencies_type::value_type;
-
-  auto read_dependencies(const node_type &path) const
-      -> std::optional<dependencies_type> {
-    const std::filesystem::path deps_path{path.string() + ".deps"};
-    if (std::filesystem::exists(deps_path)) {
-      const auto deps{sourcemeta::core::read_json(deps_path)};
-      assert(deps.is_array());
-      assert(!deps.empty());
-      return deps.as_array();
-    } else {
-      return std::nullopt;
-    }
-  }
-
-  template <typename Collection, typename Iterator>
-  auto write_dependencies(const node_type &path, Iterator begin,
-                          Iterator end) const -> void {
-    const std::filesystem::path deps_path{path.string() + ".deps"};
-    std::filesystem::create_directories(deps_path.parent_path());
-    std::ofstream deps_stream{deps_path};
-    assert(!deps_stream.fail());
-    sourcemeta::core::stringify(
-        sourcemeta::core::to_json<Collection>(begin, end), deps_stream);
-  }
-
-  auto dependency_to_node(const dependency_type &dep) const -> node_type {
-    assert(dep.is_string());
-    return dep.to_string();
-  }
-
-  auto mark(const node_type &path) const -> std::optional<mark_type> {
-    if (std::filesystem::exists(path)) {
-      return std::filesystem::last_write_time(path);
-    } else {
-      return std::nullopt;
-    }
-  }
-
-  auto is_fresh_against(const mark_type current,
-                        const mark_type dependency) const -> bool {
-    return current >= dependency;
-  }
-};
 
 static auto index_main(const std::string_view &program,
                        const std::span<const std::string> &arguments) -> int {
@@ -184,7 +135,7 @@ static auto index_main(const std::string_view &program,
   // the small-by-default thread stack with Blaze
   constexpr auto THREAD_STACK_SIZE{8 * 1024 * 1024};
 
-  RegistryBuildAdapter adapter;
+  sourcemeta::core::BuildAdapterFilesystem adapter;
 
   std::mutex mutex;
 
@@ -207,7 +158,7 @@ static auto index_main(const std::string_view &program,
         assert(schema.second.path.has_value());
         assert(schema.second.path.value().is_absolute());
 
-        if (!build<std::tuple<
+        if (!sourcemeta::core::build<std::tuple<
                 std::string_view,
                 std::reference_wrapper<sourcemeta::registry::Validator>,
                 std::reference_wrapper<sourcemeta::registry::Resolver>>>(
@@ -243,7 +194,7 @@ static auto index_main(const std::string_view &program,
         const auto base_path{output.path() / std::filesystem::path{"schemas"} /
                              schema.second.relative_path / SENTINEL};
 
-        if (!build<sourcemeta::registry::Resolver>(
+        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_POINTER_POSITIONS,
                 base_path / "positions.metapack",
                 {base_path / "schema.metapack"}, resolver)) {
@@ -254,7 +205,7 @@ static auto index_main(const std::string_view &program,
         output.track(base_path / "positions.metapack");
         output.track(base_path / "positions.metapack.deps");
 
-        if (!build<sourcemeta::registry::Resolver>(
+        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_FRAME_LOCATIONS,
                 base_path / "locations.metapack",
                 {base_path / "schema.metapack"}, resolver)) {
@@ -265,7 +216,7 @@ static auto index_main(const std::string_view &program,
         output.track(base_path / "locations.metapack");
         output.track(base_path / "locations.metapack.deps");
 
-        if (!build<sourcemeta::registry::Resolver>(
+        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_DEPENDENCIES,
                 base_path / "dependencies.metapack",
                 {base_path / "schema.metapack"}, resolver)) {
@@ -277,7 +228,7 @@ static auto index_main(const std::string_view &program,
         output.track(base_path / "dependencies.metapack");
         output.track(base_path / "dependencies.metapack.deps");
 
-        if (!build<sourcemeta::registry::Resolver>(
+        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_HEALTH,
                 base_path / "health.metapack",
                 {base_path / "schema.metapack",
@@ -290,7 +241,7 @@ static auto index_main(const std::string_view &program,
         output.track(base_path / "health.metapack");
         output.track(base_path / "health.metapack.deps");
 
-        if (!build<sourcemeta::registry::Resolver>(
+        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_BUNDLE,
                 base_path / "bundle.metapack",
                 {base_path / "schema.metapack",
@@ -303,7 +254,7 @@ static auto index_main(const std::string_view &program,
         output.track(base_path / "bundle.metapack");
         output.track(base_path / "bundle.metapack.deps");
 
-        if (!build<sourcemeta::registry::Resolver>(
+        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_UNIDENTIFIED,
                 base_path / "unidentified.metapack",
                 {base_path / "bundle.metapack"}, resolver)) {
@@ -317,7 +268,7 @@ static auto index_main(const std::string_view &program,
 
         if (attribute(configuration, schema.second.collection_name,
                       "x-sourcemeta-registry:blaze-exhaustive")) {
-          if (!build<sourcemeta::registry::Resolver>(
+          if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                   adapter,
                   sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
                   base_path / "blaze-exhaustive.metapack",
