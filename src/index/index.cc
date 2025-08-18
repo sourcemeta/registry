@@ -158,14 +158,15 @@ static auto index_main(const std::string_view &program,
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
       [&output, &resolver, &validator, &mutex, &adapter,
-       &configuration_summary_path](const auto &schema, const auto id,
-                                    const auto threads, const auto percentage) {
+       &configuration_summary_path](const auto &schema, const auto threads,
+                                    const auto cursor) {
         {
+          const auto percentage{cursor * 100 / resolver.size()};
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(" << std::setfill(' ') << std::setw(3)
                     << static_cast<int>(percentage) << "%) "
-                    << "Ingesting: " << schema.first << " [" << id << "/"
-                    << threads << "]\n";
+                    << "Ingesting: " << schema.first << " ["
+                    << std::this_thread::get_id() << "/" << threads << "]\n";
         }
 
         const auto base_path{output.path() / std::filesystem::path{"schemas"} /
@@ -184,8 +185,8 @@ static auto index_main(const std::string_view &program,
                 {schema.first, validator, resolver})) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) "
-                    << "Ingesting: " << schema.first << " [" << id << "/"
-                    << threads << "]\n";
+                    << "Ingesting: " << schema.first << " ["
+                    << std::this_thread::get_id() << "/" << threads << "]\n";
         }
 
         output.track(destination);
@@ -198,14 +199,15 @@ static auto index_main(const std::string_view &program,
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
       [&output, &resolver, &configuration, &mutex, &adapter,
-       &configuration_summary_path](const auto &schema, const auto id,
-                                    const auto threads, const auto percentage) {
+       &configuration_summary_path](const auto &schema, const auto threads,
+                                    const auto cursor) {
         {
+          const auto percentage{cursor * 100 / resolver.size()};
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(" << std::setfill(' ') << std::setw(3)
                     << static_cast<int>(percentage) << "%) "
-                    << "Analysing: " << schema.first << " [" << id << "/"
-                    << threads << "]\n";
+                    << "Analysing: " << schema.first << " ["
+                    << std::this_thread::get_id() << "/" << threads << "]\n";
         }
 
         const auto base_path{output.path() / std::filesystem::path{"schemas"} /

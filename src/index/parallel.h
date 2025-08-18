@@ -28,7 +28,7 @@ auto parallel_for_each(Iterator first, Iterator last,
   std::exception_ptr exception = nullptr;
   auto handle_exception = [&exception_mutex,
                            &exception](std::exception_ptr pointer) {
-    std::lock_guard<std::mutex> lock(exception_mutex);
+    std::lock_guard<std::mutex> lock{exception_mutex};
     if (!exception) {
       exception = pointer;
     }
@@ -61,13 +61,12 @@ auto parallel_for_each(Iterator first, Iterator last,
         },
         new std::function<void()>([&tasks, &queue_mutex, &work_callback,
                                    &handle_exception, parallelism, total] {
-          const auto thread_id{std::this_thread::get_id()};
           try {
             while (true) {
               Iterator iterator;
               std::size_t cursor{0};
               {
-                std::lock_guard<std::mutex> lock(queue_mutex);
+                std::lock_guard<std::mutex> lock{queue_mutex};
                 if (tasks.empty()) {
                   return;
                 }
@@ -75,8 +74,7 @@ auto parallel_for_each(Iterator first, Iterator last,
                 cursor = total - tasks.size() + 1;
                 tasks.pop();
               }
-              const auto percentage{cursor * 100 / total};
-              work_callback(*iterator, thread_id, parallelism, percentage);
+              work_callback(*iterator, parallelism, cursor);
             }
           } catch (...) {
             handle_exception(std::current_exception());
