@@ -224,6 +224,10 @@
       "base": "https://gcn.nasa.gov/schema/v1.0.0/gcn",
       "path": "../vendor/public/nasa-gcn-1-0-0"
     },
+    "ossf/osv/v1.7.3": {
+      "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+      "path": "../vendor/public/osv-schema-1-7-3"
+    },
     "ossf/osv/v1.7.2": {
       "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
       "path": "../vendor/public/osv-schema-1-7-2"
