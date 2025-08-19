@@ -9,41 +9,17 @@
 #include <filesystem>    // std::filesystem::path
 #include <optional>      // std::optional
 #include <unordered_map> // std::unordered_map
+#include <unordered_set> // std::unordered_set
 #include <utility>       // std::pair
 #include <variant>       // std::variant
 #include <vector>        // std::vector
 
 namespace sourcemeta::registry {
 
-// TODO: Move this to Core as a SchemConfig module
-class Configuration {
-public:
-  Configuration(const std::filesystem::path &path,
-                const std::filesystem::path &collections);
+struct Configuration {
+  static auto parse(const std::filesystem::path &path,
+                    const std::filesystem::path &collections) -> Configuration;
 
-  struct Collection {
-    Collection(const std::filesystem::path &base_path,
-               sourcemeta::core::JSON::String entry_name,
-               const sourcemeta::core::JSON &entry);
-
-    auto default_identifier(const std::filesystem::path &schema_path) const
-        -> std::string;
-
-    std::filesystem::path path;
-    sourcemeta::core::JSON::String name;
-    sourcemeta::core::URI base_uri;
-    std::optional<sourcemeta::core::JSON::String> default_dialect;
-    std::vector<std::pair<sourcemeta::core::URI, sourcemeta::core::URI>> rebase;
-    bool blaze_exhaustive;
-  };
-
-  auto inflate(const std::filesystem::path &path,
-               sourcemeta::core::JSON &target) const -> void;
-
-private:
-  sourcemeta::core::JSON data_;
-
-public:
   sourcemeta::core::JSON::String url;
   sourcemeta::core::JSON::String title;
   sourcemeta::core::JSON::String description;
@@ -58,10 +34,27 @@ public:
   };
 
   std::optional<Action> action;
-  std::unordered_map<std::filesystem::path,
-                     // TODO: Turn the JSON variant here into Page or something
-                     // like that
-                     std::variant<Collection, sourcemeta::core::JSON>>
+
+  struct Metadata {
+    std::optional<sourcemeta::core::JSON::String> title;
+    std::optional<sourcemeta::core::JSON::String> description;
+    std::optional<sourcemeta::core::JSON::String> email;
+    std::optional<sourcemeta::core::JSON::String> github;
+    std::optional<sourcemeta::core::JSON::String> website;
+  };
+
+  struct Page : public Metadata {};
+
+  struct Collection : public Metadata {
+    std::filesystem::path absolute_path;
+    std::filesystem::path relative_path;
+    sourcemeta::core::JSON::String base;
+    std::optional<sourcemeta::core::JSON::String> default_dialect;
+    std::vector<std::pair<sourcemeta::core::URI, sourcemeta::core::URI>> rebase;
+    std::unordered_set<sourcemeta::core::JSON::String> attributes;
+  };
+
+  std::unordered_map<std::filesystem::path, std::variant<Page, Collection>>
       entries;
 };
 

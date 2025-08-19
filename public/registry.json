@@ -398,27 +398,27 @@
     "dats/v1.0.0": {
       "base": "https://w3id.org/dats/schema",
       "path": "../vendor/public/dats-1-0-0",
-      "x-sourcemeta-registry:blaze-exhaustive": false
+      "x-sourcemeta-registry:no-blaze-exhaustive": true
     },
     "hl7/fhir/r5": {
       "base": "http://hl7.org/fhir/json-schema",
       "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r5.core/package/openapi",
-      "x-sourcemeta-registry:blaze-exhaustive": false
+      "x-sourcemeta-registry:no-blaze-exhaustive": true
     },
     "hl7/fhir/r4b": {
       "base": "http://hl7.org/fhir/json-schema",
       "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r4b.core/package/openapi",
-      "x-sourcemeta-registry:blaze-exhaustive": false
+      "x-sourcemeta-registry:no-blaze-exhaustive": true
     },
     "hl7/fhir/r4": {
       "base": "http://hl7.org/fhir/json-schema",
       "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r4.core/package/openapi",
-      "x-sourcemeta-registry:blaze-exhaustive": false
+      "x-sourcemeta-registry:no-blaze-exhaustive": true
     },
     "hl7/fhir/r3": {
       "base": "http://hl7.org/fhir/json-schema",
       "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r3.core/package/openapi",
-      "x-sourcemeta-registry:blaze-exhaustive": false
+      "x-sourcemeta-registry:no-blaze-exhaustive": true
     },
     "asyncapi": {
       "base": "http://asyncapi.com",

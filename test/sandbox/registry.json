@@ -62,7 +62,7 @@
     "no-blaze": {
       "base": "https://other.com",
       "path": "./schemas/no-blaze",
-      "x-sourcemeta-registry:blaze-exhaustive": false
+      "x-sourcemeta-registry:no-blaze-exhaustive": true
     }
   }
 }
