@@ -12,6 +12,7 @@ collections/geojson/v1.0.3 https://github.com/geojson/schema v1.0.3
 collections/geojson/v1.0.2 https://github.com/geojson/schema v1.0.2
 collections/geojson/v1.0.1 https://github.com/geojson/schema v1.0.1
 collections/geojson/v1.0.0 https://github.com/geojson/schema v1.0.0
+collections/modelcontextprotocol https://github.com/modelcontextprotocol/modelcontextprotocol 2025-06-18
 public/nasa-gcn-1-0-0 https://github.com/nasa-gcn/gcn-schema v1.0.0
 public/nasa-gcn-2-0-0 https://github.com/nasa-gcn/gcn-schema v2.0.0
 public/nasa-gcn-3-0-0 https://github.com/nasa-gcn/gcn-schema v3.0.0

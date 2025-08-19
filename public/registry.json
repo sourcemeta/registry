@@ -16,7 +16,10 @@
     "@geojson/v1.0.3",
     "@geojson/v1.0.2",    
     "@geojson/v1.0.1",
-    "@geojson/v1.0.0" 
+    "@geojson/v1.0.0",
+    "@modelcontextprotocol/2025-06-18",
+    "@modelcontextprotocol/2025-03-26",
+    "@modelcontextprotocol/2024-11-05"
   ],
   "pages": {
     "nasa": {
