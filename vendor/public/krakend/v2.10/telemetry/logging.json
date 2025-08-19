@@ -11,7 +11,7 @@
     "format": {
       "$id": "#format",
       "title": "Application log format",
-      "description": "Specify the format of the application logs: default, logstash, or custom.\nThe custom format needs an additional key \"custom_format\".\nThe \"logstash\" format needs the \"telemetry/logstash\" component added too.\n\nSee: https://www.krakend.io/docs/logging/",
+      "description": "Specify the format of the application logs: default, logstash, or custom.\nThe custom format needs an additional key \"custom_format\".\n\nSee: https://www.krakend.io/docs/logging/",
       "examples": [
         "default",
         "logstash",
