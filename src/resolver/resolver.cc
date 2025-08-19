@@ -117,7 +117,7 @@ auto Resolver::operator()(
 }
 
 auto Resolver::add(const sourcemeta::core::URI &server_url,
-                   const ResolverCollection &collection,
+                   const Configuration::Collection &collection,
                    const std::filesystem::path &path)
     -> std::pair<std::string, std::string> {
   const auto default_identifier{collection.default_identifier(path)};

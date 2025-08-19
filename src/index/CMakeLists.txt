@@ -1,8 +1,7 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index 
   FOLDER "Registry/Index" 
   SOURCES index.cc output.h generators.h parallel.h
-    configure.h.in validator.h explorer.h configuration.h
-    "${PROJECT_SOURCE_DIR}/schemas/configuration.json")
+    configure.h.in validator.h explorer.h)
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
 
@@ -12,6 +11,7 @@ target_compile_definitions(sourcemeta_registry_index
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::resolver)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::metapack)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::configuration)
 
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::build)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::uri)
@@ -37,7 +37,6 @@ else()
     PRIVATE SOURCEMETA_REGISTRY_STARTER)
 endif()
 
-file(READ "${PROJECT_SOURCE_DIR}/schemas/configuration.json" SCHEMA_CONFIGURATION)
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 

@@ -2,16 +2,15 @@
 
 #include <vector>
 
+#include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/resolver.h>
 
 #define RESOLVER_INIT(name)                                                    \
   sourcemeta::registry::Resolver name;                                         \
-  const auto configuration{sourcemeta::core::read_json(CONFIGURATION_PATH)};
-
-#define RESOLVER_COLLECTION_INIT(name, collection_name)                        \
-  const sourcemeta::registry::ResolverCollection name{                         \
-      std::filesystem::path{CONFIGURATION_PATH}.parent_path(),                 \
-      (collection_name), configuration.at("schemas").at(collection_name)};
+  const sourcemeta::registry::Configuration configuration{                     \
+      CONFIGURATION_PATH,                                                      \
+      std::filesystem::path{CONFIGURATION_PATH}.parent_path() /                \
+          "collections"};
 
 #define RESOLVER_EXPECT(resolver, expected_uri, expected_schema)               \
   {                                                                            \
@@ -20,17 +19,17 @@
     EXPECT_EQ(schema.value(), sourcemeta::core::parse_json(expected_schema));  \
   }
 
-#define RESOLVER_IMPORT(resolver, collection, relative_path)                   \
-  (resolver).add(configuration.at("url").to_string(), collection,              \
-                 std::filesystem::path{SCHEMAS_PATH} / collection.name /       \
-                     (relative_path))
+#define RESOLVER_IMPORT(resolver, collection_name, relative_path)              \
+  (resolver).add(                                                              \
+      configuration.url(), configuration.collection(collection_name).value(),  \
+      std::filesystem::path{SCHEMAS_PATH} / collection_name / (relative_path))
 
 #define RESOLVER_ADD(resolver, collection_name, relative_path,                 \
                      expected_current_uri, expected_final_uri,                 \
                      expected_schema)                                          \
   {                                                                            \
-    RESOLVER_COLLECTION_INIT(collection, (collection_name));                   \
-    const auto result{RESOLVER_IMPORT(resolver, collection, (relative_path))}; \
+    const auto result{                                                         \
+        RESOLVER_IMPORT(resolver, (collection_name), (relative_path))};        \
     EXPECT_EQ(result.first, (expected_current_uri));                           \
     EXPECT_EQ(result.second, (expected_final_uri));                            \
     RESOLVER_EXPECT(resolver, (result.second), (expected_schema));             \
@@ -94,8 +93,7 @@ TEST(Resolver, duplicate_id) {
     "$id": "http://localhost:8000/example/2020-12-with-id-json.json"
   })JSON");
 
-  RESOLVER_COLLECTION_INIT(collection, "example");
-  EXPECT_THROW(RESOLVER_IMPORT(resolver, collection,
+  EXPECT_THROW(RESOLVER_IMPORT(resolver, "example",
                                "2020-12-with-id-json-duplicate.json"),
                sourcemeta::core::SchemaError);
 }
@@ -284,16 +282,15 @@ TEST(Resolver, example_2020_12_meta) {
 
 TEST(Resolver, example_2020_12_meta_schema) {
   RESOLVER_INIT(resolver);
-  RESOLVER_COLLECTION_INIT(collection, "example");
   const auto schema_result{
-      RESOLVER_IMPORT(resolver, collection, "2020-12-meta-schema.json")};
+      RESOLVER_IMPORT(resolver, "example", "2020-12-meta-schema.json")};
 
   // We can't resolve it yet until we first satisfy the metaschema
   EXPECT_THROW(resolver(schema_result.second),
                sourcemeta::core::SchemaResolutionError);
 
   // Note we add the metaschema AFTER the schema
-  RESOLVER_IMPORT(resolver, collection, "2020-12-meta.json");
+  RESOLVER_IMPORT(resolver, "example", "2020-12-meta.json");
 
   RESOLVER_EXPECT(resolver, schema_result.second, R"JSON({
     "$schema": "http://localhost:8000/example/2020-12-meta.json",
