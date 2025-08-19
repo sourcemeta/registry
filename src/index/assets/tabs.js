@@ -24,7 +24,7 @@ if (initialTab) {
       selectTab(element, initialTab);
     }
   });
-} else {
+} else if (tabButtons[0]) {
   selectTab(tabButtons[0], tabButtons[0].getAttribute("data-sourcemeta-ui-tab-target"));
 }
 
