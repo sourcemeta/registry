@@ -1,0 +1,14 @@
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+docs/
+package-lock.json
+package.json
+README.md
+SECURITY.md
+tsconfig.json
+schema/draft
+schema/2024-11-05/schema.ts
+schema/2025-03-26/schema.ts
+schema/2025-06-18/schema.ts
+.npmrc
+.nvmrc
