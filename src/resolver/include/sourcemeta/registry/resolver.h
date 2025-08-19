@@ -52,6 +52,7 @@ public:
     // TODO: Do we really need this member?
     std::string original_identifier;
     std::string collection_name;
+    bool blaze_exhaustive;
     sourcemeta::core::SchemaVisitorReference reference_visitor;
   };
 

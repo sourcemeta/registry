@@ -20,9 +20,11 @@
   }
 
 #define RESOLVER_IMPORT(resolver, collection_name, relative_path)              \
-  (resolver).add(                                                              \
-      configuration.url(), configuration.collection(collection_name).value(),  \
-      std::filesystem::path{SCHEMAS_PATH} / collection_name / (relative_path))
+  (resolver).add(configuration.url,                                            \
+                 std::get<sourcemeta::registry::Configuration::Collection>(    \
+                     configuration.entries.at(collection_name)),               \
+                 std::filesystem::path{SCHEMAS_PATH} / collection_name /       \
+                     (relative_path))
 
 #define RESOLVER_ADD(resolver, collection_name, relative_path,                 \
                      expected_current_uri, expected_final_uri,                 \

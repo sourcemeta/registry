@@ -169,6 +169,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
             .relative_path = "",
             .original_identifier = effective_identifier,
             .collection_name = collection.name,
+            .blaze_exhaustive = collection.blaze_exhaustive,
             // TODO: We should avoid this vector / string copy
             .reference_visitor =
                 [rebases = collection.rebase](

@@ -51,10 +51,6 @@ auto preprocess_configuration(
     }
   }
 
-  result.assign_if_missing("title", sourcemeta::core::JSON{"Sourcemeta"});
-  result.assign_if_missing(
-      "description",
-      sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
   result.merge(configuration.as_object());
   configuration = std::move(result);
 }
@@ -81,71 +77,94 @@ namespace sourcemeta::registry {
 
 Configuration::Configuration(const std::filesystem::path &path,
                              const std::filesystem::path &collections)
-    : base_{path.parent_path()}, data_{sourcemeta::core::read_json(path)} {
+    : data_{sourcemeta::core::read_json(path)} {
   // TODO: Polish this
-  preprocess_configuration(collections, this->base_, this->data_);
+  preprocess_configuration(collections, path.parent_path(), this->data_);
 
-  if (!this->data_.defines("url")) {
-    throw ConfigurationValidationError(path, {},
-                                       "Missing 'url' required property");
+  this->data_.assign_if_missing("title", sourcemeta::core::JSON{"Sourcemeta"});
+  this->data_.assign_if_missing(
+      "description",
+      sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
+
+#define VALIDATE(condition, pointer, error)                                    \
+  if (!(condition)) {                                                          \
+    throw ConfigurationValidationError(                                        \
+        path, sourcemeta::core::Pointer(pointer), (error));                    \
   }
-}
 
-auto Configuration::base() const -> const std::filesystem::path & {
-  return this->base_;
-}
+  VALIDATE(this->data_.defines("url"), {}, "Missing 'url' required property");
+  VALIDATE(this->data_.at("url").is_string(), {"url"},
+           "The 'url' property must be a string");
+  this->url = sourcemeta::core::URI{this->data_.at("url").to_string()}
+                  .canonicalize()
+                  .recompose();
 
-auto Configuration::url() const -> const sourcemeta::core::JSON::String & {
-  assert(this->data_.defines("url"));
-  assert(this->data_.at("url").is_string());
-  return this->data_.at("url").to_string();
-}
+  VALIDATE(this->data_.defines("title"), {},
+           "Missing 'title' required property");
+  VALIDATE(this->data_.at("title").is_string(), {"title"},
+           "The 'title' property must be a string");
+  this->title = this->data_.at("title").to_string();
 
-auto Configuration::title() const -> const sourcemeta::core::JSON::String & {
-  assert(this->data_.defines("title"));
-  assert(this->data_.at("title").is_string());
-  return this->data_.at("title").to_string();
-}
+  VALIDATE(this->data_.defines("description"), {},
+           "Missing 'description' required property");
+  VALIDATE(this->data_.at("description").is_string(), {"description"},
+           "The 'description' property must be a string");
+  this->description = this->data_.at("description").to_string();
 
-auto Configuration::description() const
-    -> const sourcemeta::core::JSON::String & {
-  assert(this->data_.defines("description"));
-  assert(this->data_.at("description").is_string());
-  return this->data_.at("description").to_string();
-}
+  VALIDATE(this->data_.defines("port"), {}, "Missing 'port' required property");
+  VALIDATE(this->data_.at("port").is_integer(), {"port"},
+           "The 'description' property must be an integer");
+  VALIDATE(this->data_.at("port").is_positive(), {"port"},
+           "The 'description' property must be a positive integer");
+  this->port = this->data_.at("port").to_integer();
 
-auto Configuration::hero() const
-    -> std::optional<sourcemeta::core::JSON::String> {
   if (this->data_.defines("hero")) {
-    return this->data_.at("hero").to_string();
-  } else {
-    return std::nullopt;
+    VALIDATE(this->data_.at("hero").is_string(), {"hero"},
+             "The 'hero' property must be a string");
+    this->hero = this->data_.at("hero").to_string();
   }
-}
 
-auto Configuration::head() const
-    -> std::optional<sourcemeta::core::JSON::String> {
   if (this->data_.defines("head")) {
-    return this->data_.at("head").to_string();
-  } else {
-    return std::nullopt;
+    VALIDATE(this->data_.at("head").is_string(), {"head"},
+             "The 'head' property must be a string");
+    this->hero = this->data_.at("head").to_string();
   }
-}
 
-auto Configuration::port() const -> sourcemeta::core::JSON::Integer {
-  assert(this->data_.defines("port"));
-  assert(this->data_.at("port").is_integer());
-  return this->data_.at("port").to_integer();
-}
-
-auto Configuration::action() const -> std::optional<Action> {
   if (this->data_.defines("action")) {
-    return Action{.url = this->data_.at("action").at("url").to_string(),
-                  .icon = this->data_.at("action").at("icon").to_string(),
-                  .title = this->data_.at("action").at("title").to_string()};
-  } else {
-    return std::nullopt;
+    VALIDATE(this->data_.at("action").is_object(), {},
+             "The 'action' property must be an object");
+    VALIDATE(this->data_.at("action").defines("url"), {},
+             "The 'action' property must define a 'url' property");
+    VALIDATE(this->data_.at("action").defines("icon"), {},
+             "The 'action' property must define a 'icon' property");
+    VALIDATE(this->data_.at("action").defines("title"), {},
+             "The 'action' property must define a 'title' property");
+    VALIDATE(this->data_.at("action").at("url").is_string(),
+             sourcemeta::core::Pointer({"action", "url"}),
+             "The 'action/url' property must be a string");
+    VALIDATE(this->data_.at("action").at("icon").is_string(),
+             sourcemeta::core::Pointer({"action", "icon"}),
+             "The 'action/icon' property must be a string");
+    VALIDATE(this->data_.at("action").at("title").is_string(),
+             sourcemeta::core::Pointer({"action", "title"}),
+             "The 'action/title' property must be a string");
+    this->action = {.url = this->data_.at("action").at("url").to_string(),
+                    .icon = this->data_.at("action").at("icon").to_string(),
+                    .title = this->data_.at("action").at("title").to_string()};
   }
+
+  VALIDATE(this->data_.defines("schemas"), {},
+           "Missing 'schemas' required property");
+  VALIDATE(this->data_.at("schemas").is_object(), {"schemas"},
+           "The 'schemas' property must be an object");
+  for (const auto &entry : this->data_.at("schemas").as_object()) {
+    this->entries.emplace(
+        entry.first,
+        // TODO: Parse collections right here
+        Collection{path.parent_path(), entry.first, entry.second});
+  }
+
+#undef VALIDATE
 }
 
 auto Configuration::inflate(const std::filesystem::path &path,
@@ -181,32 +200,6 @@ auto Configuration::inflate(const std::filesystem::path &path,
   }
 }
 
-auto Configuration::attribute(const std::filesystem::path &path,
-                              const sourcemeta::core::JSON::String &name) const
-    -> bool {
-  return this->data_.at("schemas")
-      .at(path)
-      .at_or(name, sourcemeta::core::JSON{true})
-      .to_boolean();
-}
-
-auto Configuration::collection(const std::filesystem::path &path) const
-    -> std::optional<Collection> {
-  if (this->data_.at("schemas").defines(path)) {
-    return Collection{this->base_, path, this->data_.at("schemas").at(path)};
-  } else {
-    return std::nullopt;
-  }
-}
-
-auto Configuration::collections() const -> std::vector<Collection> {
-  std::vector<Collection> result;
-  for (const auto &entry : this->data_.at("schemas").as_object()) {
-    result.emplace_back(this->base_, entry.first, entry.second);
-  }
-  return result;
-}
-
 Configuration::Collection::Collection(const std::filesystem::path &base_path,
                                       sourcemeta::core::JSON::String entry_name,
                                       const sourcemeta::core::JSON &entry)
@@ -220,7 +213,11 @@ Configuration::Collection::Collection(const std::filesystem::path &base_path,
               ? entry.at("defaultDialect").to_string()
               : static_cast<std::optional<sourcemeta::core::JSON::String>>(
                     std::nullopt)},
-      rebase{parse_rebase(entry)} {}
+      rebase{parse_rebase(entry)},
+      blaze_exhaustive{entry
+                           .at_or("x-sourcemeta-registry:blaze-exhaustive",
+                                  sourcemeta::core::JSON{true})
+                           .to_boolean()} {}
 
 auto Configuration::Collection::default_identifier(
     const std::filesystem::path &schema_path) const -> std::string {

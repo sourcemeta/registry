@@ -70,7 +70,7 @@ static auto index_main(const std::string_view &program,
   // the server can quickly read on start
   const auto configuration_summary_path{output.path() / "configuration.json"};
   auto summary{sourcemeta::core::JSON::make_object()};
-  summary.assign("port", sourcemeta::core::to_json(configuration.port()));
+  summary.assign("port", sourcemeta::core::to_json(configuration.port));
   summary.assign("version",
                  sourcemeta::core::JSON{sourcemeta::registry::PROJECT_VERSION});
   // We use this configuration file to track whether we should invalidate
@@ -88,10 +88,15 @@ static auto index_main(const std::string_view &program,
     output.write_json(configuration_summary_path, summary);
   }
 
-  const auto server_url{
-      sourcemeta::core::URI{configuration.url()}.canonicalize()};
+  for (const auto &element : configuration.entries) {
+    if (!std::holds_alternative<
+            sourcemeta::registry::Configuration::Collection>(element.second)) {
+      continue;
+    }
 
-  for (const auto &collection : configuration.collections()) {
+    const auto &collection{
+        std::get<sourcemeta::registry::Configuration::Collection>(
+            element.second)};
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection.path}) {
       const auto extension{entry.path().extension()};
@@ -125,7 +130,7 @@ static auto index_main(const std::string_view &program,
       }
 #endif
 
-      resolver.add(server_url, collection, entry.path());
+      resolver.add(configuration.url, collection, entry.path());
     }
   };
 
@@ -180,9 +185,8 @@ static auto index_main(const std::string_view &program,
 
   sourcemeta::registry::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [&output, &resolver, &configuration, &mutex, &adapter,
-       &configuration_summary_path](const auto &schema, const auto threads,
-                                    const auto cursor) {
+      [&output, &resolver, &mutex, &adapter, &configuration_summary_path](
+          const auto &schema, const auto threads, const auto cursor) {
         {
           const auto percentage{cursor * 100 / resolver.size()};
           std::lock_guard<std::mutex> lock(mutex);
@@ -273,8 +277,7 @@ static auto index_main(const std::string_view &program,
         output.track(base_path / "unidentified.metapack");
         output.track(base_path / "unidentified.metapack.deps");
 
-        if (configuration.attribute(schema.second.collection_name,
-                                    "x-sourcemeta-registry:blaze-exhaustive")) {
+        if (schema.second.blaze_exhaustive) {
           if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                   adapter,
                   sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
@@ -303,7 +306,7 @@ static auto index_main(const std::string_view &program,
     output.write_metapack_json(
         schema_nav_path, sourcemeta::registry::MetaPackEncoding::GZIP,
         sourcemeta::registry::GENERATE_NAV_SCHEMA(
-            configuration.url(), resolver,
+            configuration.url, resolver,
             output.path() / "schemas" / schema.second.relative_path / SENTINEL /
                 "schema.metapack",
             output.path() / "schemas" / schema.second.relative_path / SENTINEL /
