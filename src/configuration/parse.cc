@@ -114,7 +114,7 @@ auto Configuration::parse(const std::filesystem::path &path,
   if (data.defines("head")) {
     VALIDATE(data.at("head").is_string(), {"head"},
              "The 'head' property must be a string");
-    result.hero = data.at("head").to_string();
+    result.head = data.at("head").to_string();
   }
 
   if (data.defines("action")) {
