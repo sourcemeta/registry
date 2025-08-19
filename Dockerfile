@@ -11,7 +11,6 @@ COPY package.json /source/package.json
 COPY package-lock.json /source/package-lock.json
 COPY cmake /source/cmake
 COPY src /source/src
-COPY schemas /source/schemas
 COPY collections /source/collections
 COPY vendor /source/vendor
 COPY CMakeLists.txt /source/CMakeLists.txt
@@ -19,7 +18,6 @@ COPY CMakeLists.txt /source/CMakeLists.txt
 # For testing
 COPY test/cli /source/test/cli
 COPY test/unit /source/test/unit
-COPY test/schemas /source/test/schemas
 
 # Commercial editions require a paid license
 # See https://github.com/sourcemeta/registry/blob/main/LICENSE
@@ -42,8 +40,6 @@ RUN cmake --install /build --prefix /usr --verbose --config Release \
 
 # Linting
 RUN cmake --build /build --config Release --target clang_format_test
-RUN cmake --build /build --config Release --target jsonschema_fmt_test
-RUN cmake --build /build --config Release --target jsonschema_lint
 RUN cmake --build /build --config Release --target shellcheck
 
 RUN ctest --test-dir /build --build-config Release \

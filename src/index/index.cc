@@ -2,11 +2,11 @@
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 
+#include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/license.h>
 #include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
-#include "configuration.h"
 #include "configure.h"
 #include "explorer.h"
 #include "generators.h"
@@ -25,15 +25,6 @@
 #include <string_view> // std::string_view
 #include <utility>     // std::move
 #include <vector>      // std::vector
-
-static auto attribute(const sourcemeta::core::JSON &configuration,
-                      const sourcemeta::core::JSON::String &collection,
-                      const sourcemeta::core::JSON::String &name) -> bool {
-  return configuration.at("schemas")
-      .at(collection)
-      .at_or(name, sourcemeta::core::JSON{true})
-      .to_boolean();
-}
 
 // We rely on this special prefix to avoid file system collisions. The reason it
 // works is that URIs cannot have "%" without percent-encoding it as "%25", and
@@ -72,20 +63,14 @@ static auto index_main(const std::string_view &program,
   sourcemeta::registry::Validator validator{resolver};
   const auto configuration_path{std::filesystem::canonical(arguments[0])};
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
-  const auto configuration_schema{sourcemeta::core::parse_json(
-      std::string{sourcemeta::registry::SCHEMA_CONFIGURATION})};
-  auto configuration{sourcemeta::core::read_json(configuration_path)};
-  sourcemeta::registry::preprocess_configuration(
-      SOURCEMETA_REGISTRY_COLLECTIONS, configuration_path.parent_path(),
-      configuration_schema, configuration);
-  validator.validate_or_throw(configuration_schema, configuration,
-                              "Invalid configuration");
+  const sourcemeta::registry::Configuration configuration{
+      configuration_path, SOURCEMETA_REGISTRY_COLLECTIONS};
 
   // We want to keep this file uncompressed and without a leading header to that
   // the server can quickly read on start
   const auto configuration_summary_path{output.path() / "configuration.json"};
   auto summary{sourcemeta::core::JSON::make_object()};
-  summary.assign("port", configuration.at("port"));
+  summary.assign("port", sourcemeta::core::to_json(configuration.port()));
   summary.assign("version",
                  sourcemeta::core::JSON{sourcemeta::registry::PROJECT_VERSION});
   // We use this configuration file to track whether we should invalidate
@@ -104,12 +89,9 @@ static auto index_main(const std::string_view &program,
   }
 
   const auto server_url{
-      sourcemeta::core::URI{configuration.at("url").to_string()}
-          .canonicalize()};
-  for (const auto &schema_entry : configuration.at("schemas").as_object()) {
-    const sourcemeta::registry::ResolverCollection collection{
-        configuration_path.parent_path(), schema_entry.first,
-        schema_entry.second};
+      sourcemeta::core::URI{configuration.url()}.canonicalize()};
+
+  for (const auto &collection : configuration.collections()) {
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{collection.path}) {
       const auto extension{entry.path().extension()};
@@ -145,7 +127,7 @@ static auto index_main(const std::string_view &program,
 
       resolver.add(server_url, collection, entry.path());
     }
-  }
+  };
 
   // Give it a generous thread stack size, otherwise we might overflow
   // the small-by-default thread stack with Blaze
@@ -291,8 +273,8 @@ static auto index_main(const std::string_view &program,
         output.track(base_path / "unidentified.metapack");
         output.track(base_path / "unidentified.metapack.deps");
 
-        if (attribute(configuration, schema.second.collection_name,
-                      "x-sourcemeta-registry:blaze-exhaustive")) {
+        if (configuration.attribute(schema.second.collection_name,
+                                    "x-sourcemeta-registry:blaze-exhaustive")) {
           if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                   adapter,
                   sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
@@ -321,7 +303,7 @@ static auto index_main(const std::string_view &program,
     output.write_metapack_json(
         schema_nav_path, sourcemeta::registry::MetaPackEncoding::GZIP,
         sourcemeta::registry::GENERATE_NAV_SCHEMA(
-            configuration, resolver,
+            configuration.url(), resolver,
             output.path() / "schemas" / schema.second.relative_path / SENTINEL /
                 "schema.metapack",
             output.path() / "schemas" / schema.second.relative_path / SENTINEL /
@@ -453,6 +435,13 @@ auto main(int argc, char *argv[]) noexcept -> int {
     }
 
     return index_main(program, arguments);
+  } catch (const sourcemeta::registry::ConfigurationValidationError &error) {
+    std::cerr << "error: " << error.what() << "\n  " << error.description()
+              << "\n"
+              << "    at location \""
+              << sourcemeta::core::to_string(error.pointer()) << "\"\n"
+              << "    at  " << error.path().string() << "\n";
+    return EXIT_FAILURE;
   } catch (const sourcemeta::registry::ValidatorError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
     return EXIT_FAILURE;

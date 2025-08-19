@@ -5,7 +5,7 @@
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/uri.h>
 
-#include <sourcemeta/registry/resolver_collection.h>
+#include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/resolver_error.h>
 
 #include <filesystem>    // std::filesystem
@@ -33,7 +33,7 @@ public:
       -> std::optional<sourcemeta::core::JSON>;
 
   auto add(const sourcemeta::core::URI &server_url,
-           const ResolverCollection &collection,
+           const Configuration::Collection &collection,
            const std::filesystem::path &path)
       -> std::pair<std::string, std::string>;
 

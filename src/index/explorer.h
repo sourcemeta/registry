@@ -1,6 +1,7 @@
 #ifndef SOURCEMETA_REGISTRY_INDEX_EXPLORER_H_
 #define SOURCEMETA_REGISTRY_INDEX_EXPLORER_H_
 
+#include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
 
@@ -118,7 +119,8 @@ auto image(T &output, const std::string_view url, const std::uint64_t size,
 }
 
 template <typename T>
-auto html_navigation(T &output, const sourcemeta::core::JSON &configuration)
+auto html_navigation(T &output,
+                     const sourcemeta::registry::Configuration &configuration)
     -> void {
   output.open("nav", {{"class", "navbar navbar-expand border-bottom bg-body"}});
   output.open("div", {{"class", "container-fluid px-4 py-1 align-items-center "
@@ -128,10 +130,10 @@ auto html_navigation(T &output, const sourcemeta::core::JSON &configuration)
       "a",
       {{"class",
         "navbar-brand me-0 me-md-3 d-flex align-items-center w-100 w-md-auto"},
-       {"href", configuration.at("url").to_string()}});
+       {"href", configuration.url()}});
 
   output.open("span", {{"class", "fw-bold me-1"}})
-      .text(configuration.at("title").to_string())
+      .text(configuration.title())
       .close("span")
       .open("span", {{"class", "fw-lighter"}})
       .text(" Schemas")
@@ -160,21 +162,16 @@ auto html_navigation(T &output, const sourcemeta::core::JSON &configuration)
       .close("ul")
       .close("div");
 
-  if (configuration.defines("action")) {
+  const auto action{configuration.action()};
+  if (action.has_value()) {
     output.open("a",
                 {{"class", "ms-md-3 btn btn-dark mt-2 mt-md-0 w-100 w-md-auto"},
                  {"role", "button"},
-                 {"href", configuration.at("action").at("url").to_string()}});
+                 {"href", action.value().url}});
+    output.open("i", {{"class", "me-2 bi bi-" + action.value().icon}})
+        .close("i");
 
-    if (configuration.at("action").defines("icon")) {
-      output
-          .open("i", {{"class",
-                       "me-2 bi bi-" +
-                           configuration.at("action").at("icon").to_string()}})
-          .close("i");
-    }
-
-    output.text(configuration.at("action").at("title").to_string());
+    output.text(action.value().title);
     output.close("a");
   }
 
@@ -231,7 +228,7 @@ auto html_footer(T &output, const std::string_view version) -> void {
 template <typename T>
 auto html_start(T &output, const std::string &canonical,
                 const std::string &head,
-                const sourcemeta::core::JSON &configuration,
+                const sourcemeta::registry::Configuration &configuration,
                 const std::string &title, const std::string &description,
                 const std::optional<std::string> &path) -> void {
   output.doctype();
@@ -559,7 +556,7 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
 namespace sourcemeta::registry {
 
 // TODO: Put breadcrumb inside this metadata
-auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
+auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON::String &url,
                          const sourcemeta::registry::Resolver &resolver,
                          const std::filesystem::path &absolute_path,
                          const std::filesystem::path &health_path,
@@ -579,8 +576,7 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
   result.assign("id", sourcemeta::core::JSON{std::move(id).value()});
   result.assign("url", sourcemeta::core::JSON{"/" + relative_path.string()});
   result.assign("canonical",
-                sourcemeta::core::JSON{configuration.at("url").to_string() +
-                                       "/" + relative_path.string()});
+                sourcemeta::core::JSON{url + "/" + relative_path.string()});
   const auto base_dialect{sourcemeta::core::base_dialect(
       schema_json,
       [&resolver](const auto identifier) { return resolver(identifier); })};
@@ -636,13 +632,11 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON &configuration,
   return result;
 }
 
-// TODO: We should simplify this signature somehow
-auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
-                            const std::filesystem::path &navigation_base,
-                            const std::filesystem::path &base,
-                            const std::filesystem::path &directory,
-                            const sourcemeta::registry::Output &output)
-    -> sourcemeta::core::JSON {
+auto GENERATE_NAV_DIRECTORY(
+    const sourcemeta::registry::Configuration &configuration,
+    const std::filesystem::path &navigation_base,
+    const std::filesystem::path &base, const std::filesystem::path &directory,
+    const sourcemeta::registry::Output &output) -> sourcemeta::core::JSON {
   assert(directory.string().starts_with(base.string()));
   auto entries{sourcemeta::core::JSON::make_array()};
 
@@ -670,11 +664,7 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
 
       entry_json.assign("name",
                         sourcemeta::core::JSON{entry.path().filename()});
-      if (configuration.defines("pages") &&
-          configuration.at("pages").defines(entry_relative_path)) {
-        entry_json.merge(
-            configuration.at("pages").at(entry_relative_path).as_object());
-      }
+      configuration.inflate(entry_relative_path, entry_json);
 
       entry_json.assign("type", sourcemeta::core::JSON{"directory"});
       entry_json.assign(
@@ -741,10 +731,7 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
   auto meta{sourcemeta::core::JSON::make_object()};
 
   const auto page_key{std::filesystem::relative(directory, base)};
-  if (configuration.defines("pages") &&
-      configuration.at("pages").defines(page_key)) {
-    meta.merge(configuration.at("pages").at(page_key).as_object());
-  }
+  configuration.inflate(page_key, meta);
 
   const auto accumulated_health =
       static_cast<int>(std::lround(static_cast<double>(std::accumulate(
@@ -761,11 +748,10 @@ auto GENERATE_NAV_DIRECTORY(const sourcemeta::core::JSON &configuration,
       "url", sourcemeta::core::JSON{std::string{"/"} + relative_path.string()});
 
   if (relative_path.string().empty()) {
-    meta.assign("canonical", configuration.at("url"));
+    meta.assign("canonical", sourcemeta::core::JSON{configuration.url()});
   } else {
-    meta.assign("canonical",
-                sourcemeta::core::JSON{configuration.at("url").to_string() +
-                                       "/" + relative_path.string()});
+    meta.assign("canonical", sourcemeta::core::JSON{configuration.url() + "/" +
+                                                    relative_path.string()});
   }
 
   // Precompute the breadcrumb
@@ -832,18 +818,17 @@ auto GENERATE_SEARCH_INDEX(
 
 // TODO: HTML generators should not depend on the config file, as
 // all the necessary information should be present in the nav file
-auto GENERATE_EXPLORER_404(const sourcemeta::core::JSON &configuration)
-    -> std::string {
+auto GENERATE_EXPLORER_404(
+    const sourcemeta::registry::Configuration &configuration) -> std::string {
   std::ostringstream stream;
   assert(!stream.fail());
   sourcemeta::registry::html::SafeOutput output_html{stream};
 
-  const auto head{
-      configuration.at_or("head", sourcemeta::core::JSON{""}).to_string()};
+  const auto head{configuration.head().value_or("")};
 
   sourcemeta::registry::html::partials::html_start(
-      output_html, configuration.at("url").to_string(), head, configuration,
-      "Not Found", "What you are looking for is not here", std::nullopt);
+      output_html, configuration.url(), head, configuration, "Not Found",
+      "What you are looking for is not here", std::nullopt);
   output_html.open("div", {{"class", "container-fluid p-4"}})
       .open("h2", {{"class", "fw-bold"}})
       .text("Oops! What you are looking for is not here")
@@ -863,28 +848,27 @@ auto GENERATE_EXPLORER_404(const sourcemeta::core::JSON &configuration)
 
 // TODO: HTML generators should not depend on the config file, as
 // all the necessary information should be present in the nav file
-auto GENERATE_EXPLORER_INDEX(const sourcemeta::core::JSON &configuration,
-                             const std::filesystem::path &navigation_path)
-    -> std::string {
+auto GENERATE_EXPLORER_INDEX(
+    const sourcemeta::registry::Configuration &configuration,
+    const std::filesystem::path &navigation_path) -> std::string {
   const auto navigation{sourcemeta::registry::read_contents(navigation_path)};
   assert(navigation.has_value());
   const auto meta{sourcemeta::core::parse_json(navigation.value().data)};
   std::ostringstream html;
   sourcemeta::registry::html::SafeOutput output_html{html};
 
-  const auto head{
-      configuration.at_or("head", sourcemeta::core::JSON{""}).to_string()};
+  const auto head{configuration.head().value_or("")};
 
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration,
-      configuration.at("title").to_string() + " Schemas",
-      configuration.at("description").to_string(), "");
+      configuration.title() + " Schemas", configuration.description(), "");
 
-  if (configuration.defines("hero")) {
+  const auto hero{configuration.hero()};
+  if (hero.has_value()) {
     output_html.open("div", {{"class", "container-fluid px-4"}})
         .open("div", {{"class",
                        "bg-light border border-light-subtle mt-4 px-3 py-3"}});
-    output_html.unsafe(configuration.at("hero").to_string());
+    output_html.unsafe(hero.value());
     output_html.close("div").close("div");
   }
 
@@ -897,7 +881,7 @@ auto GENERATE_EXPLORER_INDEX(const sourcemeta::core::JSON &configuration,
 // TODO: HTML generators should not depend on the config file, as
 // all the necessary information should be present in the nav file
 auto GENERATE_EXPLORER_DIRECTORY_PAGE(
-    const sourcemeta::core::JSON &configuration,
+    const sourcemeta::registry::Configuration &configuration,
     const std::filesystem::path &navigation_path) -> std::string {
   const auto navigation{sourcemeta::registry::read_contents(navigation_path)};
   assert(navigation.has_value());
@@ -905,8 +889,7 @@ auto GENERATE_EXPLORER_DIRECTORY_PAGE(
   std::ostringstream html;
 
   sourcemeta::registry::html::SafeOutput output_html{html};
-  const auto head{
-      configuration.at_or("head", sourcemeta::core::JSON{""}).to_string()};
+  const auto head{configuration.head().value_or("")};
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration,
       meta.defines("title") ? meta.at("title").to_string()
@@ -922,7 +905,7 @@ auto GENERATE_EXPLORER_DIRECTORY_PAGE(
 }
 
 auto GENERATE_EXPLORER_SCHEMA_PAGE(
-    const sourcemeta::core::JSON &configuration,
+    const sourcemeta::registry::Configuration &configuration,
     const std::filesystem::path &navigation_path,
     const std::filesystem::path &dependencies_path,
     const std::filesystem::path &health_path) -> std::string {
@@ -936,8 +919,7 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
                                           : meta.at("url").to_string()};
 
   sourcemeta::registry::html::SafeOutput output_html{html};
-  const auto head{
-      configuration.at_or("head", sourcemeta::core::JSON{""}).to_string()};
+  const auto head{configuration.head().value_or("")};
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration, title,
       meta.defines("description")
@@ -1145,11 +1127,9 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
             .close("td");
       }
 
-      if (dependency.at("to").to_string().starts_with(
-              configuration.at("url").to_string())) {
+      if (dependency.at("to").to_string().starts_with(configuration.url())) {
         std::filesystem::path dependency_schema_url{
-            dependency.at("to").to_string().substr(
-                configuration.at("url").to_string().size())};
+            dependency.at("to").to_string().substr(configuration.url().size())};
         dependency_schema_url.replace_extension("");
         output_html.open("td")
             .open("code")
