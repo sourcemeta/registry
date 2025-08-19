@@ -130,10 +130,10 @@ auto html_navigation(T &output,
       "a",
       {{"class",
         "navbar-brand me-0 me-md-3 d-flex align-items-center w-100 w-md-auto"},
-       {"href", configuration.url()}});
+       {"href", configuration.url}});
 
   output.open("span", {{"class", "fw-bold me-1"}})
-      .text(configuration.title())
+      .text(configuration.title)
       .close("span")
       .open("span", {{"class", "fw-lighter"}})
       .text(" Schemas")
@@ -162,16 +162,17 @@ auto html_navigation(T &output,
       .close("ul")
       .close("div");
 
-  const auto action{configuration.action()};
-  if (action.has_value()) {
+  if (configuration.action.has_value()) {
     output.open("a",
                 {{"class", "ms-md-3 btn btn-dark mt-2 mt-md-0 w-100 w-md-auto"},
                  {"role", "button"},
-                 {"href", action.value().url}});
-    output.open("i", {{"class", "me-2 bi bi-" + action.value().icon}})
+                 {"href", configuration.action.value().url}});
+    output
+        .open("i",
+              {{"class", "me-2 bi bi-" + configuration.action.value().icon}})
         .close("i");
 
-    output.text(action.value().title);
+    output.text(configuration.action.value().title);
     output.close("a");
   }
 
@@ -748,9 +749,9 @@ auto GENERATE_NAV_DIRECTORY(
       "url", sourcemeta::core::JSON{std::string{"/"} + relative_path.string()});
 
   if (relative_path.string().empty()) {
-    meta.assign("canonical", sourcemeta::core::JSON{configuration.url()});
+    meta.assign("canonical", sourcemeta::core::JSON{configuration.url});
   } else {
-    meta.assign("canonical", sourcemeta::core::JSON{configuration.url() + "/" +
+    meta.assign("canonical", sourcemeta::core::JSON{configuration.url + "/" +
                                                     relative_path.string()});
   }
 
@@ -824,10 +825,10 @@ auto GENERATE_EXPLORER_404(
   assert(!stream.fail());
   sourcemeta::registry::html::SafeOutput output_html{stream};
 
-  const auto head{configuration.head().value_or("")};
+  const auto head{configuration.head.value_or("")};
 
   sourcemeta::registry::html::partials::html_start(
-      output_html, configuration.url(), head, configuration, "Not Found",
+      output_html, configuration.url, head, configuration, "Not Found",
       "What you are looking for is not here", std::nullopt);
   output_html.open("div", {{"class", "container-fluid p-4"}})
       .open("h2", {{"class", "fw-bold"}})
@@ -857,18 +858,17 @@ auto GENERATE_EXPLORER_INDEX(
   std::ostringstream html;
   sourcemeta::registry::html::SafeOutput output_html{html};
 
-  const auto head{configuration.head().value_or("")};
+  const auto head{configuration.head.value_or("")};
 
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration,
-      configuration.title() + " Schemas", configuration.description(), "");
+      configuration.title + " Schemas", configuration.description, "");
 
-  const auto hero{configuration.hero()};
-  if (hero.has_value()) {
+  if (configuration.hero.has_value()) {
     output_html.open("div", {{"class", "container-fluid px-4"}})
         .open("div", {{"class",
                        "bg-light border border-light-subtle mt-4 px-3 py-3"}});
-    output_html.unsafe(hero.value());
+    output_html.unsafe(configuration.hero.value());
     output_html.close("div").close("div");
   }
 
@@ -889,7 +889,7 @@ auto GENERATE_EXPLORER_DIRECTORY_PAGE(
   std::ostringstream html;
 
   sourcemeta::registry::html::SafeOutput output_html{html};
-  const auto head{configuration.head().value_or("")};
+  const auto head{configuration.head.value_or("")};
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration,
       meta.defines("title") ? meta.at("title").to_string()
@@ -919,7 +919,7 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
                                           : meta.at("url").to_string()};
 
   sourcemeta::registry::html::SafeOutput output_html{html};
-  const auto head{configuration.head().value_or("")};
+  const auto head{configuration.head.value_or("")};
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration, title,
       meta.defines("description")
@@ -1127,9 +1127,9 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
             .close("td");
       }
 
-      if (dependency.at("to").to_string().starts_with(configuration.url())) {
+      if (dependency.at("to").to_string().starts_with(configuration.url)) {
         std::filesystem::path dependency_schema_url{
-            dependency.at("to").to_string().substr(configuration.url().size())};
+            dependency.at("to").to_string().substr(configuration.url.size())};
         dependency_schema_url.replace_extension("");
         output_html.open("td")
             .open("code")
