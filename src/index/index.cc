@@ -1,6 +1,7 @@
 #include <sourcemeta/core/build.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/core/parallel.h>
 
 #include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/license.h>
@@ -11,7 +12,6 @@
 #include "explorer.h"
 #include "generators.h"
 #include "output.h"
-#include "parallel.h"
 #include "validator.h"
 
 #include <cassert>     // assert
@@ -142,7 +142,7 @@ static auto index_main(const std::string_view &program,
 
   std::mutex mutex;
 
-  sourcemeta::registry::parallel_for_each(
+  sourcemeta::core::parallel_for_each(
       resolver.begin(), resolver.end(),
       [&output, &resolver, &validator, &mutex, &adapter,
        &configuration_summary_path](const auto &schema, const auto threads,
@@ -181,9 +181,9 @@ static auto index_main(const std::string_view &program,
 
         resolver.materialise(schema.first, destination);
       },
-      THREAD_STACK_SIZE);
+      std::thread::hardware_concurrency(), THREAD_STACK_SIZE);
 
-  sourcemeta::registry::parallel_for_each(
+  sourcemeta::core::parallel_for_each(
       resolver.begin(), resolver.end(),
       [&output, &resolver, &mutex, &adapter, &configuration_summary_path](
           const auto &schema, const auto threads, const auto cursor) {
@@ -293,7 +293,7 @@ static auto index_main(const std::string_view &program,
           output.track(base_path / "blaze-exhaustive.metapack.deps");
         }
       },
-      THREAD_STACK_SIZE);
+      std::thread::hardware_concurrency(), THREAD_STACK_SIZE);
 
   std::cerr << "Generating registry explorer\n";
 

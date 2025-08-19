@@ -1,7 +1,6 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index 
   FOLDER "Registry/Index" 
-  SOURCES index.cc output.h generators.h parallel.h
-    configure.h.in validator.h explorer.h)
+  SOURCES index.cc output.h generators.h configure.h.in validator.h explorer.h)
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
 
@@ -22,6 +21,7 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::gzip)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::alterschema)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::parallel)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evaluator)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::linter)
