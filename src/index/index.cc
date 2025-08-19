@@ -63,8 +63,8 @@ static auto index_main(const std::string_view &program,
   sourcemeta::registry::Validator validator{resolver};
   const auto configuration_path{std::filesystem::canonical(arguments[0])};
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
-  const sourcemeta::registry::Configuration configuration{
-      configuration_path, SOURCEMETA_REGISTRY_COLLECTIONS};
+  const auto configuration{sourcemeta::registry::Configuration::parse(
+      configuration_path, SOURCEMETA_REGISTRY_COLLECTIONS)};
 
   // We want to keep this file uncompressed and without a leading header to that
   // the server can quickly read on start
@@ -97,8 +97,8 @@ static auto index_main(const std::string_view &program,
     const auto &collection{
         std::get<sourcemeta::registry::Configuration::Collection>(
             element.second)};
-    for (const auto &entry :
-         std::filesystem::recursive_directory_iterator{collection.path}) {
+    for (const auto &entry : std::filesystem::recursive_directory_iterator{
+             collection.absolute_path}) {
       const auto extension{entry.path().extension()};
       const auto is_schema_file{extension == ".yaml" || extension == ".yml" ||
                                 extension == ".json"};

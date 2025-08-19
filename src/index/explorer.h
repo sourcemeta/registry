@@ -633,6 +633,45 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON::String &url,
   return result;
 }
 
+auto inflate_metadata(const sourcemeta::registry::Configuration &configuration,
+                      const std::filesystem::path &path,
+                      sourcemeta::core::JSON &target) -> void {
+  const auto match{configuration.entries.find(path)};
+  if (match == configuration.entries.cend()) {
+    return;
+  }
+
+  std::visit(
+      [&target](const auto &entry) {
+        if (entry.title.has_value()) {
+          target.assign_if_missing(
+              "title", sourcemeta::core::to_json(entry.title.value()));
+        }
+
+        if (entry.description.has_value()) {
+          target.assign_if_missing(
+              "description",
+              sourcemeta::core::to_json(entry.description.value()));
+        }
+
+        if (entry.email.has_value()) {
+          target.assign_if_missing(
+              "email", sourcemeta::core::to_json(entry.email.value()));
+        }
+
+        if (entry.github.has_value()) {
+          target.assign_if_missing(
+              "github", sourcemeta::core::to_json(entry.github.value()));
+        }
+
+        if (entry.website.has_value()) {
+          target.assign_if_missing(
+              "website", sourcemeta::core::to_json(entry.website.value()));
+        }
+      },
+      match->second);
+}
+
 auto GENERATE_NAV_DIRECTORY(
     const sourcemeta::registry::Configuration &configuration,
     const std::filesystem::path &navigation_base,
@@ -665,7 +704,7 @@ auto GENERATE_NAV_DIRECTORY(
 
       entry_json.assign("name",
                         sourcemeta::core::JSON{entry.path().filename()});
-      configuration.inflate(entry_relative_path, entry_json);
+      inflate_metadata(configuration, entry_relative_path, entry_json);
 
       entry_json.assign("type", sourcemeta::core::JSON{"directory"});
       entry_json.assign(
@@ -732,7 +771,7 @@ auto GENERATE_NAV_DIRECTORY(
   auto meta{sourcemeta::core::JSON::make_object()};
 
   const auto page_key{std::filesystem::relative(directory, base)};
-  configuration.inflate(page_key, meta);
+  inflate_metadata(configuration, page_key, meta);
 
   const auto accumulated_health =
       static_cast<int>(std::lround(static_cast<double>(std::accumulate(

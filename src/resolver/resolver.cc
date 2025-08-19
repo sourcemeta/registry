@@ -120,7 +120,12 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
                    const Configuration::Collection &collection,
                    const std::filesystem::path &path)
     -> std::pair<std::string, std::string> {
-  const auto default_identifier{collection.default_identifier(path)};
+  const auto default_identifier{
+      sourcemeta::core::URI{collection.base}
+          .append_path(std::filesystem::relative(path, collection.absolute_path)
+                           .string())
+          .canonicalize()
+          .recompose()};
 
   const auto canonical{std::filesystem::weakly_canonical(path)};
   const auto schema{internal_schema_reader(canonical)};
@@ -144,15 +149,18 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
           ? schema.at("$schema").to_string()
           : collection.default_dialect};
 
+  sourcemeta::core::URI base_uri{collection.base};
+  base_uri.canonicalize();
+
   // TODO: We also need to try to apply "rebase" arrays to the meta-schema and
   // test that
   if (current_dialect.has_value()) {
     sourcemeta::core::URI dialect_uri{current_dialect.value()};
     dialect_uri.canonicalize();
-    dialect_uri.relative_to(collection.base_uri);
+    dialect_uri.relative_to(base_uri);
     if (dialect_uri.is_relative()) {
       current_dialect = sourcemeta::core::URI{server_url}
-                            .append_path(collection.name)
+                            .append_path(collection.relative_path)
                             // TODO: Let `append_path` take a URI
                             .append_path(dialect_uri.recompose())
                             .canonicalize()
@@ -168,8 +176,9 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
             .dialect = current_dialect,
             .relative_path = "",
             .original_identifier = effective_identifier,
-            .collection_name = collection.name,
-            .blaze_exhaustive = collection.blaze_exhaustive,
+            .collection_name = collection.relative_path,
+            .blaze_exhaustive = !collection.attributes.contains(
+                "x-sourcemeta-registry:no-blaze-exhaustive"),
             // TODO: We should avoid this vector / string copy
             .reference_visitor =
                 [rebases = collection.rebase](
@@ -213,19 +222,18 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
   const auto &current_identifier{result.first->first};
 
   auto identifier_uri{sourcemeta::core::URI{
-      current_identifier == collection.base_uri.recompose()
-          ? default_identifier
-          : current_identifier}
+      current_identifier == base_uri.recompose() ? default_identifier
+                                                 : current_identifier}
                           .canonicalize()};
   auto current{identifier_uri.recompose()};
-  identifier_uri.relative_to(collection.base_uri);
+  identifier_uri.relative_to(base_uri);
   if (identifier_uri.is_absolute()) {
-    throw ResolverOutsideBaseError(current, collection.base_uri.recompose());
+    throw ResolverOutsideBaseError(current, base_uri.recompose());
   }
 
   assert(!identifier_uri.recompose().empty());
   auto new_identifier = sourcemeta::core::URI{server_url}
-                            .append_path(collection.name)
+                            .append_path(collection.relative_path)
                             // TODO: Let `append_path` take a URI
                             .append_path(identifier_uri.recompose())
                             .canonicalize()
