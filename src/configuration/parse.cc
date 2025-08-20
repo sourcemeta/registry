@@ -8,67 +8,6 @@
 
 namespace {
 
-auto fix_paths(const std::filesystem::path &extension_path,
-               sourcemeta::core::JSON &extension_json) -> void {
-  if (extension_json.defines("contents")) {
-    for (auto &contents : extension_json.at("contents").as_object()) {
-      if (contents.second.defines("contents")) {
-        for (auto &entry : contents.second.at("contents").as_object()) {
-          if (entry.second.defines("path") &&
-              entry.second.at("path").is_string()) {
-            std::filesystem::path schemas_path{
-                entry.second.at("path").to_string()};
-            if (schemas_path.is_relative()) {
-              // TODO: All object iterators are `const` so we can't directly
-              // modify the value
-              extension_json.at("contents")
-                  .at(contents.first)
-                  .at("contents")
-                  .at(entry.first)
-                  .assign("path",
-                          sourcemeta::core::JSON{extension_path.parent_path() /
-                                                 schemas_path});
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-// TODO: Allow the configuration to read collection entries from separate files
-// TODO: Polish this
-auto preprocess_configuration(
-    const std::filesystem::path &collections_directory,
-    const std::filesystem::path &directory,
-    sourcemeta::core::JSON &configuration) -> void {
-  assert(collections_directory.is_absolute());
-  assert(configuration.is_object());
-  auto result{sourcemeta::core::JSON::make_object()};
-  if (configuration.defines("extends")) {
-    for (const auto &extension : configuration.at("extends").as_array()) {
-      std::filesystem::path extension_path{extension.to_string()};
-      if (extension_path.is_relative() &&
-          extension_path.string().starts_with("@")) {
-        extension_path = collections_directory /
-                         extension_path.string().substr(1) / "registry.json";
-      } else {
-        extension_path = directory / extension_path / "registry.json";
-      }
-
-      auto extension_json{sourcemeta::core::read_json(extension_path)};
-      // To handle recursive requirements
-      preprocess_configuration(collections_directory,
-                               extension_path.parent_path(), extension_json);
-      fix_paths(extension_path, extension_json);
-      result.merge(extension_json.as_object());
-    }
-  }
-
-  result.merge(configuration.as_object());
-  configuration = std::move(result);
-}
-
 auto page_from_json(const sourcemeta::core::JSON &input)
     -> sourcemeta::registry::Configuration::Page {
   sourcemeta::registry::Configuration::Page result;
@@ -163,10 +102,8 @@ auto entries_from_json(T &result,
 
 namespace sourcemeta::registry {
 
-// TODO: Try to use sourcemeta::core::from_json as much as possible
 auto Configuration::parse(const std::filesystem::path &path,
-                          const std::filesystem::path &collections)
-    -> Configuration {
+                          const sourcemeta::core::JSON &data) -> Configuration {
 #define VALIDATE(condition, path, pointer, error)                              \
   if (!(condition)) {                                                          \
     throw sourcemeta::registry::ConfigurationValidationError(                  \
@@ -174,14 +111,6 @@ auto Configuration::parse(const std::filesystem::path &path,
   }
 
   Configuration result;
-  auto data{sourcemeta::core::read_json(path)};
-  preprocess_configuration(collections, path.parent_path(), data);
-
-  data.assign_if_missing("title", sourcemeta::core::JSON{"Sourcemeta"});
-  data.assign_if_missing(
-      "description",
-      sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
-
   VALIDATE(data.defines("url"), path, {}, "Missing 'url' required property");
   VALIDATE(data.at("url").is_string(), path, {"url"},
            "The 'url' property must be a string");
@@ -209,35 +138,14 @@ auto Configuration::parse(const std::filesystem::path &path,
   result.port = data.at("port").to_integer();
 
   if (data.defines("hero")) {
-    VALIDATE(data.at("hero").is_string(), path, {"hero"},
-             "The 'hero' property must be a string");
     result.hero = data.at("hero").to_string();
   }
 
   if (data.defines("head")) {
-    VALIDATE(data.at("head").is_string(), path, {"head"},
-             "The 'head' property must be a string");
     result.head = data.at("head").to_string();
   }
 
   if (data.defines("action")) {
-    VALIDATE(data.at("action").is_object(), path, {},
-             "The 'action' property must be an object");
-    VALIDATE(data.at("action").defines("url"), path, {},
-             "The 'action' property must define a 'url' property");
-    VALIDATE(data.at("action").defines("icon"), path, {},
-             "The 'action' property must define a 'icon' property");
-    VALIDATE(data.at("action").defines("title"), path, {},
-             "The 'action' property must define a 'title' property");
-    VALIDATE(data.at("action").at("url").is_string(), path,
-             sourcemeta::core::Pointer({"action", "url"}),
-             "The 'action/url' property must be a string");
-    VALIDATE(data.at("action").at("icon").is_string(), path,
-             sourcemeta::core::Pointer({"action", "icon"}),
-             "The 'action/icon' property must be a string");
-    VALIDATE(data.at("action").at("title").is_string(), path,
-             sourcemeta::core::Pointer({"action", "title"}),
-             "The 'action/title' property must be a string");
     result.action = {.url = data.at("action").at("url").to_string(),
                      .icon = data.at("action").at("icon").to_string(),
                      .title = data.at("action").at("title").to_string()};
