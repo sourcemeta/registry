@@ -44,7 +44,7 @@ struct Configuration {
 
   struct Collection : public Metadata {
     std::filesystem::path absolute_path;
-    sourcemeta::core::JSON::String base;
+    std::optional<sourcemeta::core::JSON::String> base;
     std::optional<sourcemeta::core::JSON::String> default_dialect;
     std::unordered_map<sourcemeta::core::JSON::String,
                        sourcemeta::core::JSON::String>

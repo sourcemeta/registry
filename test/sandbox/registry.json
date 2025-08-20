@@ -14,31 +14,37 @@
       "description": "My description",
       "email": "hello@sourcemeta.com",
       "github": "sourcemeta",
-      "website": "https://www.sourcemeta.com"
-    },
-    "example/extension": {
-      "base": "https://example.com/extension",
-      "path": "./schemas/example/extension"
-    },
-    "example/schemas": {
-      "base": "https://example.com/schemas",
-      "path": "./schemas/example/folder",
-      "defaultDialect": "http://json-schema.org/draft-07/schema#",
-      "resolve": {
-        "https://other.com/single.json": "/example/bundling/single.json"
+      "website": "https://www.sourcemeta.com",
+      "contents": {
+        "extension": {
+          "base": "https://example.com/extension",
+          "path": "./schemas/example/extension"
+        },
+        "schemas": {
+          "base": "https://example.com/schemas",
+          "path": "./schemas/example/folder",
+          "defaultDialect": "http://json-schema.org/draft-07/schema#",
+          "resolve": {
+            "https://other.com/single.json": "/example/bundling/single.json"
+          }
+        },
+        "camelcase": {
+          "contents": {
+            "test": {
+              "base": "https://sourcemeta.com/camelcase",
+              "path": "./schemas/example/camelcase"
+            }
+          }
+        },
+        "v2.0": {
+          "base": "https://example.com/schemas",
+          "path": "./schemas/example/v2.0"
+        },
+        "bundling": {
+          "base": "https://example.com/bundling",
+          "path": "./schemas/example/bundling"
+        }
       }
-    },
-    "example/camelcase/test": {
-      "base": "https://sourcemeta.com/camelcase",
-      "path": "./schemas/example/camelcase"
-    },
-    "example/v2.0": {
-      "base": "https://example.com/schemas",
-      "path": "./schemas/example/v2.0"
-    },
-    "example/bundling": {
-      "base": "https://example.com/bundling",
-      "path": "./schemas/example/bundling"
     },
     "doc": {
       "title": "A sample schema folder",
