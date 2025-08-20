@@ -1,6 +1,10 @@
 #include <sourcemeta/registry/configuration.h>
 
+#include <sourcemeta/blaze/compiler.h>
+#include <sourcemeta/blaze/evaluator.h>
 #include <sourcemeta/core/uri.h>
+
+#include "schema.h"
 
 #include <algorithm> // std::transform
 #include <cassert>   // assert
@@ -106,36 +110,25 @@ auto entries_from_json(T &result, const std::filesystem::path &location,
 namespace sourcemeta::registry {
 
 auto Configuration::parse(const sourcemeta::core::JSON &data) -> Configuration {
-#define VALIDATE(condition, pointer, error)                                    \
-  if (!(condition)) {                                                          \
-    throw sourcemeta::registry::ConfigurationValidationError(                  \
-        sourcemeta::core::Pointer(pointer), (error));                          \
+  const auto compiled_schema{sourcemeta::blaze::compile(
+      sourcemeta::core::parse_json(std::string{CONFIGURATION_SCHEMA}),
+      sourcemeta::core::schema_official_walker,
+      sourcemeta::core::schema_official_resolver,
+      sourcemeta::blaze::default_schema_compiler,
+      sourcemeta::blaze::Mode::Exhaustive)};
+  sourcemeta::blaze::Evaluator evaluator;
+  sourcemeta::blaze::SimpleOutput output{data};
+  if (!evaluator.validate(compiled_schema, data, std::ref(output))) {
+    throw ConfigurationValidationError(output);
   }
 
   Configuration result;
-  VALIDATE(data.defines("url"), {}, "Missing 'url' required property");
-  VALIDATE(data.at("url").is_string(), {"url"},
-           "The 'url' property must be a string");
   result.url = sourcemeta::core::URI{data.at("url").to_string()}
                    .canonicalize()
                    .recompose();
 
-  VALIDATE(data.defines("title"), {}, "Missing 'title' required property");
-  VALIDATE(data.at("title").is_string(), {"title"},
-           "The 'title' property must be a string");
   result.title = data.at("title").to_string();
-
-  VALIDATE(data.defines("description"), {},
-           "Missing 'description' required property");
-  VALIDATE(data.at("description").is_string(), {"description"},
-           "The 'description' property must be a string");
   result.description = data.at("description").to_string();
-
-  VALIDATE(data.defines("port"), {}, "Missing 'port' required property");
-  VALIDATE(data.at("port").is_integer(), {"port"},
-           "The 'description' property must be an integer");
-  VALIDATE(data.at("port").is_positive(), {"port"},
-           "The 'description' property must be a positive integer");
   result.port = data.at("port").to_integer();
 
   if (data.defines("hero")) {
@@ -155,7 +148,6 @@ auto Configuration::parse(const sourcemeta::core::JSON &data) -> Configuration {
   entries_from_json(result.entries, "", data);
 
   return result;
-#undef VALIDATE
 }
 
 } // namespace sourcemeta::registry

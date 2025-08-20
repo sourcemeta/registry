@@ -1,36 +1,32 @@
 #ifndef SOURCEMETA_REGISTRY_CONFIGURATION_ERROR_H_
 #define SOURCEMETA_REGISTRY_CONFIGURATION_ERROR_H_
 
-#include <sourcemeta/core/jsonpointer.h>
+#include <sourcemeta/blaze/compiler.h>
 
-#include <exception>  // std::exception
-#include <filesystem> // std::filesystem::path
-#include <string>     // std::string
-#include <utility>    // std::move
+#include <exception> // std::exception
+#include <sstream>   // std::ostringstream
+#include <string>    // std::string
 
 namespace sourcemeta::registry {
 
 class ConfigurationValidationError : public std::exception {
 public:
-  ConfigurationValidationError(sourcemeta::core::Pointer pointer,
-                               std::string description)
-      : pointer_{std::move(pointer)}, description_{std::move(description)} {}
+  ConfigurationValidationError(const sourcemeta::blaze::SimpleOutput &output) {
+    std::ostringstream stream;
+    output.stacktrace(stream);
+    this->stacktrace_ = stream.str();
+  }
 
-  [[nodiscard]] auto what() const noexcept -> const char * override {
+  [[nodiscard]] auto what() const noexcept -> const char * {
     return "Invalid configuration";
   }
 
-  [[nodiscard]] auto pointer() const noexcept -> const auto & {
-    return this->pointer_;
-  }
-
-  [[nodiscard]] auto description() const noexcept -> const auto & {
-    return this->description_;
+  [[nodiscard]] auto stacktrace() const noexcept -> const auto & {
+    return stacktrace_;
   }
 
 private:
-  const sourcemeta::core::Pointer pointer_;
-  const std::string description_;
+  std::string stacktrace_;
 };
 
 } // namespace sourcemeta::registry
