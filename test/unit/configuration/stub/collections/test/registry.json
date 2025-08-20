@@ -1,0 +1,7 @@
+{
+  "contents": {
+    "test": {
+      "include": "./nested_1.json"
+    }
+  }
+}

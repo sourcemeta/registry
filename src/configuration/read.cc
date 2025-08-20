@@ -3,87 +3,70 @@
 #include <algorithm> // std::ranges
 #include <cassert>   // assert
 #include <iterator>  // std::back_inserter
+#include <utility>   // std::move
 #include <vector>    // std::vector
 
 namespace {
 
-auto fix_paths(const std::filesystem::path &extension_path,
-               sourcemeta::core::JSON &extension_json) -> void {
-  if (extension_json.defines("contents")) {
-    for (auto &contents : extension_json.at("contents").as_object()) {
-      if (contents.second.defines("contents")) {
-        for (auto &entry : contents.second.at("contents").as_object()) {
-          if (entry.second.defines("path") &&
-              entry.second.at("path").is_string()) {
-            std::filesystem::path schemas_path{
-                entry.second.at("path").to_string()};
-            if (schemas_path.is_relative()) {
-              // TODO: All object iterators are `const` so we can't directly
-              // modify the value
-              extension_json.at("contents")
-                  .at(contents.first)
-                  .at("contents")
-                  .at(entry.first)
-                  .assign("path",
-                          sourcemeta::core::JSON{extension_path.parent_path() /
-                                                 schemas_path});
-            }
-          }
-        }
-      }
-    }
+auto resolve_path(const std::filesystem::path &base,
+                  const std::filesystem::path &rpath,
+                  const std::filesystem::path &value) -> std::filesystem::path {
+  if (value.is_absolute()) {
+    return std::filesystem::weakly_canonical(value);
+  } else if (value.string().starts_with("@")) {
+    return std::filesystem::weakly_canonical(rpath / value.string().substr(1));
+  } else {
+    return std::filesystem::weakly_canonical(base / value);
   }
 }
 
-// TODO: Allow the configuration to read collection entries from separate files
-// TODO: Polish this
-auto preprocess_configuration(
-    const std::filesystem::path &collections_directory,
-    const std::filesystem::path &directory,
-    sourcemeta::core::JSON &configuration) -> void {
-  assert(collections_directory.is_absolute());
-  assert(configuration.is_object());
-  auto result{sourcemeta::core::JSON::make_object()};
-  if (configuration.defines("extends")) {
-    for (const auto &extension : configuration.at("extends").as_array()) {
-      std::filesystem::path extension_path{extension.to_string()};
-      if (extension_path.is_relative() &&
-          extension_path.string().starts_with("@")) {
-        extension_path = collections_directory /
-                         extension_path.string().substr(1) / "registry.json";
-      } else {
-        extension_path = directory / extension_path / "registry.json";
-      }
-
-      auto extension_json{sourcemeta::core::read_json(extension_path)};
-      // To handle recursive requirements
-      preprocess_configuration(collections_directory,
-                               extension_path.parent_path(), extension_json);
-      fix_paths(extension_path, extension_json);
-      result.merge(extension_json.as_object());
-    }
+auto maybe_suffix(const std::filesystem::path &path,
+                  const std::filesystem::path &suffix)
+    -> std::filesystem::path {
+  if (std::filesystem::is_regular_file(path) || path.extension() == ".json") {
+    return path;
+  } else {
+    return path / suffix;
   }
-
-  result.merge(configuration.as_object());
-  configuration = std::move(result);
 }
 
-auto dereference(const std::filesystem::path &base,
+auto dereference(const std::filesystem::path &collections_path,
+                 const std::filesystem::path &base,
                  sourcemeta::core::JSON &input) -> void {
   assert(base.is_absolute());
   if (!input.is_object()) {
     return;
 
+    // Read extensions
+  } else if (input.defines("extends") && input.at("extends").is_array()) {
+    auto accumulator{sourcemeta::core::JSON::make_object()};
+    for (const auto &entry : input.at("extends").as_array()) {
+      if (entry.is_string()) {
+        const auto target_path{maybe_suffix(
+            resolve_path(base, collections_path, entry.to_string()),
+            "registry.json")};
+        auto extension{sourcemeta::core::read_json(target_path)};
+        if (extension.is_object()) {
+          dereference(collections_path, target_path.parent_path(), extension);
+          accumulator.merge(std::move(extension).as_object());
+        }
+      }
+    }
+
+    input.erase("extends");
+    accumulator.merge(input.as_object());
+    input = std::move(accumulator);
+    assert(!input.defines("extends"));
+    dereference(collections_path, base, input);
+
     // Read included files
   } else if (input.defines("include") && input.at("include").is_string()) {
-    auto include_path{std::filesystem::weakly_canonical(
-        base / input.at("include").to_string())};
-    if (std::filesystem::is_directory(include_path)) {
-      include_path /= "jsonschema.json";
-    }
-    input.into(sourcemeta::core::read_json(include_path));
+    const auto target_path{maybe_suffix(
+        resolve_path(base, collections_path, input.at("include").to_string()),
+        "jsonschema.json")};
+    input.into(sourcemeta::core::read_json(target_path));
     assert(!input.defines("include"));
-    dereference(include_path.parent_path(), input);
+    dereference(collections_path, target_path.parent_path(), input);
 
     // Revisit and relativize paths
   } else if (input.defines("path") && input.at("path").is_string()) {
@@ -101,7 +84,7 @@ auto dereference(const std::filesystem::path &base,
                            std::back_inserter(keys),
                            [](const auto &entry) { return entry.first; });
     for (const auto &key : keys) {
-      dereference(base, input.at("contents").at(key));
+      dereference(collections_path, base, input.at("contents").at(key));
     }
   }
 }
@@ -110,16 +93,15 @@ auto dereference(const std::filesystem::path &base,
 
 namespace sourcemeta::registry {
 
-auto Configuration::read(const std::filesystem::path &path,
-                         const std::filesystem::path &collections)
+auto Configuration::read(const std::filesystem::path &configuration_path,
+                         const std::filesystem::path &collections_path)
     -> sourcemeta::core::JSON {
-  auto data{sourcemeta::core::read_json(path)};
-  preprocess_configuration(collections, path.parent_path(), data);
+  auto data{sourcemeta::core::read_json(configuration_path)};
   data.assign_if_missing("title", sourcemeta::core::JSON{"Sourcemeta"});
   data.assign_if_missing(
       "description",
       sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
-  dereference(path.parent_path(), data);
+  dereference(collections_path, configuration_path.parent_path(), data);
   return data;
 }
 

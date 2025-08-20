@@ -23,7 +23,7 @@
             value);
 
 TEST(Configuration, stub_1) {
-  const auto configuration_path{std::filesystem::path{TEST_DIRECTORY} /
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
                                 "stub_1.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
@@ -59,7 +59,7 @@ TEST(Configuration, stub_1) {
   EXPECT_COLLECTION(configuration, "example/extension", github, std::nullopt);
   EXPECT_COLLECTION(configuration, "example/extension", website, std::nullopt);
   EXPECT_COLLECTION(configuration, "example/extension", absolute_path,
-                    std::filesystem::path{TEST_DIRECTORY} / "schemas" /
+                    std::filesystem::path{STUB_DIRECTORY} / "schemas" /
                         "example" / "extension");
   EXPECT_COLLECTION(configuration, "example/extension", default_dialect,
                     "http://json-schema.org/draft-07/schema#");

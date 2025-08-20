@@ -9,3 +9,6 @@ install(FILES "${MODELCONTEXTPROTOCOL_PATH}/schema.json"
 install(FILES "${CMAKE_CURRENT_LIST_DIR}/registry.json"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}"
   COMPONENT sourcemeta_registry)
+install(FILES "${CMAKE_CURRENT_LIST_DIR}/jsonschema.json"
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}"
+  COMPONENT sourcemeta_registry)
