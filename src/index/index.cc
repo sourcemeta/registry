@@ -63,8 +63,10 @@ static auto index_main(const std::string_view &program,
   sourcemeta::registry::Validator validator{resolver};
   const auto configuration_path{std::filesystem::canonical(arguments[0])};
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
-  const auto configuration{sourcemeta::registry::Configuration::parse(
+  const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, SOURCEMETA_REGISTRY_COLLECTIONS)};
+  const auto configuration{sourcemeta::registry::Configuration::parse(
+      configuration_path, raw_configuration)};
 
   // We want to keep this file uncompressed and without a leading header to that
   // the server can quickly read on start

@@ -7,10 +7,12 @@
 
 #define RESOLVER_INIT(name)                                                    \
   sourcemeta::registry::Resolver name;                                         \
-  const auto configuration{sourcemeta::registry::Configuration::parse(         \
+  const auto raw_configuration{sourcemeta::registry::Configuration::read(      \
       CONFIGURATION_PATH,                                                      \
       std::filesystem::path{CONFIGURATION_PATH}.parent_path() /                \
-          "collections")};
+          "collections")};                                                     \
+  const auto configuration{sourcemeta::registry::Configuration::parse(         \
+      CONFIGURATION_PATH, raw_configuration)};
 
 #define RESOLVER_EXPECT(resolver, expected_uri, expected_schema)               \
   {                                                                            \
