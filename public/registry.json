@@ -431,7 +431,7 @@
       "base": "http://www.iptc.org/std/ninjs",
       "path": "../vendor/public/ninjs/specification",
       "resolve": {
-        "https://geojson.org/schema/geojson.json": "/geojson/v1.0.5"
+        "https://geojson.org/schema/GeoJSON.json#": "/geojson/v1.0.5/geojson.json"
       }
     },
     "apis-json": {

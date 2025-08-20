@@ -188,21 +188,19 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
                     const sourcemeta::core::JSON::String &vocabulary,
                     const sourcemeta::core::JSON::String &keyword,
                     sourcemeta::core::URI &value) {
-                  // TODO: This means we only let the resolver act on lowercased
-                  // framed values?
-                  const auto current_path{value.path()};
-                  if (current_path.has_value()) {
-                    value.path(to_lowercase(current_path.value()));
-                    subschema.assign(keyword,
-                                     sourcemeta::core::JSON{value.recompose()});
-                  }
-
                   const auto match{
                       resolve_map.find(subschema.at(keyword).to_string())};
                   if (match != resolve_map.cend()) {
                     subschema.assign(keyword,
                                      sourcemeta::core::JSON{match->second});
                     return;
+                  }
+
+                  const auto current_path{value.path()};
+                  if (current_path.has_value()) {
+                    value.path(to_lowercase(current_path.value()));
+                    subschema.assign(keyword,
+                                     sourcemeta::core::JSON{value.recompose()});
                   }
 
                   sourcemeta::core::reference_visitor_relativize(
