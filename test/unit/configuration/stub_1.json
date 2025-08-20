@@ -3,7 +3,7 @@
   "title": "Title",
   "description": "Description",
   "port": 8000,
-  "pages": {
+  "schemas": {
     "example": {
       "title": "Sourcemeta",
       "description": "My description",
@@ -11,13 +11,6 @@
       "github": "sourcemeta",
       "website": "https://www.sourcemeta.com"
     },
-    "test": {
-      "title": "A sample schema folder",
-      "description": "For testing purposes",
-      "github": "sourcemeta/registry"
-    }
-  },
-  "schemas": {
     "example/extension": {
       "title": "Test",
       "base": "https://example.com/extension",
@@ -26,6 +19,11 @@
       "resolve": {
         "https://other.com/single.json": "/foo.json"
       }
+    },
+    "test": {
+      "title": "A sample schema folder",
+      "description": "For testing purposes",
+      "github": "sourcemeta/registry"
     }
   }
 }
