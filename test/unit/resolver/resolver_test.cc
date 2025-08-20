@@ -1,9 +1,19 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <cctype>
 #include <vector>
 
 #include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/resolver.h>
+
+static auto to_lowercase(const std::string_view input) -> std::string {
+  std::string result{input};
+  std::ranges::transform(result, result.begin(), [](const auto character) {
+    return static_cast<char>(std::tolower(character));
+  });
+  return result;
+}
 
 #define RESOLVER_INIT(name)                                                    \
   sourcemeta::registry::Resolver name;                                         \
@@ -358,5 +368,22 @@ TEST(Resolver, meta_draft4_override) {
                R"JSON({
     "$schema": "http://json-schema.org/draft-04/schema#",
     "id": "http://localhost:8000/meta-draft4/schema.json"
+  })JSON");
+}
+
+TEST(Resolver, no_base_anonymous) {
+  RESOLVER_INIT(resolver);
+  const auto schemas_path{
+      std::filesystem::path{to_lowercase(CONFIGURATION_PATH)}.parent_path() /
+      "schemas"};
+
+  RESOLVER_ADD(resolver, "no-base", "anonymous.json",
+               sourcemeta::core::URI::from_path(schemas_path / "no-base" /
+                                                "anonymous.json")
+                   .recompose(),
+               "http://localhost:8000/no-base/anonymous.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/no-base/anonymous.json"
   })JSON");
 }

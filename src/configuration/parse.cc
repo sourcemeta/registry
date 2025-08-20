@@ -49,8 +49,15 @@ auto collection_from_json(const sourcemeta::core::JSON &input)
   result.absolute_path = input.at("path").to_string();
   assert(result.absolute_path.is_absolute());
 
-  result.base = from_json<decltype(result.base)::value_type>(
-      input.at_or("base", JSON{nullptr}));
+  if (input.defines("base")) {
+    result.base =
+        sourcemeta::core::URI::canonicalize(input.at("base").to_string());
+  } else {
+    // Otherwise the base is the directory
+    result.base =
+        sourcemeta::core::URI::from_path(result.absolute_path).recompose();
+  }
+
   result.default_dialect =
       from_json<decltype(result.default_dialect)::value_type>(
           input.at_or("defaultDialect", JSON{nullptr}));

@@ -13,6 +13,9 @@
     "meta-draft4": {
       "base": "http://json-schema.org/draft-04",
       "path": "./schemas/meta-draft4"
+    },
+    "no-base": {
+      "path": "./schemas/no-base"
     }
   }
 }
