@@ -76,10 +76,10 @@ auto collection_from_json(const sourcemeta::core::JSON &input)
     }
   }
 
+  assert(result.extra.is_object());
   for (const auto &subentry : input.as_object()) {
-    if (subentry.first.starts_with("x-") && subentry.second.is_boolean() &&
-        subentry.second.to_boolean()) {
-      result.attributes.emplace(subentry.first);
+    if (subentry.first.starts_with("x-")) {
+      result.extra.assign(subentry.first, subentry.second);
     }
   }
 
