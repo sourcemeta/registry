@@ -217,7 +217,6 @@
           "github": "octue/power-curve-schema",
           "contents": {
             "v1.0.0.alpha-1": {
-              "base": "https://jsonschema.registry.octue.com/octue/power-curves",
               "path": "../vendor/public/octue-power-curve/power-curve-schema"
             }
           }
@@ -236,7 +235,6 @@
           "github": "usnistgov/mgi-json-schema",
           "contents": {
             "2022-08": {
-              "base": "https://github.com/usnistgov/mgi-json-schema",
               "path": "../vendor/public/usnistgov-mgi-2022-08"
             }
           }
@@ -250,15 +248,12 @@
       "website": "https://cloudevents.io",
       "contents": {
         "v1.0.2": {
-          "base": "https://github.com/cloudevents/spec",
           "path": "../vendor/public/cloudevents-1-0-2/cloudevents/formats"
         },
         "v1.0.1": {
-          "base": "https://github.com/cloudevents/spec",
           "path": "../vendor/public/cloudevents-1-0-1"
         },
         "v1.0.0": {
-          "base": "https://github.com/cloudevents/spec",
           "path": "../vendor/public/cloudevents-1-0-0",
           "defaultDialect": "http://json-schema.org/draft-07/schema#"
         }
@@ -416,7 +411,6 @@
               "x-sourcemeta-registry:no-blaze-exhaustive": true
             },
             "r3": {
-              "base": "http://hl7.org/fhir/json-schema",
               "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r3.core/package/openapi",
               "x-sourcemeta-registry:no-blaze-exhaustive": true
             }

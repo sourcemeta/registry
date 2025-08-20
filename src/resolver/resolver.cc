@@ -103,6 +103,7 @@ auto Resolver::operator()(
         },
         result->second.reference_visitor, result->second.dialect,
         result->second.original_identifier);
+
     sourcemeta::core::reidentify(
         schema, result->first,
         [this](const auto subidentifier) {
@@ -122,7 +123,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
                    const std::filesystem::path &path)
     -> std::pair<std::string, std::string> {
   const auto default_identifier{
-      sourcemeta::core::URI{collection.base.value()}
+      sourcemeta::core::URI{collection.base}
           .append_path(std::filesystem::relative(path, collection.absolute_path)
                            .string())
           .canonicalize()
@@ -150,7 +151,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
           ? schema.at("$schema").to_string()
           : collection.default_dialect};
 
-  sourcemeta::core::URI base_uri{collection.base.value()};
+  sourcemeta::core::URI base_uri{to_lowercase(collection.base)};
   base_uri.canonicalize();
 
   // TODO: We also need to try to apply "resolve" maps to the meta-schema and
@@ -220,6 +221,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
       current_identifier == base_uri.recompose() ? default_identifier
                                                  : current_identifier}
                           .canonicalize()};
+
   auto current{identifier_uri.recompose()};
   identifier_uri.relative_to(base_uri);
   if (identifier_uri.is_absolute()) {
@@ -261,6 +263,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
   }
 
   this->count_ += 1;
+
   return {std::move(current), std::move(new_identifier)};
 }
 
