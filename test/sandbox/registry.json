@@ -15,11 +15,6 @@
       "email": "hello@sourcemeta.com",
       "github": "sourcemeta",
       "website": "https://www.sourcemeta.com"
-    },
-    "doc": {
-      "title": "A sample schema folder",
-      "description": "For testing purposes",
-      "github": "sourcemeta/registry"
     }
   },
   "schemas": {
@@ -48,6 +43,9 @@
       "path": "./schemas/example/bundling"
     },
     "doc": {
+      "title": "A sample schema folder",
+      "description": "For testing purposes",
+      "github": "sourcemeta/registry",
       "base": "https://example.com/doc",
       "path": "./schemas/doc"
     },

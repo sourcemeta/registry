@@ -46,13 +46,6 @@
       "title": "Open Source Vulnerability schema",
       "github": "ossf/osv-schema"
     },
-    "krakend": {
-      "title": "KrakenD API Gateway",
-      "description": "An open-source API Gateway that helps you effortlessly adopt microservices and secure communications",
-      "email": "hello@krakend.io",
-      "github": "krakend",
-      "website": "https://www.krakend.io"
-    },
     "manfred": {
       "title": "Manfred",
       "description": "The Job Platform for those who are not looking for a job",
@@ -70,10 +63,6 @@
       "description": "A Technology Joint Venture of the Major Hollywood Studios",
       "github": "movielabs",
       "website": "https://www.movielabs.com/"
-    },
-    "movielabs/omc": {
-      "title": "The MovieLabs Ontology for Media Creation",
-      "github": "movielabs/omc"
     },
     "octue": {
       "title": "Octue",
@@ -113,13 +102,6 @@
     "riskine/global-insurance": {
       "title": "Global Insurance Ontology",
       "github": "riskine/ontology"
-    },
-    "jsr": {
-      "title": "JSR",
-      "description": "The open-source package registry for modern JavaScript and TypeScript",
-      "email": "help@jsr.io",
-      "github": "jsr-io",
-      "website": "https://jsr.io"
     },
     "jsonschema": {
       "title": "JSON Schema",
@@ -164,31 +146,12 @@
       "github": "fhir",
       "website": "https://www.hl7.org/implement/standards/fhir/"
     },
-    "asyncapi": {
-      "title": "AsyncAPI Initiative",
-      "description": "Building the future of Event-Driven Architectures (EDA)",
-      "email": "info@asyncapi.io",
-      "github": "asyncapi",
-      "website": "https://www.asyncapi.com"
-    },
     "iptc": {
       "title": "IPTC",
       "description": "The global standards body of the news media. We provide the technical foundation for the news ecosystem",
       "email": "office@iptc.org",
       "github": "iptc",
       "website": "https://www.iptc.org"
-    },
-    "iptc/ninjs": {
-      "title": "News in JSON",
-      "description": "A standard the representation of news in JSON",
-      "github": "iptc/newsinjson"
-    },
-    "apis-json": {
-      "title": "APIs.json",
-      "description": "The API discovery format",
-      "email": "info@apievangelist.com",
-      "github": "apis-json",
-      "website": "http://apisjson.org"
     },
     "sony": {
       "title": "Sony",
@@ -316,10 +279,17 @@
       "path": "../vendor/public/manfred-mac-0-3"
     },
     "krakend": {
+      "title": "KrakenD API Gateway",
+      "description": "An open-source API Gateway that helps you effortlessly adopt microservices and secure communications",
+      "email": "hello@krakend.io",
+      "github": "krakend",
+      "website": "https://www.krakend.io",
       "base": "https://www.krakend.io/schema",
       "path": "../vendor/public/krakend"
     },
     "movielabs/omc": {
+      "title": "The MovieLabs Ontology for Media Creation",
+      "github": "movielabs/omc",
       "base": "https://movielabs.com/omc/json/schema",
       "path": "../vendor/public/movielabs-omc-2-6"
     },
@@ -355,6 +325,11 @@
       "defaultDialect": "http://json-schema.org/draft-07/schema#"
     },
     "jsr": {
+      "title": "JSR",
+      "description": "The open-source package registry for modern JavaScript and TypeScript",
+      "email": "help@jsr.io",
+      "github": "jsr-io",
+      "website": "https://jsr.io",
       "base": "https://jsr.io/schema",
       "path": "../vendor/public/jsr"
     },
@@ -424,10 +399,18 @@
       "x-sourcemeta-registry:no-blaze-exhaustive": true
     },
     "asyncapi": {
+      "title": "AsyncAPI Initiative",
+      "description": "Building the future of Event-Driven Architectures (EDA)",
+      "email": "info@asyncapi.io",
+      "github": "asyncapi",
+      "website": "https://www.asyncapi.com",
       "base": "http://asyncapi.com",
       "path": "../vendor/public/asyncapi"
     },
     "iptc/ninjs": {
+      "title": "News in JSON",
+      "description": "A standard the representation of news in JSON",
+      "github": "iptc/newsinjson",
       "base": "http://www.iptc.org/std/ninjs",
       "path": "../vendor/public/ninjs/specification",
       "resolve": {
@@ -435,6 +418,11 @@
       }
     },
     "apis-json": {
+      "title": "APIs.json",
+      "description": "The API discovery format",
+      "email": "info@apievangelist.com",
+      "github": "apis-json",
+      "website": "http://apisjson.org",
       "base": "https://github.com/apis-json/api-json/blob/develop/spec/",
       "path": "../vendor/public/apis-json/spec"
     },
