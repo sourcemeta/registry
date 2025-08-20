@@ -30,7 +30,6 @@ Using configuration: $(realpath "$TMP")/registry.json
 error: Invalid configuration
   Missing 'url' required property
     at location ""
-    at  $(realpath "$TMP")/registry.json
 EOF
 
 diff "$TMP/output.txt" "$TMP/expected.txt"

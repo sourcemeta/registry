@@ -25,8 +25,9 @@ auto page_from_json(const sourcemeta::core::JSON &input)
   return result;
 }
 
-auto collection_from_json(const std::filesystem::path &path,
-                          const sourcemeta::core::JSON &input)
+// TODO: Move up and document in a common repository so that
+// the CLI understands this as jsonschema.json
+auto collection_from_json(const sourcemeta::core::JSON &input)
     -> sourcemeta::registry::Configuration::Collection {
   sourcemeta::registry::Configuration::Collection result;
   using namespace sourcemeta::core;
@@ -41,9 +42,7 @@ auto collection_from_json(const std::filesystem::path &path,
   result.website = from_json<decltype(result.website)::value_type>(
       input.at_or("website", JSON{nullptr}));
 
-  // TODO: Add more validation macros for this
-  result.absolute_path = std::filesystem::weakly_canonical(
-      path.parent_path() / input.at("path").to_string());
+  result.absolute_path = input.at("path").to_string();
   assert(result.absolute_path.is_absolute());
 
   result.base = from_json<decltype(result.base)::value_type>(
@@ -77,29 +76,25 @@ auto collection_from_json(const std::filesystem::path &path,
 }
 
 template <typename T>
-auto entries_from_json(T &result,
-                       const std::filesystem::path &configuration_path,
-                       const std::filesystem::path &location,
+auto entries_from_json(T &result, const std::filesystem::path &location,
                        const sourcemeta::core::JSON &input) -> void {
   // A heuristic to check if we are at the root or not
   if (input.defines("url")) {
     if (input.defines("contents")) {
       for (const auto &entry : input.at("contents").as_object()) {
-        entries_from_json<T>(result, configuration_path, location / entry.first,
-                             entry.second);
+        entries_from_json<T>(result, location / entry.first, entry.second);
       }
     }
   } else {
     assert(!result.contains(location));
     if (input.defines("path")) {
-      result.emplace(location, collection_from_json(configuration_path, input));
+      result.emplace(location, collection_from_json(input));
     } else {
       result.emplace(location, page_from_json(input));
       // Only pages may have children
       if (input.defines("contents")) {
         for (const auto &entry : input.at("contents").as_object()) {
-          entries_from_json<T>(result, configuration_path,
-                               location / entry.first, entry.second);
+          entries_from_json<T>(result, location / entry.first, entry.second);
         }
       }
     }
@@ -110,40 +105,36 @@ auto entries_from_json(T &result,
 
 namespace sourcemeta::registry {
 
-auto Configuration::parse(const std::filesystem::path &configuration_path,
-                          const sourcemeta::core::JSON &data) -> Configuration {
-#define VALIDATE(condition, path, pointer, error)                              \
+auto Configuration::parse(const sourcemeta::core::JSON &data) -> Configuration {
+#define VALIDATE(condition, pointer, error)                                    \
   if (!(condition)) {                                                          \
     throw sourcemeta::registry::ConfigurationValidationError(                  \
-        path, sourcemeta::core::Pointer(pointer), (error));                    \
+        sourcemeta::core::Pointer(pointer), (error));                          \
   }
 
   Configuration result;
-  VALIDATE(data.defines("url"), configuration_path, {},
-           "Missing 'url' required property");
-  VALIDATE(data.at("url").is_string(), configuration_path, {"url"},
+  VALIDATE(data.defines("url"), {}, "Missing 'url' required property");
+  VALIDATE(data.at("url").is_string(), {"url"},
            "The 'url' property must be a string");
   result.url = sourcemeta::core::URI{data.at("url").to_string()}
                    .canonicalize()
                    .recompose();
 
-  VALIDATE(data.defines("title"), configuration_path, {},
-           "Missing 'title' required property");
-  VALIDATE(data.at("title").is_string(), configuration_path, {"title"},
+  VALIDATE(data.defines("title"), {}, "Missing 'title' required property");
+  VALIDATE(data.at("title").is_string(), {"title"},
            "The 'title' property must be a string");
   result.title = data.at("title").to_string();
 
-  VALIDATE(data.defines("description"), configuration_path, {},
+  VALIDATE(data.defines("description"), {},
            "Missing 'description' required property");
-  VALIDATE(data.at("description").is_string(), configuration_path,
-           {"description"}, "The 'description' property must be a string");
+  VALIDATE(data.at("description").is_string(), {"description"},
+           "The 'description' property must be a string");
   result.description = data.at("description").to_string();
 
-  VALIDATE(data.defines("port"), configuration_path, {},
-           "Missing 'port' required property");
-  VALIDATE(data.at("port").is_integer(), configuration_path, {"port"},
+  VALIDATE(data.defines("port"), {}, "Missing 'port' required property");
+  VALIDATE(data.at("port").is_integer(), {"port"},
            "The 'description' property must be an integer");
-  VALIDATE(data.at("port").is_positive(), configuration_path, {"port"},
+  VALIDATE(data.at("port").is_positive(), {"port"},
            "The 'description' property must be a positive integer");
   result.port = data.at("port").to_integer();
 
@@ -161,7 +152,7 @@ auto Configuration::parse(const std::filesystem::path &configuration_path,
                      .title = data.at("action").at("title").to_string()};
   }
 
-  entries_from_json(result.entries, configuration_path, "", data);
+  entries_from_json(result.entries, "", data);
 
   return result;
 #undef VALIDATE

@@ -27,8 +27,8 @@ TEST(Configuration, stub_1) {
                                 "stub_1.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
-  const auto configuration{sourcemeta::registry::Configuration::parse(
-      configuration_path, raw_configuration)};
+  const auto configuration{
+      sourcemeta::registry::Configuration::parse(raw_configuration)};
 
   EXPECT_EQ(configuration.url, "http://localhost:8000");
   EXPECT_EQ(configuration.title, "Title");

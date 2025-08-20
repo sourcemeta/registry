@@ -65,8 +65,8 @@ static auto index_main(const std::string_view &program,
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, SOURCEMETA_REGISTRY_COLLECTIONS)};
-  const auto configuration{sourcemeta::registry::Configuration::parse(
-      configuration_path, raw_configuration)};
+  const auto configuration{
+      sourcemeta::registry::Configuration::parse(raw_configuration)};
 
   // We want to keep this file uncompressed and without a leading header to that
   // the server can quickly read on start
@@ -444,8 +444,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     std::cerr << "error: " << error.what() << "\n  " << error.description()
               << "\n"
               << "    at location \""
-              << sourcemeta::core::to_string(error.pointer()) << "\"\n"
-              << "    at  " << error.path().string() << "\n";
+              << sourcemeta::core::to_string(error.pointer()) << "\"\n";
     return EXIT_FAILURE;
   } catch (const sourcemeta::registry::ValidatorError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
