@@ -156,83 +156,78 @@ auto Configuration::parse(const std::filesystem::path &path,
   VALIDATE(data.at("schemas").is_object(), {"schemas"},
            "The 'schemas' property must be an object");
   for (const auto &entry : data.at("schemas").as_object()) {
-    Collection collection;
+    if (entry.second.defines("path")) {
+      Collection collection;
 
-    if (entry.second.defines("title")) {
-      VALIDATE(entry.second.at("title").is_string(),
-               sourcemeta::core::Pointer({"schemas", entry.first, "title"}),
-               "The 'title' property must be a string");
-      collection.title = entry.second.at("title").to_string();
-    }
-
-    if (entry.second.defines("description")) {
-      VALIDATE(
-          entry.second.at("description").is_string(),
-          sourcemeta::core::Pointer({"schemas", entry.first, "description"}),
-          "The 'description' property must be a string");
-      collection.description = entry.second.at("description").to_string();
-    }
-
-    if (entry.second.defines("email")) {
-      VALIDATE(entry.second.at("email").is_string(),
-               sourcemeta::core::Pointer({"schemas", entry.first, "email"}),
-               "The 'email' property must be a string");
-      collection.email = entry.second.at("email").to_string();
-    }
-
-    if (entry.second.defines("github")) {
-      VALIDATE(entry.second.at("github").is_string(),
-               sourcemeta::core::Pointer({"schemas", entry.first, "github"}),
-               "The 'github' property must be a string");
-      collection.github = entry.second.at("github").to_string();
-    }
-
-    if (entry.second.defines("website")) {
-      VALIDATE(entry.second.at("website").is_string(),
-               sourcemeta::core::Pointer({"schemas", entry.first, "website"}),
-               "The 'website' property must be a string");
-      collection.website = entry.second.at("website").to_string();
-    }
-
-    // TODO: Add more validation macros for this
-    collection.absolute_path = std::filesystem::weakly_canonical(
-        path.parent_path() / entry.second.at("path").to_string());
-    assert(collection.absolute_path.is_absolute());
-    collection.base = entry.second.at("base").to_string();
-    collection.default_dialect =
-        entry.second.defines("defaultDialect")
-            ? entry.second.at("defaultDialect").to_string()
-            : static_cast<std::optional<sourcemeta::core::JSON::String>>(
-                  std::nullopt);
-
-    if (entry.second.defines("resolve")) {
-      for (const auto &pair : entry.second.at("resolve").as_object()) {
-        collection.resolve.emplace(pair.first,
-                                   sourcemeta::core::URI::canonicalize(
-                                       to_lowercase(pair.second.to_string())));
+      if (entry.second.defines("title")) {
+        VALIDATE(entry.second.at("title").is_string(),
+                 sourcemeta::core::Pointer({"schemas", entry.first, "title"}),
+                 "The 'title' property must be a string");
+        collection.title = entry.second.at("title").to_string();
       }
-    }
 
-    for (const auto &subentry : entry.second.as_object()) {
-      if (subentry.first.starts_with("x-") && subentry.second.is_boolean() &&
-          subentry.second.to_boolean()) {
-        collection.attributes.emplace(subentry.first);
+      if (entry.second.defines("description")) {
+        VALIDATE(
+            entry.second.at("description").is_string(),
+            sourcemeta::core::Pointer({"schemas", entry.first, "description"}),
+            "The 'description' property must be a string");
+        collection.description = entry.second.at("description").to_string();
       }
-    }
 
-    result.entries.emplace(entry.first, std::move(collection));
-  }
+      if (entry.second.defines("email")) {
+        VALIDATE(entry.second.at("email").is_string(),
+                 sourcemeta::core::Pointer({"schemas", entry.first, "email"}),
+                 "The 'email' property must be a string");
+        collection.email = entry.second.at("email").to_string();
+      }
 
-  if (data.defines("pages")) {
-    VALIDATE(data.at("pages").is_object(), {"pages"},
-             "The 'pages' property must be an object");
-    for (const auto &entry : data.at("pages").as_object()) {
-      assert(result.entries.find(entry.first) == result.entries.cend());
+      if (entry.second.defines("github")) {
+        VALIDATE(entry.second.at("github").is_string(),
+                 sourcemeta::core::Pointer({"schemas", entry.first, "github"}),
+                 "The 'github' property must be a string");
+        collection.github = entry.second.at("github").to_string();
+      }
+
+      if (entry.second.defines("website")) {
+        VALIDATE(entry.second.at("website").is_string(),
+                 sourcemeta::core::Pointer({"schemas", entry.first, "website"}),
+                 "The 'website' property must be a string");
+        collection.website = entry.second.at("website").to_string();
+      }
+
+      // TODO: Add more validation macros for this
+      collection.absolute_path = std::filesystem::weakly_canonical(
+          path.parent_path() / entry.second.at("path").to_string());
+      assert(collection.absolute_path.is_absolute());
+      collection.base = entry.second.at("base").to_string();
+      collection.default_dialect =
+          entry.second.defines("defaultDialect")
+              ? entry.second.at("defaultDialect").to_string()
+              : static_cast<std::optional<sourcemeta::core::JSON::String>>(
+                    std::nullopt);
+
+      if (entry.second.defines("resolve")) {
+        for (const auto &pair : entry.second.at("resolve").as_object()) {
+          collection.resolve.emplace(
+              pair.first, sourcemeta::core::URI::canonicalize(
+                              to_lowercase(pair.second.to_string())));
+        }
+      }
+
+      for (const auto &subentry : entry.second.as_object()) {
+        if (subentry.first.starts_with("x-") && subentry.second.is_boolean() &&
+            subentry.second.to_boolean()) {
+          collection.attributes.emplace(subentry.first);
+        }
+      }
+
+      result.entries.emplace(entry.first, std::move(collection));
+    } else {
       Page page;
 
       if (entry.second.defines("title")) {
         VALIDATE(entry.second.at("title").is_string(),
-                 sourcemeta::core::Pointer({"pages", entry.first, "title"}),
+                 sourcemeta::core::Pointer({"schemas", entry.first, "title"}),
                  "The 'title' property must be a string");
         page.title = entry.second.at("title").to_string();
       }
@@ -240,28 +235,28 @@ auto Configuration::parse(const std::filesystem::path &path,
       if (entry.second.defines("description")) {
         VALIDATE(
             entry.second.at("description").is_string(),
-            sourcemeta::core::Pointer({"pages", entry.first, "description"}),
+            sourcemeta::core::Pointer({"schemas", entry.first, "description"}),
             "The 'description' property must be a string");
         page.description = entry.second.at("description").to_string();
       }
 
       if (entry.second.defines("email")) {
         VALIDATE(entry.second.at("email").is_string(),
-                 sourcemeta::core::Pointer({"pages", entry.first, "email"}),
+                 sourcemeta::core::Pointer({"schemas", entry.first, "email"}),
                  "The 'email' property must be a string");
         page.email = entry.second.at("email").to_string();
       }
 
       if (entry.second.defines("github")) {
         VALIDATE(entry.second.at("github").is_string(),
-                 sourcemeta::core::Pointer({"pages", entry.first, "github"}),
+                 sourcemeta::core::Pointer({"schemas", entry.first, "github"}),
                  "The 'github' property must be a string");
         page.github = entry.second.at("github").to_string();
       }
 
       if (entry.second.defines("website")) {
         VALIDATE(entry.second.at("website").is_string(),
-                 sourcemeta::core::Pointer({"pages", entry.first, "website"}),
+                 sourcemeta::core::Pointer({"schemas", entry.first, "website"}),
                  "The 'website' property must be a string");
         page.website = entry.second.at("website").to_string();
       }

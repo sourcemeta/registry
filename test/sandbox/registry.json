@@ -8,16 +8,14 @@
     "icon": "github"
   },
   "extends": [ "@geojson/v1.0.5", "@geojson/v1.0.4" ],
-  "pages": {
+  "schemas": {
     "example": {
       "title": "Sourcemeta",
       "description": "My description",
       "email": "hello@sourcemeta.com",
       "github": "sourcemeta",
       "website": "https://www.sourcemeta.com"
-    }
-  },
-  "schemas": {
+    },
     "example/extension": {
       "base": "https://example.com/extension",
       "path": "./schemas/example/extension"
