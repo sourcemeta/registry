@@ -11,7 +11,7 @@ cat << EOF > "$TMP/registry.json"
 {
   "url": "http://localhost:8000",
   "port": 8000,
-  "schemas": {
+  "contents": {
     "example": {
       "base": "https://example.com",
       "path": "./schemas"

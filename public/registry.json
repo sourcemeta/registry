@@ -21,7 +21,7 @@
     "@modelcontextprotocol/2025-03-26",
     "@modelcontextprotocol/2024-11-05"
   ],
-  "schemas": {
+  "contents": {
     "nasa": {
       "title": "National Aeronautics and Space Administration",
       "description": "The United States' government agency responsible for leading advancements in space exploration, scientific discovery, and aeronautics research",

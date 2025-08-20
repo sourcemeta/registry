@@ -11,7 +11,7 @@ cat << EOF > "$TMP/registry.json"
 {
   "url": "https://sourcemeta.com/",
   "port": 8000,
-  "schemas": {
+  "contents": {
     "example/schemas": {
       "base": "https://example.com/",
       "path": "./schemas"

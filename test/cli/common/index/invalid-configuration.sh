@@ -10,7 +10,7 @@ trap clean EXIT
 cat << EOF > "$TMP/registry.json"
 {
   "port": 8000,
-  "schemas": {
+  "contents": {
     "example/schemas": {}
   }
 }
