@@ -9,12 +9,16 @@ trap clean EXIT
 
 cat << EOF > "$TMP/registry.json"
 {
-  "url": "https://sourcemeta.com",
+  "url": "https://sourcemeta.com/",
   "port": 8000,
   "contents": {
-    "example/schemas": {
-      "base": "https://example.com",
-      "path": "./schemas"
+    "example": {
+      "contents": {
+        "schemas": {
+          "base": "https://example.com/",
+          "path": "./schemas"
+        }
+      }
     }
   }
 }

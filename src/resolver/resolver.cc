@@ -122,7 +122,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
                    const std::filesystem::path &path)
     -> std::pair<std::string, std::string> {
   const auto default_identifier{
-      sourcemeta::core::URI{collection.base}
+      sourcemeta::core::URI{collection.base.value()}
           .append_path(std::filesystem::relative(path, collection.absolute_path)
                            .string())
           .canonicalize()
@@ -150,7 +150,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
           ? schema.at("$schema").to_string()
           : collection.default_dialect};
 
-  sourcemeta::core::URI base_uri{collection.base};
+  sourcemeta::core::URI base_uri{collection.base.value()};
   base_uri.canonicalize();
 
   // TODO: We also need to try to apply "resolve" maps to the meta-schema and

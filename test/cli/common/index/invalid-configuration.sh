@@ -11,7 +11,11 @@ cat << EOF > "$TMP/registry.json"
 {
   "port": 8000,
   "contents": {
-    "example/schemas": {}
+    "example": {
+      "contents": {
+        "schemas": {}
+      }
+    }
   }
 }
 EOF

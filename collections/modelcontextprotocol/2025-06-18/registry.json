@@ -4,11 +4,13 @@
       "title": "Model Context Protocol (MCP)",
       "description": "An open protocol that standardizes how applications provide context to large language models (LLMs)",
       "github": "modelcontextprotocol",
-      "website": "https://modelcontextprotocol.io"
-    },
-    "modelcontextprotocol/2025-06-18": {
-      "base": "https://modelcontextprotocol.io",
-      "path": "./schemas"
+      "website": "https://modelcontextprotocol.io",
+      "contents": {
+        "2025-06-18": {
+          "base": "https://modelcontextprotocol.io",
+          "path": "./schemas"
+        }
+      }
     }
   }
 }

@@ -4,11 +4,13 @@
       "title": "GeoJSON",
       "description": "A format for encoding a variety of geographic data structures",
       "github": "geojson",
-      "website": "https://geojson.org"
-    },
-    "geojson/v1.0.3": {
-      "base": "https://geojson.org/schema",
-      "path": "./schemas"
+      "website": "https://geojson.org",
+      "contents": {
+        "v1.0.3": {
+          "base": "https://geojson.org/schema",
+          "path": "./schemas"
+        }
+      }
     }
   }
 }
