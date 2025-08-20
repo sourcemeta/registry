@@ -1,5 +1,5 @@
 {
-  "schemas": {
+  "contents": {
     "geojson": {
       "title": "GeoJSON",
       "description": "A format for encoding a variety of geographic data structures",

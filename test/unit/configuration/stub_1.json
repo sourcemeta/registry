@@ -3,7 +3,7 @@
   "title": "Title",
   "description": "Description",
   "port": 8000,
-  "schemas": {
+  "contents": {
     "example": {
       "title": "Sourcemeta",
       "description": "My description",

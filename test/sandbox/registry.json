@@ -8,7 +8,7 @@
     "icon": "github"
   },
   "extends": [ "@geojson/v1.0.5", "@geojson/v1.0.4" ],
-  "schemas": {
+  "contents": {
     "example": {
       "title": "Sourcemeta",
       "description": "My description",
