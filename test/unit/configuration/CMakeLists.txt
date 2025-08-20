@@ -1,5 +1,5 @@
 sourcemeta_googletest(NAMESPACE sourcemeta PROJECT registry NAME configuration
-  SOURCES configuration_test.cc)
+  SOURCES configuration_read_test.cc configuration_test.cc)
 
 target_link_libraries(sourcemeta_registry_configuration_unit
   PRIVATE sourcemeta::registry::configuration)

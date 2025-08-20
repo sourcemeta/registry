@@ -1,0 +1,8 @@
+{
+  "title": "Nested",
+  "contents": {
+    "nested": {
+      "include": "./folder/jsonschema.json"
+    }
+  }
+}

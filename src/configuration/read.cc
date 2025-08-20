@@ -1,6 +1,9 @@
 #include <sourcemeta/registry/configuration.h>
 
-#include <cassert> // assert
+#include <algorithm> // std::ranges
+#include <cassert>   // assert
+#include <iterator>  // std::back_inserter
+#include <vector>    // std::vector
 
 namespace {
 
@@ -65,6 +68,44 @@ auto preprocess_configuration(
   configuration = std::move(result);
 }
 
+auto dereference(const std::filesystem::path &base,
+                 sourcemeta::core::JSON &input) -> void {
+  assert(base.is_absolute());
+  if (!input.is_object()) {
+    return;
+
+    // Read included files
+  } else if (input.defines("include") && input.at("include").is_string()) {
+    auto include_path{std::filesystem::weakly_canonical(
+        base / input.at("include").to_string())};
+    if (std::filesystem::is_directory(include_path)) {
+      include_path /= "jsonschema.json";
+    }
+    input.into(sourcemeta::core::read_json(include_path));
+    assert(!input.defines("include"));
+    dereference(include_path.parent_path(), input);
+
+    // Revisit and relativize paths
+  } else if (input.defines("path") && input.at("path").is_string()) {
+    const std::filesystem::path current_path{input.at("path").to_string()};
+    const auto absolute_path{std::filesystem::weakly_canonical(
+        current_path.is_relative() ? base / current_path : current_path)};
+    input.at("path").into(sourcemeta::core::JSON{absolute_path});
+
+    // Recurse on children, if any
+  } else if (input.defines("contents") && input.at("contents").is_object()) {
+    // TODO: All of this dance because we can't get mutable iterators out of
+    // objects
+    std::vector<sourcemeta::core::JSON::String> keys;
+    std::ranges::transform(input.at("contents").as_object(),
+                           std::back_inserter(keys),
+                           [](const auto &entry) { return entry.first; });
+    for (const auto &key : keys) {
+      dereference(base, input.at("contents").at(key));
+    }
+  }
+}
+
 } // namespace
 
 namespace sourcemeta::registry {
@@ -78,6 +119,7 @@ auto Configuration::read(const std::filesystem::path &path,
   data.assign_if_missing(
       "description",
       sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
+  dereference(path.parent_path(), data);
   return data;
 }
 

@@ -81,19 +81,27 @@ auto entries_from_json(T &result,
                        const std::filesystem::path &configuration_path,
                        const std::filesystem::path &location,
                        const sourcemeta::core::JSON &input) -> void {
-  if (!input.defines("url")) {
+  // A heuristic to check if we are at the root or not
+  if (input.defines("url")) {
+    if (input.defines("contents")) {
+      for (const auto &entry : input.at("contents").as_object()) {
+        entries_from_json<T>(result, configuration_path, location / entry.first,
+                             entry.second);
+      }
+    }
+  } else {
     assert(!result.contains(location));
     if (input.defines("path")) {
       result.emplace(location, collection_from_json(configuration_path, input));
     } else {
       result.emplace(location, page_from_json(input));
-    }
-  }
-
-  if (input.defines("contents")) {
-    for (const auto &entry : input.at("contents").as_object()) {
-      entries_from_json<T>(result, configuration_path, location / entry.first,
-                           entry.second);
+      // Only pages may have children
+      if (input.defines("contents")) {
+        for (const auto &entry : input.at("contents").as_object()) {
+          entries_from_json<T>(result, configuration_path,
+                               location / entry.first, entry.second);
+        }
+      }
     }
   }
 }
