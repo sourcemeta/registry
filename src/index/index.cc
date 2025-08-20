@@ -441,10 +441,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
 
     return index_main(program, arguments);
   } catch (const sourcemeta::registry::ConfigurationValidationError &error) {
-    std::cerr << "error: " << error.what() << "\n  " << error.description()
-              << "\n"
-              << "    at location \""
-              << sourcemeta::core::to_string(error.pointer()) << "\"\n";
+    std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
     return EXIT_FAILURE;
   } catch (const sourcemeta::registry::ValidatorError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();

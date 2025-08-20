@@ -28,8 +28,9 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 error: Invalid configuration
-  Missing 'url' required property
-    at location ""
+The value was expected to be an object that defines properties "port", and "url"
+  at instance location ""
+  at evaluate path "/required"
 EOF
 
 diff "$TMP/output.txt" "$TMP/expected.txt"
