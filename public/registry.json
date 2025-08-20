@@ -430,9 +430,9 @@
     "iptc/ninjs": {
       "base": "http://www.iptc.org/std/ninjs",
       "path": "../vendor/public/ninjs/specification",
-      "rebase": [
-        { "from": "https://geojson.org/schema", "to": "/geojson/v1.0.5" }
-      ]
+      "resolve": {
+        "https://geojson.org/schema/GeoJSON.json#": "/geojson/v1.0.5/geojson.json"
+      }
     },
     "apis-json": {
       "base": "https://github.com/apis-json/api-json/blob/develop/spec/",
