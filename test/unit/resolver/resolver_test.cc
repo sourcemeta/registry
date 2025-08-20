@@ -11,8 +11,8 @@
       CONFIGURATION_PATH,                                                      \
       std::filesystem::path{CONFIGURATION_PATH}.parent_path() /                \
           "collections")};                                                     \
-  const auto configuration{sourcemeta::registry::Configuration::parse(         \
-      CONFIGURATION_PATH, raw_configuration)};
+  const auto configuration{                                                    \
+      sourcemeta::registry::Configuration::parse(raw_configuration)};
 
 #define RESOLVER_EXPECT(resolver, expected_uri, expected_schema)               \
   {                                                                            \

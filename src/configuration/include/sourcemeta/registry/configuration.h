@@ -17,8 +17,7 @@ struct Configuration {
   static auto read(const std::filesystem::path &configuration_path,
                    const std::filesystem::path &collections_path)
       -> sourcemeta::core::JSON;
-  static auto parse(const std::filesystem::path &configuration_path,
-                    const sourcemeta::core::JSON &data) -> Configuration;
+  static auto parse(const sourcemeta::core::JSON &data) -> Configuration;
 
   sourcemeta::core::JSON::String url;
   sourcemeta::core::JSON::String title;
