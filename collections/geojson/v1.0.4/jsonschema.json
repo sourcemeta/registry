@@ -1,0 +1,4 @@
+{
+  "base": "https://geojson.org/schema",
+  "path": "./schemas"
+}

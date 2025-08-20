@@ -14,10 +14,10 @@
 namespace sourcemeta::registry {
 
 struct Configuration {
-  static auto read(const std::filesystem::path &path,
-                   const std::filesystem::path &collections)
+  static auto read(const std::filesystem::path &configuration_path,
+                   const std::filesystem::path &collections_path)
       -> sourcemeta::core::JSON;
-  static auto parse(const std::filesystem::path &path,
+  static auto parse(const std::filesystem::path &configuration_path,
                     const sourcemeta::core::JSON &data) -> Configuration;
 
   sourcemeta::core::JSON::String url;

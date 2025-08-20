@@ -7,8 +7,7 @@
       "website": "https://modelcontextprotocol.io",
       "contents": {
         "2024-11-05": {
-          "base": "https://modelcontextprotocol.io",
-          "path": "./schemas"
+          "include": "./jsonschema.json"
         }
       }
     }

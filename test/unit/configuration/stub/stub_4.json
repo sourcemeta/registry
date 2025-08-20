@@ -1,0 +1,10 @@
+{
+  "url": "http://localhost:8000",
+  "port": 8000,
+  "extends": [ "./stub_2.json" ],
+  "contents": {
+    "other": {
+      "title": "Other"
+    }
+  }
+}

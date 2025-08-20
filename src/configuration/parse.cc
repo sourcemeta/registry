@@ -81,19 +81,27 @@ auto entries_from_json(T &result,
                        const std::filesystem::path &configuration_path,
                        const std::filesystem::path &location,
                        const sourcemeta::core::JSON &input) -> void {
-  if (!input.defines("url")) {
+  // A heuristic to check if we are at the root or not
+  if (input.defines("url")) {
+    if (input.defines("contents")) {
+      for (const auto &entry : input.at("contents").as_object()) {
+        entries_from_json<T>(result, configuration_path, location / entry.first,
+                             entry.second);
+      }
+    }
+  } else {
     assert(!result.contains(location));
     if (input.defines("path")) {
       result.emplace(location, collection_from_json(configuration_path, input));
     } else {
       result.emplace(location, page_from_json(input));
-    }
-  }
-
-  if (input.defines("contents")) {
-    for (const auto &entry : input.at("contents").as_object()) {
-      entries_from_json<T>(result, configuration_path, location / entry.first,
-                           entry.second);
+      // Only pages may have children
+      if (input.defines("contents")) {
+        for (const auto &entry : input.at("contents").as_object()) {
+          entries_from_json<T>(result, configuration_path,
+                               location / entry.first, entry.second);
+        }
+      }
     }
   }
 }
@@ -102,7 +110,7 @@ auto entries_from_json(T &result,
 
 namespace sourcemeta::registry {
 
-auto Configuration::parse(const std::filesystem::path &path,
+auto Configuration::parse(const std::filesystem::path &configuration_path,
                           const sourcemeta::core::JSON &data) -> Configuration {
 #define VALIDATE(condition, path, pointer, error)                              \
   if (!(condition)) {                                                          \
@@ -111,29 +119,31 @@ auto Configuration::parse(const std::filesystem::path &path,
   }
 
   Configuration result;
-  VALIDATE(data.defines("url"), path, {}, "Missing 'url' required property");
-  VALIDATE(data.at("url").is_string(), path, {"url"},
+  VALIDATE(data.defines("url"), configuration_path, {},
+           "Missing 'url' required property");
+  VALIDATE(data.at("url").is_string(), configuration_path, {"url"},
            "The 'url' property must be a string");
   result.url = sourcemeta::core::URI{data.at("url").to_string()}
                    .canonicalize()
                    .recompose();
 
-  VALIDATE(data.defines("title"), path, {},
+  VALIDATE(data.defines("title"), configuration_path, {},
            "Missing 'title' required property");
-  VALIDATE(data.at("title").is_string(), path, {"title"},
+  VALIDATE(data.at("title").is_string(), configuration_path, {"title"},
            "The 'title' property must be a string");
   result.title = data.at("title").to_string();
 
-  VALIDATE(data.defines("description"), path, {},
+  VALIDATE(data.defines("description"), configuration_path, {},
            "Missing 'description' required property");
-  VALIDATE(data.at("description").is_string(), path, {"description"},
-           "The 'description' property must be a string");
+  VALIDATE(data.at("description").is_string(), configuration_path,
+           {"description"}, "The 'description' property must be a string");
   result.description = data.at("description").to_string();
 
-  VALIDATE(data.defines("port"), path, {}, "Missing 'port' required property");
-  VALIDATE(data.at("port").is_integer(), path, {"port"},
+  VALIDATE(data.defines("port"), configuration_path, {},
+           "Missing 'port' required property");
+  VALIDATE(data.at("port").is_integer(), configuration_path, {"port"},
            "The 'description' property must be an integer");
-  VALIDATE(data.at("port").is_positive(), path, {"port"},
+  VALIDATE(data.at("port").is_positive(), configuration_path, {"port"},
            "The 'description' property must be a positive integer");
   result.port = data.at("port").to_integer();
 
@@ -151,7 +161,7 @@ auto Configuration::parse(const std::filesystem::path &path,
                      .title = data.at("action").at("title").to_string()};
   }
 
-  entries_from_json(result.entries, path, "", data);
+  entries_from_json(result.entries, configuration_path, "", data);
 
   return result;
 #undef VALIDATE

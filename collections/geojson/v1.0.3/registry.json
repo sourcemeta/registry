@@ -7,8 +7,7 @@
       "website": "https://geojson.org",
       "contents": {
         "v1.0.3": {
-          "base": "https://geojson.org/schema",
-          "path": "./schemas"
+          "include": "./jsonschema.json"
         }
       }
     }

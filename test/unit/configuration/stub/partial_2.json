@@ -1,0 +1,8 @@
+{
+  "title": "Nested without file name",
+  "contents": {
+    "nested": {
+      "include": "./folder"
+    }
+  }
+}
