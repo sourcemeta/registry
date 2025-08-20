@@ -51,7 +51,7 @@ struct Configuration {
     std::unordered_map<sourcemeta::core::JSON::String,
                        sourcemeta::core::JSON::String>
         resolve;
-    std::unordered_set<sourcemeta::core::JSON::String> attributes;
+    sourcemeta::core::JSON extra = sourcemeta::core::JSON::make_object();
   };
 
   std::unordered_map<std::filesystem::path, std::variant<Page, Collection>>

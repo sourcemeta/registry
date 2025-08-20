@@ -66,5 +66,5 @@ TEST(Configuration, stub_1) {
   EXPECT_COLLECTION(configuration, "example/extension", resolve.size(), 1);
   EXPECT_COLLECTION(configuration, "example/extension",
                     resolve.at("https://other.com/single.json"), "/foo.json");
-  EXPECT_COLLECTION(configuration, "example/extension", attributes.size(), 0);
+  EXPECT_COLLECTION(configuration, "example/extension", extra.size(), 0);
 }
