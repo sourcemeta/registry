@@ -20,7 +20,7 @@
   }
 
 #define RESOLVER_IMPORT(resolver, collection_name, relative_path)              \
-  (resolver).add(configuration.url,                                            \
+  (resolver).add(configuration.url, collection_name,                           \
                  std::get<sourcemeta::registry::Configuration::Collection>(    \
                      configuration.entries.at(collection_name)),               \
                  std::filesystem::path{SCHEMAS_PATH} / collection_name /       \

@@ -33,6 +33,7 @@ public:
       -> std::optional<sourcemeta::core::JSON>;
 
   auto add(const sourcemeta::core::URI &server_url,
+           const std::filesystem::path &relative_path,
            const Configuration::Collection &collection,
            const std::filesystem::path &path)
       -> std::pair<std::string, std::string>;

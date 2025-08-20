@@ -1,8 +1,20 @@
 #include <sourcemeta/registry/configuration.h>
 
-#include <cassert> // assert
+#include <sourcemeta/core/uri.h>
+
+#include <algorithm> // std::transform
+#include <cassert>   // assert
+#include <cctype>    // std::tolower
 
 namespace {
+
+auto to_lowercase(const std::string_view input) -> std::string {
+  std::string result{input};
+  std::ranges::transform(result, result.begin(), [](const auto character) {
+    return static_cast<char>(std::tolower(character));
+  });
+  return result;
+}
 
 // TODO: Allow the configuration to read collection entries from separate files
 auto preprocess_configuration(
@@ -146,11 +158,9 @@ auto Configuration::parse(const std::filesystem::path &path,
   for (const auto &entry : data.at("schemas").as_object()) {
     Collection collection;
     // TODO: Add more validation macros for this
-    collection.absolute_path = std::filesystem::canonical(
+    collection.absolute_path = std::filesystem::weakly_canonical(
         path.parent_path() / entry.second.at("path").to_string());
     assert(collection.absolute_path.is_absolute());
-    collection.relative_path = entry.first;
-    assert(collection.relative_path.is_relative());
     collection.base = entry.second.at("base").to_string();
     collection.default_dialect =
         entry.second.defines("defaultDialect")
@@ -158,11 +168,11 @@ auto Configuration::parse(const std::filesystem::path &path,
             : static_cast<std::optional<sourcemeta::core::JSON::String>>(
                   std::nullopt);
 
-    if (entry.second.defines("rebase")) {
-      for (const auto &pair : entry.second.at("rebase").as_array()) {
-        collection.rebase.emplace_back(
-            sourcemeta::core::URI{pair.at("from").to_string()}.canonicalize(),
-            sourcemeta::core::URI{pair.at("to").to_string()}.canonicalize());
+    if (entry.second.defines("resolve")) {
+      for (const auto &pair : entry.second.at("resolve").as_object()) {
+        collection.resolve.emplace(pair.first,
+                                   sourcemeta::core::URI::canonicalize(
+                                       to_lowercase(pair.second.to_string())));
       }
     }
 

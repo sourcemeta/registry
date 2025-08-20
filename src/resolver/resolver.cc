@@ -117,6 +117,7 @@ auto Resolver::operator()(
 }
 
 auto Resolver::add(const sourcemeta::core::URI &server_url,
+                   const std::filesystem::path &relative_path,
                    const Configuration::Collection &collection,
                    const std::filesystem::path &path)
     -> std::pair<std::string, std::string> {
@@ -152,7 +153,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
   sourcemeta::core::URI base_uri{collection.base};
   base_uri.canonicalize();
 
-  // TODO: We also need to try to apply "rebase" arrays to the meta-schema and
+  // TODO: We also need to try to apply "resolve" maps to the meta-schema and
   // test that
   if (current_dialect.has_value()) {
     sourcemeta::core::URI dialect_uri{current_dialect.value()};
@@ -160,7 +161,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
     dialect_uri.relative_to(base_uri);
     if (dialect_uri.is_relative()) {
       current_dialect = sourcemeta::core::URI{server_url}
-                            .append_path(collection.relative_path)
+                            .append_path(relative_path)
                             // TODO: Let `append_path` take a URI
                             .append_path(dialect_uri.recompose())
                             .canonicalize()
@@ -176,17 +177,19 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
             .dialect = current_dialect,
             .relative_path = "",
             .original_identifier = effective_identifier,
-            .collection_name = collection.relative_path,
+            .collection_name = relative_path,
             .blaze_exhaustive = !collection.attributes.contains(
                 "x-sourcemeta-registry:no-blaze-exhaustive"),
-            // TODO: We should avoid this vector / string copy
+            // TODO: We should avoid this map copy
             .reference_visitor =
-                [rebases = collection.rebase](
+                [resolve_map = collection.resolve](
                     sourcemeta::core::JSON &subschema,
                     const sourcemeta::core::URI &base,
                     const sourcemeta::core::JSON::String &vocabulary,
                     const sourcemeta::core::JSON::String &keyword,
                     sourcemeta::core::URI &value) {
+                  // TODO: This means we only let the resolver act on lowercased
+                  // framed values?
                   const auto current_path{value.path()};
                   if (current_path.has_value()) {
                     value.path(to_lowercase(current_path.value()));
@@ -194,22 +197,16 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
                                      sourcemeta::core::JSON{value.recompose()});
                   }
 
-                  sourcemeta::core::reference_visitor_relativize(
-                      subschema, base, vocabulary, keyword, value);
-
-                  if (!value.is_absolute()) {
+                  const auto match{
+                      resolve_map.find(subschema.at(keyword).to_string())};
+                  if (match != resolve_map.cend()) {
+                    subschema.assign(keyword,
+                                     sourcemeta::core::JSON{match->second});
                     return;
                   }
 
-                  for (const auto &rebase : rebases) {
-                    auto value_other = value;
-                    value_other.rebase(rebase.first, rebase.second);
-                    if (value_other != value) {
-                      subschema.assign(keyword, sourcemeta::core::JSON{
-                                                    value_other.recompose()});
-                      return;
-                    }
-                  }
+                  sourcemeta::core::reference_visitor_relativize(
+                      subschema, base, vocabulary, keyword, value);
                 }})};
 
   if (!result.second && result.first->second.path != canonical) {
@@ -233,7 +230,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
 
   assert(!identifier_uri.recompose().empty());
   auto new_identifier = sourcemeta::core::URI{server_url}
-                            .append_path(collection.relative_path)
+                            .append_path(relative_path)
                             // TODO: Let `append_path` take a URI
                             .append_path(identifier_uri.recompose())
                             .canonicalize()

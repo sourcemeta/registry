@@ -2,7 +2,6 @@
 #define SOURCEMETA_REGISTRY_CONFIGURATION_H_
 
 #include <sourcemeta/core/json.h>
-#include <sourcemeta/core/uri.h>
 
 #include <sourcemeta/registry/configuration_error.h>
 
@@ -10,9 +9,7 @@
 #include <optional>      // std::optional
 #include <unordered_map> // std::unordered_map
 #include <unordered_set> // std::unordered_set
-#include <utility>       // std::pair
 #include <variant>       // std::variant
-#include <vector>        // std::vector
 
 namespace sourcemeta::registry {
 
@@ -47,10 +44,11 @@ struct Configuration {
 
   struct Collection : public Metadata {
     std::filesystem::path absolute_path;
-    std::filesystem::path relative_path;
     sourcemeta::core::JSON::String base;
     std::optional<sourcemeta::core::JSON::String> default_dialect;
-    std::vector<std::pair<sourcemeta::core::URI, sourcemeta::core::URI>> rebase;
+    std::unordered_map<sourcemeta::core::JSON::String,
+                       sourcemeta::core::JSON::String>
+        resolve;
     std::unordered_set<sourcemeta::core::JSON::String> attributes;
   };
 
