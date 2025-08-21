@@ -171,6 +171,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
     }
   }
 
+  std::unique_lock lock{this->mutex};
   auto result{this->views.emplace(
       effective_identifier,
       Entry{.cache_path = std::nullopt,
@@ -207,6 +208,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
                   sourcemeta::core::reference_visitor_relativize(
                       subschema, base, vocabulary, keyword, value);
                 }})};
+  lock.unlock();
 
   if (!result.second && result.first->second.path != canonical) {
     std::ostringstream error;
@@ -244,6 +246,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
   // Otherwise we have things like "../" that should not be there
   assert(new_identifier.find("..") == std::string::npos);
   if (to_lowercase(current_identifier) != to_lowercase(new_identifier)) {
+    lock.lock();
     const auto match{this->views.find(to_lowercase(current_identifier))};
     assert(match != this->views.cend());
 
@@ -260,6 +263,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
     }
 
     this->views.erase(match);
+    lock.unlock();
   }
 
   this->count_ += 1;
@@ -269,8 +273,9 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
 
 auto Resolver::materialise(const std::string &uri,
                            const std::filesystem::path &path) -> void {
-  std::lock_guard<std::mutex> lock(this->mutex);
   assert(std::filesystem::exists(path));
+  // As we are modifying the actual map
+  std::unique_lock lock{this->mutex};
   auto entry{this->views.find(uri)};
   assert(entry != this->views.cend());
   assert(!entry->second.cache_path.has_value());
