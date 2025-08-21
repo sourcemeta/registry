@@ -15,6 +15,7 @@ PRESET ?= Debug
 OUTPUT ?= ./build
 PREFIX ?= $(OUTPUT)/dist
 SANDBOX ?= ./test/sandbox
+SANDBOX_URL ?= $(shell jq --raw-output '.url' < $(SANDBOX)/registry.json)
 PUBLIC ?= ./public
 
 .PHONY: all
@@ -56,8 +57,12 @@ test:
 .PHONY: test-e2e
 test-e2e: 
 	$(HURL) --test \
-		--variable base=$(shell jq --raw-output '.url' < $(SANDBOX)/registry.json) \
+		--variable base=$(SANDBOX_URL) \
 			test/e2e/api/*.hurl test/e2e/explorer/*.hurl test/e2e/schemas/*.hurl
+
+.PHONY: test-e2e-api
+test-e2e-api: 
+	$(HURL) --test --variable base=$(SANDBOX_URL) test/e2e/api/*.hurl
 
 .PHONY: sandbox
 sandbox: compile
@@ -69,8 +74,6 @@ sandbox: compile
 
 .PHONY: docker
 docker:
-	$(DOCKER) build --tag registry-$(EDITION) . --file Dockerfile \
-		--build-arg SOURCEMETA_REGISTRY_EDITION=$(EDITION) --progress plain
 	SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
 		$(DOCKER) compose --file test/sandbox/compose.yaml config
 	SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
