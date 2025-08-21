@@ -9,8 +9,8 @@
 #include <sourcemeta/registry/resolver_error.h>
 
 #include <filesystem>    // std::filesystem
-#include <mutex>         // std::mutex, std::lock_guard
 #include <optional>      // std::optional
+#include <shared_mutex>  // std::shared_mutex
 #include <string>        // std::string
 #include <string_view>   // std::string_view
 #include <unordered_map> // std::unordered_map
@@ -60,7 +60,7 @@ public:
 private:
   std::unordered_map<std::string, Entry> views;
   std::size_t count_{0};
-  std::mutex mutex;
+  std::shared_mutex mutex;
 };
 
 } // namespace sourcemeta::registry
