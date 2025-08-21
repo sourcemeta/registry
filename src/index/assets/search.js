@@ -32,7 +32,7 @@ search.addEventListener('input', function(event) {
 
     console.log('Searching for:', event.target.value);
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/search?q=' + encodeURIComponent(event.target.value));
+    xhr.open('GET', '/api/schemas/search?q=' + encodeURIComponent(event.target.value));
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4 && xhr.status === 200) {
         var response = JSON.parse(xhr.responseText);

@@ -290,7 +290,7 @@ static auto on_request(const std::filesystem::path &base,
                             "directory-html.metapack",
                         sourcemeta::registry::STATUS_OK);
     }
-  } else if (request->getUrl() == "/api/search") {
+  } else if (request->getUrl() == "/api/schemas/search") {
     if (request->getMethod() == "get") {
       const auto query{request->getQuery("q")};
       if (query.empty()) {
