@@ -1,0 +1,69 @@
+/*
+ * All rights reserved. You can only use this software 
+ * under a commercial license, as set out in 
+ * <https://www.sourcemeta.com/licensing/>.
+ */
+
+@import "../../../vendor/bootstrap/scss/functions";
+
+$border-radius: 0;
+$breadcrumb-font-size: 15px;
+
+@import "../../../vendor/bootstrap/scss/variables";
+@import "../../../vendor/bootstrap/scss/variables-dark";
+@import "../../../vendor/bootstrap/scss/maps";
+@import "../../../vendor/bootstrap/scss/mixins";
+@import "../../../vendor/bootstrap/scss/utilities";
+
+@import "../../../vendor/bootstrap/scss/root";
+@import "../../../vendor/bootstrap/scss/reboot";
+@import "../../../vendor/bootstrap/scss/type";
+@import "../../../vendor/bootstrap/scss/images";
+@import "../../../vendor/bootstrap/scss/containers";
+@import "../../../vendor/bootstrap/scss/grid";
+
+@import "../../../vendor/bootstrap/scss/tables";
+@import "../../../vendor/bootstrap/scss/forms";
+@import "../../../vendor/bootstrap/scss/buttons";
+// @import "../../../vendor/bootstrap/scss/transitions";
+// @import "../../../vendor/bootstrap/scss/dropdown";
+@import "../../../vendor/bootstrap/scss/button-group";
+@import "../../../vendor/bootstrap/scss/nav";
+@import "../../../vendor/bootstrap/scss/navbar";
+// @import "../../../vendor/bootstrap/scss/card";
+// @import "../../../vendor/bootstrap/scss/accordion";
+@import "../../../vendor/bootstrap/scss/breadcrumb";
+// @import "../../../vendor/bootstrap/scss/pagination";
+@import "../../../vendor/bootstrap/scss/badge";
+// @import "../../../vendor/bootstrap/scss/alert";
+@import "../../../vendor/bootstrap/scss/progress";
+@import "../../../vendor/bootstrap/scss/list-group";
+// @import "../../../vendor/bootstrap/scss/close";
+// @import "../../../vendor/bootstrap/scss/toasts";
+// @import "../../../vendor/bootstrap/scss/modal";
+// @import "../../../vendor/bootstrap/scss/tooltip";
+// @import "../../../vendor/bootstrap/scss/popover";
+// @import "../../../vendor/bootstrap/scss/carousel";
+// @import "../../../vendor/bootstrap/scss/spinners";
+// @import "../../../vendor/bootstrap/scss/offcanvas";
+// @import "../../../vendor/bootstrap/scss/placeholders";
+
+@import "../../../vendor/bootstrap/scss/helpers";
+@import "../../../vendor/bootstrap/scss/utilities/api";
+
+// Bootstrap Icons
+$bootstrap-icons-font: bootstrap-icons;
+$bootstrap-icons-font-dir: "/static";
+@import "../../../vendor/bootstrap-icons/font/bootstrap-icons.scss";
+
+// Bootstrap doesn't seem to provide breakpoint-based modifiers to `.w-*`
+@include media-breakpoint-up(md) {
+  .w-md-auto {
+    width: auto !important;
+  }
+}
+
+// Tables with vertical headers collapse the headers by default
+table tr > th[scope="row"] {
+  width: 1px;
+}

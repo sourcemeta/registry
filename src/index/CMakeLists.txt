@@ -77,10 +77,10 @@ include(BootstrapFiles)
 find_program(SASSC_BIN NAMES sassc REQUIRED)
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
   COMMAND "${SASSC_BIN}" --style compressed
-    "${CMAKE_CURRENT_SOURCE_DIR}/style.scss"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/style.scss"
     "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
   DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/style.scss"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/style.scss"
     "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/bootstrap-icons.scss"
     ${BOOTSTRAP_SCSS_FILES})
 target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
