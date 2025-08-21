@@ -237,36 +237,3 @@ jsonpath "$.entries[2].name" == "to-without"
 jsonpath "$.entries[2].type" == "schema"
 jsonpath "$.entries[2].url" == "/example/extension/to-without"
 jsonpath "$.entries[2].health" == 100
-
-GET {{base}}/example/v2.0/schema.json?meta=1
-Accept: application/json
-HTTP 200
-Content-Type: application/json
-Access-Control-Allow-Origin: *
-[Asserts]
-header "ETag" exists
-header "Last-Modified" exists
-jsonpath "$.bytes" == 138
-jsonpath "$.baseDialect" == "draft7"
-jsonpath "$.health" == 100
-jsonpath "$.canonical" == "{{base}}/example/v2.0/schema.json"
-jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.id" == "{{base}}/example/v2.0/schema.json"
-jsonpath "$.url" == "/example/v2.0/schema.json"
-jsonpath "$.breadcrumb" count == 3
-jsonpath "$.breadcrumb[0].name" == "example"
-jsonpath "$.breadcrumb[0].url" == "/example"
-jsonpath "$.breadcrumb[1].name" == "v2.0"
-jsonpath "$.breadcrumb[1].url" == "/example/v2.0"
-jsonpath "$.breadcrumb[2].name" == "schema"
-jsonpath "$.breadcrumb[2].url" == "/example/v2.0/schema"
-
-GET {{base}}/example/v2.0/xxxxx.json?meta=1
-Accept: application/json
-HTTP 404
-Content-Type: application/json
-Access-Control-Allow-Origin: *
-[Asserts]  
-jsonpath "$.code" == 404
-jsonpath "$.error" == "not-found"
-jsonpath "$.message" == "There is nothing at this URL"

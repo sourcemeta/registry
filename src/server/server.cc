@@ -290,44 +290,81 @@ static auto on_request(const std::filesystem::path &base,
                             "directory-html.metapack",
                         sourcemeta::registry::STATUS_OK);
     }
-  } else if (request->getUrl() == "/api/schemas/search") {
-    if (request->getMethod() == "get") {
-      const auto query{request->getQuery("q")};
-      if (query.empty()) {
-        json_error(request->getMethod(), request->getUrl(), response, encoding,
-                   sourcemeta::registry::STATUS_BAD_REQUEST, "missing-query",
-                   "You must provide a query parameter to search for");
-      } else {
-        auto result{sourcemeta::registry::search(
-            base / "explorer" / SENTINEL / "search.metapack", query)};
-        response->writeStatus(sourcemeta::registry::STATUS_OK);
-        response->writeHeader("Access-Control-Allow-Origin", "*");
-        response->writeHeader("Content-Type", "application/json");
-        std::ostringstream output;
-        sourcemeta::core::prettify(result, output);
-        send_response(sourcemeta::registry::STATUS_OK, request->getMethod(),
-                      request->getUrl(), response, output.str(), encoding,
-                      ServerContentEncoding::Identity);
-      }
+  } else if (request->getUrl().starts_with("/api/schemas/dependencies/")) {
+    if (request->getMethod() == "get" || request->getMethod() == "head") {
+      auto absolute_path{base / "schemas"};
+      absolute_path /= request->getUrl().substr(26);
+      absolute_path += ".json";
+      absolute_path /= SENTINEL;
+      absolute_path /= "dependencies.metapack";
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true);
     } else {
       json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
-  } else if (request->getUrl().starts_with("/static/")) {
-    std::ostringstream absolute_path;
-    absolute_path << SOURCEMETA_REGISTRY_STATIC;
-    absolute_path << request->getUrl().substr(7);
-    serve_static_file(request, response, encoding, absolute_path.str(),
-                      sourcemeta::registry::STATUS_OK);
-  } else if (request->getUrl().ends_with(".json")) {
-    // Otherwise we may get unexpected results in case-sensitive file-systems
-    std::string lowercase_path{request->getUrl().substr(1)};
-    std::transform(
-        lowercase_path.begin(), lowercase_path.end(), lowercase_path.begin(),
-        [](const unsigned char character) { return std::tolower(character); });
-
+  } else if (request->getUrl().starts_with("/api/schemas/health/")) {
+    if (request->getMethod() == "get" || request->getMethod() == "head") {
+      auto absolute_path{base / "schemas"};
+      absolute_path /= request->getUrl().substr(20);
+      absolute_path += ".json";
+      absolute_path /= SENTINEL;
+      absolute_path /= "health.metapack";
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true);
+    } else {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                 "method-not-allowed",
+                 "This HTTP method is invalid for this URL");
+    }
+  } else if (request->getUrl().starts_with("/api/schemas/locations/")) {
+    if (request->getMethod() == "get" || request->getMethod() == "head") {
+      auto absolute_path{base / "schemas"};
+      absolute_path /= request->getUrl().substr(23);
+      absolute_path += ".json";
+      absolute_path /= SENTINEL;
+      absolute_path /= "locations.metapack";
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true);
+    } else {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                 "method-not-allowed",
+                 "This HTTP method is invalid for this URL");
+    }
+  } else if (request->getUrl().starts_with("/api/schemas/positions/")) {
+    if (request->getMethod() == "get" || request->getMethod() == "head") {
+      auto absolute_path{base / "schemas"};
+      absolute_path /= request->getUrl().substr(23);
+      absolute_path += ".json";
+      absolute_path /= SENTINEL;
+      absolute_path /= "positions.metapack";
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true);
+    } else {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                 "method-not-allowed",
+                 "This HTTP method is invalid for this URL");
+    }
+  } else if (request->getUrl().starts_with("/api/schemas/metadata/")) {
+    if (request->getMethod() == "get" || request->getMethod() == "head") {
+      auto absolute_path{base / "explorer"};
+      absolute_path /= request->getUrl().substr(22);
+      absolute_path /= SENTINEL;
+      absolute_path /= "schema.metapack";
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true);
+    } else {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                 "method-not-allowed",
+                 "This HTTP method is invalid for this URL");
+    }
+  } else if (request->getUrl().starts_with("/api/schemas/evaluate/")) {
     // A CORS pre-flight request
     if (request->getMethod() == "options") {
       response->writeStatus(sourcemeta::registry::STATUS_NO_CONTENT);
@@ -338,11 +375,13 @@ static auto on_request(const std::filesystem::path &base,
       send_response(sourcemeta::registry::STATUS_NO_CONTENT,
                     request->getMethod(), request->getUrl(), response);
     } else if (request->getMethod() == "post") {
-      const auto template_path{base / "schemas" / lowercase_path / SENTINEL /
-                               "blaze-exhaustive.metapack"};
+      auto template_path{base / "schemas"};
+      template_path /= request->getUrl().substr(22);
+      template_path += ".json";
+      template_path /= SENTINEL;
+      template_path /= "blaze-exhaustive.metapack";
       if (!std::filesystem::exists(template_path)) {
-        const auto schema_path{base / "schemas" / lowercase_path / SENTINEL /
-                               "schema.metapack"};
+        const auto schema_path{template_path.parent_path() / "schema.metapack"};
         if (std::filesystem::exists(schema_path)) {
           json_error(request->getMethod(), request->getUrl(), response,
                      encoding, sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
@@ -400,59 +439,86 @@ static auto on_request(const std::filesystem::path &base,
                      "uncaught-error", error.what());
         }
       });
-    } else if (!request->getQuery("meta").empty()) {
-      auto absolute_path{base / "explorer" / lowercase_path};
-      absolute_path.replace_extension("");
-      absolute_path /= SENTINEL;
-      absolute_path /= "schema.metapack";
-      serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK, true);
     } else {
-      // Because Visual Studio Code famously does not support `$id` or `id`
-      // See
-      // https://github.com/microsoft/vscode-json-languageservice/issues/224
-      const auto &user_agent{request->getHeader("user-agent")};
-      const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
-                           user_agent.starts_with("VSCodium")};
-      const auto health{!request->getQuery("health").empty()};
-      const auto locations{!request->getQuery("locations").empty()};
-      const auto positions{!request->getQuery("positions").empty()};
-      const auto dependencies{!request->getQuery("dependencies").empty()};
-      const auto bundle{!request->getQuery("bundle").empty()};
-      const auto unidentify{!request->getQuery("unidentify").empty()};
-      auto absolute_path{base / "schemas" / lowercase_path / SENTINEL};
-      if (health) {
-        absolute_path /= "health.metapack";
-      } else if (locations) {
-        absolute_path /= "locations.metapack";
-      } else if (positions) {
-        absolute_path /= "positions.metapack";
-      } else if (dependencies) {
-        absolute_path /= "dependencies.metapack";
-      } else if (unidentify || is_vscode) {
-        absolute_path /= "unidentified.metapack";
-      } else if (bundle) {
-        absolute_path /= "bundle.metapack";
-      } else {
-        absolute_path /= "schema.metapack";
-      }
-
-      // For convenience
-      if (!std::filesystem::exists(absolute_path)) {
-        auto nav_path{base / "explorer" / lowercase_path};
-        nav_path.replace_extension("");
-        nav_path /= SENTINEL;
-        nav_path /= "directory.metapack";
-        if (std::filesystem::exists(nav_path)) {
-          serve_static_file(request, response, encoding, nav_path,
-                            sourcemeta::registry::STATUS_OK, true);
-          return;
-        }
-      }
-
-      serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK, true);
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                 "method-not-allowed",
+                 "This HTTP method is invalid for this URL");
     }
+  } else if (request->getUrl() == "/api/schemas/search") {
+    if (request->getMethod() == "get") {
+      const auto query{request->getQuery("q")};
+      if (query.empty()) {
+        json_error(request->getMethod(), request->getUrl(), response, encoding,
+                   sourcemeta::registry::STATUS_BAD_REQUEST, "missing-query",
+                   "You must provide a query parameter to search for");
+      } else {
+        auto result{sourcemeta::registry::search(
+            base / "explorer" / SENTINEL / "search.metapack", query)};
+        response->writeStatus(sourcemeta::registry::STATUS_OK);
+        response->writeHeader("Access-Control-Allow-Origin", "*");
+        response->writeHeader("Content-Type", "application/json");
+        std::ostringstream output;
+        sourcemeta::core::prettify(result, output);
+        send_response(sourcemeta::registry::STATUS_OK, request->getMethod(),
+                      request->getUrl(), response, output.str(), encoding,
+                      ServerContentEncoding::Identity);
+      }
+    } else {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                 "method-not-allowed",
+                 "This HTTP method is invalid for this URL");
+    }
+  } else if (request->getUrl().starts_with("/api/")) {
+    json_error(request->getMethod(), request->getUrl(), response, encoding,
+               sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
+               "There is nothing at this URL");
+  } else if (request->getUrl().starts_with("/static/")) {
+    std::ostringstream absolute_path;
+    absolute_path << SOURCEMETA_REGISTRY_STATIC;
+    absolute_path << request->getUrl().substr(7);
+    serve_static_file(request, response, encoding, absolute_path.str(),
+                      sourcemeta::registry::STATUS_OK);
+  } else if (request->getUrl().ends_with(".json")) {
+    // Otherwise we may get unexpected results in case-sensitive file-systems
+    std::string lowercase_path{request->getUrl().substr(1)};
+    std::transform(
+        lowercase_path.begin(), lowercase_path.end(), lowercase_path.begin(),
+        [](const unsigned char character) { return std::tolower(character); });
+
+    // Because Visual Studio Code famously does not support `$id` or `id`
+    // See
+    // https://github.com/microsoft/vscode-json-languageservice/issues/224
+    const auto &user_agent{request->getHeader("user-agent")};
+    const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
+                         user_agent.starts_with("VSCodium")};
+    const auto bundle{!request->getQuery("bundle").empty()};
+    const auto unidentify{!request->getQuery("unidentify").empty()};
+    auto absolute_path{base / "schemas" / lowercase_path / SENTINEL};
+    if (unidentify || is_vscode) {
+      absolute_path /= "unidentified.metapack";
+    } else if (bundle) {
+      absolute_path /= "bundle.metapack";
+    } else {
+      absolute_path /= "schema.metapack";
+    }
+
+    // For convenience
+    if (!std::filesystem::exists(absolute_path)) {
+      auto nav_path{base / "explorer" / lowercase_path};
+      nav_path.replace_extension("");
+      nav_path /= SENTINEL;
+      nav_path /= "directory.metapack";
+      if (std::filesystem::exists(nav_path)) {
+        serve_static_file(request, response, encoding, nav_path,
+                          sourcemeta::registry::STATUS_OK, true);
+        return;
+      }
+    }
+
+    serve_static_file(request, response, encoding, absolute_path,
+                      sourcemeta::registry::STATUS_OK, true);
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
     const auto accept{request->getHeader("accept")};
     auto absolute_path{base / "explorer" / request->getUrl().substr(1) /

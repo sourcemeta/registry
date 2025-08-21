@@ -207,3 +207,60 @@ HTTP 200
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/example/schemas/%25/test.json"
 }
+
+GET {{base}}/example/schemas/string.json
+HTTP 200
+Content-Type: application/schema+json
+Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
+[Captures]
+example_schemas_string_json_etag: header "ETag"
+example_schemas_string_json_content_length: header "Content-Length"
+
+HEAD {{base}}/example/schemas/string.json
+HTTP 200
+Content-Type: application/schema+json
+Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
+[Asserts]
+bytes count == 0
+header "ETag" == {{example_schemas_string_json_etag}}
+header "Content-Length" == {{example_schemas_string_json_content_length}}
+
+POST {{base}}/example/schemas/string.json
+HTTP 405
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]  
+jsonpath "$.code" == 405
+jsonpath "$.error" == "method-not-allowed"
+jsonpath "$.message" == "This HTTP method is invalid for this URL"
+
+GET {{base}}/schemas/doc/.period.json
+HTTP 404
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]  
+jsonpath "$.code" == 404
+jsonpath "$.error" == "not-found"
+jsonpath "$.message" == "There is nothing at this URL"
+
+# Invalid method on found
+DELETE {{base}}/example/schemas/string.json
+HTTP 405
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]  
+jsonpath "$.code" == 405
+jsonpath "$.error" == "method-not-allowed"
+jsonpath "$.message" == "This HTTP method is invalid for this URL"
+
+# Invalid method on not found
+PUT {{base}}/example/schemas/xxx.json
+HTTP 404
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]
+jsonpath "$.code" == 404
+jsonpath "$.error" == "not-found"
+jsonpath "$.message" == "There is nothing at this URL"
