@@ -57,7 +57,7 @@ test:
 test-e2e: 
 	$(HURL) --test \
 		--variable base=$(shell jq --raw-output '.url' < $(SANDBOX)/registry.json) \
-			test/e2e/api/*.hurl test/e2e/explorer/*.hurl
+			test/e2e/api/*.hurl test/e2e/explorer/*.hurl test/e2e/schemas/*.hurl
 
 .PHONY: sandbox
 sandbox: compile

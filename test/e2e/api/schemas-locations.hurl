@@ -1,4 +1,4 @@
-GET {{base}}/example/v2.0/schema.json?locations=1
+GET {{base}}/api/schemas/locations/example/v2.0/schema
 Accept: application/json
 HTTP 200
 Content-Type: application/json
@@ -38,3 +38,40 @@ jsonpath "$.static['{{base}}/example/v2.0/schema.json#/type'].pointer" == "/type
 jsonpath "$.static['{{base}}/example/v2.0/schema.json#/type'].relativePointer" == "/type"
 jsonpath "$.static['{{base}}/example/v2.0/schema.json#/type'].root" == "{{base}}/example/v2.0/schema.json"
 jsonpath "$.static['{{base}}/example/v2.0/schema.json#/type'].type" == "pointer"
+
+HEAD {{base}}/api/schemas/locations/example/v2.0/schema
+Accept: application/json
+HTTP 200
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]
+header "ETag" exists
+header "Last-Modified" exists
+bytes count == 0
+
+POST {{base}}/api/schemas/locations/example/v2.0/schema
+HTTP 405
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]  
+jsonpath "$.code" == 405
+jsonpath "$.error" == "method-not-allowed"
+jsonpath "$.message" == "This HTTP method is invalid for this URL"
+
+GET {{base}}/api/schemas/locations/xyz/
+HTTP 404
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]  
+jsonpath "$.code" == 404
+jsonpath "$.error" == "not-found"
+jsonpath "$.message" == "There is nothing at this URL"
+
+GET {{base}}/api/schemas/locations
+HTTP 404
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]  
+jsonpath "$.code" == 404
+jsonpath "$.error" == "not-found"
+jsonpath "$.message" == "There is nothing at this URL"
