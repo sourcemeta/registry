@@ -85,8 +85,21 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
     ${BOOTSTRAP_SCSS_FILES})
 target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
 
+# Generate OpenAPI docs
+find_program(NODE_BIN NAMES node REQUIRED)
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/openapi.html"
+  COMMAND "${NODE_BIN}" "${PROJECT_SOURCE_DIR}/node_modules/@redocly/cli/bin/cli.js" 
+    build-docs --disableGoogleFont --output "${CMAKE_CURRENT_BINARY_DIR}/openapi.html" 
+    "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml"
+  DEPENDS
+    "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml"
+    "${PROJECT_SOURCE_DIR}/package.json"
+    "${PROJECT_SOURCE_DIR}/package-lock.json")
+target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/openapi.html")
+
 # Generate static files
 set(REGISTRY_STATIC
+  "${CMAKE_CURRENT_BINARY_DIR}/openapi.html"
   "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
   "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/favicon.ico"
@@ -95,6 +108,7 @@ set(REGISTRY_STATIC
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.svg"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/apple-touch-icon.png"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/manifest.webmanifest"
+  "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff2")
 
@@ -120,6 +134,10 @@ foreach(file_path IN LISTS REGISTRY_STATIC)
     set(MIME "font/woff")
   elseif(file_extension STREQUAL ".woff2")
     set(MIME "font/woff2")
+  elseif(file_extension STREQUAL ".yaml")
+    set(MIME "application/yaml")
+  elseif(file_extension STREQUAL ".html")
+    set(MIME "text/html")
   else()
     message(FATAL_ERROR "Cannot determine MIME type for ${file_extension}")
   endif()
