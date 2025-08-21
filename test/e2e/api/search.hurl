@@ -1,4 +1,4 @@
-GET {{base}}/api/search
+GET {{base}}/api/schemas/search
 HTTP 400
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -7,7 +7,7 @@ jsonpath "$.code" == 400
 jsonpath "$.error" == "missing-query"
 jsonpath "$.message" == "You must provide a query parameter to search for"
 
-GET {{base}}/api/search?q=
+GET {{base}}/api/schemas/search?q=
 HTTP 400
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -16,7 +16,7 @@ jsonpath "$.code" == 400
 jsonpath "$.error" == "missing-query"
 jsonpath "$.message" == "You must provide a query parameter to search for"
 
-POST {{base}}/api/search?q=foo
+POST {{base}}/api/schemas/search?q=foo
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -26,14 +26,14 @@ jsonpath "$.error" == "method-not-allowed"
 jsonpath "$.message" == "This HTTP method is invalid for this URL"
 
 # A string we know won't give any results
-GET {{base}}/api/search?q=xxxxxxxxxxxx
+GET {{base}}/api/schemas/search?q=xxxxxxxxxxxx
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
 []
 
 # Results with title/description
-GET {{base}}/api/search?q=bundling
+GET {{base}}/api/schemas/search?q=bundling
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -51,7 +51,7 @@ Access-Control-Allow-Origin: *
 ]
 
 # Test casing
-GET {{base}}/api/search?q=bUNdLing
+GET {{base}}/api/schemas/search?q=bUNdLing
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -69,7 +69,7 @@ Access-Control-Allow-Origin: *
 ]
 
 # Results without title/description
-GET {{base}}/api/search?q=schemas/camelcase
+GET {{base}}/api/schemas/search?q=schemas/camelcase
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -82,7 +82,7 @@ Access-Control-Allow-Origin: *
 ]
 
 # No matter what, we impose a limit on the results
-GET {{base}}/api/search?q=e
+GET {{base}}/api/schemas/search?q=e
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
