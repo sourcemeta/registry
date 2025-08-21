@@ -40,3 +40,5 @@ EOF
 
 export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 "$1" "$TMP/registry.json" "$TMP/dist"
+# Run again to exercise caching
+"$1" "$TMP/registry.json" "$TMP/dist"
