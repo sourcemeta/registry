@@ -8,6 +8,7 @@
 #include <cassert>       // assert
 #include <filesystem>    // std::filesystem
 #include <iostream>      // std::cerr
+#include <shared_mutex>  // std::shared_mutex
 #include <string_view>   // std::string_view
 #include <unordered_map> // std::unordered_map
 
@@ -109,7 +110,7 @@ public:
       -> const std::filesystem::path & {
     assert(path.is_absolute());
     assert(std::filesystem::exists(path));
-    std::lock_guard<std::mutex> lock(this->tracker_mutex);
+    std::unique_lock lock{this->tracker_mutex};
     // Otherwise it means we wrote to the same place twice
     assert(!this->tracker.contains(path) || !this->tracker.at(path));
     const auto &result{this->tracker.insert_or_assign(path, true).first->first};
@@ -123,6 +124,9 @@ public:
   }
 
   auto is_untracked_file(const std::filesystem::path &path) const {
+    // Because reading from a hash map while writing to it is undefined
+    // behaviour
+    std::shared_lock lock{this->tracker_mutex};
     const auto match{this->tracker.find(path)};
     return match == this->tracker.cend() || !match->second;
   }
@@ -142,7 +146,7 @@ private:
 
   const std::filesystem::path path_;
   std::unordered_map<std::filesystem::path, bool> tracker;
-  std::mutex tracker_mutex;
+  mutable std::shared_mutex tracker_mutex;
 };
 
 } // namespace sourcemeta::registry
