@@ -35,6 +35,8 @@ if(REGISTRY_INDEX OR REGISTRY_SERVER)
 endif()
 
 if(REGISTRY_INDEX)
+  include(commands/esbuild)
+  include(commands/redocly)
   add_subdirectory(src/configuration)
   add_subdirectory(src/resolver)
   add_subdirectory(src/index)

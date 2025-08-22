@@ -1,0 +1,34 @@
+function(sourcemeta_esbuild_bundle)
+  cmake_parse_arguments(SOURCEMETA_ESBUILD_BUNDLE "" "ENTRYPOINT;OUTPUT" "DEPENDS" ${ARGN})
+
+  if(NOT SOURCEMETA_ESBUILD_BUNDLE_ENTRYPOINT)
+    message(FATAL_ERROR "You must pass the ENTRYPOINT option to ${CMAKE_CURRENT_FUNCTION}")
+  endif()
+  if(NOT SOURCEMETA_ESBUILD_BUNDLE_OUTPUT)
+    message(FATAL_ERROR "You must pass the OUTPUT option to ${CMAKE_CURRENT_FUNCTION}")
+  endif()
+
+  find_program(ESBUILD_BIN NAMES esbuild REQUIRED)
+
+  if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(ESBUILD_OPTIONS "--minify")
+  else()
+    set(ESBUILD_OPTIONS "")
+  endif()
+
+  if(SOURCEMETA_ESBUILD_BUNDLE_DEPENDS)
+    add_custom_command(
+      OUTPUT "${SOURCEMETA_ESBUILD_BUNDLE_OUTPUT}"
+      COMMAND "${ESBUILD_BIN}" --bundle "${SOURCEMETA_ESBUILD_BUNDLE_ENTRYPOINT}"
+              --outfile="${SOURCEMETA_ESBUILD_BUNDLE_OUTPUT}"
+              ${ESBUILD_OPTIONS}
+      DEPENDS "${SOURCEMETA_ESBUILD_BUNDLE_ENTRYPOINT}" ${SOURCEMETA_ESBUILD_BUNDLE_DEPENDS})
+  else()
+    add_custom_command(
+      OUTPUT "${SOURCEMETA_ESBUILD_BUNDLE_OUTPUT}"
+      COMMAND "${ESBUILD_BIN}" --bundle "${SOURCEMETA_ESBUILD_BUNDLE_ENTRYPOINT}"
+              --outfile="${SOURCEMETA_ESBUILD_BUNDLE_OUTPUT}"
+              ${ESBUILD_OPTIONS}
+      DEPENDS "${SOURCEMETA_ESBUILD_BUNDLE_ENTRYPOINT}")
+  endif()
+endfunction()
