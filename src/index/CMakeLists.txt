@@ -58,19 +58,26 @@ install(TARGETS sourcemeta_registry_index
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
   COMPONENT sourcemeta_registry)
 
-# Generate JS
-find_program(ESBUILD_BIN NAMES esbuild REQUIRED)
-add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
-  COMMAND "${ESBUILD_BIN}" --bundle 
-    "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
-    --outfile="${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
-    --minify
+sourcemeta_esbuild_bundle(
+  ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js" 
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/main.min.js" 
   DEPENDS 
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/search.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/tabs.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/editor.js")
-target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/main.min.js")
+target_sources(sourcemeta_registry_index 
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/main.min.js")
+
+sourcemeta_redocly_openapi_to_html(
+  REDOCLY "${PROJECT_SOURCE_DIR}/node_modules/@redocly/cli/bin/cli.js" 
+  INPUT "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml" 
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/openapi.html"
+  DEPENDS
+    "${PROJECT_SOURCE_DIR}/package.json"
+    "${PROJECT_SOURCE_DIR}/package-lock.json")
+target_sources(sourcemeta_registry_index 
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/openapi.html")
 
 # Generate CSS
 include(BootstrapFiles)
@@ -84,18 +91,6 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
     "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/bootstrap-icons.scss"
     ${BOOTSTRAP_SCSS_FILES})
 target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
-
-# Generate OpenAPI docs
-find_program(NODE_BIN NAMES node REQUIRED)
-add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/openapi.html"
-  COMMAND "${NODE_BIN}" "${PROJECT_SOURCE_DIR}/node_modules/@redocly/cli/bin/cli.js" 
-    build-docs --disableGoogleFont --output "${CMAKE_CURRENT_BINARY_DIR}/openapi.html" 
-    "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml"
-  DEPENDS
-    "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml"
-    "${PROJECT_SOURCE_DIR}/package.json"
-    "${PROJECT_SOURCE_DIR}/package-lock.json")
-target_sources(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/openapi.html")
 
 # Generate static files
 set(REGISTRY_STATIC
