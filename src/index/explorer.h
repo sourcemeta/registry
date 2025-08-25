@@ -57,7 +57,8 @@ public:
     for (const auto &attribute : attributes) {
       this->stream << " " << attribute.first;
       if (!attribute.second.empty()) {
-        this->stream << "=\"" << attribute.second << "\"";
+        // Single quotes make it easier to embed JSON in attributes
+        this->stream << "='" << attribute.second << "'";
       }
     }
     this->stream << ">";
@@ -1147,12 +1148,14 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       output_html.open("tr");
 
       if (dependency.at("from") == meta.at("id")) {
+        std::ostringstream dependency_attribute;
+        sourcemeta::core::stringify(dependency.at("at"), dependency_attribute);
         output_html.open("td")
             .open("a", {{"href", "#"},
                         {"data-sourcemeta-ui-editor-highlight",
                          meta.at("url").to_string()},
-                        {"data-sourcemeta-ui-editor-highlight-pointer",
-                         dependency.at("at").to_string()}})
+                        {"data-sourcemeta-ui-editor-highlight-pointers",
+                         dependency_attribute.str()}})
             .open("code")
             .text(dependency.at("at").to_string())
             .close("code")
@@ -1212,15 +1215,17 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
     output_html.open("div", {{"class", "list-group"}});
 
     for (const auto &error : health.at("errors").as_array()) {
+      assert(error.at("pointers").size() >= 1);
+      std::ostringstream pointers;
+      sourcemeta::core::stringify(error.at("pointers"), pointers);
       output_html.open(
           "a",
           {{"href", "#"},
            {"data-sourcemeta-ui-editor-highlight", meta.at("url").to_string()},
-           {"data-sourcemeta-ui-editor-highlight-pointer",
-            error.at("pointer").to_string()},
+           {"data-sourcemeta-ui-editor-highlight-pointers", pointers.str()},
            {"class", "list-group-item list-group-item-action py-3"}});
       output_html.open("code", {{"class", "d-block text-primary"}})
-          .text(error.at("pointer").to_string())
+          .text(error.at("pointers").front().to_string())
           .close("code");
       output_html.open("small", {{"class", "d-block text-body-secondary"}})
           .text(error.at("name").to_string())

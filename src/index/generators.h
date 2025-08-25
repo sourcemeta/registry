@@ -153,17 +153,24 @@ auto GENERATE_HEALTH(
         return resolver(identifier, callback);
       },
       [&errors](const auto &pointer, const auto &name, const auto &message,
-                const auto &description) {
+                const auto &outcome) {
         auto entry{sourcemeta::core::JSON::make_object()};
-        entry.assign("pointer", sourcemeta::core::to_json(pointer));
         entry.assign("name", sourcemeta::core::JSON{name});
         entry.assign("message", sourcemeta::core::JSON{message});
-        if (description.empty()) {
-          entry.assign("description", sourcemeta::core::JSON{nullptr});
+        entry.assign("description",
+                     sourcemeta::core::to_json(outcome.description));
+
+        auto pointers{sourcemeta::core::JSON::make_array()};
+        if (outcome.locations.empty()) {
+          pointers.push_back(sourcemeta::core::to_json(pointer));
         } else {
-          entry.assign("description", sourcemeta::core::JSON{description});
+          for (const auto &location : outcome.locations) {
+            pointers.push_back(
+                sourcemeta::core::to_json(pointer.concat(location)));
+          }
         }
 
+        entry.assign("pointers", std::move(pointers));
         errors.push_back(std::move(entry));
       });
 

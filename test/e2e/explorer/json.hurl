@@ -27,7 +27,7 @@ jsonpath "$.entries[2].health" == 78
 jsonpath "$.entries[2].url" == "/modelcontextprotocol"
 jsonpath "$.entries[3].name" == "hyper"
 jsonpath "$.entries[3].type" == "directory"
-jsonpath "$.entries[3].health" == 100
+jsonpath "$.entries[3].health" == 50
 jsonpath "$.entries[3].url" == "/hyper"
 jsonpath "$.entries[4].name" == "geojson"
 jsonpath "$.entries[4].title" == "GeoJSON"

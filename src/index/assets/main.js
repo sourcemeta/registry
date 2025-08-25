@@ -22,17 +22,22 @@ document.querySelectorAll('[data-sourcemeta-ui-editor-highlight]').forEach((elem
   element.addEventListener("click", async (event) => {
     event.preventDefault();
     const url = element.getAttribute('data-sourcemeta-ui-editor-highlight');
-    const pointer = element.getAttribute('data-sourcemeta-ui-editor-highlight-pointer');
+    const pointers = JSON.parse(element.getAttribute('data-sourcemeta-ui-editor-highlight-pointers'));
     if (EDITORS[url]) {
       const positions = await window.fetch(`/api/schemas/positions${url.replace(/\.json$/i, "")}`);
       if (!positions.ok) {
         throw new Error(positions.statusText);
       }
 
-      const range = (await positions.json())[pointer];
+      const positions_json = await positions.json();
       EDITORS[url].unhighlight();
-      EDITORS[url].highlight(range, "#fb9c9c");
-      EDITORS[url].scroll(range[0]);
+      const mainRange = positions_json[pointers[0]];
+      EDITORS[url].highlight(mainRange, "#fb9c9c");
+      EDITORS[url].scroll(mainRange[0]);
+      for (const pointer of pointers.slice(1)) {
+        const range = positions_json[pointer];
+        EDITORS[url].highlight(range, "#ffedd0");
+      }
     }
   });
 });
