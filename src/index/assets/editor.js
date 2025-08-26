@@ -76,7 +76,7 @@ export class Editor {
     const toLine = this.view.state.doc.line(lineEnd);
     const from = fromLine.from + columnStart - 1;
     const to = toLine.from + columnEnd;
-    const builder = new RangeSetBuilder();
+
     const decoration = Decoration.mark({
       attributes: { 
         // Margin/padding to compensate whiteness between lines
@@ -84,15 +84,19 @@ export class Editor {
           background-color: ${color};
           margin: -2px 0 -2px 0;
           padding: 2px 0 2px 0;
-        ` 
+        `
       }
     });
 
-    builder.add(from, to, decoration);
+    // Make sure to not override existing highlights
+    const current = this.view.state.field(highlightPlugin);
+    const newSet = current.update({
+      add: [ { from, to, value: decoration } ],
+      sort: true
+    });
 
-    const decorations = builder.finish();
     this.view.dispatch({
-      effects: setHighlights.of(decorations)
+      effects: setHighlights.of(newSet)
     });
   }
 
