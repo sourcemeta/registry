@@ -31,12 +31,12 @@ document.querySelectorAll('[data-sourcemeta-ui-editor-highlight]').forEach((elem
 
       const positions_json = await positions.json();
       EDITORS[url].unhighlight();
-      const mainRange = positions_json[pointers[0]];
-      EDITORS[url].highlight(mainRange, "#fb9c9c");
-      EDITORS[url].scroll(mainRange[0]);
-      for (const pointer of pointers.slice(1)) {
+      for (const [index, pointer] of pointers.entries()) {
         const range = positions_json[pointer];
-        EDITORS[url].highlight(range, "#ffedd0");
+        EDITORS[url].highlight(range, "#fb9c9c");
+        if (index === 0) {
+          EDITORS[url].scroll(range[0]);
+        }
       }
     }
   });
