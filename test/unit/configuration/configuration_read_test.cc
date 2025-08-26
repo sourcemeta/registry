@@ -28,7 +28,7 @@ TEST(Configuration_read, stub_2) {
         "title": "Nested",
         "contents": {
           "nested": {
-            "base": "https://example.com/extension",
+            "baseUri": "https://example.com/extension",
             "path": "STUB_DIRECTORY/folder/schemas/example/extension",
             "defaultDialect": "http://json-schema.org/draft-07/schema#"
           }
@@ -58,7 +58,7 @@ TEST(Configuration_read, stub_3) {
         "title": "Nested without file name",
         "contents": {
           "nested": {
-            "base": "https://example.com/extension",
+            "baseUri": "https://example.com/extension",
             "path": "STUB_DIRECTORY/folder/schemas/example/extension",
             "defaultDialect": "http://json-schema.org/draft-07/schema#"
           }
@@ -91,7 +91,7 @@ TEST(Configuration_read, stub_4) {
         "title": "Nested",
         "contents": {
           "nested": {
-            "base": "https://example.com/extension",
+            "baseUri": "https://example.com/extension",
             "path": "STUB_DIRECTORY/folder/schemas/example/extension",
             "defaultDialect": "http://json-schema.org/draft-07/schema#"
           }
@@ -124,7 +124,7 @@ TEST(Configuration_read, stub_5) {
         "title": "Nested",
         "contents": {
           "nested": {
-            "base": "https://example.com/extension",
+            "baseUri": "https://example.com/extension",
             "path": "STUB_DIRECTORY/folder/schemas/example/extension",
             "defaultDialect": "http://json-schema.org/draft-07/schema#"
           }

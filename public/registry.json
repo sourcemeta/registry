@@ -36,27 +36,27 @@
           "website": "https://gcn.nasa.gov",
           "contents": {
             "v4.2.0": {
-              "base": "https://gcn.nasa.gov/schema/v4.2.0/gcn",
+              "baseUri": "https://gcn.nasa.gov/schema/v4.2.0/gcn",
               "path": "../vendor/public/nasa-gcn-4-2-0"
             },
             "v4.1.0": {
-              "base": "https://gcn.nasa.gov/schema/v4.1.0/gcn",
+              "baseUri": "https://gcn.nasa.gov/schema/v4.1.0/gcn",
               "path": "../vendor/public/nasa-gcn-4-1-0"
             },
             "v4.0.0": {
-              "base": "https://gcn.nasa.gov/schema/v4.0.0/gcn",
+              "baseUri": "https://gcn.nasa.gov/schema/v4.0.0/gcn",
               "path": "../vendor/public/nasa-gcn-4-0-0"
             },
             "v3.0.0": {
-              "base": "https://gcn.nasa.gov/schema/v3.0.0/gcn",
+              "baseUri": "https://gcn.nasa.gov/schema/v3.0.0/gcn",
               "path": "../vendor/public/nasa-gcn-3-0-0"
             },
             "v2.0.0": {
-              "base": "https://gcn.nasa.gov/schema/v2.0.0/gcn",
+              "baseUri": "https://gcn.nasa.gov/schema/v2.0.0/gcn",
               "path": "../vendor/public/nasa-gcn-2-0-0"
             },
             "v1.0.0": {
-              "base": "https://gcn.nasa.gov/schema/v1.0.0/gcn",
+              "baseUri": "https://gcn.nasa.gov/schema/v1.0.0/gcn",
               "path": "../vendor/public/nasa-gcn-1-0-0"
             }
           }
@@ -75,75 +75,75 @@
           "github": "ossf/osv-schema",
           "contents": {
             "v1.7.3": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-7-3"
             },
             "v1.7.2": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-7-2"
             },
             "v1.7.0": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-7-0"
             },
             "v1.6.7": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-6-7"
             },
             "v1.6.6": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-6-6"
             },
             "v1.6.5": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-6-5"
             },
             "v1.6.4": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-6-4"
             },
             "v1.6.3": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-6-3"
             },
             "v1.6.2": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-6-2"
             },
             "v1.6.1": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-6-1"
             },
             "v1.6.0": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-6-0"
             },
             "v1.5.0": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-5-0"
             },
             "v1.4.0": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-4-0/validation"
             },
             "v1.3.1": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-3-1/validation"
             },
             "v1.3.0": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-3-0/validation"
             },
             "v1.2.0": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-2-0/validation"
             },
             "v1.1.0": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-1-0/validation"
             },
             "v1.0.0": {
-              "base": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
+              "baseUri": "https://raw.githubusercontent.com/ossf/osv-schema/main/validation",
               "path": "../vendor/public/osv-schema-1-0-0/validation"
             }
           }
@@ -163,19 +163,19 @@
           "github": "getmanfred/mac",
           "contents": {
             "v0.6": {
-              "base": "http://github.com/manfred/mac",
+              "baseUri": "http://github.com/manfred/mac",
               "path": "../vendor/public/manfred-mac-0-6"
             },
             "v0.5": {
-              "base": "http://github.com/manfred/mac",
+              "baseUri": "http://github.com/manfred/mac",
               "path": "../vendor/public/manfred-mac-0-5"
             },
             "v0.4": {
-              "base": "http://github.com/manfred/mac",
+              "baseUri": "http://github.com/manfred/mac",
               "path": "../vendor/public/manfred-mac-0-4"
             },
             "v0.3": {
-              "base": "http://github.com/manfred/mac",
+              "baseUri": "http://github.com/manfred/mac",
               "path": "../vendor/public/manfred-mac-0-3"
             }
           }
@@ -188,7 +188,7 @@
       "email": "hello@krakend.io",
       "github": "krakend",
       "website": "https://www.krakend.io",
-      "base": "https://www.krakend.io/schema",
+      "baseUri": "https://www.krakend.io/schema",
       "path": "../vendor/public/krakend"
     },
     "movielabs": {
@@ -200,7 +200,7 @@
         "omc": {
           "title": "The MovieLabs Ontology for Media Creation",
           "github": "movielabs/omc",
-          "base": "https://movielabs.com/omc/json/schema",
+          "baseUri": "https://movielabs.com/omc/json/schema",
           "path": "../vendor/public/movielabs-omc-2-6"
         }
       }
@@ -273,12 +273,12 @@
             "v1.0.0": {
               "contents": {
                 "core": {
-                  "base": "https://ontology.riskine.com",
+                  "baseUri": "https://ontology.riskine.com",
                   "path": "../vendor/public/riskine-ontology-1-0-0/schemas/core",
                   "defaultDialect": "http://json-schema.org/draft-07/schema#"
                 },
                 "products": {
-                  "base": "https://ontology.riskine.com",
+                  "baseUri": "https://ontology.riskine.com",
                   "path": "../vendor/public/riskine-ontology-1-0-0/schemas/products",
                   "defaultDialect": "http://json-schema.org/draft-07/schema#"
                 }
@@ -294,7 +294,7 @@
       "email": "help@jsr.io",
       "github": "jsr-io",
       "website": "https://jsr.io",
-      "base": "https://jsr.io/schema",
+      "baseUri": "https://jsr.io/schema",
       "path": "../vendor/public/jsr"
     },
     "jsonschema": {
@@ -304,23 +304,23 @@
       "website": "https://json-schema.org",
       "contents": {
         "2020-12": {
-          "base": "https://json-schema.org/draft/2020-12",
+          "baseUri": "https://json-schema.org/draft/2020-12",
           "path": "../vendor/public/jsonschema-2020-12"
         },
         "2019-09": {
-          "base": "https://json-schema.org/draft/2019-09",
+          "baseUri": "https://json-schema.org/draft/2019-09",
           "path": "../vendor/public/jsonschema-2019-09"
         },
         "draft7": {
-          "base": "http://json-schema.org/draft-07",
+          "baseUri": "http://json-schema.org/draft-07",
           "path": "../vendor/public/jsonschema-draft7"
         },
         "draft6": {
-          "base": "http://json-schema.org/draft-06",
+          "baseUri": "http://json-schema.org/draft-06",
           "path": "../vendor/public/jsonschema-draft6"
         },
         "draft4": {
-          "base": "http://json-schema.org/draft-04",
+          "baseUri": "http://json-schema.org/draft-04",
           "path": "../vendor/public/jsonschema-draft4"
         }
       }
@@ -333,19 +333,19 @@
       "website": "https://openapis.org",
       "contents": {
         "v1.2": {
-          "base": "https://raw.githubusercontent.com/oai/openapi-specification/master/schemas/v1.2",
+          "baseUri": "https://raw.githubusercontent.com/oai/openapi-specification/master/schemas/v1.2",
           "path": "../vendor/public/openapi/schemas/v1.2"
         },
         "v2.0": {
-          "base": "http://swagger.io/v2",
+          "baseUri": "http://swagger.io/v2",
           "path": "../vendor/public/openapi/schemas/v2.0"
         },
         "v3.0": {
-          "base": "https://spec.openapis.org/oas/3.0/schema/2021-09-28",
+          "baseUri": "https://spec.openapis.org/oas/3.0/schema/2021-09-28",
           "path": "../vendor/public/openapi/schemas/v3.0"
         },
         "v3.1": {
-          "base": "https://spec.openapis.org/oas/3.1",
+          "baseUri": "https://spec.openapis.org/oas/3.1",
           "path": "../vendor/public/openapi/schemas/v3.1"
         }
       }
@@ -361,7 +361,7 @@
           "github": "humancellatlas/metadata-schema",
           "contents": {
             "v5.0.0": {
-              "base": "https://schema.humancellatlas.org",
+              "baseUri": "https://schema.humancellatlas.org",
               "path": "../vendor/public/hca-metadata-5-0-0/json_schema"
             }
           }
@@ -375,7 +375,7 @@
       "website": "https://datatagsuite.github.io/docs/html",
       "contents": {
         "v1.0.0": {
-          "base": "https://w3id.org/dats/schema",
+          "baseUri": "https://w3id.org/dats/schema",
           "path": "../vendor/public/dats-1-0-0",
           "x-sourcemeta-registry:no-blaze-exhaustive": true
         }
@@ -396,17 +396,17 @@
           "website": "https://www.hl7.org/implement/standards/fhir/",
           "contents": {
             "r5": {
-              "base": "http://hl7.org/fhir/json-schema",
+              "baseUri": "http://hl7.org/fhir/json-schema",
               "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r5.core/package/openapi",
               "x-sourcemeta-registry:no-blaze-exhaustive": true
             },
             "r4b": {
-              "base": "http://hl7.org/fhir/json-schema",
+              "baseUri": "http://hl7.org/fhir/json-schema",
               "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r4b.core/package/openapi",
               "x-sourcemeta-registry:no-blaze-exhaustive": true
             },
             "r4": {
-              "base": "http://hl7.org/fhir/json-schema",
+              "baseUri": "http://hl7.org/fhir/json-schema",
               "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r4.core/package/openapi",
               "x-sourcemeta-registry:no-blaze-exhaustive": true
             },
@@ -424,7 +424,7 @@
       "email": "info@asyncapi.io",
       "github": "asyncapi",
       "website": "https://www.asyncapi.com",
-      "base": "http://asyncapi.com",
+      "baseUri": "http://asyncapi.com",
       "path": "../vendor/public/asyncapi"
     },
     "iptc": {
@@ -438,7 +438,7 @@
           "title": "News in JSON",
           "description": "A standard the representation of news in JSON",
           "github": "iptc/newsinjson",
-          "base": "http://www.iptc.org/std/ninjs",
+          "baseUri": "http://www.iptc.org/std/ninjs",
           "path": "../vendor/public/ninjs/specification",
           "resolve": {
             "https://geojson.org/schema/GeoJSON.json#": "/geojson/v1.0.5/geojson.json"
@@ -452,7 +452,7 @@
       "email": "info@apievangelist.com",
       "github": "apis-json",
       "website": "http://apisjson.org",
-      "base": "https://github.com/apis-json/api-json/blob/develop/spec/",
+      "baseUri": "https://github.com/apis-json/api-json/blob/develop/spec/",
       "path": "../vendor/public/apis-json/spec"
     },
     "sony": {
@@ -467,7 +467,7 @@
           "github": "sony/x590schema",
           "contents": {
             "v1.0.0": {
-              "base": "https://www.sony.com",
+              "baseUri": "https://www.sony.com",
               "path": "../vendor/public/sony-x590/v1.0.0"
             }
           }

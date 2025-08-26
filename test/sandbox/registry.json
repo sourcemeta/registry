@@ -21,11 +21,11 @@
       "website": "https://www.sourcemeta.com",
       "contents": {
         "extension": {
-          "base": "https://example.com/extension",
+          "baseUri": "https://example.com/extension",
           "path": "./schemas/example/extension"
         },
         "schemas": {
-          "base": "https://example.com/schemas",
+          "baseUri": "https://example.com/schemas",
           "path": "./schemas/example/folder",
           "defaultDialect": "http://json-schema.org/draft-07/schema#",
           "resolve": {
@@ -35,17 +35,17 @@
         "camelcase": {
           "contents": {
             "test": {
-              "base": "https://sourcemeta.com/camelcase",
+              "baseUri": "https://sourcemeta.com/camelcase",
               "path": "./schemas/example/camelcase"
             }
           }
         },
         "v2.0": {
-          "base": "https://example.com/schemas",
+          "baseUri": "https://example.com/schemas",
           "path": "./schemas/example/v2.0"
         },
         "bundling": {
-          "base": "https://example.com/bundling",
+          "baseUri": "https://example.com/bundling",
           "path": "./schemas/example/bundling"
         }
       }
@@ -54,19 +54,19 @@
       "title": "A sample schema folder",
       "description": "For testing purposes",
       "github": "sourcemeta/registry",
-      "base": "https://example.com/doc",
+      "baseUri": "https://example.com/doc",
       "path": "./schemas/doc"
     },
     "hyper": {
-      "base": "https://example.com/hyper",
+      "baseUri": "https://example.com/hyper",
       "path": "./schemas/hyper"
     },
     "same": {
-      "base": "http://localhost:8000/same",
+      "baseUri": "http://localhost:8000/same",
       "path": "./schemas/same"
     },
     "no-blaze": {
-      "base": "https://other.com",
+      "baseUri": "https://other.com",
       "path": "./schemas/no-blaze",
       "x-sourcemeta-registry:no-blaze-exhaustive": true
     }

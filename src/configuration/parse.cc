@@ -6,9 +6,7 @@
 
 #include "schema.h"
 
-#include <algorithm> // std::transform
-#include <cassert>   // assert
-#include <cctype>    // std::tolower
+#include <cassert> // assert
 
 namespace {
 
@@ -29,63 +27,6 @@ auto page_from_json(const sourcemeta::core::JSON &input)
   return result;
 }
 
-// TODO: Move up and document in a common repository so that
-// the CLI understands this as jsonschema.json
-auto collection_from_json(const sourcemeta::core::JSON &input)
-    -> sourcemeta::registry::Configuration::Collection {
-  sourcemeta::registry::Configuration::Collection result;
-  using namespace sourcemeta::core;
-  result.title = from_json<decltype(result.title)::value_type>(
-      input.at_or("title", JSON{nullptr}));
-  result.description = from_json<decltype(result.description)::value_type>(
-      input.at_or("description", JSON{nullptr}));
-  result.email = from_json<decltype(result.email)::value_type>(
-      input.at_or("email", JSON{nullptr}));
-  result.github = from_json<decltype(result.github)::value_type>(
-      input.at_or("github", JSON{nullptr}));
-  result.website = from_json<decltype(result.website)::value_type>(
-      input.at_or("website", JSON{nullptr}));
-
-  result.absolute_path = input.at("path").to_string();
-  assert(result.absolute_path.is_absolute());
-
-  if (input.defines("base")) {
-    result.base =
-        sourcemeta::core::URI::canonicalize(input.at("base").to_string());
-  } else {
-    // Otherwise the base is the directory
-    result.base =
-        sourcemeta::core::URI::from_path(result.absolute_path).recompose();
-  }
-
-  result.default_dialect =
-      from_json<decltype(result.default_dialect)::value_type>(
-          input.at_or("defaultDialect", JSON{nullptr}));
-
-  if (input.defines("resolve") && input.at("resolve").is_object()) {
-    for (const auto &pair : input.at("resolve").as_object()) {
-      if (pair.second.is_string()) {
-        auto destination{pair.second.to_string()};
-        std::ranges::transform(
-            destination, destination.begin(), [](const auto character) {
-              return static_cast<char>(std::tolower(character));
-            });
-        result.resolve.emplace(
-            pair.first, sourcemeta::core::URI::canonicalize(destination));
-      }
-    }
-  }
-
-  assert(result.extra.is_object());
-  for (const auto &subentry : input.as_object()) {
-    if (subentry.first.starts_with("x-")) {
-      result.extra.assign(subentry.first, subentry.second);
-    }
-  }
-
-  return result;
-}
-
 template <typename T>
 auto entries_from_json(T &result, const std::filesystem::path &location,
                        const sourcemeta::core::JSON &input) -> void {
@@ -99,7 +40,12 @@ auto entries_from_json(T &result, const std::filesystem::path &location,
   } else {
     assert(!result.contains(location));
     if (input.defines("path")) {
-      result.emplace(location, collection_from_json(input));
+      result.emplace(location,
+                     sourcemeta::core::SchemaConfig::from_json(
+                         input,
+                         // This path doesn't matter much here, as by now we
+                         // have converted all paths to their absolute forms
+                         std::filesystem::current_path()));
     } else {
       result.emplace(location, page_from_json(input));
       // Only pages may have children

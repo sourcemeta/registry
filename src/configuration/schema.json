@@ -62,6 +62,9 @@
         "path": {
           "type": "string"
         },
+        "base": {
+          "type": "string"
+        },
         "resolve": {
           "type": "object",
           "additionalProperties": {
