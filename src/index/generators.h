@@ -6,6 +6,7 @@
 
 #include <sourcemeta/core/alterschema.h>
 #include <sourcemeta/core/build.h>
+#include <sourcemeta/core/editorschema.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonpointer.h>
 #include <sourcemeta/core/jsonschema.h>
@@ -223,7 +224,7 @@ auto GENERATE_UNIDENTIFIED(
   auto contents{sourcemeta::registry::read_contents(dependencies.front())};
   assert(contents.has_value());
   auto schema{sourcemeta::core::parse_json(contents.value().data)};
-  sourcemeta::core::unidentify(schema, sourcemeta::core::schema_official_walker,
+  sourcemeta::core::for_editor(schema, sourcemeta::core::schema_official_walker,
                                [&callback, &resolver](const auto identifier) {
                                  return resolver(identifier, callback);
                                });
