@@ -25,6 +25,11 @@ nav:
   - library.md
   - commercial.md
   - Live Example Instance: https://schemas.sourcemeta.com
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - footnotes
 theme:
   language: en
   logo: assets/logo.svg
