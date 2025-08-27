@@ -44,11 +44,14 @@ compile:
 		--component sourcemeta_registry --component sourcemeta_registry
 	$(CMAKE) --install $(OUTPUT) --prefix $(PREFIX) --config $(PRESET) --verbose \
 		--component sourcemeta_registry --component sourcemeta_jsonschema
+	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target jsonschema_fmt
 
 .PHONY: lint
 lint:
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target clang_format_test
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target shellcheck
+	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target jsonschema_metaschema
+	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target jsonschema_lint
 
 .PHONY: test
 test: 

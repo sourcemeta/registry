@@ -1,8 +1,34 @@
 sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
-  PRIVATE_HEADERS error.h SOURCES parse.cc read.cc schema.json schema.h.in)
+  PRIVATE_HEADERS error.h SOURCES parse.cc read.cc)
 
-file(READ schema.json CONFIGURATION_SCHEMA)
-configure_file(schema.h.in schema.h @ONLY)
+# Bundle the configuration schema
+set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/configuration")
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
+  COMMAND "$<TARGET_FILE:jsonschema_cli>" bundle "${SCHEMA_BASE_PATH}/registry.json" 
+    > "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
+  DEPENDS 
+    "$<TARGET_FILE:jsonschema_cli>"
+    "${SCHEMA_BASE_PATH}/registry.json"
+    "${SCHEMA_BASE_PATH}/collection.json"
+    "${SCHEMA_BASE_PATH}/email-address.json"
+    "${SCHEMA_BASE_PATH}/entry.json"
+    "${SCHEMA_BASE_PATH}/include.json"
+    "${SCHEMA_BASE_PATH}/page.json"
+    "${SCHEMA_BASE_PATH}/path.json"
+    "${SCHEMA_BASE_PATH}/uri-reference.json"
+    "${SCHEMA_BASE_PATH}/uri.json"
+    "${SCHEMA_BASE_PATH}/url.json"
+    "${SCHEMA_BASE_PATH}/urn.json")
+add_custom_command(
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.h"
+  COMMAND "${CMAKE_COMMAND}" 
+    -DINPUT="${CMAKE_CURRENT_BINARY_DIR}/schema.json"
+    -DOUTPUT="${CMAKE_CURRENT_BINARY_DIR}/schema.h"
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/schema.cmake"
+  DEPENDS 
+    "${CMAKE_CURRENT_BINARY_DIR}/schema.json" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/schema.cmake")
+target_sources(sourcemeta_registry_configuration PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/schema.h")
 target_include_directories(sourcemeta_registry_configuration PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core::json)

@@ -1,0 +1,16 @@
+{
+  "contents": {
+    "sourcemeta": {
+      "title": "Sourcemeta",
+      "description": "A provider of premium tooling and services to support JSON Schema use in production",
+      "email": "hello@sourcemeta.com",
+      "github": "sourcemeta",
+      "website": "https://www.sourcemeta.com",
+      "contents": {
+        "registry": {
+          "include": "./jsonschema.json"
+        }
+      }
+    }
+  }
+}

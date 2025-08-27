@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sourcemeta Registry Entry",
+  "type": "object",
+  "properties": {
+    "extends": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^@",
+            "minLength": 2
+          },
+          {
+            "$ref": "./path.json"
+          }
+        ]
+      }
+    },
+    "contents": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "./include.json"
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "./collection.json"
+              },
+              {
+                "$ref": "#"
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "./page.json"
+              },
+              {
+                "$ref": "#"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

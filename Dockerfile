@@ -44,6 +44,9 @@ RUN cmake --install /build --prefix /usr --verbose --config Release \
 # Linting
 RUN cmake --build /build --config Release --target clang_format_test
 RUN cmake --build /build --config Release --target shellcheck
+RUN cmake --build /build --config Release --target jsonschema_fmt_test
+RUN cmake --build /build --config Release --target jsonschema_metaschema
+RUN cmake --build /build --config Release --target jsonschema_lint
 
 RUN ctest --test-dir /build --build-config Release \
   --output-on-failure --parallel

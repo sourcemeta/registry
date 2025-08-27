@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sourcemeta Registry Include",
+  "type": "object",
+  "required": [ "include" ],
+  "properties": {
+    "include": {
+      "$ref": "./path.json"
+    }
+  },
+  "additionalProperties": false
+}
