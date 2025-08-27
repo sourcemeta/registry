@@ -5,15 +5,18 @@ repo_name: sourcemeta/registry
 copyright: Copyright &copy; Sourcemeta
 edit_uri: edit/main/docs/
 extra:
-  # See https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/
-  version:
-    provider: mike
   social:
     - icon: fontawesome/brands/linkedin 
       link: https://www.linkedin.com/company/sourcemeta
     - icon: fontawesome/brands/github 
       link: https://github.com/sourcemeta
   generator: false
+  # See https://jimandreas.github.io/mkdocs-material/setup/setting-up-site-analytics/#custom-site-analytics
+  analytics:
+    provider: custom
+    source: https://cdn.telemetrydeck.com/websdk/telemetrydeck.min.js
+    attribute: "data-app-id"
+    identifier: 4D73FC6D-E0BF-46A1-8D7A-F7C39B041189
 # TODO: Add https://squidfunk.github.io/mkdocs-material/setup/setting-up-social-cards/
 # TODO: Add https://squidfunk.github.io/mkdocs-material/setup/building-an-optimized-site/#built-in-optimize-plugin
 plugins:
@@ -35,6 +38,7 @@ theme:
   logo: assets/logo.svg
   favicon: assets/favicon.ico
   name: material
+  custom_dir: mkdocs
   icon:
     repo: fontawesome/brands/github
   features:
