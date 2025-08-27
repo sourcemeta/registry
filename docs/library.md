@@ -52,7 +52,7 @@ identifiers are `@geojson/v1.0.5` and `@geojson/v1.0.4`, respectively.
 Therefore, a minimal example configuration that ingests them both using the
 `extends` keyword may look like this:
 
-```json hl_lines="4"
+```json hl_lines="4" title="registry.json"
 {
   "url": "https://schemas.example.com",
   "port": 8000,
