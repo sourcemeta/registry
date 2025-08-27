@@ -2,13 +2,13 @@
 #define SOURCEMETA_REGISTRY_CONFIGURATION_H_
 
 #include <sourcemeta/core/json.h>
+#include <sourcemeta/core/schemaconfig.h>
 
 #include <sourcemeta/registry/configuration_error.h>
 
 #include <filesystem>    // std::filesystem::path
 #include <optional>      // std::optional
 #include <unordered_map> // std::unordered_map
-#include <unordered_set> // std::unordered_set
 #include <variant>       // std::variant
 
 namespace sourcemeta::registry {
@@ -34,7 +34,7 @@ struct Configuration {
 
   std::optional<Action> action;
 
-  struct Metadata {
+  struct Page {
     std::optional<sourcemeta::core::JSON::String> title;
     std::optional<sourcemeta::core::JSON::String> description;
     std::optional<sourcemeta::core::JSON::String> email;
@@ -42,17 +42,7 @@ struct Configuration {
     std::optional<sourcemeta::core::JSON::String> website;
   };
 
-  struct Page : public Metadata {};
-
-  struct Collection : public Metadata {
-    std::filesystem::path absolute_path;
-    sourcemeta::core::JSON::String base;
-    std::optional<sourcemeta::core::JSON::String> default_dialect;
-    std::unordered_map<sourcemeta::core::JSON::String,
-                       sourcemeta::core::JSON::String>
-        resolve;
-    sourcemeta::core::JSON extra = sourcemeta::core::JSON::make_object();
-  };
+  using Collection = sourcemeta::core::SchemaConfig;
 
   std::unordered_map<std::filesystem::path, std::variant<Page, Collection>>
       entries;

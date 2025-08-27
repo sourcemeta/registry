@@ -3,7 +3,7 @@
   "port": 8000,
   "contents": {
     "example": {
-      "base": "https://example.com/schemas",
+      "baseUri": "https://example.com/schemas",
       "path": "./schemas/example",
       "defaultDialect": "http://json-schema.org/draft-07/schema#",
       "resolve": {
@@ -11,7 +11,7 @@
       }
     },
     "meta-draft4": {
-      "base": "http://json-schema.org/draft-04",
+      "baseUri": "http://json-schema.org/draft-04",
       "path": "./schemas/meta-draft4"
     },
     "no-base": {

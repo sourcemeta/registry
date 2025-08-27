@@ -15,7 +15,7 @@ cat << EOF > "$TMP/registry.json"
     "example": {
       "contents": {
         "schemas": {
-          "base": "https://example.com/",
+          "baseUri": "https://example.com/",
           "path": "./schemas"
         }
       }

@@ -13,7 +13,7 @@ cat << EOF > "$TMP/registry.json"
   "port": 8000,
   "contents": {
     "example": {
-      "base": "https://example.com",
+      "baseUri": "https://example.com",
       "path": "./schemas"
     }
   }

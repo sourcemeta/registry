@@ -7,6 +7,7 @@ target_include_directories(sourcemeta_registry_configuration PRIVATE "${CMAKE_CU
 
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core::jsonpointer)
+target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core::schemaconfig)
 target_link_libraries(sourcemeta_registry_configuration PRIVATE sourcemeta::core::uri)
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_configuration PRIVATE sourcemeta::blaze::evaluator)
