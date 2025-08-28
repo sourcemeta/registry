@@ -16,11 +16,15 @@
       "$comment": "With authority (//...)",
       "allOf": [
         {
-          "$comment": "Valid authority structure",
-          "pattern": "^[^:]+://(?:[^@/]*@)?(?:\\[[^\\]]+\\]|[^:/]+)(?::[0-9]+)?(?:/.*)?$"
+          "$comment": "Valid authority structure - host can be empty",
+          "pattern": "^[^:]+://(?:[^@/]*@)?(?:\\[[^\\]]+\\]|[^:/]*)(?::[0-9]+)?(?:/.*)?$"
         }
       ],
       "anyOf": [
+        {
+          "$comment": "Empty host",
+          "pattern": "^[^:]+://(?:[^@/]*@)?(?:/|$)"
+        },
         {
           "$comment": "IPv6 in brackets",
           "pattern": "^[^:]+://(?:[^@]*@)?\\[[0-9A-Fa-f:.]+\\]"
