@@ -145,6 +145,41 @@
       "description": "Trailing slash in NSS (allowed)",
       "valid": true,
       "data": "urn:example:foo/bar/"
+    },
+    {
+      "description": "URN with r-component (resolution)",
+      "valid": true,
+      "data": "urn:example:foo-bar-baz?+CCResolve:cc=uk"
+    },
+    {
+      "description": "URN with q-component (query)",  
+      "valid": true,
+      "data": "urn:example:foo-bar-baz?=querystring"
+    },
+    {
+      "description": "URN with fragment",
+      "valid": true,
+      "data": "urn:example:foo-bar-baz#section"
+    },
+    {
+      "description": "URN with both r-component and fragment",
+      "valid": true,
+      "data": "urn:isbn:0451450523?+res:format=pdf#page=10"
+    },
+    {
+      "description": "URN with multiple resolution parameters",
+      "valid": true,
+      "data": "urn:example:foo?+res:format=xml&+res:lang=en"
+    },
+    {
+      "description": "URN with empty r-component",
+      "valid": true,
+      "data": "urn:example:foo?"
+    },
+    {
+      "description": "URN with empty fragment",
+      "valid": true,
+      "data": "urn:example:foo#"
     }
   ]
 }
