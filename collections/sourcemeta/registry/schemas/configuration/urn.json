@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "RFC 3986 Uniform Resource Name (URN)",
+  "title": "RFC 8141 Uniform Resource Name (URN)",
   "description": "A non-locatable Uniform Resource Identifier (URI) that uses the urn scheme",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc3986#section-3",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc8141#section-2",
   "examples": [
     "urn:example:foo",
     "URN:example:foo/bar",
@@ -22,6 +22,6 @@
     "$comment": "Disallow reserved NID value 'urn'",
     "pattern": "^[Uu][Rr][Nn]:[Uu][Rr][Nn]:"
   },
-  "pattern": "^[Uu][Rr][Nn]:([A-Za-z0-9]([A-Za-z0-9\\-]{0,30}[A-Za-z0-9])?):((%[0-9A-Fa-f]{2}|[A-Za-z0-9\\-._~!$&'()*+,;=:@/])+)$",
+  "pattern": "^[Uu][Rr][Nn]:([A-Za-z0-9]([A-Za-z0-9\\-]{0,30}[A-Za-z0-9])?):((%[0-9A-Fa-f]{2}|[A-Za-z0-9\\-._~!$&'()*+,;=:@/])+)(?:\\?(?:\\+[^?#]*)?)?(?:\\?=[^#]*)?(?:#.*)?$",
   "format": "uri"
 }
