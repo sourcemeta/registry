@@ -11,10 +11,13 @@
       "$ref": "./uri.json"
     },
     "path": {
-      "$ref": "./path.json"
+      "$ref": "./path-posix.json"
     },
     "resolve": {
       "type": "object",
+      "propertyNames": {
+        "$ref": "./uri-reference.json"
+      },
       "additionalProperties": {
         "$ref": "./uri-reference.json"
       }
