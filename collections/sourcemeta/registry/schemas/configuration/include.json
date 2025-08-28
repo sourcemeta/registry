@@ -5,7 +5,7 @@
   "required": [ "include" ],
   "properties": {
     "include": {
-      "$ref": "./path.json"
+      "$ref": "./path-posix.json"
     }
   },
   "additionalProperties": false

@@ -10,11 +10,10 @@
         "anyOf": [
           {
             "type": "string",
-            "pattern": "^@",
-            "minLength": 2
+            "pattern": "^@[a-z0-9/.]+$"
           },
           {
-            "$ref": "./path.json"
+            "$ref": "./path-posix.json"
           }
         ]
       }

@@ -13,7 +13,9 @@ install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/urn.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/url.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/email-address.json"
-    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path-posix.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path-posix-absolute.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path-posix-relative.json"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}/schemas"
   COMPONENT sourcemeta_registry)
 
