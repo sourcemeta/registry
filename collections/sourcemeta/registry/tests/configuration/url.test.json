@@ -1,0 +1,190 @@
+{
+  "target": "../../schemas/configuration/url.json",
+  "tests": [
+    {
+      "description": "Invalid type",
+      "valid": false,
+      "data": 123
+    },
+    {
+      "description": "Simple HTTP URL",
+      "valid": true,
+      "data": "http://example.com"
+    },
+    {
+      "description": "HTTPS with path",
+      "valid": true,
+      "data": "https://example.com/path/to/resource"
+    },
+    {
+      "description": "FTP with userinfo and port",
+      "valid": true,
+      "data": "ftp://user:pass@example.com:21/resource"
+    },
+    {
+      "description": "URN is valid absolute URI",
+      "valid": false,
+      "data": "urn:isbn:0451450523"
+    },
+    {
+      "description": "Custom scheme with plus sign",
+      "valid": true,
+      "data": "my+scheme://host/resource"
+    },
+    {
+      "description": "Custom scheme with dot and dash",
+      "valid": true,
+      "data": "a.b-c://example.org/"
+    },
+    {
+      "description": "Scheme must start with a letter",
+      "valid": false,
+      "data": "1abc://example.com"
+    },
+    {
+      "description": "Scheme with invalid character",
+      "valid": false,
+      "data": "te@st://example.com"
+    },
+    {
+      "description": "Authority with IPv4",
+      "valid": true,
+      "data": "http://192.168.1.1/"
+    },
+    {
+      "description": "Authority with invalid IPv4",
+      "valid": false,
+      "data": "http://256.256.256.256/"
+    },
+    {
+      "description": "Authority with IPv6",
+      "valid": true,
+      "data": "http://[2001:db8::1]/"
+    },
+    {
+      "description": "Authority with IPv6 and port",
+      "valid": true,
+      "data": "http://[2001:db8::1]:8080/"
+    },
+    {
+      "description": "IPv6 without brackets",
+      "valid": false,
+      "data": "http://2001:db8::1/"
+    },
+    {
+      "description": "Authority with reg-name and port",
+      "valid": true,
+      "data": "http://example.com:8080/"
+    },
+    {
+      "description": "Authority with empty port",
+      "valid": false,
+      "data": "http://example.com:/"
+    },
+    {
+      "description": "Authority with userinfo",
+      "valid": true,
+      "data": "http://user@example.com/"
+    },
+    {
+      "description": "Authority with userinfo and password",
+      "valid": true,
+      "data": "http://user:pass@example.com/"
+    },
+    {
+      "description": "Authority with empty userinfo",
+      "valid": true,
+      "data": "http://@example.com/"
+    },
+    {
+      "description": "Authority without host",
+      "valid": false,
+      "data": "http://:80/"
+    },
+    {
+      "description": "Path with multiple segments",
+      "valid": true,
+      "data": "http://example.com/a/b/c"
+    },
+    {
+      "description": "Path with percent-encoded reserved characters",
+      "valid": true,
+      "data": "http://example.com/a%20b%2Fc"
+    },
+    {
+      "description": "Percent-encoding with invalid hex",
+      "valid": false,
+      "data": "http://example.com/a%ZZb"
+    },
+    {
+      "description": "Query component",
+      "valid": true,
+      "data": "http://example.com/path?query=value&other=123"
+    },
+    {
+      "description": "Fragment component",
+      "valid": true,
+      "data": "http://example.com/path#fragment"
+    },
+    {
+      "description": "Query and fragment together",
+      "valid": true,
+      "data": "http://example.com/path?query=yes#frag"
+    },
+    {
+      "description": "Empty path allowed",
+      "valid": true,
+      "data": "http://example.com"
+    },
+    {
+      "description": "Absolute path without authority",
+      "valid": false,
+      "data": "mailto:user@example.com"
+    },
+    {
+      "description": "Scheme without hierarchical part (URN)",
+      "valid": false,
+      "data": "news:comp.infosystems.www.servers.unix"
+    },
+    {
+      "description": "Invalid characters in host",
+      "valid": false,
+      "data": "http://exa mple.com/"
+    },
+    {
+      "description": "Host with uppercase letters",
+      "valid": true,
+      "data": "http://EXAMPLE.com/"
+    },
+    {
+      "description": "Scheme case insensitive",
+      "valid": true,
+      "data": "HTTP://example.com/"
+    },
+    {
+      "description": "Fragment with percent-encoding",
+      "valid": true,
+      "data": "http://example.com/#frag%20ment"
+    },
+    {
+      "description": "Path with unencoded space (invalid)",
+      "valid": false,
+      "data": "http://example.com/a b"
+    },
+    {
+      "description": "Minimal valid URL with only scheme and path",
+      "valid": true,
+      "data": "foo:/bar"
+    },
+    {
+      "description": "Missing scheme",
+      "valid": false,
+      "data": "//example.com/path"
+    },
+    {
+      "description": "Path-only URI (relative, not absolute)",
+      "valid": false,
+      "data": "/relative/path"
+    }
+  ]
+}
