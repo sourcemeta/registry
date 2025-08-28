@@ -8,6 +8,7 @@ install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/page.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/collection.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/uri-reference.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/uri-relative.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/uri.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/urn.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/url.json"
