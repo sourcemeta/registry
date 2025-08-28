@@ -1,0 +1,410 @@
+{
+  "target": "../../schemas/configuration/uri.json",
+  "tests": [
+    {
+      "description": "Invalid type - number",
+      "valid": false,
+      "data": 123
+    },
+    {
+      "description": "Invalid type - boolean",
+      "valid": false,
+      "data": false
+    },
+    {
+      "description": "Invalid type - null",
+      "valid": false,
+      "data": null
+    },
+    {
+      "description": "Empty string (not an absolute URI)",
+      "valid": false,
+      "data": ""
+    },
+    {
+      "description": "URL: HTTP with authority",
+      "valid": true,
+      "data": "http://example.com"
+    },
+    {
+      "description": "URL: HTTPS with path and query",
+      "valid": true,
+      "data": "https://example.com/path?query=value"
+    },
+    {
+      "description": "URL: FTP with userinfo and port",
+      "valid": true,
+      "data": "ftp://user:pass@ftp.example.com:21/file.txt"
+    },
+    {
+      "description": "URL: File URI with absolute path",
+      "valid": true,
+      "data": "file:///home/user/document.pdf"
+    },
+    {
+      "description": "URL: File URI without authority",
+      "valid": true,
+      "data": "file:/home/user/document.pdf"
+    },
+    {
+      "description": "URL: HTTP with IPv4",
+      "valid": true,
+      "data": "http://192.168.1.1/resource"
+    },
+    {
+      "description": "URL: HTTP with IPv6",
+      "valid": true,
+      "data": "http://[2001:db8::8a2e:370:7334]/resource"
+    },
+    {
+      "description": "URN: ISBN example",
+      "valid": true,
+      "data": "urn:isbn:0451450523"
+    },
+    {
+      "description": "URN: UUID example",
+      "valid": true,
+      "data": "urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66"
+    },
+    {
+      "description": "URN: IETF RFC example",
+      "valid": true,
+      "data": "urn:ietf:rfc:3986"
+    },
+    {
+      "description": "URN: With percent-encoding",
+      "valid": true,
+      "data": "urn:example:a%20b"
+    },
+    {
+      "description": "URN: With r-component and q-component",
+      "valid": true,
+      "data": "urn:example:foo-bar-baz?+CCResolve:cc=uk"
+    },
+    {
+      "description": "URN: With fragment",
+      "valid": true,
+      "data": "urn:example:foo-bar-baz#section"
+    },
+    {
+      "description": "Mailto: Simple email",
+      "valid": true,
+      "data": "mailto:user@example.com"
+    },
+    {
+      "description": "Mailto: Multiple recipients",
+      "valid": true,
+      "data": "mailto:user1@example.com,user2@example.com"
+    },
+    {
+      "description": "Mailto: With subject",
+      "valid": true,
+      "data": "mailto:user@example.com?subject=Hello%20World"
+    },
+    {
+      "description": "Mailto: With multiple query parameters",
+      "valid": true,
+      "data": "mailto:user@example.com?subject=Test&body=Message"
+    },
+    {
+      "description": "Mailto: No recipient specified",
+      "valid": true,
+      "data": "mailto:?to=user@example.com&subject=Test"
+    },
+    {
+      "description": "Tel: International format",
+      "valid": true,
+      "data": "tel:+1-555-555-5555"
+    },
+    {
+      "description": "Tel: With extension",
+      "valid": true,
+      "data": "tel:+1-555-555-5555;ext=123"
+    },
+    {
+      "description": "Tel: Local number",
+      "valid": true,
+      "data": "tel:555-5555"
+    },
+    {
+      "description": "Tel: With special characters",
+      "valid": true,
+      "data": "tel:+1(555)555-5555"
+    },
+    {
+      "description": "Data: Plain text",
+      "valid": true,
+      "data": "data:text/plain;charset=utf-8,Hello%20World"
+    },
+    {
+      "description": "Data: Base64 encoded",
+      "valid": true,
+      "data": "data:text/plain;base64,SGVsbG8gV29ybGQh"
+    },
+    {
+      "description": "Data: HTML content",
+      "valid": true,
+      "data": "data:text/html,%3Ch1%3EHello%3C%2Fh1%3E"
+    },
+    {
+      "description": "Data: Image with base64",
+      "valid": true,
+      "data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+    },
+    {
+      "description": "Data: Without parameters",
+      "valid": true,
+      "data": "data:,Hello%20World"
+    },
+    {
+      "description": "News: Newsgroup",
+      "valid": true,
+      "data": "news:comp.lang.javascript"
+    },
+    {
+      "description": "News: Message ID",
+      "valid": true,
+      "data": "news:1234567890@example.com"
+    },
+    {
+      "description": "News: Wildcard",
+      "valid": true,
+      "data": "news:*"
+    },
+    {
+      "description": "NNTP: With server and group",
+      "valid": true,
+      "data": "nntp://news.example.com/comp.lang.javascript"
+    },
+    {
+      "description": "SIP: Basic address",
+      "valid": true,
+      "data": "sip:alice@atlanta.com"
+    },
+    {
+      "description": "SIP: With port",
+      "valid": true,
+      "data": "sip:alice@atlanta.com:5060"
+    },
+    {
+      "description": "SIPS: Secure SIP",
+      "valid": true,
+      "data": "sips:alice@atlanta.com"
+    },
+    {
+      "description": "SIP: With parameters",
+      "valid": true,
+      "data": "sip:alice@atlanta.com;transport=tcp"
+    },
+    {
+      "description": "Geo: Coordinates",
+      "valid": true,
+      "data": "geo:37.786971,-122.399677"
+    },
+    {
+      "description": "Geo: With altitude",
+      "valid": true,
+      "data": "geo:37.786971,-122.399677,250"
+    },
+    {
+      "description": "Geo: With uncertainty",
+      "valid": true,
+      "data": "geo:37.786971,-122.399677;u=35"
+    },
+    {
+      "description": "Magnet: BitTorrent hash",
+      "valid": true,
+      "data": "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"
+    },
+    {
+      "description": "Magnet: With display name",
+      "valid": true,
+      "data": "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a&dn=Test"
+    },
+    {
+      "description": "LDAP: Search",
+      "valid": true,
+      "data": "ldap://ldap.example.com/cn=John%20Doe,dc=example,dc=com"
+    },
+    {
+      "description": "LDAP: With port and attributes",
+      "valid": true,
+      "data": "ldap://ldap.example.com:389/dc=example,dc=com?cn,mail?sub?(cn=*)"
+    },
+    {
+      "description": "SSH: With user and host",
+      "valid": true,
+      "data": "ssh://user@example.com:22"
+    },
+    {
+      "description": "Git: Repository URL",
+      "valid": true,
+      "data": "git://github.com/user/repo.git"
+    },
+    {
+      "description": "Bitcoin: Address",
+      "valid": true,
+      "data": "bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+    },
+    {
+      "description": "Bitcoin: With amount",
+      "valid": true,
+      "data": "bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa?amount=0.001"
+    },
+    {
+      "description": "Custom scheme: Single letter",
+      "valid": true,
+      "data": "x:something"
+    },
+    {
+      "description": "Custom scheme: With plus",
+      "valid": true,
+      "data": "custom+scheme:data"
+    },
+    {
+      "description": "Custom scheme: With dot",
+      "valid": true,
+      "data": "custom.scheme:data"
+    },
+    {
+      "description": "Custom scheme: With hyphen",
+      "valid": true,
+      "data": "custom-scheme:data"
+    },
+    {
+      "description": "Scheme must start with letter",
+      "valid": false,
+      "data": "9scheme:data"
+    },
+    {
+      "description": "Scheme with invalid character underscore",
+      "valid": false,
+      "data": "custom_scheme:data"
+    },
+    {
+      "description": "Scheme with invalid character at sign",
+      "valid": false,
+      "data": "cust@m:data"
+    },
+    {
+      "description": "Missing scheme",
+      "valid": false,
+      "data": "//example.com/path"
+    },
+    {
+      "description": "Missing colon after scheme",
+      "valid": false,
+      "data": "http//example.com"
+    },
+    {
+      "description": "Empty scheme",
+      "valid": false,
+      "data": ":data"
+    },
+    {
+      "description": "Space in URI",
+      "valid": false,
+      "data": "http://example.com/path with spaces"
+    },
+    {
+      "description": "Tab character in URI",
+      "valid": false,
+      "data": "http://example.com/path\twith\ttabs"
+    },
+    {
+      "description": "Newline in URI",
+      "valid": false,
+      "data": "http://example.com/path\nwith\nnewlines"
+    },
+    {
+      "description": "Invalid percent-encoding (single digit)",
+      "valid": false,
+      "data": "http://example.com/path%2"
+    },
+    {
+      "description": "Invalid percent-encoding (non-hex)",
+      "valid": false,
+      "data": "http://example.com/path%GG"
+    },
+    {
+      "description": "Invalid IPv4 in URL",
+      "valid": false,
+      "data": "http://256.256.256.256/"
+    },
+    {
+      "description": "IPv6 without brackets in URL",
+      "valid": false,
+      "data": "http://2001:db8::1/"
+    },
+    {
+      "description": "Empty port in URL",
+      "valid": false,
+      "data": "http://example.com:/"
+    },
+    {
+      "description": "Missing host in URL with authority",
+      "valid": false,
+      "data": "http://:8080/"
+    },
+    {
+      "description": "Relative path (not absolute)",
+      "valid": false,
+      "data": "path/to/resource"
+    },
+    {
+      "description": "Network-path reference (not absolute)",
+      "valid": false,
+      "data": "//example.com/path"
+    },
+    {
+      "description": "Query only (not absolute)",
+      "valid": false,
+      "data": "?query=value"
+    },
+    {
+      "description": "Fragment only (not absolute)",
+      "valid": false,
+      "data": "#fragment"
+    },
+    {
+      "description": "Scheme with only hierarchical part",
+      "valid": true,
+      "data": "scheme://"
+    },
+    {
+      "description": "Scheme with empty path",
+      "valid": true,
+      "data": "scheme:"
+    },
+    {
+      "description": "Complex URI with all components",
+      "valid": true,
+      "data": "scheme://user:pass@host.com:8080/path?query=value#fragment"
+    },
+    {
+      "description": "URI with encoded reserved characters",
+      "valid": true,
+      "data": "http://example.com/%2F%3F%23%5B%5D%40"
+    },
+    {
+      "description": "URI with unreserved characters",
+      "valid": true,
+      "data": "http://example.com/ABCabc123-._~"
+    },
+    {
+      "description": "URI with sub-delims in path",
+      "valid": true,
+      "data": "http://example.com/!$&'()*+,;="
+    },
+    {
+      "description": "Minimum valid absolute URI",
+      "valid": true,
+      "data": "a:"
+    },
+    {
+      "description": "Scheme with 63 characters (valid)",
+      "valid": true,
+      "data": "abcdefghijklmnopqrstuvwxyz0123456789.plus-minus.dots.hyphens01:data"
+    }
+  ]
+}
