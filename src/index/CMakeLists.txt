@@ -43,6 +43,7 @@ target_include_directories(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BI
 
 # Load pre-made collections
 set(REGISTRY_COLLECTION_SOURCES)
+include("${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/registry.cmake")
 include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.0/registry.cmake")
 include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.1/registry.cmake")
 include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.2/registry.cmake")

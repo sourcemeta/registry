@@ -1,0 +1,13 @@
+file(READ "${INPUT}" CONTENTS)
+file(WRITE "${OUTPUT}" "
+#ifndef SOURCEMETA_REGISTRY_CONFIGURATION_SCHEMA_H_
+#define SOURCEMETA_REGISTRY_CONFIGURATION_SCHEMA_H_
+
+#include <string_view> // std::string_view
+
+namespace sourcemeta::registry {
+constexpr std::string_view CONFIGURATION_SCHEMA{R\"EOF(${CONTENTS})EOF\"};
+}
+
+#endif // SOURCEMETA_REGISTRY_CONFIGURATION_SCHEMA_H_
+")

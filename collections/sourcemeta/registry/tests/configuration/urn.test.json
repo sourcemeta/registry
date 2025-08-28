@@ -1,0 +1,150 @@
+{
+  "target": "../../schemas/configuration/urn.json",
+  "tests": [
+    {
+      "description": "Invalid type (non-string)",
+      "valid": false,
+      "data": 1
+    },
+    {
+      "description": "Missing URN scheme prefix",
+      "valid": false,
+      "data": "example:foo"
+    },
+    {
+      "description": "Wrong URI scheme (not urn)",
+      "valid": false,
+      "data": "mailto:123"
+    },
+    {
+      "description": "URN scheme uppercase (case-insensitive)",
+      "valid": true,
+      "data": "URN:example:foo"
+    },
+    {
+      "description": "Mixed-case URN scheme and NID",
+      "valid": true,
+      "data": "UrN:ExAmPlE:nSs"
+    },
+    {
+      "description": "Single-character NID and NSS",
+      "valid": true,
+      "data": "urn:a:b"
+    },
+    {
+      "description": "Numeric NID (all digits)",
+      "valid": true,
+      "data": "urn:12345:abcde"
+    },
+    {
+      "description": "NID with digit and hyphen",
+      "valid": true,
+      "data": "urn:1-234:foo"
+    },
+    {
+      "description": "NID with uppercase letters",
+      "valid": true,
+      "data": "urn:IsBn:2000"
+    },
+    {
+      "description": "NID starting with hyphen (disallowed)",
+      "valid": false,
+      "data": "urn:-nid:foo"
+    },
+    {
+      "description": "NID ending with hyphen (disallowed)",
+      "valid": false,
+      "data": "urn:nid-:foo"
+    },
+    {
+      "description": "NID with invalid character (underscore)",
+      "valid": false,
+      "data": "urn:bad_nid:foo"
+    },
+    {
+      "description": "NID reserved 'urn' (disallowed)",
+      "valid": false,
+      "data": "urn:urn:foo"
+    },
+    {
+      "description": "NID too long (33 characters)",
+      "valid": false,
+      "data": "urn:123456789012345678901234567890123:abc"
+    },
+    {
+      "description": "NID at maximum length (32 characters)",
+      "valid": true,
+      "data": "urn:12345678901234567890123456789012:abc"
+    },
+    {
+      "description": "Empty NSS (no characters after NID)",
+      "valid": false,
+      "data": "urn:example:"
+    },
+    {
+      "description": "NSS with slash (allowed)",
+      "valid": true,
+      "data": "urn:example:foo/bar"
+    },
+    {
+      "description": "NSS with underscore (allowed)",
+      "valid": true,
+      "data": "urn:example:under_score"
+    },
+    {
+      "description": "NSS with various allowed punctuation characters",
+      "valid": true,
+      "data": "urn:ex:!*'();:@&=+$,.-"
+    },
+    {
+      "description": "NSS with tilde (allowed)",
+      "valid": true,
+      "data": "urn:example:foo~bar"
+    },
+    {
+      "description": "NSS with valid percent-encoding",
+      "valid": true,
+      "data": "urn:example:hello%20world"
+    },
+    {
+      "description": "Percent-encoding with uppercase hex letters",
+      "valid": true,
+      "data": "urn:example:%3A%41"
+    },
+    {
+      "description": "NSS with invalid percent-encoding",
+      "valid": false,
+      "data": "urn:example:bad%2Gcase"
+    },
+    {
+      "description": "Lone percent sign in NSS (invalid)",
+      "valid": false,
+      "data": "urn:example:50%off"
+    },
+    {
+      "description": "Space in NSS not percent-encoded (invalid)",
+      "valid": false,
+      "data": "urn:example:hello world"
+    },
+    {
+      "description": "Raw non-ASCII in NSS (invalid)",
+      "valid": false,
+      "data": "urn:example:ni\u00E7o"
+    },
+    {
+      "description": "Double colon (empty NID)",
+      "valid": false,
+      "data": "urn::foo"
+    },
+    {
+      "description": "Multiple colons in NSS (allowed)",
+      "valid": true,
+      "data": "urn:example:foo:bar:baz"
+    },
+    {
+      "description": "Trailing slash in NSS (allowed)",
+      "valid": true,
+      "data": "urn:example:foo/bar/"
+    }
+  ]
+}

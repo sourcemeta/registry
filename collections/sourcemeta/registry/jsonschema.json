@@ -1,0 +1,8 @@
+{
+  "title": "Sourcemeta Registry",
+  "description": "The schemas that define the current version of the Registry itself",
+  "email": "hello@sourcemeta.com",
+  "github": "sourcemeta/registry",
+  "website": "https://registry.sourcemeta.com",
+  "path": "./schemas"
+}

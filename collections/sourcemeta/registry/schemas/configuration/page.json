@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sourcemeta Registry Page",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "email": {
+      "$ref": "./email-address.json"
+    },
+    "github": {
+      "type": "string"
+    },
+    "website": {
+      "$ref": "./url.json"
+    }
+  }
+}

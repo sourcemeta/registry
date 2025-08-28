@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "The Sourcemeta Registry configuration file format",
+  "$ref": "./entry.json",
+  "type": "object",
+  "required": [ "url", "port" ],
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "action": {
+      "type": "object",
+      "required": [ "title", "url", "icon" ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "url": {
+          "$ref": "./url.json"
+        }
+      }
+    },
+    "head": {
+      "type": "string"
+    },
+    "hero": {
+      "type": "string"
+    },
+    "port": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "url": {
+      "$ref": "./url.json"
+    }
+  }
+}
