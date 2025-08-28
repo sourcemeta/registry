@@ -37,8 +37,8 @@ Importing Collections
 
 Each built-in schema collection has with a unique identifier that starts with
 the `@` character. To import such a collection, import the corresponding
-identifier to your [configuration file](configuration.md) using the `extends`
-keyword.
+identifier to your [configuration file](configuration.md) using the
+[`extends`](configuration.md#extends) keyword.
 
 !!! warning
 
@@ -50,7 +50,7 @@ keyword.
 For example, let's say your company depends on GeoJSON v1.0.5 and v1.0.4. Their
 identifiers are `@geojson/v1.0.5` and `@geojson/v1.0.4`, respectively.
 Therefore, a minimal example configuration that ingests them both using the
-`extends` keyword may look like this:
+[`extends`](configuration.md#extends) keyword may look like this:
 
 ```json hl_lines="4" title="registry.json"
 {
