@@ -60,10 +60,8 @@ add_custom_target(jsonschema_fmt
   COMMAND "$<TARGET_FILE:jsonschema_cli>" fmt --verbose ${SOURCEMETA_SCHEMAS})
 add_custom_target(jsonschema_metaschema 
   COMMAND "$<TARGET_FILE:jsonschema_cli>" metaschema --verbose ${SOURCEMETA_SCHEMAS})
-# TODO: We shouldn't require this --exclude
 add_custom_target(jsonschema_lint 
   COMMAND "$<TARGET_FILE:jsonschema_cli>" lint --strict --verbose 
-  --exclude unnecessary_allof_wrapper_modern
   ${SOURCEMETA_SCHEMAS})
 
 if(REGISTRY_TESTS)
