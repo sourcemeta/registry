@@ -87,6 +87,7 @@ your [configuration file](configuration.md) using the `extends` keyword.
 | `@modelcontextprotocol/2025-06-18` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2025-06-18) | Registry v1.2.0 |
 | `@modelcontextprotocol/2025-03-26` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2025-03-26) | Registry v1.2.0 |
 | `@modelcontextprotocol/2024-11-05` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2024-11-05) | Registry v1.2.0 |
+| `@sourcemeta/registry` | [Sourcemeta Registry](https://registry.sourcemeta.com) | Schemas that define the Sourcemeta Registry itself | [Link](https://schemas.sourcemeta.com/sourcemeta/registry) | Registry v1.2.0 |
 
 [^1]: The built-in collections we offer are redistributed directly from their
   upstream sources *without modification*. As such, any issues, errors, or
