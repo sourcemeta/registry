@@ -12,32 +12,6 @@
     "user@[abc.def]"
   ],
   "type": "string",
-  "allOf": [
-    {
-      "not": {
-        "$comment": "Disallow bare IPv4 address in domain (must be bracketed)",
-        "pattern": "@([0-9]{1,3}\\.){3}[0-9]{1,3}(?:$|\\s)"
-      }
-    },
-    {
-      "not": {
-        "$comment": "Disallow IPv6 literal without brackets",
-        "pattern": "@IPv6:"
-      }
-    },
-    {
-      "not": {
-        "$comment": "Disallow numeric-only final label (numeric TLDs like example.123)",
-        "pattern": "@[^@\\s]*\\.\\d+(?:$|\\s)"
-      }
-    },
-    {
-      "not": {
-        "$comment": "Reject addresses that start with a single-quote delimiter",
-        "pattern": "^'"
-      }
-    }
-  ],
   "anyOf": [
     {
       "$comment": "Unquoted (dot-atom) local-part with dot-atom domain — both allow inline single-level comments",
@@ -56,6 +30,26 @@
       "pattern": "^(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*(?:\"(?:[^\"\\\\\\r]|\\\\.)*\")(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*@(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*\\[(?:[^\\[\\]\\\\\\r]|\\\\.)*\\](?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*$"
     }
   ],
+  "not": {
+    "anyOf": [
+      {
+        "$comment": "Disallow bare IPv4 address in domain (must be bracketed)",
+        "pattern": "@([0-9]{1,3}\\.){3}[0-9]{1,3}(?:$|\\s)"
+      },
+      {
+        "$comment": "Disallow IPv6 literal without brackets",
+        "pattern": "@IPv6:"
+      },
+      {
+        "$comment": "Disallow numeric-only final label (numeric TLDs like example.123)",
+        "pattern": "@[^@\\s]*\\.\\d+(?:$|\\s)"
+      },
+      {
+        "$comment": "Reject addresses that start with a single-quote delimiter",
+        "pattern": "^'"
+      }
+    ]
+  },
   "format": "email",
   "minLength": 1
 }
