@@ -185,6 +185,36 @@
       "description": "Path-only URI (relative, not absolute)",
       "valid": false,
       "data": "/relative/path"
+    },
+    {
+      "description": "File URI with empty authority (three slashes)",
+      "valid": true,
+      "data": "file:///home/user/document.pdf"
+    },
+    {
+      "description": "File URI with empty authority and Windows path",
+      "valid": true,
+      "data": "file:///C:/Users/document.pdf"
+    },
+    {
+      "description": "File URI with localhost authority",
+      "valid": true,
+      "data": "file://localhost/home/user/document.pdf"
+    },
+    {
+      "description": "File URI with host",
+      "valid": true,
+      "data": "file://server.example.com/share/document.pdf"
+    },
+    {
+      "description": "URI with empty authority",
+      "valid": true,
+      "data": "scheme://"
+    },
+    {
+      "description": "URI with empty authority and path",
+      "valid": true,
+      "data": "scheme:///path"
     }
   ]
 }
