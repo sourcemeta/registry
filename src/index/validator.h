@@ -8,6 +8,7 @@
 
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
+#include <sourcemeta/blaze/output.h>
 
 #include <exception>     // std::exception
 #include <functional>    // std::ref, std::reference_wrapper
