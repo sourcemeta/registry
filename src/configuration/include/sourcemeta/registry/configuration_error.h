@@ -1,7 +1,7 @@
 #ifndef SOURCEMETA_REGISTRY_CONFIGURATION_ERROR_H_
 #define SOURCEMETA_REGISTRY_CONFIGURATION_ERROR_H_
 
-#include <sourcemeta/blaze/compiler.h>
+#include <sourcemeta/blaze/output.h>
 
 #include <exception> // std::exception
 #include <sstream>   // std::ostringstream

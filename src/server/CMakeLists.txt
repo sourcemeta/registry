@@ -14,11 +14,8 @@ target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uSockets)
 target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uWebSockets)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::license)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::metapack)
-
-# TODO: We should only need to link against the evaluator. The fact that we need
-# to link to both seems like a deficiency of the Blaze modular design
-target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::evaluator)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::output)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
   target_compile_definitions(sourcemeta_registry_server 

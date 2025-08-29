@@ -25,6 +25,7 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::editor
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::parallel)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evaluator)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::output)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::linter)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")

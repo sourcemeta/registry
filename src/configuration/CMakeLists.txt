@@ -38,5 +38,6 @@ target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core:
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core::jsonpointer)
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core::schemaconfig)
 target_link_libraries(sourcemeta_registry_configuration PRIVATE sourcemeta::core::uri)
+target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::blaze::output)
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_configuration PRIVATE sourcemeta::blaze::evaluator)
