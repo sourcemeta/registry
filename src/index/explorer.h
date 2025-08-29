@@ -370,6 +370,9 @@ auto schema_health_progress_bar(T &html,
   } else if (health > 60) {
     html << "<div class=\"progress-bar text-bg-warning\" style=\"width:"
          << health << "%\">";
+  } else if (health == 0) {
+    // Otherwise if we set width: 0px, then the label is not shown
+    html << "<div class=\"progress-bar text-bg-danger\"" << health << "%\">";
   } else {
     html << "<div class=\"progress-bar text-bg-danger\" style=\"width:"
          << health << "%\">";
