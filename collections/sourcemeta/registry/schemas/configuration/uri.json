@@ -9,6 +9,7 @@
     "mailto:user@example.com",
     "tel:+1-555-555-5555"
   ],
+  "x-license": "LicenseRef-Sourcemeta-Commercial",
   "anyOf": [
     {
       "$ref": "./urn.json"

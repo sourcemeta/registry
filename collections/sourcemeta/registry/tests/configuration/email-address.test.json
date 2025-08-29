@@ -1,5 +1,6 @@
 {
   "target": "../../schemas/configuration/email-address.json",
+  "x-license": "LicenseRef-Sourcemeta-Commercial",
   "tests": [
     {
       "description": "Invalid type",

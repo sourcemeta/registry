@@ -1,5 +1,6 @@
 {
   "target": "../../schemas/configuration/url.json",
+  "x-license": "LicenseRef-Sourcemeta-Commercial",
   "tests": [
     {
       "description": "Invalid type",

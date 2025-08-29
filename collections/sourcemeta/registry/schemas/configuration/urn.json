@@ -17,6 +17,7 @@
     "urn:example:foo:bar:baz",
     "urn:example:foo/bar/"
   ],
+  "x-license": "LicenseRef-Sourcemeta-Commercial",
   "type": "string",
   "not": {
     "$comment": "Disallow reserved NID value 'urn'",

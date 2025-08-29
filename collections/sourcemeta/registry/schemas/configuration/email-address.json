@@ -11,6 +11,7 @@
     "jo(comment)hn@example.com",
     "user@[abc.def]"
   ],
+  "x-license": "LicenseRef-Sourcemeta-Commercial",
   "type": "string",
   "anyOf": [
     {
