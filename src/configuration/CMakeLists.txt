@@ -4,16 +4,17 @@ sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
 # Bundle the configuration schema
 set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/configuration")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
-  COMMAND "$<TARGET_FILE:jsonschema_cli>" bundle "${SCHEMA_BASE_PATH}/registry.json" 
+  COMMAND "$<TARGET_FILE:jsonschema_cli>" bundle "${SCHEMA_BASE_PATH}/configuration.json" 
     > "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
   DEPENDS 
     "$<TARGET_FILE:jsonschema_cli>"
-    "${SCHEMA_BASE_PATH}/registry.json"
+    "${SCHEMA_BASE_PATH}/configuration.json"
     "${SCHEMA_BASE_PATH}/collection.json"
     "${SCHEMA_BASE_PATH}/email-address.json"
     "${SCHEMA_BASE_PATH}/entry.json"
     "${SCHEMA_BASE_PATH}/include.json"
     "${SCHEMA_BASE_PATH}/page.json"
+    "${SCHEMA_BASE_PATH}/tcp-port.json"
     "${SCHEMA_BASE_PATH}/path-posix.json"
     "${SCHEMA_BASE_PATH}/path-posix-absolute.json"
     "${SCHEMA_BASE_PATH}/path-posix-relative.json"

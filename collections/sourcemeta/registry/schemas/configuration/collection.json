@@ -21,9 +21,6 @@
       "additionalProperties": {
         "$ref": "./uri-reference.json"
       }
-    },
-    "website": {
-      "$ref": "./url.json"
     }
   }
 }

@@ -2,7 +2,7 @@ set(COLLECTION_NAMESPACE "sourcemeta/registry")
 
 include(GNUInstallDirs)
 install(FILES 
-    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/registry.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/configuration.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/entry.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/include.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/page.json"
@@ -13,6 +13,7 @@ install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/urn.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/url.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/email-address.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/tcp-port.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path-posix.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path-posix-absolute.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path-posix-relative.json"
