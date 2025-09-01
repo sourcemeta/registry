@@ -1,0 +1,4 @@
+/* To prevent weird table wrapping */
+table code {
+  white-space: nowrap;
+}
