@@ -81,7 +81,7 @@ auto Configuration::parse(const sourcemeta::core::JSON &data) -> Configuration {
                    .canonicalize()
                    .recompose();
 
-  result.title = data.at("title").to_string();
+  result.owner = data.at("owner").to_string();
   result.description = data.at("description").to_string();
   result.port = data.at("port").to_integer();
 

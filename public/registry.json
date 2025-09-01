@@ -1,6 +1,6 @@
 {
   "url": "https://schemas.sourcemeta.com",
-  "title": "Sourcemeta",
+  "owner": "Sourcemeta",
   "description": "The universal JSON Schema index, bringing together and supercharging the world's open-source schemas",
   "port": 8000,
   "hero": "<p class=\"mb-1\">The universal JSON Schema index, bringing together and supercharging the world's open-source schemas</p> <small class=\"fw-light\">Are we missing any schema collection you know about? <a href=\"https://github.com/sourcemeta/schemas/issues/new\" target=\"_blank\">Let us know!</a></small>",
@@ -10,12 +10,12 @@
     "url": "https://github.com/sourcemeta/registry",
     "icon": "github"
   },
-  "extends": [ 
+  "extends": [
     "@sourcemeta/registry",
     "@geojson/v1.0.5",
     "@geojson/v1.0.4",
     "@geojson/v1.0.3",
-    "@geojson/v1.0.2",    
+    "@geojson/v1.0.2",
     "@geojson/v1.0.1",
     "@geojson/v1.0.0",
     "@modelcontextprotocol/2025-06-18",

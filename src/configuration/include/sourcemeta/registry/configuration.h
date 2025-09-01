@@ -20,7 +20,7 @@ struct Configuration {
   static auto parse(const sourcemeta::core::JSON &data) -> Configuration;
 
   sourcemeta::core::JSON::String url;
-  sourcemeta::core::JSON::String title;
+  sourcemeta::core::JSON::String owner;
   sourcemeta::core::JSON::String description;
   sourcemeta::core::JSON::Integer port;
   std::optional<sourcemeta::core::JSON::String> head;

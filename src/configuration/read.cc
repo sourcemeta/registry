@@ -97,7 +97,7 @@ auto Configuration::read(const std::filesystem::path &configuration_path,
                          const std::filesystem::path &collections_path)
     -> sourcemeta::core::JSON {
   auto data{sourcemeta::core::read_json(configuration_path)};
-  data.assign_if_missing("title", sourcemeta::core::JSON{"Sourcemeta"});
+  data.assign_if_missing("owner", sourcemeta::core::JSON{"Sourcemeta"});
   data.assign_if_missing(
       "description",
       sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});

@@ -19,7 +19,7 @@ TEST(Configuration_read, stub_2) {
       configuration_path, COLLECTIONS_DIRECTORY)};
 
   std::string text{R"JSON({
-    "title": "Sourcemeta",
+    "owner": "Sourcemeta",
     "description": "The next-generation JSON Schema Registry",
     "url": "http://localhost:8000",
     "port": 8000,
@@ -49,7 +49,7 @@ TEST(Configuration_read, stub_3) {
       configuration_path, COLLECTIONS_DIRECTORY)};
 
   std::string text{R"JSON({
-    "title": "Sourcemeta",
+    "owner": "Sourcemeta",
     "description": "The next-generation JSON Schema Registry",
     "url": "http://localhost:8000",
     "port": 8000,
@@ -79,7 +79,7 @@ TEST(Configuration_read, stub_4) {
       configuration_path, COLLECTIONS_DIRECTORY)};
 
   std::string text{R"JSON({
-    "title": "Sourcemeta",
+    "owner": "Sourcemeta",
     "description": "The next-generation JSON Schema Registry",
     "url": "http://localhost:8000",
     "port": 8000,
@@ -112,7 +112,7 @@ TEST(Configuration_read, stub_5) {
       configuration_path, COLLECTIONS_DIRECTORY)};
 
   std::string text{R"JSON({
-    "title": "Sourcemeta",
+    "owner": "Sourcemeta",
     "description": "The next-generation JSON Schema Registry",
     "url": "http://localhost:8000",
     "port": 8000,
@@ -145,7 +145,7 @@ TEST(Configuration_read, stub_6) {
       configuration_path, COLLECTIONS_DIRECTORY)};
 
   std::string text{R"JSON({
-    "title": "Sourcemeta",
+    "owner": "Sourcemeta",
     "description": "The next-generation JSON Schema Registry",
     "url": "http://localhost:8000",
     "port": 8000,
@@ -172,7 +172,7 @@ TEST(Configuration_read, stub_7) {
       configuration_path, COLLECTIONS_DIRECTORY)};
 
   std::string text{R"JSON({
-    "title": "Sourcemeta",
+    "owner": "Sourcemeta",
     "description": "The next-generation JSON Schema Registry",
     "url": "http://localhost:8000",
     "port": 8000,

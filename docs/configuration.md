@@ -76,7 +76,7 @@ instance.
 |-----------------|------|----------|---------|-------------|
 | `/url`          | String  | :red_circle: **Yes** | N/A | The absolute URL on which the Registry will be served. Every ingested schema will have a schema identifier URI relative to this URL |
 | `/port`         | Integer | :red_circle: **Yes** | N/A | The TCP port on which the Registry server will listen on |
-| `/title`        | String  | No  | *Sourcemeta* | The concise name of the Registry instance. This will be shown in the navigation bar in the HTML explorer |
+| `/owner`        | String  | No  | *Sourcemeta* | The owner that operates the Registry instance. This will be shown in the navigation bar in the HTML explorer and its typically a company or organisation name |
 | `/description`  | String  | No  | *The next-generation JSON Schema Registry* | A longer description of the Registry instance. This will be shown in HTML meta tags |
 | `/head`         | String  | No  | None | An HTML snippet to include in the `<head>` section of the HTML explorer. Useful for website analytics purposes or for custom styles |
 | `/hero`         | String  | No  | None | An HTML snippet to render in the front page of the Registry. Try to make this snippet as standalone as possible using `style` HTML attributes |
