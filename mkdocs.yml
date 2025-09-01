@@ -44,7 +44,7 @@ theme:
   logo: assets/logo.svg
   favicon: assets/favicon.ico
   name: material
-  custom_dir: mkdocs
+  custom_dir: docs/overrides
   icon:
     repo: fontawesome/brands/github
   features:
