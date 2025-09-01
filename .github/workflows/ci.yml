@@ -36,22 +36,50 @@ jobs:
         env:
           HURL_VERSION: 5.0.1
 
-      # Testing
-      - run: docker build --tag registry-${{ matrix.edition.name }} . --file Dockerfile --build-arg SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }} --progress plain
+      - run: >
+          docker build
+          --tag registry-${{ matrix.edition.name }} .
+          --file Dockerfile
+          --build-arg SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }}
+          --progress plain
+
+      # Sandbox (headless)
       - run: docker compose --file test/sandbox/compose.yaml build
         env:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
+          SOURCEMETA_REGISTRY_CONFIGURATION: headless
       - run: docker compose --file test/sandbox/compose.yaml up --detach --wait
         env:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
+          SOURCEMETA_REGISTRY_CONFIGURATION: headless
       - run: make test-e2e PRESET=Release EDITION=${{ matrix.edition.name }}
-      - run: make test-e2e-api PRESET=Release EDITION=${{ matrix.edition.name }}
+        env:
+          SANDBOX_CONFIGURATION: headless
       - run: docker compose --file test/sandbox/compose.yaml down
         env:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
+          SOURCEMETA_REGISTRY_CONFIGURATION: headless
+
+      # Sandbox (full)
+      - run: docker compose --file test/sandbox/compose.yaml build
+        env:
+          SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
+          SOURCEMETA_REGISTRY_CONFIGURATION: full
+      - run: docker compose --file test/sandbox/compose.yaml up --detach --wait
+        env:
+          SANDBOX_CONFIGURATION: full
+      - run: make test-e2e PRESET=Release EDITION=${{ matrix.edition.name }}
+      - run: docker compose --file test/sandbox/compose.yaml down
+        env:
+          SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
+          SOURCEMETA_REGISTRY_CONFIGURATION: full
 
       # Public instance
-      - run: docker build . --file public/Dockerfile --progress plain --build-arg SOURCEMETA_REGISTRY=registry-${{ matrix.edition.name }}
+      - run: >
+          docker build .
+          --file public/Dockerfile
+          --progress plain
+          --build-arg SOURCEMETA_REGISTRY=registry-${{ matrix.edition.name }}
         if: matrix.edition.name == 'enterprise'
 
   website:
@@ -61,5 +89,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - run: pip install mkdocs-material 
+      - run: pip install mkdocs-material
       - run: mkdocs build --config-file mkdocs.yml --strict --site-dir ./build/website

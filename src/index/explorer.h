@@ -134,7 +134,7 @@ auto html_navigation(T &output,
        {"href", configuration.url}});
 
   output.open("span", {{"class", "fw-bold me-1"}})
-      .text(configuration.name)
+      .text(configuration.html->name)
       .close("span")
       .open("span", {{"class", "fw-lighter"}})
       .text(" Schemas")
@@ -163,17 +163,17 @@ auto html_navigation(T &output,
       .close("ul")
       .close("div");
 
-  if (configuration.action.has_value()) {
+  if (configuration.html->action.has_value()) {
     output.open("a",
                 {{"class", "ms-md-3 btn btn-dark mt-2 mt-md-0 w-100 w-md-auto"},
                  {"role", "button"},
-                 {"href", configuration.action.value().url}});
+                 {"href", configuration.html->action.value().url}});
     output
-        .open("i",
-              {{"class", "me-2 bi bi-" + configuration.action.value().icon}})
+        .open("i", {{"class",
+                     "me-2 bi bi-" + configuration.html->action.value().icon}})
         .close("i");
 
-    output.text(configuration.action.value().title);
+    output.text(configuration.html->action.value().title);
     output.close("a");
   }
 
@@ -868,7 +868,7 @@ auto GENERATE_EXPLORER_404(
   assert(!stream.fail());
   sourcemeta::registry::html::SafeOutput output_html{stream};
 
-  const auto head{configuration.head.value_or("")};
+  const auto head{configuration.html->head.value_or("")};
 
   sourcemeta::registry::html::partials::html_start(
       output_html, configuration.url, head, configuration, "Not Found",
@@ -901,17 +901,18 @@ auto GENERATE_EXPLORER_INDEX(
   std::ostringstream html;
   sourcemeta::registry::html::SafeOutput output_html{html};
 
-  const auto head{configuration.head.value_or("")};
+  const auto head{configuration.html->head.value_or("")};
 
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration,
-      configuration.name + " Schemas", configuration.description, "");
+      configuration.html->name + " Schemas", configuration.html->description,
+      "");
 
-  if (configuration.hero.has_value()) {
+  if (configuration.html->hero.has_value()) {
     output_html.open("div", {{"class", "container-fluid px-4"}})
         .open("div", {{"class",
                        "bg-light border border-light-subtle mt-4 px-3 py-3"}});
-    output_html.unsafe(configuration.hero.value());
+    output_html.unsafe(configuration.html->hero.value());
     output_html.close("div").close("div");
   }
 
@@ -932,7 +933,7 @@ auto GENERATE_EXPLORER_DIRECTORY_PAGE(
   std::ostringstream html;
 
   sourcemeta::registry::html::SafeOutput output_html{html};
-  const auto head{configuration.head.value_or("")};
+  const auto head{configuration.html->head.value_or("")};
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration,
       meta.defines("title") ? meta.at("title").to_string()
@@ -962,7 +963,7 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
                                           : meta.at("url").to_string()};
 
   sourcemeta::registry::html::SafeOutput output_html{html};
-  const auto head{configuration.head.value_or("")};
+  const auto head{configuration.html->head.value_or("")};
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration, title,
       meta.defines("description")

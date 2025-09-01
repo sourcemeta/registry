@@ -20,19 +20,24 @@ struct Configuration {
   static auto parse(const sourcemeta::core::JSON &data) -> Configuration;
 
   sourcemeta::core::JSON::String url;
-  sourcemeta::core::JSON::String name;
-  sourcemeta::core::JSON::String description;
   sourcemeta::core::JSON::Integer port;
-  std::optional<sourcemeta::core::JSON::String> head;
-  std::optional<sourcemeta::core::JSON::String> hero;
 
-  struct Action {
-    sourcemeta::core::JSON::String url;
-    sourcemeta::core::JSON::String icon;
-    sourcemeta::core::JSON::String title;
+  struct HTML {
+    sourcemeta::core::JSON::String name;
+    sourcemeta::core::JSON::String description;
+    std::optional<sourcemeta::core::JSON::String> head;
+    std::optional<sourcemeta::core::JSON::String> hero;
+
+    struct Action {
+      sourcemeta::core::JSON::String url;
+      sourcemeta::core::JSON::String icon;
+      sourcemeta::core::JSON::String title;
+    };
+
+    std::optional<Action> action;
   };
 
-  std::optional<Action> action;
+  std::optional<HTML> html;
 
   struct Page {
     std::optional<sourcemeta::core::JSON::String> title;

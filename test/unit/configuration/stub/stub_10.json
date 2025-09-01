@@ -1,0 +1,12 @@
+{
+  "url": "http://localhost:8000",
+  "port": 8000,
+  "html": {},
+  "contents": {
+    "test": {
+      "title": "A sample schema folder",
+      "description": "For testing purposes",
+      "github": "sourcemeta/registry"
+    }
+  }
+}

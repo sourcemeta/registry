@@ -376,54 +376,60 @@ static auto index_main(const std::string_view &program,
                               sourcemeta::registry::MetaPackEncoding::Identity,
                               search_index.cbegin(), search_index.cend());
 
-  const auto explorer_base{output.path() / "explorer"};
+  // TODO: Add a test for this
+  if (configuration.html.has_value()) {
+    const auto explorer_base{output.path() / "explorer"};
 
-  for (const auto &entry :
-       std::filesystem::recursive_directory_iterator{explorer_base}) {
-    if (entry.path().parent_path() == explorer_base / SENTINEL) {
-      continue;
-    } else if (entry.path().filename() == "directory.metapack") {
-      const auto relative_destination{
-          std::filesystem::relative(entry.path().parent_path(), output.path()) /
-          "directory-html.metapack"};
-      output.write_metapack_html(
-          relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
-          sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(configuration,
-                                                                 entry.path()));
-    } else if (entry.path().filename() == "schema.metapack") {
-      const auto relative_destination{
-          std::filesystem::relative(entry.path().parent_path(), output.path()) /
-          "schema-html.metapack"};
-      const auto schema_base_path{
-          output.path() / "schemas" /
-          (std::filesystem::relative(entry.path().parent_path(),
-                                     output.path() / "explorer")
-               .parent_path()
-               .string() +
-           ".json")};
+    for (const auto &entry :
+         std::filesystem::recursive_directory_iterator{explorer_base}) {
+      if (entry.path().parent_path() == explorer_base / SENTINEL) {
+        continue;
+      } else if (entry.path().filename() == "directory.metapack") {
+        const auto relative_destination{
+            std::filesystem::relative(entry.path().parent_path(),
+                                      output.path()) /
+            "directory-html.metapack"};
+        output.write_metapack_html(
+            relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
+            sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(
+                configuration, entry.path()));
+      } else if (entry.path().filename() == "schema.metapack") {
+        const auto relative_destination{
+            std::filesystem::relative(entry.path().parent_path(),
+                                      output.path()) /
+            "schema-html.metapack"};
+        const auto schema_base_path{
+            output.path() / "schemas" /
+            (std::filesystem::relative(entry.path().parent_path(),
+                                       output.path() / "explorer")
+                 .parent_path()
+                 .string() +
+             ".json")};
 
-      const auto dependencies_path{schema_base_path / SENTINEL /
-                                   "dependencies.metapack"};
-      const auto health_path{schema_base_path / SENTINEL / "health.metapack"};
+        const auto dependencies_path{schema_base_path / SENTINEL /
+                                     "dependencies.metapack"};
+        const auto health_path{schema_base_path / SENTINEL / "health.metapack"};
 
-      output.write_metapack_html(
-          relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
-          sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
-              configuration, entry.path(), dependencies_path, health_path));
+        output.write_metapack_html(
+            relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
+            sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
+                configuration, entry.path(), dependencies_path, health_path));
+      }
     }
+
+    output.write_metapack_html(
+        std::filesystem::path{"explorer"} / SENTINEL /
+            "directory-html.metapack",
+        sourcemeta::registry::MetaPackEncoding::GZIP,
+        sourcemeta::registry::GENERATE_EXPLORER_INDEX(
+            configuration, output.path() / std::filesystem::path{"explorer"} /
+                               SENTINEL / "directory.metapack"));
+
+    output.write_metapack_html(
+        std::filesystem::path{"explorer"} / SENTINEL / "404.metapack",
+        sourcemeta::registry::MetaPackEncoding::GZIP,
+        sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
   }
-
-  output.write_metapack_html(
-      std::filesystem::path{"explorer"} / SENTINEL / "directory-html.metapack",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
-      sourcemeta::registry::GENERATE_EXPLORER_INDEX(
-          configuration, output.path() / std::filesystem::path{"explorer"} /
-                             SENTINEL / "directory.metapack"));
-
-  output.write_metapack_html(
-      std::filesystem::path{"explorer"} / SENTINEL / "404.metapack",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
-      sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
 
   output.remove_unknown_files();
   return EXIT_SUCCESS;

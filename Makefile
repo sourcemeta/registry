@@ -15,17 +15,18 @@ PRESET ?= Debug
 OUTPUT ?= ./build
 PREFIX ?= $(OUTPUT)/dist
 SANDBOX ?= ./test/sandbox
-SANDBOX_URL ?= $(shell jq --raw-output '.url' < $(SANDBOX)/registry.json)
+SANDBOX_CONFIGURATION ?= full
+SANDBOX_URL ?= $(shell jq --raw-output '.url' < $(SANDBOX)/registry-full.json)
 PUBLIC ?= ./public
 
 .PHONY: all
-all: configure compile test 
+all: configure compile test
 
 node_modules: package.json package-lock.json
 	$(NPM) ci
 
 .PHONY: configure
-configure: node_modules 
+configure: node_modules
 	$(CMAKE) -S . -B $(OUTPUT) \
 		-DCMAKE_BUILD_TYPE:STRING=$(PRESET) \
 		-DCMAKE_COMPILE_WARNING_AS_ERROR:BOOL=ON \
@@ -37,7 +38,7 @@ configure: node_modules
 		-DBUILD_SHARED_LIBS:BOOL=OFF
 
 .PHONY: compile
-compile: 
+compile:
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target clang_format
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --parallel 4
 	$(CMAKE) --install $(OUTPUT) --prefix $(PREFIX) --config $(PRESET) --verbose \
@@ -54,26 +55,35 @@ lint:
 	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target jsonschema_lint
 
 .PHONY: test
-test: 
+test:
 	$(CTEST) --test-dir $(OUTPUT) --build-config $(PRESET) --output-on-failure --parallel
 
 .PHONY: test-e2e
-test-e2e: 
-	$(HURL) --test \
-		--variable base=$(SANDBOX_URL) \
-			test/e2e/api/*.hurl test/e2e/explorer/*.hurl test/e2e/schemas/*.hurl
-
-.PHONY: test-e2e-api
-test-e2e-api: 
-	$(HURL) --test --variable base=$(SANDBOX_URL) test/e2e/api/*.hurl
+test-e2e:
+ifeq ($(SANDBOX_CONFIGURATION),headless)
+	$(HURL) --test --variable base=$(SANDBOX_URL) \
+		test/e2e/api/*.hurl \
+		test/e2e/explorer/*.hurl \
+		test/e2e/schemas/*.hurl
+else
+	$(HURL) --test --variable base=$(SANDBOX_URL) \
+		test/e2e/api/*.hurl \
+		test/e2e/explorer/*.hurl \
+		test/e2e/html/*.hurl \
+		test/e2e/schemas/*.hurl
+endif
 
 .PHONY: sandbox
 sandbox: compile
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
-		$(PREFIX)/bin/sourcemeta-registry-index $(SANDBOX)/registry.json $(OUTPUT)/sandbox
-	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox $(SANDBOX)/manifest.txt
+		$(PREFIX)/bin/sourcemeta-registry-index \
+		$(SANDBOX)/registry-$(SANDBOX_CONFIGURATION).json \
+		$(OUTPUT)/sandbox
+	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox \
+		$(SANDBOX)/manifest-$(SANDBOX_CONFIGURATION).txt
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
-		$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/sandbox
+		$(PREFIX)/bin/sourcemeta-registry-server \
+		$(OUTPUT)/sandbox
 
 .PHONY: docker
 docker:
@@ -87,13 +97,13 @@ docs: mkdocs.yml
 	$(MKDOCS) serve --config-file $< --strict --open
 
 .PHONY: public
-public: 
+public:
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-index $(PUBLIC)/registry.json $(OUTPUT)/public
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/public
 
 .PHONY: clean
-clean: 
+clean:
 	$(CMAKE) -E rm -R -f build
 	$(DOCKER) system prune --force --all --volumes || true
