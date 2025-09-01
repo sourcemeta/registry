@@ -33,8 +33,7 @@
       "type": "string"
     },
     "port": {
-      "type": "integer",
-      "minimum": 0
+      "$ref": "./tcp-port.json"
     },
     "url": {
       "$ref": "./url.json"
