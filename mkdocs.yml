@@ -6,9 +6,9 @@ copyright: Copyright &copy; Sourcemeta
 edit_uri: edit/main/docs/
 extra:
   social:
-    - icon: fontawesome/brands/linkedin 
+    - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/company/sourcemeta
-    - icon: fontawesome/brands/github 
+    - icon: fontawesome/brands/github
       link: https://github.com/sourcemeta
   generator: false
   # See https://jimandreas.github.io/mkdocs-material/setup/setting-up-site-analytics/#custom-site-analytics
@@ -33,6 +33,10 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
   - footnotes
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 extra_css:
   - assets/style.css
 theme:
@@ -50,7 +54,7 @@ theme:
     - navigation.footer
     - search.share
     - content.action.edit
-  palette: 
+  palette:
     - scheme: default
       media: "(prefers-color-scheme: light)"
       primary: black
