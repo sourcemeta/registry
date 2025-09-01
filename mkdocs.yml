@@ -28,6 +28,7 @@ nav:
   - library.md
   - commercial.md
   - Live Example Instance: https://schemas.sourcemeta.com
+  - Community Support: https://github.com/sourcemeta/registry/discussions
 markdown_extensions:
   - admonition
   - pymdownx.details
