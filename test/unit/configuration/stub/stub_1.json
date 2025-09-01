@@ -1,6 +1,6 @@
 {
   "url": "http://localhost:8000",
-  "owner": "Title",
+  "name": "Title",
   "description": "Description",
   "port": 8000,
   "contents": {

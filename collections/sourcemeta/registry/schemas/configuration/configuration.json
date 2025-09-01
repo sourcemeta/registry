@@ -29,7 +29,7 @@
     "hero": {
       "type": "string"
     },
-    "owner": {
+    "name": {
       "type": "string"
     },
     "port": {
