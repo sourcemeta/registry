@@ -5,9 +5,6 @@
   "type": "object",
   "required": [ "url", "port" ],
   "properties": {
-    "title": {
-      "type": "string"
-    },
     "description": {
       "type": "string"
     },
@@ -30,6 +27,9 @@
       "type": "string"
     },
     "hero": {
+      "type": "string"
+    },
+    "name": {
       "type": "string"
     },
     "port": {

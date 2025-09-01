@@ -134,7 +134,7 @@ auto html_navigation(T &output,
        {"href", configuration.url}});
 
   output.open("span", {{"class", "fw-bold me-1"}})
-      .text(configuration.title)
+      .text(configuration.name)
       .close("span")
       .open("span", {{"class", "fw-lighter"}})
       .text(" Schemas")
@@ -905,7 +905,7 @@ auto GENERATE_EXPLORER_INDEX(
 
   sourcemeta::registry::html::partials::html_start(
       output_html, meta.at("canonical").to_string(), head, configuration,
-      configuration.title + " Schemas", configuration.description, "");
+      configuration.name + " Schemas", configuration.description, "");
 
   if (configuration.hero.has_value()) {
     output_html.open("div", {{"class", "container-fluid px-4"}})
