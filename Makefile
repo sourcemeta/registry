@@ -15,7 +15,7 @@ PRESET ?= Debug
 OUTPUT ?= ./build
 PREFIX ?= $(OUTPUT)/dist
 SANDBOX ?= ./test/sandbox
-SANDBOX_CONFIGURATION ?= full
+SANDBOX_CONFIGURATION ?= html
 SANDBOX_PORT ?= 8000
 SANDBOX_URL ?= http://localhost:$(SANDBOX_PORT)
 PUBLIC ?= ./public
@@ -61,18 +61,11 @@ test:
 
 .PHONY: test-e2e
 test-e2e:
-ifeq ($(SANDBOX_CONFIGURATION),headless)
 	$(HURL) --test --variable base=$(SANDBOX_URL) \
+		test/e2e/$(SANDBOX_CONFIGURATION)/*.hurl \
 		test/e2e/api/*.hurl \
 		test/e2e/explorer/*.hurl \
 		test/e2e/schemas/*.hurl
-else
-	$(HURL) --test --variable base=$(SANDBOX_URL) \
-		test/e2e/api/*.hurl \
-		test/e2e/explorer/*.hurl \
-		test/e2e/html/*.hurl \
-		test/e2e/schemas/*.hurl
-endif
 
 .PHONY: sandbox
 sandbox: compile

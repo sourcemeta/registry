@@ -13,7 +13,7 @@ inputs:
     required: true
     type: choice
     options:
-      - full
+      - html
       - headless
   port:
     description: Port

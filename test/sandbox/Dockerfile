@@ -1,10 +1,10 @@
 ARG SOURCEMETA_REGISTRY_EDITION=starter
 FROM registry-${SOURCEMETA_REGISTRY_EDITION} AS builder
-ARG SOURCEMETA_REGISTRY_CONFIGURATION=full
-COPY registry-full.json /app/registry-full.json
+ARG SOURCEMETA_REGISTRY_CONFIGURATION=html
+COPY registry-html.json /app/registry-html.json
 COPY registry-headless.json /app/registry-headless.json
 COPY schemas /app/schemas
-COPY manifest-full.txt /app/manifest-full.txt
+COPY manifest-html.txt /app/manifest-html.txt
 COPY manifest-headless.txt /app/manifest-headless.txt
 COPY manifest-check.sh /app/manifest-check.sh
 
