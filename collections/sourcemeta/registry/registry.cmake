@@ -3,10 +3,10 @@ set(COLLECTION_NAMESPACE "sourcemeta/registry")
 include(GNUInstallDirs)
 install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/configuration.json"
-    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/entry.json"
-    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/include.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/contents.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/page.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/collection.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/extends.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/uri-reference.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/uri-relative.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/uri.json"

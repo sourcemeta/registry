@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "The Sourcemeta Registry Contents",
+  "type": "object",
+  "additionalProperties": {
+    "anyOf": [
+      {
+        "type": "object",
+        "required": [ "include" ],
+        "properties": {
+          "include": {
+            "$ref": "./path-posix.json"
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "$ref": "./collection.json"
+      },
+      {
+        "$ref": "./page.json"
+      }
+    ]
+  }
+}
