@@ -3,7 +3,7 @@ hide:
   - navigation
 ---
 
-# Curated Schema Collections 
+# Curated Schema Collections
 
 *Most JSON Schema projects don't start from a blank sheet. They often build on
 top of existing data models for regulatory compliance, partner
@@ -55,7 +55,6 @@ Therefore, a minimal example configuration that ingests them both using the
 ```json hl_lines="4" title="registry.json"
 {
   "url": "https://schemas.example.com",
-  "port": 8000,
   "extends": [ "@geojson/v1.0.5", "@geojson/v1.0.4" ]
 }
 ```

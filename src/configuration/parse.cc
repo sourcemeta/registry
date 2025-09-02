@@ -78,7 +78,6 @@ auto Configuration::parse(const sourcemeta::core::JSON &data) -> Configuration {
 
   Configuration result;
   result.url = sourcemeta::core::URI::canonicalize(data.at("url").to_string());
-  result.port = data.at("port").to_integer();
 
   if (data.defines("html")) {
     if (data.at("html").is_boolean() && !data.at("html").to_boolean()) {

@@ -31,7 +31,6 @@ TEST(Configuration, stub_1) {
       sourcemeta::registry::Configuration::parse(raw_configuration)};
 
   EXPECT_EQ(configuration.url, "http://localhost:8000");
-  EXPECT_EQ(configuration.port, 8000);
 
   EXPECT_TRUE(configuration.html.has_value());
   EXPECT_EQ(configuration.html.value().name, "Title");
@@ -82,7 +81,6 @@ TEST(Configuration, stub_8) {
       sourcemeta::registry::Configuration::parse(raw_configuration)};
 
   EXPECT_EQ(configuration.url, "http://localhost:8000");
-  EXPECT_EQ(configuration.port, 8000);
 
   EXPECT_FALSE(configuration.html.has_value());
 

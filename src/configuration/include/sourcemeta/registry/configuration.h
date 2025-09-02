@@ -20,7 +20,6 @@ struct Configuration {
   static auto parse(const sourcemeta::core::JSON &data) -> Configuration;
 
   sourcemeta::core::JSON::String url;
-  sourcemeta::core::JSON::Integer port;
 
   struct HTML {
     sourcemeta::core::JSON::String name;

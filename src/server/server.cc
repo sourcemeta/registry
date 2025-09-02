@@ -17,7 +17,7 @@
 #include <cctype>      // std::tolower
 #include <chrono>      // std::chrono::system_clock
 #include <csignal>     // std::signal, SIGINT, SIGTERM
-#include <cstdint>     // std::uint32_t, std::atoi
+#include <cstdint>     // std::uint32_t, std::atoi, std::stoul
 #include <cstdlib>     // EXIT_FAILURE, std::exit
 #include <filesystem>  // std::filesystem
 #include <iostream>    // std::cerr, std::cout
@@ -629,10 +629,13 @@ auto main(int argc, char *argv[]) noexcept -> int {
   std::signal(SIGTERM, terminate);
 
   try {
-    if (argc < 2) {
-      std::cout << "Usage: " << argv[0] << " <path/to/output/directory>\n";
+    if (argc != 3) {
+      std::cout << "Usage: " << argv[0]
+                << " <path/to/output/directory> <port>\n";
       return EXIT_FAILURE;
     }
+
+    const auto port{static_cast<std::uint32_t>(std::stoul(argv[2]))};
 
     if (!sourcemeta::registry::license_permitted()) {
       std::cerr << sourcemeta::registry::license_error();
@@ -640,14 +643,6 @@ auto main(int argc, char *argv[]) noexcept -> int {
     }
 
     const auto base{std::filesystem::canonical(argv[1])};
-    const auto configuration{
-        sourcemeta::core::read_json(base / "configuration.json")};
-    assert(configuration.defines("port"));
-    assert(configuration.at("port").is_integer());
-    assert(configuration.at("port").is_positive());
-    const auto port{
-        static_cast<std::uint32_t>(configuration.at("port").to_integer())};
-
     uWS::LocalCluster({}, [&base, port](uWS::SSLApp &app) -> void {
       app.any(
           "/*",

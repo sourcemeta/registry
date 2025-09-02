@@ -10,7 +10,6 @@ trap clean EXIT
 cat << EOF > "$TMP/registry.json"
 {
   "url": "http://localhost:8000",
-  "port": 8000,
   "contents": {
     "example": {
       "baseUri": "https://example.com",

@@ -1,6 +1,5 @@
 {
   "url": "https://schemas.sourcemeta.com",
-  "port": 8000,
   "html": {
     "name": "Sourcemeta",
     "description": "The universal JSON Schema index, bringing together and supercharging the world's open-source schemas",

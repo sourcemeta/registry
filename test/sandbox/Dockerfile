@@ -21,5 +21,7 @@ COPY --from=builder /app/index /app/index
 # Just for the sake of the sandbox
 ENV SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 
-ENTRYPOINT [ "/usr/bin/sourcemeta-registry-server" ]
-CMD [ "/app/index" ]
+ARG SOURCEMETA_REGISTRY_PORT=8000
+ENV SOURCEMETA_REGISTRY_PORT=${SOURCEMETA_REGISTRY_PORT}
+
+ENTRYPOINT /usr/bin/sourcemeta-registry-server /app/index ${SOURCEMETA_REGISTRY_PORT}

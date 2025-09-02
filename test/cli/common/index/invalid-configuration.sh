@@ -9,7 +9,6 @@ trap clean EXIT
 
 cat << EOF > "$TMP/registry.json"
 {
-  "port": 8000,
   "contents": {
     "example": {
       "contents": {
@@ -28,7 +27,7 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 error: Invalid configuration
-The value was expected to be an object that defines properties "port", and "url"
+The value was expected to be an object that defines the property "url"
   at instance location ""
   at evaluate path "/required"
 EOF

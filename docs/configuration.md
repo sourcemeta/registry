@@ -52,7 +52,6 @@ schema at `./schemas/foo.json` will be available at
 ```json title="registry.json"
 {
   "url": "https://schemas.example.com",
-  "port": 8000,
   "contents": {
     "my-first-collection": {
       "path": "./schemas"
@@ -75,7 +74,6 @@ instance.
 | Property        | Type | Required | Default | Description |
 |-----------------|------|----------|---------|-------------|
 | `/url`          | String  | :red_circle: **Yes** | N/A | The absolute URL on which the Registry will be served. Every ingested schema will have a schema identifier URI relative to this URL |
-| `/port`         | Integer | :red_circle: **Yes** | N/A | The TCP port on which the Registry server will listen on |
 | `/extends`      | Array   | No  | None | One or more configuration files to extend from. See the [Extends](#extends) section for more information |
 | `/contents`     | Object  | No  | None | The top-level [Collections](#collections) and [Pages](#pages) that compose the Registry instance |
 | `/html`        | Object or Boolean  | No  | `true` | Settings for the HTML explorer. If set to `false`, the Registry runs in headless mode. See the [HTML](#html) section for more details |
@@ -143,10 +141,9 @@ same properties as a standard schema collection definition, with the Registry
 seamlessly integrating the external file's contents at the specified location
 during processing. For example:
 
-```json hl_lines="6" title="registry.json"
+```json hl_lines="5" title="registry.json"
 {
   "url": "https://schemas.example.com",
-  "port": 8000,
   "contents": {
     "my-first-collection": {
       "includes": "./jsonschema.json"
@@ -178,10 +175,9 @@ the [`@geojson/v1.0.5`](library.md) built-in collection and rephrase the
 `https://geojson.org/schema/GeoJSON.json` references to consume from the
 internal version:
 
-```json hl_lines="4 9" title="registry.json"
+```json hl_lines="3 8" title="registry.json"
 {
   "url": "https://schemas.example.com",
-  "port": 8000,
   "extends": [ "@geojson/v1.0.5" ]
   "contents": {
     "my-first-collection": {
@@ -221,10 +217,9 @@ strings where each entry represents either a file path (relative from the
 configuration file location) or a [built-in schema collection
 identifier](library.md) (prefixed with `@`). For example:
 
-```json hl_lines="4" title="registry.json"
+```json hl_lines="3" title="registry.json"
 {
   "url": "https://schemas.example.com",
-  "port": 8000,
   "extends": [ "@geojson/v1.0.5", "../path/to/my/other/config/registry.json" ]
 }
 ```

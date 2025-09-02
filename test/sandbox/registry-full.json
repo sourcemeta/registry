@@ -1,6 +1,5 @@
 {
   "url": "http://localhost:8000",
-  "port": 8000,
   "html": {
     "hero": "<p class=\"mb-0\">A sample schema registry sandbox for testing purposes</p>",
     "action": {
