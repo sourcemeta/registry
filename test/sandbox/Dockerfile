@@ -3,9 +3,11 @@ FROM registry-${SOURCEMETA_REGISTRY_EDITION} AS builder
 ARG SOURCEMETA_REGISTRY_CONFIGURATION=html
 COPY registry-html.json /app/registry-html.json
 COPY registry-headless.json /app/registry-headless.json
+COPY registry-empty.json /app/registry-empty.json
 COPY schemas /app/schemas
 COPY manifest-html.txt /app/manifest-html.txt
 COPY manifest-headless.txt /app/manifest-headless.txt
+COPY manifest-empty.txt /app/manifest-empty.txt
 COPY manifest-check.sh /app/manifest-check.sh
 
 # Just for the sake of the sandbox

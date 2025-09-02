@@ -1,0 +1,7 @@
+./configuration.json
+./explorer
+./explorer/%
+./explorer/%/404.metapack
+./explorer/%/directory-html.metapack
+./explorer/%/directory.metapack
+./explorer/%/search.metapack

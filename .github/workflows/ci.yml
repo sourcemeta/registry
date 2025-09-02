@@ -58,6 +58,13 @@ jobs:
           configuration: html
           port: 8000
 
+      - name: Sandbox (empty)
+        uses: ./.github/actions/sandbox
+        with:
+          edition: ${{ matrix.edition.name }}
+          configuration: empty
+          port: 8000
+
       # Public instance
       - run: >
           docker build .
