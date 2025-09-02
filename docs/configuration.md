@@ -33,7 +33,7 @@ company's needs rather than a pre-defined model.
 
 The JSON Schema that defines `registry.json` can be mounted in the Registry as
 a [built-in collection](library.md) called `@sourcemeta/registry`. You can
-explore a live instance of the latest version at
+explore the latest version at
 [https://schemas.sourcemeta.com/sourcemeta/registry/configuration](https://schemas.sourcemeta.com/sourcemeta/registry/configuration).
 
 !!! tip
@@ -42,6 +42,24 @@ explore a live instance of the latest version at
     of the [schemas.sourcemeta.com](https://schemas.sourcemeta.com) public
     example instance, which you can find [on
     GitHub](https://github.com/sourcemeta/registry/blob/main/public/registry.json)
+
+## `registry.json`
+
+The configuration file controls your entire Registry instance through various
+top-level properties that define both global settings and content structure.
+For representing the contents of the Registry, this file uses a hierarchical
+tree approach where you organise the contents of your Registry using nested
+nodes.  Each node in this tree serves as either a [Collection](#collections)
+(containing actual schemas) or a [Page](#pages) (acting as a directory that
+groups other pages and schema collections), giving you complete flexibility in
+structuring your instance.
+
+| Property        | Type | Required | Default | Description |
+|-----------------|------|----------|---------|-------------|
+| `/url`          | String  | :red_circle: **Yes** | N/A | The absolute URL on which the Registry will be served. The Registry will automatically add URI identifiers relative to this URL for every ingested schema |
+| `/extends`      | Array   | No  | None | One or more configuration files to extend from. See the [Extends](#extends) section for more information |
+| `/contents`     | Object  | No  | None | The top-level [Collections](#collections) and [Pages](#pages) that compose the Registry instance |
+| `/html`        | Object or Boolean  | No  | `{}` | Settings for the HTML explorer. If set to `false`, the Registry runs in headless mode. See the [HTML](#html) section for more details |
 
 For example, a minimal Registry configuration that mounts a single schema
 collection (`./schemas`) at URL
@@ -59,24 +77,6 @@ schema at `./schemas/foo.json` will be available at
   }
 }
 ```
-
-## `registry.json`
-
-The configuration file controls your entire Registry instance through various
-top-level properties that define both global settings and content structure.
-For representing the contents of the Registry, this file uses a hierarchical
-tree approach where you organise the contents of your Registry using nested
-nodes.  Each node in this tree serves as either a schema collection (containing
-actual schemas) or a page (acting as a directory that groups other pages and
-schema collections), giving you complete flexibility in structuring your
-instance.
-
-| Property        | Type | Required | Default | Description |
-|-----------------|------|----------|---------|-------------|
-| `/url`          | String  | :red_circle: **Yes** | N/A | The absolute URL on which the Registry will be served. Every ingested schema will have a schema identifier URI relative to this URL |
-| `/extends`      | Array   | No  | None | One or more configuration files to extend from. See the [Extends](#extends) section for more information |
-| `/contents`     | Object  | No  | None | The top-level [Collections](#collections) and [Pages](#pages) that compose the Registry instance |
-| `/html`        | Object or Boolean  | No  | `true` | Settings for the HTML explorer. If set to `false`, the Registry runs in headless mode. See the [HTML](#html) section for more details |
 
 ### HTML
 
@@ -118,7 +118,7 @@ collections contain the actual schema definitions that power your registry.
 
 | Property        | Type | Required | Default | Description |
 |-----------------|------|----------|---------|-------------|
-| `/path`         | String  | :red_circle: **Yes** | N/A | The path (relative to the location of the configuration file) to the directory which includes the schemas for this collection. The directory will be recursively traversed in search of `.json`, `.yaml`, or `.yml` schemas |
+| `/path`         | String  | :red_circle: **Yes** (unless `includes` is set) | N/A | The path (relative to the location of the configuration file) to the directory which includes the schemas for this collection. The directory will be recursively traversed in search of `.json`, `.yaml`, or `.yml` schemas |
 | `/baseUri`         | String  | No  | *The `file://` URI of the configuration directory* | The base URI of every schema file that is part of this collection, for rebasing purposes. If a schema defines an explicit identifier that is not relative to this base URI, the generation of the Registry will fail |
 | `/defaultDialect` | String  | No  | None | The default JSON Schema dialect URI to use for schemas that do not declare the `$schema` keyword |
 | `/title`        | String  | No  | None | The concise title of the schema collection |
@@ -126,9 +126,9 @@ collections contain the actual schema definitions that power your registry.
 | `/email`        | String  | No  | None | The e-mail address associated with the schema collection |
 | `/github`       | String  | No  | None | The GitHub organisation or `organisation/repository` identifier associated with the schema collection |
 | `/website`      | String  | No  | None | The absolute URL to the website associated with the schema collection |
-| `/includes`     | String  | No  | None | A `jsonschema.json` manifest definition to include in-place. See the [Includes](#includes) section for more information. **If this property is set, none of the other properties can be set** |
+| `/includes`     | String  | No  | None | A `jsonschema.json` manifest definition to include in-place. See the [Includes](#includes) section for more information. **If this property is set, none of the other properties can be set (including `path`)** |
 | `/resolve`      | Object  | No  | None | A URI-to-URI map to hook into the schema reference resolution process. See the [Resolve](#resolve) section for more information |
-| `/x-sourcemeta-registry:evaluate`      | Boolean  | No  | `true` | When set to `false`, disable the evaluation API for this schema collection |
+| `/x-sourcemeta-registry:evaluate`      | Boolean  | No  | `true` | When set to `false`, disable the evaluation API for this schema collection. This is useful if you will never make use of the evaluation API and want to speed up the generation of the Registry |
 
 ### Includes
 
