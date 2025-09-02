@@ -3,6 +3,8 @@
 
 #include <sourcemeta/blaze/output.h>
 
+#include <sourcemeta/core/jsonpointer.h>
+
 #include <exception> // std::exception
 #include <sstream>   // std::ostringstream
 #include <string>    // std::string
@@ -22,11 +24,71 @@ public:
   }
 
   [[nodiscard]] auto stacktrace() const noexcept -> const auto & {
-    return stacktrace_;
+    return this->stacktrace_;
   }
 
 private:
   std::string stacktrace_;
+};
+
+class ConfigurationReadError : public std::exception {
+public:
+  ConfigurationReadError(std::filesystem::path from,
+                         sourcemeta::core::Pointer location,
+                         std::filesystem::path target)
+      : from_{std::move(from)}, location_{std::move(location)},
+        target_{std::move(target)} {}
+
+  [[nodiscard]] auto what() const noexcept -> const char * {
+    return "Could not read referenced file";
+  }
+
+  [[nodiscard]] auto from() const noexcept -> const auto & {
+    return this->from_;
+  }
+
+  [[nodiscard]] auto target() const noexcept -> const auto & {
+    return this->target_;
+  }
+
+  [[nodiscard]] auto location() const noexcept -> const auto & {
+    return this->location_;
+  }
+
+private:
+  std::filesystem::path from_;
+  sourcemeta::core::Pointer location_;
+  std::filesystem::path target_;
+};
+
+class ConfigurationUnknownBuiltInCollectionError : public std::exception {
+public:
+  ConfigurationUnknownBuiltInCollectionError(std::filesystem::path from,
+                                             sourcemeta::core::Pointer location,
+                                             std::string identifier)
+      : from_{std::move(from)}, location_{std::move(location)},
+        identifier_{std::move(identifier)} {}
+
+  [[nodiscard]] auto what() const noexcept -> const char * {
+    return "Could not locate built-in collection";
+  }
+
+  [[nodiscard]] auto from() const noexcept -> const auto & {
+    return this->from_;
+  }
+
+  [[nodiscard]] auto identifier() const noexcept -> const auto & {
+    return this->identifier_;
+  }
+
+  [[nodiscard]] auto location() const noexcept -> const auto & {
+    return this->location_;
+  }
+
+private:
+  std::filesystem::path from_;
+  sourcemeta::core::Pointer location_;
+  std::string identifier_;
 };
 
 } // namespace sourcemeta::registry

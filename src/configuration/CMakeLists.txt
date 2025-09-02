@@ -1,12 +1,11 @@
 sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
   PRIVATE_HEADERS error.h SOURCES parse.cc read.cc)
 
-# Bundle the configuration schema
-# TODO: We shouldn't be bundling here, but pre-compiling!
+# Compile the configuration schema
 set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/configuration")
-add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
-  COMMAND "$<TARGET_FILE:jsonschema_cli>" bundle "${SCHEMA_BASE_PATH}/configuration.json"
-    > "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.json"
+  COMMAND "$<TARGET_FILE:jsonschema_cli>" compile --minify "${SCHEMA_BASE_PATH}/configuration.json"
+    > "${CMAKE_CURRENT_BINARY_DIR}/template.json"
   DEPENDS
     "$<TARGET_FILE:jsonschema_cli>"
     "${SCHEMA_BASE_PATH}/configuration.json"
@@ -23,16 +22,15 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
     "${SCHEMA_BASE_PATH}/uri.json"
     "${SCHEMA_BASE_PATH}/url.json"
     "${SCHEMA_BASE_PATH}/urn.json")
-add_custom_command(
-  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.h"
-  COMMAND "${CMAKE_COMMAND}"
-    -DINPUT="${CMAKE_CURRENT_BINARY_DIR}/schema.json"
-    -DOUTPUT="${CMAKE_CURRENT_BINARY_DIR}/schema.h"
-    -P "${CMAKE_CURRENT_SOURCE_DIR}/schema.cmake"
-  DEPENDS
-    "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
-    "${CMAKE_CURRENT_SOURCE_DIR}/schema.cmake")
-target_sources(sourcemeta_registry_configuration PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/schema.h")
+
+find_program(XXD_BIN NAMES xxd REQUIRED)
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.h"
+  COMMAND "${XXD_BIN}" --include --name SOURCEMETA_CONFIGURATION_SCHEMA_TEMPLATE
+    "${CMAKE_CURRENT_BINARY_DIR}/template.json"
+      > "${CMAKE_CURRENT_BINARY_DIR}/template.h"
+  DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/template.json")
+
+target_sources(sourcemeta_registry_configuration PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/template.h")
 target_include_directories(sourcemeta_registry_configuration PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core::json)
@@ -40,5 +38,4 @@ target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core:
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core::schemaconfig)
 target_link_libraries(sourcemeta_registry_configuration PRIVATE sourcemeta::core::uri)
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::blaze::output)
-target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_configuration PRIVATE sourcemeta::blaze::evaluator)

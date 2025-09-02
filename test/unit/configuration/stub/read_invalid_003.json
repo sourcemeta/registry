@@ -2,7 +2,7 @@
   "url": "http://localhost:8000",
   "contents": {
     "example": {
-      "include": "./partial_2.json"
+      "include": "@invalid"
     }
   }
 }

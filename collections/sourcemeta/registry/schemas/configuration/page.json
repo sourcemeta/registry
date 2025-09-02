@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Sourcemeta Registry Page",
+  "description": "Represents directory of other pages or schema collections",
   "type": "object",
   "properties": {
     "title": {

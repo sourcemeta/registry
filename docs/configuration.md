@@ -159,6 +159,9 @@ during processing. For example:
 }
 ```
 
+If a directory path is provided to the `includes` property, the Registry will
+look for a file called `jsonschema.json` inside such directory.
+
 ### Resolve
 
 The `resolve` property is an advanced feature to hook into the schema reference
@@ -223,6 +226,9 @@ identifier](library.md) (prefixed with `@`). For example:
   "extends": [ "@geojson/v1.0.5", "../path/to/my/other/config/registry.json" ]
 }
 ```
+
+If a directory path is provided to the `extends` property, the Registry will
+look for a file called `registry.json` inside such directory.
 
 !!! note
 

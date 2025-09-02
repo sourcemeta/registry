@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Sourcemeta Registry Collection",
+  "description": "Represents a set of schemas to be mounted into the Registry",
   "type": "object",
   "required": [ "path" ],
   "properties": {

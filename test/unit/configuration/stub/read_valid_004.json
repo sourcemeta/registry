@@ -1,6 +1,6 @@
 {
   "url": "http://localhost:8000",
-  "extends": [ "./stub_2.json" ],
+  "extends": [ "./read_valid_002.json" ],
   "contents": {
     "other": {
       "title": "Other"

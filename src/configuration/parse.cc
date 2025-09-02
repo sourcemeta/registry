@@ -1,11 +1,10 @@
 #include <sourcemeta/registry/configuration.h>
 
-#include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
 #include <sourcemeta/blaze/output.h>
 #include <sourcemeta/core/uri.h>
 
-#include "schema.h"
+#include "template.h"
 
 #include <cassert> // assert
 
@@ -64,15 +63,15 @@ auto entries_from_json(T &result, const std::filesystem::path &location,
 namespace sourcemeta::registry {
 
 auto Configuration::parse(const sourcemeta::core::JSON &data) -> Configuration {
-  const auto compiled_schema{sourcemeta::blaze::compile(
-      sourcemeta::core::parse_json(std::string{CONFIGURATION_SCHEMA}),
-      sourcemeta::core::schema_official_walker,
-      sourcemeta::core::schema_official_resolver,
-      sourcemeta::blaze::default_schema_compiler,
-      sourcemeta::blaze::Mode::Exhaustive)};
+  const auto compiled_schema{
+      sourcemeta::blaze::from_json(sourcemeta::core::parse_json(
+          std::string(reinterpret_cast<const char *>(
+                          SOURCEMETA_CONFIGURATION_SCHEMA_TEMPLATE),
+                      SOURCEMETA_CONFIGURATION_SCHEMA_TEMPLATE_len)))};
+  assert(compiled_schema.has_value());
   sourcemeta::blaze::Evaluator evaluator;
   sourcemeta::blaze::SimpleOutput output{data};
-  if (!evaluator.validate(compiled_schema, data, std::ref(output))) {
+  if (!evaluator.validate(compiled_schema.value(), data, std::ref(output))) {
     throw ConfigurationValidationError(output);
   }
 

@@ -466,6 +466,22 @@ auto main(int argc, char *argv[]) noexcept -> int {
     }
 
     return index_main(program, app);
+  } catch (const sourcemeta::registry::ConfigurationReadError &error) {
+    std::cerr << "error: " << error.what() << "\n";
+    std::cerr << "  from " << error.from().string() << "\n";
+    std::cerr << "  at \"" << sourcemeta::core::to_string(error.location())
+              << "\"\n";
+    std::cerr << "  to " << error.target().string() << "\n";
+    return EXIT_FAILURE;
+  } catch (
+      const sourcemeta::registry::ConfigurationUnknownBuiltInCollectionError
+          &error) {
+    std::cerr << "error: " << error.what() << "\n";
+    std::cerr << "  from " << error.from().string() << "\n";
+    std::cerr << "  at \"" << sourcemeta::core::to_string(error.location())
+              << "\"\n";
+    std::cerr << "  to " << error.identifier() << "\n";
+    return EXIT_FAILURE;
   } catch (const sourcemeta::core::OptionsUnexpectedValueFlagError &error) {
     std::cerr << "error: " << error.what() << " '" << error.name() << "'\n";
     return EXIT_FAILURE;

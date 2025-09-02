@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "The Sourcemeta Registry configuration file format",
+  "description": "The configuration file format used to configured Registry instances",
   "type": "object",
   "required": [ "url" ],
   "properties": {

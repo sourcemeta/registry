@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "The Sourcemeta Registry Contents",
+  "description": "An internal utility to represent the tree-structure of the configuration format",
   "type": "object",
   "additionalProperties": {
     "anyOf": [
