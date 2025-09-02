@@ -97,8 +97,8 @@ Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
 
-# Update the configuration summary
-touch "$TMP/output/configuration.json"
+# Update the executable
+touch "$1"
 "$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt"
 remove_threads_information "$TMP/output.txt"
 cat << EOF > "$TMP/expected.txt"
