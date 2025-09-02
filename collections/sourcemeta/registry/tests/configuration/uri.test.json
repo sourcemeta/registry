@@ -339,7 +339,7 @@
     },
     {
       "description": "Empty port in URL",
-      "valid": false,
+      "valid": true,
       "data": "http://example.com:/"
     },
     {
