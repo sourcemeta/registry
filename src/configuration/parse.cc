@@ -80,23 +80,30 @@ auto Configuration::parse(const sourcemeta::core::JSON &data) -> Configuration {
   result.url = sourcemeta::core::URI{data.at("url").to_string()}
                    .canonicalize()
                    .recompose();
-
-  result.name = data.at("name").to_string();
-  result.description = data.at("description").to_string();
   result.port = data.at("port").to_integer();
 
-  if (data.defines("hero")) {
-    result.hero = data.at("hero").to_string();
-  }
+  if (data.defines("html")) {
+    if (data.at("html").is_boolean() && !data.at("html").to_boolean()) {
+      result.html = std::nullopt;
+    } else {
+      result.html = Configuration::HTML{};
+      result.html->name = data.at("html").at("name").to_string();
+      result.html->description = data.at("html").at("description").to_string();
+      if (data.at("html").defines("hero")) {
+        result.html->hero = data.at("html").at("hero").to_string();
+      }
 
-  if (data.defines("head")) {
-    result.head = data.at("head").to_string();
-  }
+      if (data.at("html").defines("head")) {
+        result.html->head = data.at("html").at("head").to_string();
+      }
 
-  if (data.defines("action")) {
-    result.action = {.url = data.at("action").at("url").to_string(),
-                     .icon = data.at("action").at("icon").to_string(),
-                     .title = data.at("action").at("title").to_string()};
+      if (data.at("html").defines("action")) {
+        result.html->action = {
+            .url = data.at("html").at("action").at("url").to_string(),
+            .icon = data.at("html").at("action").at("icon").to_string(),
+            .title = data.at("html").at("action").at("title").to_string()};
+      }
+    }
   }
 
   entries_from_json(result.entries, "", data);

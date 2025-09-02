@@ -1,0 +1,13 @@
+{
+  "url": "http://localhost:8000",
+  "port": 8000,
+  "extends": [ "./stub_10.json" ],
+  "html": false,
+  "contents": {
+    "test": {
+      "title": "A sample schema folder",
+      "description": "For testing purposes",
+      "github": "sourcemeta/registry"
+    }
+  }
+}

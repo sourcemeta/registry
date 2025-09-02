@@ -5,5 +5,6 @@ services:
       dockerfile: Dockerfile
       args:
         SOURCEMETA_REGISTRY_EDITION: ${SOURCEMETA_REGISTRY_EDITION}
+        SOURCEMETA_REGISTRY_CONFIGURATION: ${SOURCEMETA_REGISTRY_CONFIGURATION}
     ports:
       - 8000:8000

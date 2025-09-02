@@ -97,10 +97,22 @@ auto Configuration::read(const std::filesystem::path &configuration_path,
                          const std::filesystem::path &collections_path)
     -> sourcemeta::core::JSON {
   auto data{sourcemeta::core::read_json(configuration_path)};
-  data.assign_if_missing("name", sourcemeta::core::JSON{"Sourcemeta"});
-  data.assign_if_missing(
-      "description",
-      sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
+
+  if (data.is_object() && data.defines("html") &&
+      data.at("html").is_boolean() && data.at("html").to_boolean()) {
+    data.at("html").into_object();
+  } else if (!data.defines("html")) {
+    data.assign("html", sourcemeta::core::JSON::make_object());
+  }
+
+  if (data.is_object() && data.defines("html") && data.at("html").is_object()) {
+    data.at("html").assign_if_missing("name",
+                                      sourcemeta::core::JSON{"Sourcemeta"});
+    data.at("html").assign_if_missing(
+        "description",
+        sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
+  }
+
   dereference(collections_path, configuration_path.parent_path(), data);
   return data;
 }

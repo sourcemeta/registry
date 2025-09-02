@@ -76,6 +76,20 @@ instance.
 |-----------------|------|----------|---------|-------------|
 | `/url`          | String  | :red_circle: **Yes** | N/A | The absolute URL on which the Registry will be served. Every ingested schema will have a schema identifier URI relative to this URL |
 | `/port`         | Integer | :red_circle: **Yes** | N/A | The TCP port on which the Registry server will listen on |
+| `/extends`      | Array   | No  | None | One or more configuration files to extend from. See the [Extends](#extends) section for more information |
+| `/contents`     | Object  | No  | None | The top-level [Collections](#collections) and [Pages](#pages) that compose the Registry instance |
+| `/html`        | Object or Boolean  | No  | `true` | Settings for the HTML explorer. If set to `false`, the Registry runs in headless mode. See the [HTML](#html) section for more details |
+
+### HTML
+
+When enabled through the optional `html` top-level property, the Registry
+generates an HTML explorer interface. Unlike the basic JSON API, this explorer
+provides a user-friendly web interface for browsing and examining your schemas.
+You can customize the explorer's appearance and behavior using the
+configuration options detailed below.
+
+| Property        | Type | Required | Default | Description |
+|-----------------|------|----------|---------|-------------|
 | `/name`        | String  | No  | *Sourcemeta* | The concise name of the Registry instance. For example, the name of your organisation. This will be shown in the navigation bar in the HTML explorer |
 | `/description`  | String  | No  | *The next-generation JSON Schema Registry* | A longer description of the Registry instance. This will be shown in HTML meta tags |
 | `/head`         | String  | No  | None | An HTML snippet to include in the `<head>` section of the HTML explorer. Useful for website analytics purposes or for custom styles |
@@ -84,8 +98,6 @@ instance.
 | `/action/title` | String  | Yes | N/A | The text of the call-to-action button |
 | `/action/icon`  | String  | Yes | N/A | The icon name of the call-to-action button, which must match the name of an icon in the [Bootstrap Icons](https://icons.getbootstrap.com) collection |
 | `/action/url`   | String  | Yes | N/A | The absolute URL of the call-to-action button |
-| `/extends`      | Array   | No  | None | One or more configuration files to extend from. See the [Extends](#extends) section for more information |
-| `/contents`     | Object  | No  | None | The top-level [Collections](#collections) and [Pages](#pages) that compose the Registry instance |
 
 ## Collections
 

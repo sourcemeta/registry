@@ -1,8 +1,10 @@
 {
   "url": "http://localhost:8000",
-  "name": "Title",
-  "description": "Description",
   "port": 8000,
+  "html": {
+    "name": "Title",
+    "description": "Description"
+  },
   "contents": {
     "example": {
       "title": "Sourcemeta",

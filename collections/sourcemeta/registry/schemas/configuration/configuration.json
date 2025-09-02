@@ -5,32 +5,37 @@
   "type": "object",
   "required": [ "url", "port" ],
   "properties": {
-    "description": {
-      "type": "string"
-    },
-    "action": {
-      "type": "object",
-      "required": [ "title", "url", "icon" ],
+    "html": {
+      "type": [ "object", "boolean" ],
       "properties": {
-        "title": {
+        "description": {
           "type": "string"
         },
-        "icon": {
+        "action": {
+          "type": "object",
+          "required": [ "title", "url", "icon" ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "icon": {
+              "type": "string"
+            },
+            "url": {
+              "$ref": "./url.json"
+            }
+          }
+        },
+        "head": {
           "type": "string"
         },
-        "url": {
-          "$ref": "./url.json"
+        "hero": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
         }
       }
-    },
-    "head": {
-      "type": "string"
-    },
-    "hero": {
-      "type": "string"
-    },
-    "name": {
-      "type": "string"
     },
     "port": {
       "$ref": "./tcp-port.json"

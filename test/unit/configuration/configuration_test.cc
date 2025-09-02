@@ -31,12 +31,14 @@ TEST(Configuration, stub_1) {
       sourcemeta::registry::Configuration::parse(raw_configuration)};
 
   EXPECT_EQ(configuration.url, "http://localhost:8000");
-  EXPECT_EQ(configuration.name, "Title");
-  EXPECT_EQ(configuration.description, "Description");
   EXPECT_EQ(configuration.port, 8000);
-  EXPECT_FALSE(configuration.head.has_value());
-  EXPECT_FALSE(configuration.hero.has_value());
-  EXPECT_FALSE(configuration.action.has_value());
+
+  EXPECT_TRUE(configuration.html.has_value());
+  EXPECT_EQ(configuration.html.value().name, "Title");
+  EXPECT_EQ(configuration.html.value().description, "Description");
+  EXPECT_FALSE(configuration.html.value().head.has_value());
+  EXPECT_FALSE(configuration.html.value().hero.has_value());
+  EXPECT_FALSE(configuration.html.value().action.has_value());
 
   EXPECT_EQ(configuration.entries.size(), 3);
 
@@ -67,4 +69,26 @@ TEST(Configuration, stub_1) {
   EXPECT_COLLECTION(configuration, "example/extension",
                     resolve.at("https://other.com/single.json"), "/foo.json");
   EXPECT_COLLECTION(configuration, "example/extension", extra.size(), 0);
+}
+
+// TODO: Test the remaining stubs here
+
+TEST(Configuration, stub_8) {
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
+                                "stub_8.json"};
+  const auto raw_configuration{sourcemeta::registry::Configuration::read(
+      configuration_path, COLLECTIONS_DIRECTORY)};
+  const auto configuration{
+      sourcemeta::registry::Configuration::parse(raw_configuration)};
+
+  EXPECT_EQ(configuration.url, "http://localhost:8000");
+  EXPECT_EQ(configuration.port, 8000);
+
+  EXPECT_FALSE(configuration.html.has_value());
+
+  EXPECT_EQ(configuration.entries.size(), 1);
+
+  EXPECT_PAGE(configuration, "test", title, "A sample schema folder");
+  EXPECT_PAGE(configuration, "test", description, "For testing purposes");
+  EXPECT_PAGE(configuration, "test", github, "sourcemeta/registry");
 }
