@@ -51,11 +51,11 @@ jobs:
           configuration: headless
           port: 8000
 
-      - name: Sandbox (full)
+      - name: Sandbox (html)
         uses: ./.github/actions/sandbox
         with:
           edition: ${{ matrix.edition.name }}
-          configuration: full
+          configuration: html
           port: 8000
 
       # Public instance

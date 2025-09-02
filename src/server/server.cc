@@ -277,10 +277,11 @@ constexpr auto SENTINEL{"%"};
 static auto on_request(const std::filesystem::path &base,
                        uWS::HttpRequest *request,
                        uWS::HttpResponse<true> *response,
-                       const ServerContentEncoding encoding) -> void {
+                       const ServerContentEncoding encoding,
+                       const bool is_headless) -> void {
   if (request->getUrl() == "/") {
     const auto accept{request->getHeader("accept")};
-    if (accept == "application/json") {
+    if (accept == "application/json" || is_headless) {
       serve_static_file(request, response, encoding,
                         base / "explorer" / SENTINEL / "directory.metapack",
                         sourcemeta::registry::STATUS_OK, true);
@@ -474,7 +475,7 @@ static auto on_request(const std::filesystem::path &base,
     json_error(request->getMethod(), request->getUrl(), response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
-  } else if (request->getUrl().starts_with("/static/")) {
+  } else if (request->getUrl().starts_with("/static/") && !is_headless) {
     std::ostringstream absolute_path;
     absolute_path << SOURCEMETA_REGISTRY_STATIC;
     absolute_path << request->getUrl().substr(7);
@@ -523,7 +524,7 @@ static auto on_request(const std::filesystem::path &base,
     const auto accept{request->getHeader("accept")};
     auto absolute_path{base / "explorer" / request->getUrl().substr(1) /
                        SENTINEL};
-    if (accept == "application/json") {
+    if (accept == "application/json" || is_headless) {
       absolute_path /= "directory.metapack";
       serve_static_file(request, response, encoding, absolute_path,
                         sourcemeta::registry::STATUS_OK, true);
@@ -552,7 +553,8 @@ static auto on_request(const std::filesystem::path &base,
 
 static auto dispatch(const std::filesystem::path &base,
                      uWS::HttpResponse<true> *const response,
-                     uWS::HttpRequest *const request) noexcept -> void {
+                     uWS::HttpRequest *const request,
+                     const bool is_headless) noexcept -> void {
   try {
     // As long as the identity;q=0 or *;q=0 directives do not explicitly
     // forbid the identity value that means no encoding, the server must never
@@ -585,7 +587,7 @@ static auto dispatch(const std::filesystem::path &base,
     }
 
     if (encoding.has_value()) {
-      on_request(base, request, response, encoding.value());
+      on_request(base, request, response, encoding.value(), is_headless);
     } else {
       json_error(request->getMethod(), request->getUrl(), response,
                  ServerContentEncoding::Identity,
@@ -643,12 +645,15 @@ auto main(int argc, char *argv[]) noexcept -> int {
     }
 
     const auto base{std::filesystem::canonical(argv[1])};
-    uWS::LocalCluster({}, [&base, port](uWS::SSLApp &app) -> void {
-      app.any(
-          "/*",
-          [&base](auto *const response, auto *const request) noexcept -> void {
-            dispatch(base, response, request);
-          });
+    const auto is_headless{!std::filesystem::exists(
+        base / "explorer" / SENTINEL / "directory-html.metapack")};
+
+    uWS::LocalCluster({}, [&base, port, is_headless](uWS::SSLApp &app) -> void {
+      app.any("/*",
+              [&base, is_headless](auto *const response,
+                                   auto *const request) noexcept -> void {
+                dispatch(base, response, request, is_headless);
+              });
 
       app.listen(static_cast<int>(port),
                  [port](us_listen_socket_t *const socket) -> void {
