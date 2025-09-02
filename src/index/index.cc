@@ -67,8 +67,22 @@ static auto index_main(const std::string_view &program,
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, SOURCEMETA_REGISTRY_COLLECTIONS)};
-  const auto configuration{
+  auto configuration{
       sourcemeta::registry::Configuration::parse(raw_configuration)};
+  if (app.contains("url")) {
+    std::cerr << "Overriding the URL in the configuration file with: "
+              << app.at("url").at(0) << "\n";
+    sourcemeta::core::URI url{std::string{app.at("url").at(0)}};
+    if (url.is_absolute() &&
+        (url.scheme().value() == "https" || url.scheme().value() == "http")) {
+      // TODO: Unit test this
+      configuration.url =
+          sourcemeta::core::URI::canonicalize(std::string{app.at("url").at(0)});
+    } else {
+      std::cerr << "error: The URL option must be an absolute HTTP(s) URL\n";
+      return EXIT_FAILURE;
+    }
+  }
 
   // We want to keep this file uncompressed and without a leading header to that
   // the server can quickly read on start
@@ -440,6 +454,8 @@ static auto index_main(const std::string_view &program,
 auto main(int argc, char *argv[]) noexcept -> int {
   try {
     sourcemeta::core::Options app;
+    // TODO: Support a --help flag
+    app.option("url", {"u"});
     app.parse(argc, argv);
     const std::string_view program{argv[0]};
     if (!sourcemeta::registry::license_permitted()) {
@@ -448,6 +464,15 @@ auto main(int argc, char *argv[]) noexcept -> int {
     }
 
     return index_main(program, app);
+  } catch (const sourcemeta::core::OptionsUnexpectedValueFlagError &error) {
+    std::cerr << "error: " << error.what() << " '" << error.name() << "'\n";
+    return EXIT_FAILURE;
+  } catch (const sourcemeta::core::OptionsMissingOptionValueError &error) {
+    std::cerr << "error: " << error.what() << " '" << error.name() << "'\n";
+    return EXIT_FAILURE;
+  } catch (const sourcemeta::core::OptionsUnknownOptionError &error) {
+    std::cerr << "error: " << error.what() << " '" << error.name() << "'\n";
+    return EXIT_FAILURE;
   } catch (const sourcemeta::registry::ConfigurationValidationError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
     return EXIT_FAILURE;
