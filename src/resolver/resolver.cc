@@ -180,8 +180,12 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
             .relative_path = "",
             .original_identifier = effective_identifier,
             .collection_name = relative_path,
-            .blaze_exhaustive = !collection.extra.defines(
-                "x-sourcemeta-registry:no-blaze-exhaustive"),
+            .blaze_exhaustive =
+                !collection.extra.defines("x-sourcemeta-registry:evaluate") ||
+                !collection.extra.at("x-sourcemeta-registry:evaluate")
+                     .is_boolean() ||
+                collection.extra.at("x-sourcemeta-registry:evaluate")
+                    .to_boolean(),
             // TODO: We should avoid this map copy
             .reference_visitor =
                 [resolve_map = collection.resolve](
