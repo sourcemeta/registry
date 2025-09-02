@@ -478,74 +478,78 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
     html << "</div>";
   }
 
-  html << "<thead>";
-  html << "<tr>";
-  html << "<th scope=\"col\" style=\"width: 50px\"></th>";
-  html << "<th scope=\"col\">Name</th>";
-  html << "<th scope=\"col\">Title</th>";
-  html << "<th scope=\"col\">Description</th>";
-  html << "<th scope=\"col\" style=\"width: 150px\">Health</th>";
-  html << "</tr>";
-  html << "</thead>";
-  html << "<tbody>";
-
   assert(meta.is_object());
   assert(meta.defines("entries"));
   assert(meta.at("entries").is_array());
 
-  for (const auto &entry : meta.at("entries").as_array()) {
-    assert(entry.is_object());
+  if (meta.at("entries").empty()) {
+    html << "<p>Things look a bit empty over here. Try ingesting some schemas "
+            "in the configuration file!</p>";
+  } else {
+    html << "<thead>";
     html << "<tr>";
-
-    assert(entry.defines("type"));
-    assert(entry.at("type").is_string());
-    html << "<td class=\"text-nowrap\">";
-    if (entry.at("type").to_string() == "directory") {
-      const auto has_picture{profile_picture(html, entry, 40)};
-      if (!has_picture) {
-        html << "<i class=\"bi bi-folder-fill\"></i>";
-      }
-    } else {
-      const auto &base_dialect{entry.at("baseDialect").to_string()};
-      dialect_badge(html, base_dialect);
-    }
-    html << "</td>";
-
-    assert(entry.defines("name"));
-    assert(entry.at("name").is_string());
-    html << "<td class=\"font-monospace text-nowrap\">";
-    assert(entry.defines("url"));
-    assert(entry.at("url").is_string());
-    html << "<a href=\"" << entry.at("url").to_string() << "\">";
-    html << entry.at("name").to_string();
-    html << "</a>";
-    html << "</td>";
-
-    html << "<td>";
-    html << "<small>";
-    if (entry.defines("title")) {
-      html << entry.at("title").to_string();
-    } else {
-      html << "-";
-    }
-    html << "</small>";
-    html << "</td>";
-
-    html << "<td>";
-    html << "<small>";
-    if (entry.defines("description")) {
-      html << entry.at("description").to_string();
-    } else {
-      html << "-";
-    }
-    html << "</small>";
-    html << "</td>";
-
-    html << "<td class=\"align-middle\">";
-    schema_health_progress_bar(html, entry.at("health").to_integer());
-    html << "</td>";
-
+    html << "<th scope=\"col\" style=\"width: 50px\"></th>";
+    html << "<th scope=\"col\">Name</th>";
+    html << "<th scope=\"col\">Title</th>";
+    html << "<th scope=\"col\">Description</th>";
+    html << "<th scope=\"col\" style=\"width: 150px\">Health</th>";
     html << "</tr>";
+    html << "</thead>";
+    html << "<tbody>";
+    for (const auto &entry : meta.at("entries").as_array()) {
+      assert(entry.is_object());
+      html << "<tr>";
+
+      assert(entry.defines("type"));
+      assert(entry.at("type").is_string());
+      html << "<td class=\"text-nowrap\">";
+      if (entry.at("type").to_string() == "directory") {
+        const auto has_picture{profile_picture(html, entry, 40)};
+        if (!has_picture) {
+          html << "<i class=\"bi bi-folder-fill\"></i>";
+        }
+      } else {
+        const auto &base_dialect{entry.at("baseDialect").to_string()};
+        dialect_badge(html, base_dialect);
+      }
+      html << "</td>";
+
+      assert(entry.defines("name"));
+      assert(entry.at("name").is_string());
+      html << "<td class=\"font-monospace text-nowrap\">";
+      assert(entry.defines("url"));
+      assert(entry.at("url").is_string());
+      html << "<a href=\"" << entry.at("url").to_string() << "\">";
+      html << entry.at("name").to_string();
+      html << "</a>";
+      html << "</td>";
+
+      html << "<td>";
+      html << "<small>";
+      if (entry.defines("title")) {
+        html << entry.at("title").to_string();
+      } else {
+        html << "-";
+      }
+      html << "</small>";
+      html << "</td>";
+
+      html << "<td>";
+      html << "<small>";
+      if (entry.defines("description")) {
+        html << entry.at("description").to_string();
+      } else {
+        html << "-";
+      }
+      html << "</small>";
+      html << "</td>";
+
+      html << "<td class=\"align-middle\">";
+      schema_health_progress_bar(html, entry.at("health").to_integer());
+      html << "</td>";
+
+      html << "</tr>";
+    }
   }
 
   html << "</tbody>";
@@ -685,69 +689,71 @@ auto GENERATE_NAV_DIRECTORY(
   auto entries{sourcemeta::core::JSON::make_array()};
 
   std::vector<sourcemeta::core::JSON::Integer> scores;
-  for (const auto &entry : std::filesystem::directory_iterator{directory}) {
-    auto entry_json{sourcemeta::core::JSON::make_object()};
-    const auto entry_relative_path{
-        entry.path().string().substr(base.string().size() + 1)};
-    assert(!entry_relative_path.starts_with('/'));
-    if (entry.is_directory() &&
-        !std::filesystem::exists(entry.path() / "%" / "schema.metapack") &&
-        !output.is_untracked_file(entry.path())) {
-      const auto directory_nav_path{navigation_base / entry_relative_path /
-                                    "%" / "directory.metapack"};
-      const auto directory_nav{
-          sourcemeta::registry::read_contents(directory_nav_path)};
-      assert(directory_nav.has_value());
-      auto directory_nav_json{
-          sourcemeta::core::parse_json(directory_nav.value().data)};
-      assert(directory_nav_json.is_object());
-      assert(directory_nav_json.defines("health"));
-      assert(directory_nav_json.at("health").is_integer());
-      scores.emplace_back(directory_nav_json.at("health").to_integer());
-      entry_json.assign("health", directory_nav_json.at("health"));
+  if (std::filesystem::exists(directory)) {
+    for (const auto &entry : std::filesystem::directory_iterator{directory}) {
+      auto entry_json{sourcemeta::core::JSON::make_object()};
+      const auto entry_relative_path{
+          entry.path().string().substr(base.string().size() + 1)};
+      assert(!entry_relative_path.starts_with('/'));
+      if (entry.is_directory() &&
+          !std::filesystem::exists(entry.path() / "%" / "schema.metapack") &&
+          !output.is_untracked_file(entry.path())) {
+        const auto directory_nav_path{navigation_base / entry_relative_path /
+                                      "%" / "directory.metapack"};
+        const auto directory_nav{
+            sourcemeta::registry::read_contents(directory_nav_path)};
+        assert(directory_nav.has_value());
+        auto directory_nav_json{
+            sourcemeta::core::parse_json(directory_nav.value().data)};
+        assert(directory_nav_json.is_object());
+        assert(directory_nav_json.defines("health"));
+        assert(directory_nav_json.at("health").is_integer());
+        scores.emplace_back(directory_nav_json.at("health").to_integer());
+        entry_json.assign("health", directory_nav_json.at("health"));
 
-      entry_json.assign("name",
-                        sourcemeta::core::JSON{entry.path().filename()});
-      inflate_metadata(configuration, entry_relative_path, entry_json);
+        entry_json.assign("name",
+                          sourcemeta::core::JSON{entry.path().filename()});
+        inflate_metadata(configuration, entry_relative_path, entry_json);
 
-      entry_json.assign("type", sourcemeta::core::JSON{"directory"});
-      entry_json.assign(
-          "url", sourcemeta::core::JSON{
-                     entry.path().string().substr(base.string().size())});
-      entries.push_back(std::move(entry_json));
+        entry_json.assign("type", sourcemeta::core::JSON{"directory"});
+        entry_json.assign(
+            "url", sourcemeta::core::JSON{
+                       entry.path().string().substr(base.string().size())});
+        entries.push_back(std::move(entry_json));
 
-    } else if (entry.is_directory() &&
-               std::filesystem::exists(entry.path() / "%" /
-                                       "schema.metapack")) {
-      auto name{entry.path().stem()};
-      if (name.extension() == ".schema") {
-        name.replace_extension("");
+      } else if (entry.is_directory() &&
+                 std::filesystem::exists(entry.path() / "%" /
+                                         "schema.metapack")) {
+        auto name{entry.path().stem()};
+        if (name.extension() == ".schema") {
+          name.replace_extension("");
+        }
+
+        entry_json.assign("name", sourcemeta::core::JSON{std::move(name)});
+        auto schema_nav_path{navigation_base / entry_relative_path};
+        schema_nav_path.replace_extension("");
+        schema_nav_path /= "%";
+        schema_nav_path /= "schema.metapack";
+
+        const auto nav{sourcemeta::registry::read_contents(schema_nav_path)};
+        assert(nav.has_value());
+        entry_json.merge(
+            sourcemeta::core::parse_json(nav.value().data).as_object());
+        assert(!entry_json.defines("entries"));
+        // No need to show breadcrumbs of children
+        entry_json.erase("breadcrumb");
+        entry_json.assign("type", sourcemeta::core::JSON{"schema"});
+
+        assert(entry_json.defines("url"));
+        std::filesystem::path url{entry_json.at("url").to_string()};
+        url.replace_extension("");
+        entry_json.at("url").into(sourcemeta::core::JSON{url});
+
+        assert(entry_json.defines("health"));
+        assert(entry_json.at("health").is_integer());
+        scores.emplace_back(entry_json.at("health").to_integer());
+        entries.push_back(std::move(entry_json));
       }
-
-      entry_json.assign("name", sourcemeta::core::JSON{std::move(name)});
-      auto schema_nav_path{navigation_base / entry_relative_path};
-      schema_nav_path.replace_extension("");
-      schema_nav_path /= "%";
-      schema_nav_path /= "schema.metapack";
-
-      const auto nav{sourcemeta::registry::read_contents(schema_nav_path)};
-      assert(nav.has_value());
-      entry_json.merge(
-          sourcemeta::core::parse_json(nav.value().data).as_object());
-      assert(!entry_json.defines("entries"));
-      // No need to show breadcrumbs of children
-      entry_json.erase("breadcrumb");
-      entry_json.assign("type", sourcemeta::core::JSON{"schema"});
-
-      assert(entry_json.defines("url"));
-      std::filesystem::path url{entry_json.at("url").to_string()};
-      url.replace_extension("");
-      entry_json.at("url").into(sourcemeta::core::JSON{url});
-
-      assert(entry_json.defines("health"));
-      assert(entry_json.at("health").is_integer());
-      scores.emplace_back(entry_json.at("health").to_integer());
-      entries.push_back(std::move(entry_json));
     }
   }
 

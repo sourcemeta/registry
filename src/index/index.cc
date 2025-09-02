@@ -336,12 +336,14 @@ static auto index_main(const std::string_view &program,
   const auto navigation_base{output.path() / "explorer"};
 
   std::vector<std::filesystem::path> schema_directories;
-  for (const auto &entry :
-       std::filesystem::recursive_directory_iterator{base}) {
-    if (entry.is_directory() && entry.path().filename() != SENTINEL &&
-        !std::filesystem::exists(entry.path() / SENTINEL) &&
-        !output.is_untracked_file(entry.path())) {
-      schema_directories.push_back(entry.path());
+  if (std::filesystem::exists(base)) {
+    for (const auto &entry :
+         std::filesystem::recursive_directory_iterator{base}) {
+      if (entry.is_directory() && entry.path().filename() != SENTINEL &&
+          !std::filesystem::exists(entry.path() / SENTINEL) &&
+          !output.is_untracked_file(entry.path())) {
+        schema_directories.push_back(entry.path());
+      }
     }
   }
 
