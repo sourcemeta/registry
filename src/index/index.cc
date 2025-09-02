@@ -1,6 +1,7 @@
 #include <sourcemeta/core/build.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/core/options.h>
 #include <sourcemeta/core/parallel.h>
 
 #include <sourcemeta/registry/configuration.h>
@@ -33,7 +34,7 @@
 constexpr auto SENTINEL{"%"};
 
 static auto index_main(const std::string_view &program,
-                       const std::span<const std::string> &arguments) -> int {
+                       const sourcemeta::core::Options &app) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
 #if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
   std::cout << " Enterprise ";
@@ -44,14 +45,14 @@ static auto index_main(const std::string_view &program,
 #endif
   std::cout << "Edition\n";
 
-  if (arguments.size() < 2) {
+  if (app.positional().size() != 2) {
     std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
               << " <registry.json> <path/to/output/directory>\n";
     return EXIT_FAILURE;
   }
 
   // Prepare the output directory
-  sourcemeta::registry::Output output{arguments[1]};
+  sourcemeta::registry::Output output{app.positional().at(1)};
   std::cerr << "Writing output to: " << output.path().string() << "\n";
 
   // --------------------------------------------
@@ -61,7 +62,8 @@ static auto index_main(const std::string_view &program,
   // Read and validate the configuration file
   sourcemeta::registry::Resolver resolver;
   sourcemeta::registry::Validator validator{resolver};
-  const auto configuration_path{std::filesystem::canonical(arguments[0])};
+  const auto configuration_path{
+      std::filesystem::canonical(app.positional().at(0))};
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, SOURCEMETA_REGISTRY_COLLECTIONS)};
@@ -437,15 +439,15 @@ static auto index_main(const std::string_view &program,
 
 auto main(int argc, char *argv[]) noexcept -> int {
   try {
+    sourcemeta::core::Options app;
+    app.parse(argc, argv);
     const std::string_view program{argv[0]};
-    const std::vector<std::string> arguments{argv + std::min(1, argc),
-                                             argv + argc};
     if (!sourcemeta::registry::license_permitted()) {
       std::cerr << sourcemeta::registry::license_error();
       return EXIT_FAILURE;
     }
 
-    return index_main(program, arguments);
+    return index_main(program, app);
   } catch (const sourcemeta::registry::ConfigurationValidationError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
     return EXIT_FAILURE;
