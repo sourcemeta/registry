@@ -4,7 +4,7 @@
   "$ref": "./page.json",
   "required": [ "path" ],
   "properties": {
-    "base": {
+    "baseUri": {
       "$ref": "./uri-reference.json"
     },
     "defaultDialect": {

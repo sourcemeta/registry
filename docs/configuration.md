@@ -121,7 +121,7 @@ collections contain the actual schema definitions that power your registry.
 | Property        | Type | Required | Default | Description |
 |-----------------|------|----------|---------|-------------|
 | `/path`         | String  | :red_circle: **Yes** | N/A | The path (relative to the location of the configuration file) to the directory which includes the schemas for this collection. The directory will be recursively traversed in search of `.json`, `.yaml`, or `.yml` schemas |
-| `/base`         | String  | No  | *The `file://` URI of the configuration directory* | The base URI of every schema file that is part of this collection, for rebasing purposes. If a schema defines an explicit identifier that is not relative to this base URI, the generation of the Registry will fail |
+| `/baseUri`         | String  | No  | *The `file://` URI of the configuration directory* | The base URI of every schema file that is part of this collection, for rebasing purposes. If a schema defines an explicit identifier that is not relative to this base URI, the generation of the Registry will fail |
 | `/defaultDialect` | String  | No  | None | The default JSON Schema dialect URI to use for schemas that do not declare the `$schema` keyword |
 | `/title`        | String  | No  | None | The concise title of the schema collection |
 | `/description`  | String  | No  | None | A longer description of the schema collection |
@@ -130,6 +130,7 @@ collections contain the actual schema definitions that power your registry.
 | `/website`      | String  | No  | None | The absolute URL to the website associated with the schema collection |
 | `/includes`     | String  | No  | None | A `jsonschema.json` manifest definition to include in-place. See the [Includes](#includes) section for more information. **If this property is set, none of the other properties can be set** |
 | `/resolve`      | Object  | No  | None | A URI-to-URI map to hook into the schema reference resolution process. See the [Resolve](#resolve) section for more information |
+| `/x-sourcemeta-registry:evaluate`      | Boolean  | No  | `true` | When set to `false`, disable the evaluation API for this schema collection |
 
 ### Includes
 

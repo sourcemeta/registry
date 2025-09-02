@@ -70,7 +70,7 @@
     "no-blaze": {
       "baseUri": "https://other.com",
       "path": "./schemas/no-blaze",
-      "x-sourcemeta-registry:no-blaze-exhaustive": true
+      "x-sourcemeta-registry:evaluate": false
     }
   }
 }

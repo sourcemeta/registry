@@ -380,7 +380,7 @@
         "v1.0.0": {
           "baseUri": "https://w3id.org/dats/schema",
           "path": "../vendor/public/dats-1-0-0",
-          "x-sourcemeta-registry:no-blaze-exhaustive": true
+          "x-sourcemeta-registry:evaluate": false
         }
       }
     },
@@ -401,21 +401,21 @@
             "r5": {
               "baseUri": "http://hl7.org/fhir/json-schema",
               "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r5.core/package/openapi",
-              "x-sourcemeta-registry:no-blaze-exhaustive": true
+              "x-sourcemeta-registry:evaluate": false
             },
             "r4b": {
               "baseUri": "http://hl7.org/fhir/json-schema",
               "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r4b.core/package/openapi",
-              "x-sourcemeta-registry:no-blaze-exhaustive": true
+              "x-sourcemeta-registry:evaluate": false
             },
             "r4": {
               "baseUri": "http://hl7.org/fhir/json-schema",
               "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r4.core/package/openapi",
-              "x-sourcemeta-registry:no-blaze-exhaustive": true
+              "x-sourcemeta-registry:evaluate": false
             },
             "r3": {
               "path": "../vendor/public/fhir/hl7.fhir.rX/hl7.fhir.r3.core/package/openapi",
-              "x-sourcemeta-registry:no-blaze-exhaustive": true
+              "x-sourcemeta-registry:evaluate": false
             }
           }
         }
