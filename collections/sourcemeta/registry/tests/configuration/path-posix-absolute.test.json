@@ -1,0 +1,426 @@
+{
+  "target": "../../schemas/configuration/path-posix-absolute.json",
+  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "tests": [
+    {
+      "description": "Invalid type - number",
+      "valid": false,
+      "data": 123
+    },
+    {
+      "description": "Invalid type - boolean",
+      "valid": false,
+      "data": true
+    },
+    {
+      "description": "Invalid type - null",
+      "valid": false,
+      "data": null
+    },
+    {
+      "description": "Invalid type - array",
+      "valid": false,
+      "data": []
+    },
+    {
+      "description": "Invalid type - object",
+      "valid": false,
+      "data": {}
+    },
+    {
+      "description": "Root directory",
+      "valid": true,
+      "data": "/"
+    },
+    {
+      "description": "Single slash with filename",
+      "valid": true,
+      "data": "/file"
+    },
+    {
+      "description": "Simple absolute path",
+      "valid": true,
+      "data": "/home/user"
+    },
+    {
+      "description": "Deep absolute path",
+      "valid": true,
+      "data": "/usr/local/bin/program"
+    },
+    {
+      "description": "Path with file extension",
+      "valid": true,
+      "data": "/etc/passwd"
+    },
+    {
+      "description": "Exactly two leading slashes (implementation-defined)",
+      "valid": true,
+      "data": "//server/share"
+    },
+    {
+      "description": "Three or more leading slashes (treated as single slash)",
+      "valid": true,
+      "data": "///home/user"
+    },
+    {
+      "description": "Four leading slashes",
+      "valid": true,
+      "data": "////etc/hosts"
+    },
+    {
+      "description": "Many leading slashes",
+      "valid": true,
+      "data": "/////////usr/bin"
+    },
+    {
+      "description": "Multiple slashes in middle",
+      "valid": true,
+      "data": "/home//user"
+    },
+    {
+      "description": "Many consecutive slashes",
+      "valid": true,
+      "data": "/home////user//documents"
+    },
+    {
+      "description": "Mixed single and multiple slashes",
+      "valid": true,
+      "data": "/usr//local/bin//program"
+    },
+    {
+      "description": "Single trailing slash",
+      "valid": true,
+      "data": "/home/user/"
+    },
+    {
+      "description": "Multiple trailing slashes",
+      "valid": true,
+      "data": "/home/user///"
+    },
+    {
+      "description": "Root with multiple slashes",
+      "valid": true,
+      "data": "///"
+    },
+    {
+      "description": "Path with dot component",
+      "valid": true,
+      "data": "/home/./user"
+    },
+    {
+      "description": "Path with dot-dot component",
+      "valid": true,
+      "data": "/home/../etc"
+    },
+    {
+      "description": "Path with multiple dot components",
+      "valid": true,
+      "data": "/home/./user/./documents"
+    },
+    {
+      "description": "Path with multiple dot-dot components",
+      "valid": true,
+      "data": "/home/user/../../etc"
+    },
+    {
+      "description": "Path ending with dot",
+      "valid": true,
+      "data": "/home/user/."
+    },
+    {
+      "description": "Path ending with dot-dot",
+      "valid": true,
+      "data": "/home/user/.."
+    },
+    {
+      "description": "All uppercase letters",
+      "valid": true,
+      "data": "/ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    },
+    {
+      "description": "All lowercase letters",
+      "valid": true,
+      "data": "/abcdefghijklmnopqrstuvwxyz"
+    },
+    {
+      "description": "All digits",
+      "valid": true,
+      "data": "/0123456789"
+    },
+    {
+      "description": "Period characters",
+      "valid": true,
+      "data": "/file.name.ext"
+    },
+    {
+      "description": "Underscore characters",
+      "valid": true,
+      "data": "/file_name_with_underscores"
+    },
+    {
+      "description": "Hyphen characters",
+      "valid": true,
+      "data": "/file-name-with-hyphens"
+    },
+    {
+      "description": "Mixed portable characters",
+      "valid": true,
+      "data": "/home/User_123/file-name.txt"
+    },
+    {
+      "description": "All portable characters in one filename",
+      "valid": true,
+      "data": "/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-"
+    },
+    {
+      "description": "Empty component between slashes",
+      "valid": true,
+      "data": "/home//user"
+    },
+    {
+      "description": "Multiple empty components",
+      "valid": true,
+      "data": "/home///user///documents"
+    },
+    {
+      "description": "Single character filename",
+      "valid": true,
+      "data": "/a"
+    },
+    {
+      "description": "Single digit filename",
+      "valid": true,
+      "data": "/1"
+    },
+    {
+      "description": "Filename starting with dot (hidden file)",
+      "valid": true,
+      "data": "/home/user/.bashrc"
+    },
+    {
+      "description": "Filename starting with hyphen",
+      "valid": true,
+      "data": "/-file"
+    },
+    {
+      "description": "Filename with only dots",
+      "valid": true,
+      "data": "/home/user/...."
+    },
+    {
+      "description": "Filename with only hyphens",
+      "valid": true,
+      "data": "/home/user/----"
+    },
+    {
+      "description": "Filename with only underscores",
+      "valid": true,
+      "data": "/home/user/____"
+    },
+    {
+      "description": "Relative path",
+      "valid": false,
+      "data": "home/user"
+    },
+    {
+      "description": "Empty string",
+      "valid": false,
+      "data": ""
+    },
+    {
+      "description": "Single dot",
+      "valid": false,
+      "data": "."
+    },
+    {
+      "description": "Dot-dot",
+      "valid": false,
+      "data": ".."
+    },
+    {
+      "description": "Filename without leading slash",
+      "valid": false,
+      "data": "file.txt"
+    },
+    {
+      "description": "Path starting with dot",
+      "valid": false,
+      "data": "./home/user"
+    },
+    {
+      "description": "Path starting with dot-dot",
+      "valid": false,
+      "data": "../home/user"
+    },
+    {
+      "description": "Path starting with letter",
+      "valid": false,
+      "data": "home/user/documents"
+    },
+    {
+      "description": "Null byte in path",
+      "valid": false,
+      "data": "/home/user\u0000file"
+    },
+    {
+      "description": "Null byte at beginning of filename",
+      "valid": false,
+      "data": "/\u0000home"
+    },
+    {
+      "description": "Null byte at end",
+      "valid": false,
+      "data": "/home/user\u0000"
+    },
+    {
+      "description": "Deep nesting",
+      "valid": true,
+      "data": "/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z"
+    },
+    {
+      "description": "Space in filename",
+      "valid": true,
+      "data": "/home/my file"
+    },
+    {
+      "description": "Special characters (non-portable but not forbidden)",
+      "valid": true,
+      "data": "/home/file@#$%^&*()"
+    },
+    {
+      "description": "Unicode characters (implementation-dependent)",
+      "valid": true,
+      "data": "/home/файл"
+    },
+    {
+      "description": "High-bit characters",
+      "valid": true,
+      "data": "/home/file\u00e9\u00f1"
+    },
+    {
+      "description": "Maximum depth root reference",
+      "valid": true,
+      "data": "/../../../../../../../../../../../../../../../../../../../../.."
+    },
+    {
+      "description": "Complex combination of dots and regular names",
+      "valid": true,
+      "data": "/home/./user/../user/./documents/../documents/file"
+    },
+    {
+      "description": "Common executable path",
+      "valid": true,
+      "data": "/usr/bin/bash"
+    },
+    {
+      "description": "Common configuration file",
+      "valid": true,
+      "data": "/etc/systemd/system/myservice.service"
+    },
+    {
+      "description": "Home directory file",
+      "valid": true,
+      "data": "/home/username/.ssh/id_rsa"
+    },
+    {
+      "description": "Temporary file",
+      "valid": true,
+      "data": "/tmp/temp_file_123.tmp"
+    },
+    {
+      "description": "Device file",
+      "valid": true,
+      "data": "/dev/sda1"
+    },
+    {
+      "description": "Proc filesystem",
+      "valid": true,
+      "data": "/proc/1/cmdline"
+    },
+    {
+      "description": "Var log file",
+      "valid": true,
+      "data": "/var/log/syslog"
+    },
+    {
+      "description": "Path with backslash (valid character, not separator in POSIX)",
+      "valid": true,
+      "data": "/home/file\\name"
+    },
+    {
+      "description": "Path with colon (valid in POSIX filenames)",
+      "valid": true,
+      "data": "/home/file:name"
+    },
+    {
+      "description": "Path with semicolon",
+      "valid": true,
+      "data": "/home/file;name"
+    },
+    {
+      "description": "Path with question mark",
+      "valid": true,
+      "data": "/home/file?name"
+    },
+    {
+      "description": "Path with asterisk",
+      "valid": true,
+      "data": "/home/file*name"
+    },
+    {
+      "description": "Path with brackets",
+      "valid": true,
+      "data": "/home/file[123]name"
+    },
+    {
+      "description": "Path with braces",
+      "valid": true,
+      "data": "/home/file{abc}name"
+    },
+    {
+      "description": "Path with pipe character",
+      "valid": true,
+      "data": "/home/file|name"
+    },
+    {
+      "description": "Path with tab character",
+      "valid": true,
+      "data": "/home/file\tname"
+    },
+    {
+      "description": "Path with newline (valid but problematic)",
+      "valid": true,
+      "data": "/home/file\nname"
+    },
+    {
+      "description": "Hidden directory with config",
+      "valid": true,
+      "data": "/home/user/.config/app/settings.conf"
+    },
+    {
+      "description": "Multiple extensions",
+      "valid": true,
+      "data": "/usr/share/doc/package/README.md.gz"
+    },
+    {
+      "description": "Numeric filename",
+      "valid": true,
+      "data": "/proc/1234/fd/0"
+    },
+    {
+      "description": "Single slash only",
+      "valid": true,
+      "data": "/"
+    },
+    {
+      "description": "Two slashes only",
+      "valid": true,
+      "data": "//"
+    },
+    {
+      "description": "Many slashes only",
+      "valid": true,
+      "data": "/////////"
+    }
+  ]
+}

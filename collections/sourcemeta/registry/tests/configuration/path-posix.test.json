@@ -1,0 +1,593 @@
+{
+  "target": "../../schemas/configuration/path-posix.json",
+  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "tests": [
+    {
+      "description": "Invalid type - number",
+      "valid": false,
+      "data": 123
+    },
+    {
+      "description": "Invalid type - boolean",
+      "valid": false,
+      "data": true
+    },
+    {
+      "description": "Invalid type - null",
+      "valid": false,
+      "data": null
+    },
+    {
+      "description": "Invalid type - array",
+      "valid": false,
+      "data": []
+    },
+    {
+      "description": "Invalid type - object",
+      "valid": false,
+      "data": {}
+    },
+
+    {
+      "description": "Empty string (relative path)",
+      "valid": true,
+      "data": ""
+    },
+
+    {
+      "description": "Root directory (absolute)",
+      "valid": true,
+      "data": "/"
+    },
+    {
+      "description": "Simple absolute path",
+      "valid": true,
+      "data": "/home/user"
+    },
+    {
+      "description": "Deep absolute path",
+      "valid": true,
+      "data": "/usr/local/bin/program"
+    },
+    {
+      "description": "Absolute path with extension",
+      "valid": true,
+      "data": "/etc/passwd"
+    },
+
+    {
+      "description": "Single filename (relative)",
+      "valid": true,
+      "data": "file.txt"
+    },
+    {
+      "description": "Simple relative path",
+      "valid": true,
+      "data": "home/user"
+    },
+    {
+      "description": "Deep relative path",
+      "valid": true,
+      "data": "documents/projects/readme.md"
+    },
+    {
+      "description": "Relative path with extension",
+      "valid": true,
+      "data": "config/settings.conf"
+    },
+
+    {
+      "description": "Two leading slashes (absolute, implementation-defined)",
+      "valid": true,
+      "data": "//server/share"
+    },
+    {
+      "description": "Three leading slashes (absolute)",
+      "valid": true,
+      "data": "///home/user"
+    },
+    {
+      "description": "Many leading slashes (absolute)",
+      "valid": true,
+      "data": "/////////usr/bin"
+    },
+
+    {
+      "description": "Current directory (relative)",
+      "valid": true,
+      "data": "."
+    },
+    {
+      "description": "Parent directory (relative)",
+      "valid": true,
+      "data": ".."
+    },
+    {
+      "description": "Relative path starting with dot",
+      "valid": true,
+      "data": "./file.txt"
+    },
+    {
+      "description": "Relative path starting with dot-dot",
+      "valid": true,
+      "data": "../file.txt"
+    },
+    {
+      "description": "Absolute path with dot component",
+      "valid": true,
+      "data": "/home/./user"
+    },
+    {
+      "description": "Absolute path with dot-dot component",
+      "valid": true,
+      "data": "/home/../etc"
+    },
+    {
+      "description": "Relative path with dot component",
+      "valid": true,
+      "data": "home/./user"
+    },
+    {
+      "description": "Relative path with dot-dot component",
+      "valid": true,
+      "data": "home/../etc"
+    },
+    {
+      "description": "Multiple dots in absolute path",
+      "valid": true,
+      "data": "/home/./user/./documents"
+    },
+    {
+      "description": "Multiple dots in relative path",
+      "valid": true,
+      "data": "home/./user/./documents"
+    },
+    {
+      "description": "Multiple dot-dots in absolute path",
+      "valid": true,
+      "data": "/home/user/../../etc"
+    },
+    {
+      "description": "Multiple dot-dots in relative path",
+      "valid": true,
+      "data": "home/user/../../etc"
+    },
+    {
+      "description": "Absolute path ending with dot",
+      "valid": true,
+      "data": "/home/user/."
+    },
+    {
+      "description": "Relative path ending with dot",
+      "valid": true,
+      "data": "home/user/."
+    },
+    {
+      "description": "Absolute path ending with dot-dot",
+      "valid": true,
+      "data": "/home/user/.."
+    },
+    {
+      "description": "Relative path ending with dot-dot",
+      "valid": true,
+      "data": "home/user/.."
+    },
+
+    {
+      "description": "Multiple slashes in absolute path",
+      "valid": true,
+      "data": "/home//user"
+    },
+    {
+      "description": "Multiple slashes in relative path",
+      "valid": true,
+      "data": "home//user"
+    },
+    {
+      "description": "Many consecutive slashes in absolute path",
+      "valid": true,
+      "data": "/home////user//documents"
+    },
+    {
+      "description": "Many consecutive slashes in relative path",
+      "valid": true,
+      "data": "home////user//documents"
+    },
+
+    {
+      "description": "Absolute path with trailing slash",
+      "valid": true,
+      "data": "/home/user/"
+    },
+    {
+      "description": "Relative path with trailing slash",
+      "valid": true,
+      "data": "home/user/"
+    },
+    {
+      "description": "Absolute path with multiple trailing slashes",
+      "valid": true,
+      "data": "/home/user///"
+    },
+    {
+      "description": "Relative path with multiple trailing slashes",
+      "valid": true,
+      "data": "home/user///"
+    },
+    {
+      "description": "Current directory with trailing slash",
+      "valid": true,
+      "data": "./"
+    },
+    {
+      "description": "Parent directory with trailing slash",
+      "valid": true,
+      "data": "../"
+    },
+
+    {
+      "description": "Portable characters - all uppercase",
+      "valid": true,
+      "data": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    },
+    {
+      "description": "Portable characters - all lowercase",
+      "valid": true,
+      "data": "abcdefghijklmnopqrstuvwxyz"
+    },
+    {
+      "description": "Portable characters - all digits",
+      "valid": true,
+      "data": "0123456789"
+    },
+    {
+      "description": "Portable characters - period",
+      "valid": true,
+      "data": "file.name.ext"
+    },
+    {
+      "description": "Portable characters - underscore",
+      "valid": true,
+      "data": "file_name_with_underscores"
+    },
+    {
+      "description": "Portable characters - hyphen",
+      "valid": true,
+      "data": "file-name-with-hyphens"
+    },
+    {
+      "description": "Mixed portable characters in absolute path",
+      "valid": true,
+      "data": "/home/User_123/file-name.txt"
+    },
+    {
+      "description": "Mixed portable characters in relative path",
+      "valid": true,
+      "data": "home/User_123/file-name.txt"
+    },
+
+    {
+      "description": "Single character absolute path",
+      "valid": true,
+      "data": "/a"
+    },
+    {
+      "description": "Single character relative path",
+      "valid": true,
+      "data": "a"
+    },
+    {
+      "description": "Single digit absolute path",
+      "valid": true,
+      "data": "/1"
+    },
+    {
+      "description": "Single digit relative path",
+      "valid": true,
+      "data": "1"
+    },
+    {
+      "description": "Hidden file in absolute path",
+      "valid": true,
+      "data": "/home/user/.bashrc"
+    },
+    {
+      "description": "Hidden file in relative path",
+      "valid": true,
+      "data": ".bashrc"
+    },
+    {
+      "description": "Filename starting with hyphen in absolute path",
+      "valid": true,
+      "data": "/-file"
+    },
+    {
+      "description": "Filename starting with hyphen in relative path",
+      "valid": true,
+      "data": "-file"
+    },
+
+    {
+      "description": "Space in absolute path",
+      "valid": true,
+      "data": "/home/my file"
+    },
+    {
+      "description": "Space in relative path",
+      "valid": true,
+      "data": "my file"
+    },
+    {
+      "description": "Special characters in absolute path",
+      "valid": true,
+      "data": "/home/file@#$%^&*()"
+    },
+    {
+      "description": "Special characters in relative path",
+      "valid": true,
+      "data": "file@#$%^&*()"
+    },
+    {
+      "description": "Unicode characters in absolute path",
+      "valid": true,
+      "data": "/home/файл"
+    },
+    {
+      "description": "Unicode characters in relative path",
+      "valid": true,
+      "data": "файл"
+    },
+    {
+      "description": "High-bit characters in absolute path",
+      "valid": true,
+      "data": "/home/filé"
+    },
+    {
+      "description": "High-bit characters in relative path",
+      "valid": true,
+      "data": "filé"
+    },
+
+    {
+      "description": "Backslash in absolute path",
+      "valid": true,
+      "data": "/home/file\\name"
+    },
+    {
+      "description": "Backslash in relative path",
+      "valid": true,
+      "data": "file\\name"
+    },
+    {
+      "description": "Colon in absolute path",
+      "valid": true,
+      "data": "/home/file:name"
+    },
+    {
+      "description": "Colon in relative path",
+      "valid": true,
+      "data": "file:name"
+    },
+    {
+      "description": "Question mark in absolute path",
+      "valid": true,
+      "data": "/home/file?name"
+    },
+    {
+      "description": "Question mark in relative path",
+      "valid": true,
+      "data": "file?name"
+    },
+    {
+      "description": "Asterisk in absolute path",
+      "valid": true,
+      "data": "/home/file*name"
+    },
+    {
+      "description": "Asterisk in relative path",
+      "valid": true,
+      "data": "file*name"
+    },
+    {
+      "description": "Brackets in absolute path",
+      "valid": true,
+      "data": "/home/file[123]name"
+    },
+    {
+      "description": "Brackets in relative path",
+      "valid": true,
+      "data": "file[123]name"
+    },
+    {
+      "description": "Pipe character in absolute path",
+      "valid": true,
+      "data": "/home/file|name"
+    },
+    {
+      "description": "Pipe character in relative path",
+      "valid": true,
+      "data": "file|name"
+    },
+
+    {
+      "description": "Tab character in absolute path",
+      "valid": true,
+      "data": "/home/file\tname"
+    },
+    {
+      "description": "Tab character in relative path",
+      "valid": true,
+      "data": "file\tname"
+    },
+    {
+      "description": "Newline in absolute path",
+      "valid": true,
+      "data": "/home/file\nname"
+    },
+    {
+      "description": "Newline in relative path",
+      "valid": true,
+      "data": "file\nname"
+    },
+
+    {
+      "description": "Deep nesting absolute path",
+      "valid": true,
+      "data": "/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z"
+    },
+    {
+      "description": "Deep nesting relative path",
+      "valid": true,
+      "data": "a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z"
+    },
+    {
+      "description": "Complex dot navigation in absolute path",
+      "valid": true,
+      "data": "/home/./user/../user/./documents/../documents/file"
+    },
+    {
+      "description": "Complex dot navigation in relative path",
+      "valid": true,
+      "data": "home/./user/../user/./documents/../documents/file"
+    },
+
+    {
+      "description": "Common executable absolute path",
+      "valid": true,
+      "data": "/usr/bin/bash"
+    },
+    {
+      "description": "Common config absolute path",
+      "valid": true,
+      "data": "/etc/systemd/system/myservice.service"
+    },
+    {
+      "description": "Home directory absolute path",
+      "valid": true,
+      "data": "/home/username/.ssh/id_rsa"
+    },
+    {
+      "description": "Temp file absolute path",
+      "valid": true,
+      "data": "/tmp/temp_file_123.tmp"
+    },
+    {
+      "description": "Device file absolute path",
+      "valid": true,
+      "data": "/dev/sda1"
+    },
+    {
+      "description": "Proc filesystem absolute path",
+      "valid": true,
+      "data": "/proc/1/cmdline"
+    },
+    {
+      "description": "Common document relative path",
+      "valid": true,
+      "data": "Documents/Projects/readme.md"
+    },
+    {
+      "description": "Config file relative path",
+      "valid": true,
+      "data": ".config/app/settings.conf"
+    },
+    {
+      "description": "Source code relative path",
+      "valid": true,
+      "data": "src/main/java/com/example/App.java"
+    },
+    {
+      "description": "Build output relative path",
+      "valid": true,
+      "data": "build/dist/app-1.0.0.jar"
+    },
+
+    {
+      "description": "Multiple extensions absolute",
+      "valid": true,
+      "data": "/usr/share/doc/package/README.md.gz"
+    },
+    {
+      "description": "Multiple extensions relative",
+      "valid": true,
+      "data": "archive.tar.gz"
+    },
+    {
+      "description": "No extension absolute",
+      "valid": true,
+      "data": "/usr/bin/ls"
+    },
+    {
+      "description": "No extension relative",
+      "valid": true,
+      "data": "README"
+    },
+    {
+      "description": "Numeric filename absolute",
+      "valid": true,
+      "data": "/proc/1234/fd/0"
+    },
+    {
+      "description": "Numeric filename relative",
+      "valid": true,
+      "data": "1234/5678"
+    },
+
+    {
+      "description": "Only slashes relative (empty components)",
+      "valid": true,
+      "data": "///"
+    },
+    {
+      "description": "Empty components in absolute path",
+      "valid": true,
+      "data": "/home///user"
+    },
+    {
+      "description": "Empty components in relative path",
+      "valid": true,
+      "data": "home///user"
+    },
+
+    {
+      "description": "Null byte in absolute path",
+      "valid": false,
+      "data": "/home/user\u0000file"
+    },
+    {
+      "description": "Null byte in relative path",
+      "valid": false,
+      "data": "home/user\u0000file"
+    },
+    {
+      "description": "Null byte at beginning of absolute path",
+      "valid": false,
+      "data": "/\u0000home"
+    },
+    {
+      "description": "Null byte at beginning of relative path",
+      "valid": false,
+      "data": "\u0000home"
+    },
+    {
+      "description": "Null byte at end of absolute path",
+      "valid": false,
+      "data": "/home/user\u0000"
+    },
+    {
+      "description": "Null byte at end of relative path",
+      "valid": false,
+      "data": "home/user\u0000"
+    },
+    {
+      "description": "Null byte in filename absolute",
+      "valid": false,
+      "data": "/file\u0000.txt"
+    },
+    {
+      "description": "Null byte in filename relative",
+      "valid": false,
+      "data": "file\u0000.txt"
+    }
+  ]
+}

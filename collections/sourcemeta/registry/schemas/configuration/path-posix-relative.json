@@ -1,4 +1,27 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "string"
+  "title": "IEEE Std 1003.1-2017 POSIX File Path (Relative)",
+  "description": "IEEE Std 1003.1-2017 POSIX relative pathname",
+  "$comment": "https://pubs.opengroup.org/onlinepubs/9699919799/",
+  "examples": [
+    "",
+    "file.txt",
+    "documents/project/readme.md",
+    "../config/settings.conf",
+    ".ssh/id_rsa"
+  ],
+  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "type": "string",
+  "not": {
+    "anyOf": [
+      {
+        "$comment": "Cannot contain null bytes",
+        "pattern": "\u0000"
+      },
+      {
+        "$comment": "Cannot start with slash",
+        "pattern": "^/"
+      }
+    ]
+  }
 }
