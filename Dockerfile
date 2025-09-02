@@ -37,9 +37,7 @@ RUN	cmake -S /source -B ./build \
 
 RUN cmake --build /build --config Release --parallel 2
 RUN cmake --install /build --prefix /usr --verbose --config Release \
-  --component sourcemeta_registry 
-RUN cmake --install /build --prefix /usr --verbose --config Release \
-  --component sourcemeta_jsonschema 
+  --component sourcemeta_registry
 
 # Linting
 RUN cmake --build /build --config Release --target clang_format_test
