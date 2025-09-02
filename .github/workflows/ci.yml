@@ -44,45 +44,17 @@ jobs:
           --build-arg SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }}
           --progress plain
 
-      - name: Build Sandbox (headless)
-        run: docker compose --file test/sandbox/compose.yaml build
-        env:
-          SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
-          SOURCEMETA_REGISTRY_CONFIGURATION: headless
-      - name: Up Sandbox (headless)
-        run: docker compose --file test/sandbox/compose.yaml up --detach --wait
-        env:
-          SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
-          SOURCEMETA_REGISTRY_CONFIGURATION: headless
-      - name: Test Sandbox (headless)
-        run: make test-e2e PRESET=Release EDITION=${{ matrix.edition.name }}
-        env:
-          SANDBOX_CONFIGURATION: headless
-      - name: Down Sandbox (headless)
-        run: docker compose --file test/sandbox/compose.yaml down
-        env:
-          SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
-          SOURCEMETA_REGISTRY_CONFIGURATION: headless
+      - name: Sandbox (headless)
+        uses: ./.github/actions/sandbox
+        with:
+          edition: ${{ matrix.edition.name }}
+          configuration: headless
 
-      - name: Build Sandbox (full)
-        run: docker compose --file test/sandbox/compose.yaml build
-        env:
-          SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
-          SOURCEMETA_REGISTRY_CONFIGURATION: full
-      - name: Up Sandbox (full)
-        run: docker compose --file test/sandbox/compose.yaml up --detach --wait
-        env:
-          SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
-          SOURCEMETA_REGISTRY_CONFIGURATION: full
-      - name: Test Sandbox (full)
-        run: make test-e2e PRESET=Release EDITION=${{ matrix.edition.name }}
-        env:
-          SANDBOX_CONFIGURATION: full
-      - name: Down Sandbox (full)
-        run: docker compose --file test/sandbox/compose.yaml down
-        env:
-          SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
-          SOURCEMETA_REGISTRY_CONFIGURATION: full
+      - name: Sandbox (full)
+        uses: ./.github/actions/sandbox
+        with:
+          edition: ${{ matrix.edition.name }}
+          configuration: full
 
       # Public instance
       - run: >

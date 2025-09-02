@@ -1,0 +1,47 @@
+name: Sandbox
+inputs:
+  edition:
+    description: Edition
+    required: true
+    type: choice
+    options:
+      - starter
+      - pro
+      - enterprise
+  configuration:
+    description: Configuration
+    required: true
+    type: choice
+    options:
+      - full
+      - headless
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build Sandbox (${{ inputs.configuration }})
+      run: docker compose --file test/sandbox/compose.yaml build
+      shell: bash
+      env:
+        SOURCEMETA_REGISTRY_EDITION: ${{ inputs.edition }}
+        SOURCEMETA_REGISTRY_CONFIGURATION: ${{ inputs.configuration }}
+
+    - name: Up Sandbox (${{ inputs.configuration }})
+      run: docker compose --file test/sandbox/compose.yaml up --detach --wait
+      shell: bash
+      env:
+        SOURCEMETA_REGISTRY_EDITION: ${{ inputs.edition }}
+        SOURCEMETA_REGISTRY_CONFIGURATION: ${{ inputs.configuration }}
+
+    - name: Test Sandbox (${{ inputs.configuration }})
+      run: make test-e2e PRESET=Release EDITION=${{ inputs.edition }}
+      shell: bash
+      env:
+        SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
+
+    - name: Down Sandbox (${{ inputs.configuration }})
+      run: docker compose --file test/sandbox/compose.yaml down
+      shell: bash
+      env:
+        SOURCEMETA_REGISTRY_EDITION: ${{ inputs.edition }}
+        SOURCEMETA_REGISTRY_CONFIGURATION: ${{ inputs.configuration }}
