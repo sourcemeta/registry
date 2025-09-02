@@ -8,6 +8,23 @@
 
 namespace {
 
+auto read_file(const std::filesystem::path &current,
+               const sourcemeta::core::Pointer &location,
+               const std::filesystem::path &path, const std::string &original)
+    -> sourcemeta::core::JSON {
+  try {
+    return sourcemeta::core::read_json(path);
+  } catch (const std::filesystem::filesystem_error &) {
+    if (original.starts_with("@")) {
+      throw sourcemeta::registry::ConfigurationUnknownBuiltInCollectionError(
+          current, location, original);
+    } else {
+      throw sourcemeta::registry::ConfigurationReadError(current, location,
+                                                         path);
+    }
+  }
+}
+
 auto resolve_path(const std::filesystem::path &base,
                   const std::filesystem::path &rpath,
                   const std::filesystem::path &value) -> std::filesystem::path {
@@ -32,7 +49,8 @@ auto maybe_suffix(const std::filesystem::path &path,
 
 auto dereference(const std::filesystem::path &collections_path,
                  const std::filesystem::path &base,
-                 sourcemeta::core::JSON &input) -> void {
+                 sourcemeta::core::JSON &input,
+                 const sourcemeta::core::Pointer &location) -> void {
   assert(base.is_absolute());
   if (!input.is_object()) {
     return;
@@ -42,12 +60,15 @@ auto dereference(const std::filesystem::path &collections_path,
     auto accumulator{sourcemeta::core::JSON::make_object()};
     for (const auto &entry : input.at("extends").as_array()) {
       if (entry.is_string()) {
-        const auto target_path{maybe_suffix(
-            resolve_path(base, collections_path, entry.to_string()),
-            "registry.json")};
-        auto extension{sourcemeta::core::read_json(target_path)};
+        const auto target_path{
+            maybe_suffix(resolve_path(base.parent_path(), collections_path,
+                                      entry.to_string()),
+                         "registry.json")};
+        const auto new_location{location.concat({"extends"})};
+        auto extension{
+            read_file(base, new_location, target_path, entry.to_string())};
         if (extension.is_object()) {
-          dereference(collections_path, target_path.parent_path(), extension);
+          dereference(collections_path, target_path, extension, new_location);
           accumulator.merge(std::move(extension).as_object());
         }
       }
@@ -57,22 +78,29 @@ auto dereference(const std::filesystem::path &collections_path,
     accumulator.merge(input.as_object());
     input = std::move(accumulator);
     assert(!input.defines("extends"));
-    dereference(collections_path, base, input);
+    dereference(collections_path, base, input, location);
 
     // Read included files
-  } else if (input.defines("include") && input.at("include").is_string()) {
-    const auto target_path{maybe_suffix(
-        resolve_path(base, collections_path, input.at("include").to_string()),
-        "jsonschema.json")};
-    input.into(sourcemeta::core::read_json(target_path));
+  } else if (!location.empty() && input.defines("include") &&
+             input.at("include").is_string() &&
+             // We only permit `include` by itself
+             input.size() == 1) {
+    const auto target_path{
+        maybe_suffix(resolve_path(base.parent_path(), collections_path,
+                                  input.at("include").to_string()),
+                     "jsonschema.json")};
+    const auto new_location{location.concat({"include"})};
+    input.into(read_file(base, new_location, target_path,
+                         input.at("include").to_string()));
     assert(!input.defines("include"));
-    dereference(collections_path, target_path.parent_path(), input);
+    dereference(collections_path, target_path, input, new_location);
 
     // Revisit and relativize paths
   } else if (input.defines("path") && input.at("path").is_string()) {
     const std::filesystem::path current_path{input.at("path").to_string()};
     const auto absolute_path{std::filesystem::weakly_canonical(
-        current_path.is_relative() ? base / current_path : current_path)};
+        current_path.is_relative() ? base.parent_path() / current_path
+                                   : current_path)};
     input.at("path").into(sourcemeta::core::JSON{absolute_path});
 
     // Recurse on children, if any
@@ -84,7 +112,8 @@ auto dereference(const std::filesystem::path &collections_path,
                            std::back_inserter(keys),
                            [](const auto &entry) { return entry.first; });
     for (const auto &key : keys) {
-      dereference(collections_path, base, input.at("contents").at(key));
+      dereference(collections_path, base, input.at("contents").at(key),
+                  location.concat({"contents", key}));
     }
   }
 }
@@ -113,7 +142,7 @@ auto Configuration::read(const std::filesystem::path &configuration_path,
         sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
   }
 
-  dereference(collections_path, configuration_path.parent_path(), data);
+  dereference(collections_path, configuration_path, data, {});
   return data;
 }
 

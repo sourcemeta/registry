@@ -1,0 +1,32 @@
+{
+  "url": "http://localhost:8000",
+  "html": {
+    "name": "Title",
+    "description": "Description"
+  },
+  "contents": {
+    "example": {
+      "title": "Sourcemeta",
+      "description": "My description",
+      "email": "hello@sourcemeta.com",
+      "github": "sourcemeta",
+      "website": "https://www.sourcemeta.com",
+      "contents": {
+        "extension": {
+          "title": "Test",
+          "baseUri": "https://example.com/extension",
+          "path": "./schemas/example/extension",
+          "defaultDialect": "http://json-schema.org/draft-07/schema#",
+          "resolve": {
+            "https://other.com/single.json": "/foo.json"
+          }
+        }
+      }
+    },
+    "test": {
+      "title": "A sample schema folder",
+      "description": "For testing purposes",
+      "github": "sourcemeta/registry"
+    }
+  }
+}

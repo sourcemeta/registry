@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Sourcemeta Registry Extends",
+  "description": "A utility mechanism for inhering from other configuration files",
   "type": "array",
   "minItems": 1,
   "items": {

@@ -12,9 +12,53 @@ auto replace_all(std::string &text, const std::string &from,
   }
 }
 
-TEST(Configuration_read, stub_2) {
+TEST(Configuration_read, read_valid_001) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_2.json"};
+                                "read_valid_001.json"};
+  const auto raw_configuration{sourcemeta::registry::Configuration::read(
+      configuration_path, COLLECTIONS_DIRECTORY)};
+
+  std::string text{R"JSON({
+    "url": "http://localhost:8000",
+    "html": {
+      "name": "Title",
+      "description": "Description"
+    },
+    "contents": {
+      "example": {
+        "title": "Sourcemeta",
+        "description": "My description",
+        "email": "hello@sourcemeta.com",
+        "github": "sourcemeta",
+        "website": "https://www.sourcemeta.com",
+        "contents": {
+          "extension": {
+            "title": "Test",
+            "baseUri": "https://example.com/extension",
+            "path": "STUB_DIRECTORY/schemas/example/extension",
+            "defaultDialect": "http://json-schema.org/draft-07/schema#",
+            "resolve": {
+              "https://other.com/single.json": "/foo.json"
+            }
+          }
+        }
+      },
+      "test": {
+        "title": "A sample schema folder",
+        "description": "For testing purposes",
+        "github": "sourcemeta/registry"
+      }
+    }
+  })JSON"};
+
+  replace_all(text, "STUB_DIRECTORY", STUB_DIRECTORY);
+  const auto expected{sourcemeta::core::parse_json(text)};
+  EXPECT_EQ(raw_configuration, expected);
+}
+
+TEST(Configuration_read, read_valid_002) {
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
+                                "read_valid_002.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -43,9 +87,9 @@ TEST(Configuration_read, stub_2) {
   EXPECT_EQ(raw_configuration, expected);
 }
 
-TEST(Configuration_read, stub_3) {
+TEST(Configuration_read, read_valid_003) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_3.json"};
+                                "read_valid_003.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -74,9 +118,9 @@ TEST(Configuration_read, stub_3) {
   EXPECT_EQ(raw_configuration, expected);
 }
 
-TEST(Configuration_read, stub_4) {
+TEST(Configuration_read, read_valid_004) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_4.json"};
+                                "read_valid_004.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -108,9 +152,9 @@ TEST(Configuration_read, stub_4) {
   EXPECT_EQ(raw_configuration, expected);
 }
 
-TEST(Configuration_read, stub_5) {
+TEST(Configuration_read, read_valid_005) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_5.json"};
+                                "read_valid_005.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -142,9 +186,9 @@ TEST(Configuration_read, stub_5) {
   EXPECT_EQ(raw_configuration, expected);
 }
 
-TEST(Configuration_read, stub_6) {
+TEST(Configuration_read, read_valid_006) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_6.json"};
+                                "read_valid_006.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -170,9 +214,9 @@ TEST(Configuration_read, stub_6) {
   EXPECT_EQ(raw_configuration, expected);
 }
 
-TEST(Configuration_read, stub_7) {
+TEST(Configuration_read, read_valid_007) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_7.json"};
+                                "read_valid_007.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -194,9 +238,9 @@ TEST(Configuration_read, stub_7) {
   EXPECT_EQ(raw_configuration, expected);
 }
 
-TEST(Configuration_read, stub_8) {
+TEST(Configuration_read, read_valid_008) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_8.json"};
+                                "read_valid_008.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -217,9 +261,9 @@ TEST(Configuration_read, stub_8) {
   EXPECT_EQ(raw_configuration, expected);
 }
 
-TEST(Configuration_read, stub_9) {
+TEST(Configuration_read, read_valid_009) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_9.json"};
+                                "read_valid_009.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -243,9 +287,9 @@ TEST(Configuration_read, stub_9) {
   EXPECT_EQ(raw_configuration, expected);
 }
 
-TEST(Configuration_read, stub_10) {
+TEST(Configuration_read, read_valid_010) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_10.json"};
+                                "read_valid_010.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -269,9 +313,9 @@ TEST(Configuration_read, stub_10) {
   EXPECT_EQ(raw_configuration, expected);
 }
 
-TEST(Configuration_read, stub_11) {
+TEST(Configuration_read, read_valid_011) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_11.json"};
+                                "read_valid_011.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
 
@@ -290,4 +334,150 @@ TEST(Configuration_read, stub_11) {
   replace_all(text, "STUB_DIRECTORY", STUB_DIRECTORY);
   const auto expected{sourcemeta::core::parse_json(text)};
   EXPECT_EQ(raw_configuration, expected);
+}
+
+TEST(Configuration_read, read_valid_012) {
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
+                                "read_valid_012.json"};
+  const auto raw_configuration{sourcemeta::registry::Configuration::read(
+      configuration_path, COLLECTIONS_DIRECTORY)};
+
+  std::string text{R"JSON({
+    "include": "./read_valid_001.json",
+    "html": {
+      "name": "Sourcemeta",
+      "description": "The next-generation JSON Schema Registry"
+    }
+  })JSON"};
+
+  replace_all(text, "STUB_DIRECTORY", STUB_DIRECTORY);
+  const auto expected{sourcemeta::core::parse_json(text)};
+  EXPECT_EQ(raw_configuration, expected);
+}
+
+TEST(Configuration_read, read_valid_013) {
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
+                                "read_valid_013.json"};
+  const auto raw_configuration{sourcemeta::registry::Configuration::read(
+      configuration_path, COLLECTIONS_DIRECTORY)};
+
+  std::string text{R"JSON({
+    "url": "http://localhost:8000",
+    "html": {
+      "name": "Title",
+      "description": "Description"
+    },
+    "contents": {
+      "example": {
+        "title": "Test",
+        "baseUri": "https://example.com/extension",
+        "path": "STUB_DIRECTORY/schemas/example/extension",
+        "defaultDialect": "http://json-schema.org/draft-07/schema#",
+        "resolve": {
+          "https://other.com/single.json": "/foo.json"
+        },
+        "include": "./read_partial_001.json"
+      }
+    }
+  })JSON"};
+
+  replace_all(text, "STUB_DIRECTORY", STUB_DIRECTORY);
+  const auto expected{sourcemeta::core::parse_json(text)};
+  EXPECT_EQ(raw_configuration, expected);
+}
+
+TEST(Configuration_read, read_valid_014) {
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
+                                "read_valid_014.json"};
+  const auto raw_configuration{sourcemeta::registry::Configuration::read(
+      configuration_path, COLLECTIONS_DIRECTORY)};
+
+  std::string text{R"JSON({
+    "url": "http://localhost:8000",
+    "html": {
+      "name": "Title",
+      "description": "Description"
+    },
+    "contents": {
+      "example": {
+        "title": "Test",
+        "baseUri": "https://example.com/extension",
+        "path": "STUB_DIRECTORY/schemas/example/extension",
+        "defaultDialect": "http://json-schema.org/draft-07/schema#",
+        "resolve": {
+          "https://other.com/single.json": "/foo.json"
+        },
+        "contents": {
+          "foo": {
+            "include": "./read_partial_001.json"
+          }
+        }
+      }
+    }
+  })JSON"};
+
+  replace_all(text, "STUB_DIRECTORY", STUB_DIRECTORY);
+  const auto expected{sourcemeta::core::parse_json(text)};
+  EXPECT_EQ(raw_configuration, expected);
+}
+
+TEST(Configuration_read, read_invalid_001) {
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
+                                "read_invalid_001.json"};
+
+  try {
+    sourcemeta::registry::Configuration::read(configuration_path,
+                                              COLLECTIONS_DIRECTORY);
+    FAIL();
+  } catch (const sourcemeta::registry::ConfigurationReadError &error) {
+    EXPECT_EQ(error.from(), configuration_path);
+    EXPECT_EQ(error.target(),
+              std::filesystem::path{STUB_DIRECTORY} / "missing.json");
+    EXPECT_EQ(sourcemeta::core::to_string(error.location()),
+              "/contents/example/include");
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+TEST(Configuration_read, read_invalid_002) {
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
+                                "read_invalid_002.json"};
+
+  try {
+    sourcemeta::registry::Configuration::read(configuration_path,
+                                              COLLECTIONS_DIRECTORY);
+    FAIL();
+  } catch (
+      const sourcemeta::registry::ConfigurationUnknownBuiltInCollectionError
+          &error) {
+    EXPECT_EQ(error.from(), configuration_path);
+    EXPECT_EQ(error.identifier(), "@invalid");
+    EXPECT_EQ(sourcemeta::core::to_string(error.location()), "/extends");
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
+}
+
+TEST(Configuration_read, read_invalid_003) {
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
+                                "read_invalid_003.json"};
+
+  try {
+    sourcemeta::registry::Configuration::read(configuration_path,
+                                              COLLECTIONS_DIRECTORY);
+    FAIL();
+  } catch (
+      const sourcemeta::registry::ConfigurationUnknownBuiltInCollectionError
+          &error) {
+    EXPECT_EQ(error.from(), configuration_path);
+    EXPECT_EQ(error.identifier(), "@invalid");
+    EXPECT_EQ(sourcemeta::core::to_string(error.location()),
+              "/contents/example/include");
+    SUCCEED();
+  } catch (...) {
+    FAIL();
+  }
 }

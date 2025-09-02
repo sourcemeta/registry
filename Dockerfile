@@ -4,7 +4,7 @@ RUN apt-get --yes update && apt-get install --yes --no-install-recommends curl c
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 RUN apt-get --yes update && apt-get install --yes --no-install-recommends \
-  build-essential cmake sassc esbuild shellcheck nodejs \
+  build-essential cmake sassc esbuild shellcheck nodejs xxd \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY openapi /source/openapi

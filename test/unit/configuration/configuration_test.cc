@@ -22,9 +22,9 @@
                 .property,                                                     \
             value);
 
-TEST(Configuration, stub_1) {
+TEST(Configuration, valid_001) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_1.json"};
+                                "parse_valid_001.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
   const auto configuration{
@@ -70,11 +70,9 @@ TEST(Configuration, stub_1) {
   EXPECT_COLLECTION(configuration, "example/extension", extra.size(), 0);
 }
 
-// TODO: Test the remaining stubs here
-
-TEST(Configuration, stub_8) {
+TEST(Configuration, valid_002) {
   const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
-                                "stub_8.json"};
+                                "parse_valid_002.json"};
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, COLLECTIONS_DIRECTORY)};
   const auto configuration{
