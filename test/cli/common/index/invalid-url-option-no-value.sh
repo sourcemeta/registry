@@ -10,7 +10,6 @@ trap clean EXIT
 cat << EOF > "$TMP/registry.json"
 {
   "url": "https://sourcemeta.com",
-  "port": 8000,
   "contents": {
     "example": {
       "contents": {

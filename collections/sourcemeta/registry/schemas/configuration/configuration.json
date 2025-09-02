@@ -3,7 +3,7 @@
   "title": "The Sourcemeta Registry configuration file format",
   "$ref": "./entry.json",
   "type": "object",
-  "required": [ "url", "port" ],
+  "required": [ "url" ],
   "properties": {
     "html": {
       "type": [ "object", "boolean" ],
@@ -36,9 +36,6 @@
           "type": "string"
         }
       }
-    },
-    "port": {
-      "$ref": "./tcp-port.json"
     },
     "url": {
       "$ref": "./url.json"

@@ -20,7 +20,6 @@ TEST(Configuration_read, stub_2) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": {
       "name": "Sourcemeta",
       "description": "The next-generation JSON Schema Registry"
@@ -52,7 +51,6 @@ TEST(Configuration_read, stub_3) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": {
       "name": "Sourcemeta",
       "description": "The next-generation JSON Schema Registry"
@@ -84,7 +82,6 @@ TEST(Configuration_read, stub_4) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": {
       "name": "Sourcemeta",
       "description": "The next-generation JSON Schema Registry"
@@ -119,7 +116,6 @@ TEST(Configuration_read, stub_5) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": {
       "name": "Sourcemeta",
       "description": "The next-generation JSON Schema Registry"
@@ -154,7 +150,6 @@ TEST(Configuration_read, stub_6) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": {
       "name": "Sourcemeta",
       "description": "The next-generation JSON Schema Registry"
@@ -183,7 +178,6 @@ TEST(Configuration_read, stub_7) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": {
       "name": "Sourcemeta",
       "description": "The next-generation JSON Schema Registry"
@@ -208,7 +202,6 @@ TEST(Configuration_read, stub_8) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": false,
     "contents": {
       "test": {
@@ -232,7 +225,6 @@ TEST(Configuration_read, stub_9) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": {
       "name": "Sourcemeta",
       "description": "The next-generation JSON Schema Registry"
@@ -259,7 +251,6 @@ TEST(Configuration_read, stub_10) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": {
       "name": "Sourcemeta",
       "description": "The next-generation JSON Schema Registry"
@@ -286,7 +277,6 @@ TEST(Configuration_read, stub_11) {
 
   std::string text{R"JSON({
     "url": "http://localhost:8000",
-    "port": 8000,
     "html": false,
     "contents": {
       "test": {

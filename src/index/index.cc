@@ -86,9 +86,9 @@ static auto index_main(const std::string_view &program,
 
   // We want to keep this file uncompressed and without a leading header to that
   // the server can quickly read on start
+  // TODO: Get rid of this file
   const auto configuration_summary_path{output.path() / "configuration.json"};
   auto summary{sourcemeta::core::JSON::make_object()};
-  summary.assign("port", sourcemeta::core::to_json(configuration.port));
   summary.assign("version",
                  sourcemeta::core::JSON{sourcemeta::registry::PROJECT_VERSION});
   // We use this configuration file to track whether we should invalidate

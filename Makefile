@@ -16,7 +16,8 @@ OUTPUT ?= ./build
 PREFIX ?= $(OUTPUT)/dist
 SANDBOX ?= ./test/sandbox
 SANDBOX_CONFIGURATION ?= full
-SANDBOX_URL ?= $(shell jq --raw-output '.url' < $(SANDBOX)/registry-full.json)
+SANDBOX_PORT ?= 8000
+SANDBOX_URL ?= http://localhost:$(SANDBOX_PORT)
 PUBLIC ?= ./public
 
 .PHONY: all
@@ -78,18 +79,25 @@ sandbox: compile
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-index \
 		$(SANDBOX)/registry-$(SANDBOX_CONFIGURATION).json \
-		$(OUTPUT)/sandbox
+		$(OUTPUT)/sandbox --url $(SANDBOX_URL)
 	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox \
 		$(SANDBOX)/manifest-$(SANDBOX_CONFIGURATION).txt
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-server \
-		$(OUTPUT)/sandbox
+		$(OUTPUT)/sandbox $(SANDBOX_PORT)
 
 .PHONY: docker
 docker:
+	$(DOCKER) build --tag registry-$(EDITION) . --file Dockerfile \
+		--build-arg SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
+		--progress plain
 	SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
+	SOURCEMETA_REGISTRY_CONFIGURATION=$(SANDBOX_CONFIGURATION) \
+	SOURCEMETA_REGISTRY_PORT=$(SANDBOX_PORT) \
 		$(DOCKER) compose --file test/sandbox/compose.yaml config
 	SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
+	SOURCEMETA_REGISTRY_CONFIGURATION=$(SANDBOX_CONFIGURATION) \
+	SOURCEMETA_REGISTRY_PORT=$(SANDBOX_PORT) \
 		$(DOCKER) compose --file test/sandbox/compose.yaml up --build
 
 .PHONY: docs

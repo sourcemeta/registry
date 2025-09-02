@@ -1,6 +1,5 @@
 {
   "url": "http://localhost:8000",
-  "port": 8000,
   "contents": {
     "example": {
       "include": "./partial_1.json"

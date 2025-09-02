@@ -4,9 +4,9 @@ sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
 # Bundle the configuration schema
 set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/configuration")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
-  COMMAND "$<TARGET_FILE:jsonschema_cli>" bundle "${SCHEMA_BASE_PATH}/configuration.json" 
+  COMMAND "$<TARGET_FILE:jsonschema_cli>" bundle "${SCHEMA_BASE_PATH}/configuration.json"
     > "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
-  DEPENDS 
+  DEPENDS
     "$<TARGET_FILE:jsonschema_cli>"
     "${SCHEMA_BASE_PATH}/configuration.json"
     "${SCHEMA_BASE_PATH}/collection.json"
@@ -14,7 +14,6 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
     "${SCHEMA_BASE_PATH}/entry.json"
     "${SCHEMA_BASE_PATH}/include.json"
     "${SCHEMA_BASE_PATH}/page.json"
-    "${SCHEMA_BASE_PATH}/tcp-port.json"
     "${SCHEMA_BASE_PATH}/path-posix.json"
     "${SCHEMA_BASE_PATH}/path-posix-absolute.json"
     "${SCHEMA_BASE_PATH}/path-posix-relative.json"
@@ -25,12 +24,12 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
     "${SCHEMA_BASE_PATH}/urn.json")
 add_custom_command(
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.h"
-  COMMAND "${CMAKE_COMMAND}" 
+  COMMAND "${CMAKE_COMMAND}"
     -DINPUT="${CMAKE_CURRENT_BINARY_DIR}/schema.json"
     -DOUTPUT="${CMAKE_CURRENT_BINARY_DIR}/schema.h"
     -P "${CMAKE_CURRENT_SOURCE_DIR}/schema.cmake"
-  DEPENDS 
-    "${CMAKE_CURRENT_BINARY_DIR}/schema.json" 
+  DEPENDS
+    "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
     "${CMAKE_CURRENT_SOURCE_DIR}/schema.cmake")
 target_sources(sourcemeta_registry_configuration PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/schema.h")
 target_include_directories(sourcemeta_registry_configuration PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

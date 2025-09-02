@@ -14,4 +14,4 @@ FROM ${SOURCEMETA_REGISTRY}
 COPY --from=builder /app/index /app/index
 ENV SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 ENTRYPOINT [ "/usr/bin/sourcemeta-registry-server" ]
-CMD [ "/app/index" ]
+CMD [ "/app/index", 8000 ]

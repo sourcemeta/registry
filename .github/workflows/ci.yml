@@ -49,12 +49,14 @@ jobs:
         with:
           edition: ${{ matrix.edition.name }}
           configuration: headless
+          port: 8000
 
       - name: Sandbox (full)
         uses: ./.github/actions/sandbox
         with:
           edition: ${{ matrix.edition.name }}
           configuration: full
+          port: 8000
 
       # Public instance
       - run: >

@@ -4,4 +4,4 @@ rootfs: ./Dockerfile.kraft
 labels:
   cloud.unikraft.v1.instances/scale_to_zero.policy: "on"
   cloud.unikraft.v1.instances/scale_to_zero.cooldown_time_ms: 5000
-cmd: [ "/usr/bin/sourcemeta-registry-server", "/app/index" ]
+cmd: [ "/usr/bin/sourcemeta-registry-server", "/app/index", 8000 ]
