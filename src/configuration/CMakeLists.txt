@@ -2,6 +2,7 @@ sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
   PRIVATE_HEADERS error.h SOURCES parse.cc read.cc)
 
 # Bundle the configuration schema
+# TODO: We shouldn't be bundling here, but pre-compiling!
 set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/configuration")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/schema.json"
   COMMAND "$<TARGET_FILE:jsonschema_cli>" bundle "${SCHEMA_BASE_PATH}/configuration.json"
