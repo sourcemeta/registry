@@ -36,40 +36,50 @@ jobs:
         env:
           HURL_VERSION: 5.0.1
 
-      - run: >
+      - name: Build Registry
+        run: >
           docker build
           --tag registry-${{ matrix.edition.name }} .
           --file Dockerfile
           --build-arg SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }}
           --progress plain
 
-      # Sandbox (headless)
-      - run: docker compose --file test/sandbox/compose.yaml build
+      - name: Build Sandbox (headless)
+        run: docker compose --file test/sandbox/compose.yaml build
         env:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
           SOURCEMETA_REGISTRY_CONFIGURATION: headless
-      - run: docker compose --file test/sandbox/compose.yaml up --detach --wait
+      - name: Up Sandbox (headless)
+        run: docker compose --file test/sandbox/compose.yaml up --detach --wait
         env:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
           SOURCEMETA_REGISTRY_CONFIGURATION: headless
-      - run: make test-e2e PRESET=Release EDITION=${{ matrix.edition.name }}
+      - name: Test Sandbox (headless)
+        run: make test-e2e PRESET=Release EDITION=${{ matrix.edition.name }}
         env:
           SANDBOX_CONFIGURATION: headless
-      - run: docker compose --file test/sandbox/compose.yaml down
+      - name: Down Sandbox (headless)
+        run: docker compose --file test/sandbox/compose.yaml down
         env:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
           SOURCEMETA_REGISTRY_CONFIGURATION: headless
 
-      # Sandbox (full)
-      - run: docker compose --file test/sandbox/compose.yaml build
+      - name: Build Sandbox (full)
+        run: docker compose --file test/sandbox/compose.yaml build
         env:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
           SOURCEMETA_REGISTRY_CONFIGURATION: full
-      - run: docker compose --file test/sandbox/compose.yaml up --detach --wait
+      - name: Up Sandbox (full)
+        run: docker compose --file test/sandbox/compose.yaml up --detach --wait
+        env:
+          SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
+          SOURCEMETA_REGISTRY_CONFIGURATION: full
+      - name: Test Sandbox (full)
+        run: make test-e2e PRESET=Release EDITION=${{ matrix.edition.name }}
         env:
           SANDBOX_CONFIGURATION: full
-      - run: make test-e2e PRESET=Release EDITION=${{ matrix.edition.name }}
-      - run: docker compose --file test/sandbox/compose.yaml down
+      - name: Down Sandbox (full)
+        run: docker compose --file test/sandbox/compose.yaml down
         env:
           SOURCEMETA_REGISTRY_EDITION: ${{ matrix.edition.name }}
           SOURCEMETA_REGISTRY_CONFIGURATION: full
