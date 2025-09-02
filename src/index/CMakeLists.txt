@@ -1,10 +1,10 @@
-sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index 
-  FOLDER "Registry/Index" 
+sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index
+  FOLDER "Registry/Index"
   SOURCES index.cc output.h generators.h configure.h.in validator.h explorer.h)
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
 
-target_compile_definitions(sourcemeta_registry_index 
+target_compile_definitions(sourcemeta_registry_index
   PRIVATE SOURCEMETA_REGISTRY_COLLECTIONS="${REGISTRY_PREFIX}/share/sourcemeta/registry/collections")
 
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::resolver)
@@ -23,19 +23,20 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::alterschema)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::editorschema)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::parallel)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::options)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evaluator)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::output)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::linter)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
-  target_compile_definitions(sourcemeta_registry_index 
+  target_compile_definitions(sourcemeta_registry_index
     PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
 elseif(REGISTRY_EDITION STREQUAL "pro")
-  target_compile_definitions(sourcemeta_registry_index 
+  target_compile_definitions(sourcemeta_registry_index
     PRIVATE SOURCEMETA_REGISTRY_PRO)
 else()
-  target_compile_definitions(sourcemeta_registry_index 
+  target_compile_definitions(sourcemeta_registry_index
     PRIVATE SOURCEMETA_REGISTRY_STARTER)
 endif()
 
@@ -62,24 +63,24 @@ install(TARGETS sourcemeta_registry_index
   COMPONENT sourcemeta_registry)
 
 sourcemeta_esbuild_bundle(
-  ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js" 
-  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/main.min.js" 
-  DEPENDS 
+  ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
+  DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/search.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/tabs.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/editor.js")
-target_sources(sourcemeta_registry_index 
+target_sources(sourcemeta_registry_index
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/main.min.js")
 
 sourcemeta_redocly_openapi_to_html(
-  REDOCLY "${PROJECT_SOURCE_DIR}/node_modules/@redocly/cli/bin/cli.js" 
-  INPUT "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml" 
+  REDOCLY "${PROJECT_SOURCE_DIR}/node_modules/@redocly/cli/bin/cli.js"
+  INPUT "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml"
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/openapi.html"
   DEPENDS
     "${PROJECT_SOURCE_DIR}/package.json"
     "${PROJECT_SOURCE_DIR}/package-lock.json")
-target_sources(sourcemeta_registry_index 
+target_sources(sourcemeta_registry_index
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/openapi.html")
 
 # Generate CSS
@@ -145,7 +146,7 @@ foreach(file_path IN LISTS REGISTRY_STATIC)
     COMMAND "$<TARGET_FILE:sourcemeta_registry_metapack_gzip_cli>"
       "${file_path}" "${MIME}" "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}"
     DEPENDS "${file_path}" "$<TARGET_FILE:sourcemeta_registry_metapack_gzip_cli>")
-  target_sources(sourcemeta_registry_index 
+  target_sources(sourcemeta_registry_index
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}")
   list(APPEND REGISTRY_STATIC_METAPACK
     "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}")
