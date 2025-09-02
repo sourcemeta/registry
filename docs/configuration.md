@@ -154,7 +154,7 @@ during processing. For example:
 
 ```json title="jsonschema.json"
 {
-  "title": "My Schema Collection"
+  "title": "My Schema Collection",
   "path": "./schemas"
 }
 ```
@@ -181,7 +181,7 @@ internal version:
 ```json hl_lines="3 8" title="registry.json"
 {
   "url": "https://schemas.example.com",
-  "extends": [ "@geojson/v1.0.5" ]
+  "extends": [ "@geojson/v1.0.5" ],
   "contents": {
     "my-first-collection": {
       "path": "./schemas",
