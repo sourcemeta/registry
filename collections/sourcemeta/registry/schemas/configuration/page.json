@@ -9,6 +9,12 @@
     "description": {
       "type": "string"
     },
+    "extends": {
+      "$ref": "./extends.json"
+    },
+    "contents": {
+      "$ref": "./contents.json"
+    },
     "email": {
       "$ref": "./email-address.json"
     },
@@ -18,5 +24,6 @@
     "website": {
       "$ref": "./url.json"
     }
-  }
+  },
+  "additionalProperties": false
 }

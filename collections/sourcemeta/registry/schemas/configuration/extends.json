@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sourcemeta Registry Extends",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "anyOf": [
+      {
+        "type": "string",
+        "pattern": "^@[a-z0-9/.]+$"
+      },
+      {
+        "$ref": "./path-posix.json"
+      }
+    ]
+  }
+}

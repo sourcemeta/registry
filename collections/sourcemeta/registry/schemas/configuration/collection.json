@@ -1,14 +1,29 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Sourcemeta Registry Collection",
-  "$ref": "./page.json",
+  "type": "object",
   "required": [ "path" ],
   "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "x-sourcemeta-registry:evaluate": {
+      "type": "boolean"
+    },
     "baseUri": {
       "$ref": "./uri-reference.json"
     },
     "defaultDialect": {
       "$ref": "./uri.json"
+    },
+    "email": {
+      "$ref": "./email-address.json"
+    },
+    "github": {
+      "type": "string"
     },
     "path": {
       "$ref": "./path-posix.json"
@@ -21,6 +36,10 @@
       "additionalProperties": {
         "$ref": "./uri-reference.json"
       }
+    },
+    "website": {
+      "$ref": "./url.json"
     }
-  }
+  },
+  "additionalProperties": false
 }

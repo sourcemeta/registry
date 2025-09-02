@@ -1,0 +1,134 @@
+{
+  "target": "../../schemas/configuration/configuration.json",
+  "tests": [
+    {
+      "description": "Sample configuration file format",
+      "valid": true,
+      "data": {
+        "url": "http://localhost:8000",
+        "html": {
+          "name": "Title",
+          "description": "Description"
+        },
+        "contents": {
+          "example": {
+            "title": "Sourcemeta",
+            "description": "My description",
+            "email": "hello@sourcemeta.com",
+            "github": "sourcemeta",
+            "website": "https://www.sourcemeta.com",
+            "contents": {
+              "extension": {
+                "title": "Test",
+                "baseUri": "https://example.com/extension",
+                "path": "./schemas/example/extension",
+                "defaultDialect": "http://json-schema.org/draft-07/schema#",
+                "resolve": {
+                  "https://other.com/single.json": "/foo.json"
+                }
+              }
+            }
+          },
+          "test": {
+            "title": "A sample schema folder",
+            "description": "For testing purposes",
+            "github": "sourcemeta/registry"
+          }
+        }
+      }
+    },
+    {
+      "description": "No extends on a collection",
+      "valid": false,
+      "data": {
+        "url": "http://localhost:8000",
+        "contents": {
+          "example": {
+            "title": "Test",
+            "baseUri": "https://example.com/extension",
+            "path": "./schemas/example/extension",
+            "defaultDialect": "http://json-schema.org/draft-07/schema#",
+            "resolve": {
+              "https://other.com/single.json": "/foo.json"
+            },
+            "extends": [ "./foo" ]
+          }
+        }
+      }
+    },
+    {
+      "description": "No contents on a collection",
+      "valid": false,
+      "data": {
+        "url": "http://localhost:8000",
+        "contents": {
+          "example": {
+            "title": "Test",
+            "baseUri": "https://example.com/extension",
+            "path": "./schemas/example/extension",
+            "defaultDialect": "http://json-schema.org/draft-07/schema#",
+            "resolve": {
+              "https://other.com/single.json": "/foo.json"
+            },
+            "contents": {
+              "test": {
+                "title": "A sample schema folder",
+                "description": "For testing purposes",
+                "github": "sourcemeta/registry"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "No includes on a page",
+      "valid": false,
+      "data": {
+        "url": "http://localhost:8000",
+        "contents": {
+          "example": {
+            "title": "A sample schema folder",
+            "description": "For testing purposes",
+            "github": "sourcemeta/registry",
+            "includes": "./foo"
+          }
+        }
+      }
+    },
+    {
+      "description": "No unknown properties on a page",
+      "valid": false,
+      "data": {
+        "url": "http://localhost:8000",
+        "contents": {
+          "example": {
+            "title": "A sample schema folder",
+            "description": "For testing purposes",
+            "github": "sourcemeta/registry",
+            "foo": "bar"
+          }
+        }
+      }
+    },
+    {
+      "description": "No unknown properties on a collection",
+      "valid": false,
+      "data": {
+        "url": "http://localhost:8000",
+        "contents": {
+          "example": {
+            "title": "Test",
+            "baseUri": "https://example.com/extension",
+            "path": "./schemas/example/extension",
+            "defaultDialect": "http://json-schema.org/draft-07/schema#",
+            "resolve": {
+              "https://other.com/single.json": "/foo.json"
+            },
+            "foo": "bar"
+          }
+        }
+      }
+    }
+  ]
+}
