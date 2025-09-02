@@ -78,9 +78,9 @@
       "data": "http://example.com:8080/"
     },
     {
-      "description": "Authority with empty port",
-      "valid": false,
-      "data": "http://example.com:/"
+      "description": "URI with empty port",
+      "valid": true,
+      "data": "http://example.com:/path"
     },
     {
       "description": "Authority with userinfo",
