@@ -1,4 +1,4 @@
-#include <sourcemeta/registry/resolver_visitor.h>
+#include "visitor.h"
 
 #include <sourcemeta/core/jsonpointer.h>
 

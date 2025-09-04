@@ -176,16 +176,14 @@ static auto index_main(const std::string_view &program,
         const auto base_path{output.path() / std::filesystem::path{"schemas"} /
                              schema.second.relative_path / SENTINEL};
         const auto destination{base_path / "schema.metapack"};
-        assert(schema.second.path.has_value());
-        assert(schema.second.path.value().is_absolute());
+        assert(schema.second.path.is_absolute());
 
         if (!sourcemeta::core::build<std::tuple<
                 std::string_view,
                 std::reference_wrapper<sourcemeta::registry::Validator>,
                 std::reference_wrapper<sourcemeta::registry::Resolver>>>(
                 adapter, sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA,
-                destination,
-                {schema.second.path.value(), configuration_summary_path},
+                destination, {schema.second.path, configuration_summary_path},
                 {schema.first, validator, resolver})) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) "
@@ -196,7 +194,7 @@ static auto index_main(const std::string_view &program,
         output.track(destination);
         output.track(base_path / "schema.metapack.deps");
 
-        resolver.materialise(schema.first, destination);
+        resolver.cache_path(schema.first, destination);
       },
       std::thread::hardware_concurrency(), THREAD_STACK_SIZE);
 
@@ -294,7 +292,14 @@ static auto index_main(const std::string_view &program,
         output.track(base_path / "unidentified.metapack");
         output.track(base_path / "unidentified.metapack.deps");
 
-        if (schema.second.blaze_exhaustive) {
+        if (!schema.second.collection.get().extra.defines(
+                "x-sourcemeta-registry:evaluate") ||
+            !schema.second.collection.get()
+                 .extra.at("x-sourcemeta-registry:evaluate")
+                 .is_boolean() ||
+            schema.second.collection.get()
+                .extra.at("x-sourcemeta-registry:evaluate")
+                .to_boolean()) {
           if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                   adapter,
                   sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
