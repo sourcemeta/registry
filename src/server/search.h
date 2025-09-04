@@ -3,7 +3,7 @@
 
 #include <sourcemeta/core/json.h>
 
-#include <sourcemeta/registry/metapack.h>
+#include <sourcemeta/registry/shared.h>
 
 #include <algorithm>   // std::search
 #include <cassert>     // assert

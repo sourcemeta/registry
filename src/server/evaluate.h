@@ -7,7 +7,7 @@
 #include <sourcemeta/blaze/evaluator.h>
 #include <sourcemeta/blaze/output.h>
 
-#include <sourcemeta/registry/metapack.h>
+#include <sourcemeta/registry/shared.h>
 
 #include <cassert>     // assert
 #include <filesystem>  // std::filesystem::path

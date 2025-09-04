@@ -1,4 +1,4 @@
-#include <sourcemeta/registry/metapack.h>
+#include <sourcemeta/registry/shared_metapack.h>
 
 #include <sourcemeta/core/gzip.h>
 #include <sourcemeta/core/io.h>
@@ -11,6 +11,9 @@
 #include <ostream>    // std::ostream
 #include <sstream>    // std::ostringstream
 #include <utility>    // std::move
+
+// TODO: There are lots of opportunities to optimise this file
+// and avoid temporary buffers, etc
 
 namespace {
 

@@ -1,5 +1,5 @@
 #include <sourcemeta/core/options.h>
-#include <sourcemeta/registry/metapack.h>
+#include <sourcemeta/registry/shared.h>
 
 #include <cstdlib>    // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>  // std::exception
