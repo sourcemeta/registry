@@ -1,4 +1,4 @@
-#include <sourcemeta/registry/license.h>
+#include <sourcemeta/registry/shared_license.h>
 
 #include <cstdlib> // std::getenv
 

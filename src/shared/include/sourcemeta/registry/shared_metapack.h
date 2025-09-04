@@ -1,7 +1,9 @@
-#ifndef SOURCEMETA_REGISTRY_METAPACK_H
-#define SOURCEMETA_REGISTRY_METAPACK_H
+#ifndef SOURCEMETA_REGISTRY_SHARED_METAPACK_H
+#define SOURCEMETA_REGISTRY_SHARED_METAPACK_H
 
 #include <sourcemeta/core/json.h>
+
+#include <sourcemeta/registry/shared_encoding.h>
 
 #include <chrono>     // std::chrono
 #include <cstdint>    // std::uint64_t
@@ -11,8 +13,6 @@
 #include <vector>     // std::vector
 
 namespace sourcemeta::registry {
-
-enum class Encoding { Identity, GZIP };
 
 template <typename T> struct File {
   T data;

@@ -1,5 +1,5 @@
-sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server 
-  FOLDER "Registry/Server" 
+sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server
+  FOLDER "Registry/Server"
   SOURCES search.h status.h evaluate.h
     server.cc uwebsockets.h configure.h.in)
 
@@ -12,23 +12,22 @@ target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::gzip)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uSockets)
 target_link_libraries(sourcemeta_registry_server PRIVATE uNetworking::uWebSockets)
-target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::license)
-target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::metapack)
+target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::shared)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::evaluator)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::output)
 
 if(REGISTRY_EDITION STREQUAL "enterprise")
-  target_compile_definitions(sourcemeta_registry_server 
+  target_compile_definitions(sourcemeta_registry_server
     PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
 elseif(REGISTRY_EDITION STREQUAL "pro")
-  target_compile_definitions(sourcemeta_registry_server 
+  target_compile_definitions(sourcemeta_registry_server
     PRIVATE SOURCEMETA_REGISTRY_PRO)
 else()
-  target_compile_definitions(sourcemeta_registry_server 
+  target_compile_definitions(sourcemeta_registry_server
     PRIVATE SOURCEMETA_REGISTRY_STARTER)
 endif()
 
-target_compile_definitions(sourcemeta_registry_server 
+target_compile_definitions(sourcemeta_registry_server
   PRIVATE SOURCEMETA_REGISTRY_STATIC="${REGISTRY_PREFIX}/share/sourcemeta/registry/static")
 
 configure_file(configure.h.in configure.h @ONLY)

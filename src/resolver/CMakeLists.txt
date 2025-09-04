@@ -12,4 +12,4 @@ target_link_libraries(sourcemeta_registry_resolver PRIVATE
 target_link_libraries(sourcemeta_registry_resolver PUBLIC
   sourcemeta::registry::configuration)
 target_link_libraries(sourcemeta_registry_resolver PRIVATE
-  sourcemeta::registry::metapack)
+  sourcemeta::registry::shared)

@@ -3,8 +3,7 @@
 #include <sourcemeta/core/time.h>
 #include <sourcemeta/core/uuid.h>
 
-#include <sourcemeta/registry/license.h>
-#include <sourcemeta/registry/metapack.h>
+#include <sourcemeta/registry/shared.h>
 
 #include "uwebsockets.h"
 
@@ -50,6 +49,7 @@ static auto send_response(const char *const code, const std::string_view method,
   log(std::move(line).str());
 }
 
+// TODO: Use `Encoding` from `src/shared`
 enum class ServerContentEncoding { Identity, GZIP };
 
 static auto send_response(const char *const code, const std::string_view method,

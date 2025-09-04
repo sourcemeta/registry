@@ -1,8 +1,8 @@
 #ifndef SOURCEMETA_REGISTRY_INDEX_GENERATORS_H_
 #define SOURCEMETA_REGISTRY_INDEX_GENERATORS_H_
 
-#include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
+#include <sourcemeta/registry/shared.h>
 
 #include <sourcemeta/core/alterschema.h>
 #include <sourcemeta/core/build.h>

@@ -5,9 +5,8 @@
 #include <sourcemeta/core/parallel.h>
 
 #include <sourcemeta/registry/configuration.h>
-#include <sourcemeta/registry/license.h>
-#include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
+#include <sourcemeta/registry/shared.h>
 
 #include "configure.h"
 #include "explorer.h"

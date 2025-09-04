@@ -2,8 +2,8 @@
 #define SOURCEMETA_REGISTRY_INDEX_EXPLORER_H_
 
 #include <sourcemeta/registry/configuration.h>
-#include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
+#include <sourcemeta/registry/shared.h>
 
 #include <sourcemeta/core/gzip.h>
 #include <sourcemeta/core/json.h>

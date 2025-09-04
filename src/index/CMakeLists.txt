@@ -8,8 +8,7 @@ target_compile_definitions(sourcemeta_registry_index
   PRIVATE SOURCEMETA_REGISTRY_COLLECTIONS="${REGISTRY_PREFIX}/share/sourcemeta/registry/collections")
 
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::resolver)
-target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::license)
-target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::metapack)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::shared)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::configuration)
 
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::build)

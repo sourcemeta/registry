@@ -1,5 +1,5 @@
-#include <sourcemeta/registry/metapack.h>
 #include <sourcemeta/registry/resolver.h>
+#include <sourcemeta/registry/shared.h>
 
 #include <sourcemeta/core/yaml.h>
 
