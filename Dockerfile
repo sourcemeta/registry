@@ -12,6 +12,7 @@ COPY package.json /source/package.json
 COPY package-lock.json /source/package-lock.json
 COPY cmake /source/cmake
 COPY src /source/src
+COPY contrib /source/contrib
 COPY collections /source/collections
 COPY vendor /source/vendor
 COPY CMakeLists.txt /source/CMakeLists.txt

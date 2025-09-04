@@ -7,39 +7,66 @@
 #include <cstdint>    // std::uint64_t
 #include <filesystem> // std::filesystem
 #include <fstream>    // std::ifstream
-#include <functional> // std::functional
 #include <optional>   // std::optional
-#include <ostream>    // std::ostream
+#include <vector>     // std::vector
 
 namespace sourcemeta::registry {
 
-enum class MetaPackEncoding { Identity, GZIP };
+enum class Encoding { Identity, GZIP };
 
-template <typename T> struct MetaPackFile {
+template <typename T> struct File {
   T data;
   std::uint64_t version;
   sourcemeta::core::JSON::String checksum;
   std::chrono::system_clock::time_point last_modified;
   sourcemeta::core::JSON::String mime;
   std::size_t bytes;
-  MetaPackEncoding encoding;
+  Encoding encoding;
   sourcemeta::core::JSON extension;
 };
 
-auto read_stream(const std::filesystem::path &path)
-    -> std::optional<MetaPackFile<std::ifstream>>;
+auto read_stream_raw(const std::filesystem::path &path)
+    -> std::optional<File<std::ifstream>>;
 
-auto write_stream(const std::filesystem::path &path,
-                  const sourcemeta::core::JSON::String &mime,
-                  const MetaPackEncoding encoding,
-                  const sourcemeta::core::JSON &extension,
-                  const std::function<void(std::ostream &)> &callback) -> void;
+auto read_json(const std::filesystem::path &path,
+               const sourcemeta::core::JSON::ParseCallback &callback = nullptr)
+    -> sourcemeta::core::JSON;
 
-auto read_contents(MetaPackFile<std::ifstream> &stream)
-    -> MetaPackFile<sourcemeta::core::JSON::String>;
+auto read_json_with_metadata(
+    const std::filesystem::path &path,
+    const sourcemeta::core::JSON::ParseCallback &callback = nullptr)
+    -> File<sourcemeta::core::JSON>;
 
-auto read_contents(const std::filesystem::path &path)
-    -> std::optional<MetaPackFile<sourcemeta::core::JSON::String>>;
+auto write_json(const std::filesystem::path &destination,
+                const sourcemeta::core::JSON &document,
+                const sourcemeta::core::JSON::String &mime,
+                const Encoding encoding,
+                const sourcemeta::core::JSON &extension) -> void;
+
+auto write_pretty_json(
+    const std::filesystem::path &destination,
+    const sourcemeta::core::JSON &document,
+    const sourcemeta::core::JSON::String &mime, const Encoding encoding,
+    const sourcemeta::core::JSON &extension,
+    const sourcemeta::core::JSON::KeyComparison &compare = nullptr) -> void;
+
+auto write_text(const std::filesystem::path &destination,
+                const std::string_view contents,
+                const sourcemeta::core::JSON::String &mime,
+                const Encoding encoding,
+                const sourcemeta::core::JSON &extension) -> void;
+
+auto write_file(const std::filesystem::path &destination,
+                const std::filesystem::path &source,
+                const sourcemeta::core::JSON::String &mime,
+                const Encoding encoding,
+                const sourcemeta::core::JSON &extension) -> void;
+
+auto write_jsonl(const std::filesystem::path &destination,
+                 const std::vector<sourcemeta::core::JSON> &entries,
+                 const sourcemeta::core::JSON::String &mime,
+                 const Encoding encoding,
+                 const sourcemeta::core::JSON &extension) -> void;
 
 } // namespace sourcemeta::registry
 

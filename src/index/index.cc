@@ -322,7 +322,7 @@ static auto index_main(const std::string_view &program,
     schema_nav_path /= SENTINEL;
     schema_nav_path /= "schema.metapack";
     output.write_metapack_json(
-        schema_nav_path, sourcemeta::registry::MetaPackEncoding::GZIP,
+        schema_nav_path, sourcemeta::registry::Encoding::GZIP,
         sourcemeta::registry::GENERATE_NAV_SCHEMA(
             configuration.url, resolver,
             output.path() / "schemas" / schema.second.relative_path / SENTINEL /
@@ -364,14 +364,14 @@ static auto index_main(const std::string_view &program,
                              std::filesystem::relative(entry, base) / SENTINEL /
                              "directory.metapack"};
     output.write_metapack_json(
-        relative_path, sourcemeta::registry::MetaPackEncoding::GZIP,
+        relative_path, sourcemeta::registry::Encoding::GZIP,
         sourcemeta::registry::GENERATE_NAV_DIRECTORY(
             configuration, navigation_base, base, entry, output));
   }
 
   output.write_metapack_json(
       std::filesystem::path{"explorer"} / SENTINEL / "directory.metapack",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
+      sourcemeta::registry::Encoding::GZIP,
       sourcemeta::registry::GENERATE_NAV_DIRECTORY(
           configuration, navigation_base, base, base, output));
 
@@ -387,12 +387,11 @@ static auto index_main(const std::string_view &program,
   }
 
   const auto search_index{sourcemeta::registry::GENERATE_SEARCH_INDEX(navs)};
-  output.write_metapack_jsonl(std::filesystem::path{"explorer"} / SENTINEL /
-                                  "search.metapack",
-                              // We don't want to compress this one so we can
-                              // quickly skim through it while streaming it
-                              sourcemeta::registry::MetaPackEncoding::Identity,
-                              search_index.cbegin(), search_index.cend());
+  output.write_metapack_jsonl(
+      std::filesystem::path{"explorer"} / SENTINEL / "search.metapack",
+      // We don't want to compress this one so we can
+      // quickly skim through it while streaming it
+      sourcemeta::registry::Encoding::Identity, search_index);
 
   // TODO: Add a test for this
   if (configuration.html.has_value()) {
@@ -408,7 +407,7 @@ static auto index_main(const std::string_view &program,
                                       output.path()) /
             "directory-html.metapack"};
         output.write_metapack_html(
-            relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
+            relative_destination, sourcemeta::registry::Encoding::GZIP,
             sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(
                 configuration, entry.path()));
       } else if (entry.path().filename() == "schema.metapack") {
@@ -429,7 +428,7 @@ static auto index_main(const std::string_view &program,
         const auto health_path{schema_base_path / SENTINEL / "health.metapack"};
 
         output.write_metapack_html(
-            relative_destination, sourcemeta::registry::MetaPackEncoding::GZIP,
+            relative_destination, sourcemeta::registry::Encoding::GZIP,
             sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
                 configuration, entry.path(), dependencies_path, health_path));
       }
@@ -438,14 +437,14 @@ static auto index_main(const std::string_view &program,
     output.write_metapack_html(
         std::filesystem::path{"explorer"} / SENTINEL /
             "directory-html.metapack",
-        sourcemeta::registry::MetaPackEncoding::GZIP,
+        sourcemeta::registry::Encoding::GZIP,
         sourcemeta::registry::GENERATE_EXPLORER_INDEX(
             configuration, output.path() / std::filesystem::path{"explorer"} /
                                SENTINEL / "directory.metapack"));
 
     output.write_metapack_html(
         std::filesystem::path{"explorer"} / SENTINEL / "404.metapack",
-        sourcemeta::registry::MetaPackEncoding::GZIP,
+        sourcemeta::registry::Encoding::GZIP,
         sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
   }
 

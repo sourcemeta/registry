@@ -68,10 +68,7 @@ auto Resolver::operator()(
         callback(result->second.cache_path.value());
       }
 
-      const auto schema{sourcemeta::registry::read_contents(
-          result->second.cache_path.value())};
-      assert(schema.has_value());
-      return sourcemeta::core::parse_json(schema.value().data);
+      return sourcemeta::registry::read_json(result->second.cache_path.value());
     } else if (!result->second.path.has_value()) {
       return std::nullopt;
     }

@@ -25,11 +25,7 @@ auto trace(sourcemeta::blaze::Evaluator &evaluator,
 
   auto locations_path{template_path.parent_path() / "locations.metapack"};
   // TODO: Cache this across runs?
-  const auto locations_entry{
-      sourcemeta::registry::read_contents(locations_path)};
-  assert(locations_entry.has_value());
-  const auto locations{
-      sourcemeta::core::parse_json(locations_entry.value().data)};
+  const auto locations{sourcemeta::registry::read_json(locations_path)};
   assert(locations.defines("static"));
   const auto &static_locations{locations.at("static")};
 
@@ -118,10 +114,8 @@ auto evaluate(const std::filesystem::path &template_path,
   // TODO: Cache this conversion across runs, potentially using the schema file
   // "checksum" as the cache key. This is important as the template might be
   // compressed
-  const auto template_json{read_contents(template_path)};
-  assert(template_json.has_value());
-  const auto schema_template{sourcemeta::blaze::from_json(
-      sourcemeta::core::parse_json(template_json.value().data))};
+  const auto template_json{read_json(template_path)};
+  const auto schema_template{sourcemeta::blaze::from_json(template_json)};
   assert(schema_template.has_value());
 
   sourcemeta::blaze::Evaluator evaluator;
