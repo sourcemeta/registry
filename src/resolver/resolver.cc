@@ -90,10 +90,7 @@ auto Resolver::operator()(
       }
     }
 
-    // TODO: Extract the idea of a reference visitor into this project
-    // Because we allow re-identification, we can get into issues unless we
-    // always try to relativize references
-    sourcemeta::core::reference_visit(
+    reference_visit(
         schema, sourcemeta::core::schema_official_walker,
         [this](const auto subidentifier) {
           return this->operator()(subidentifier);
@@ -206,8 +203,8 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
                                      sourcemeta::core::JSON{value.recompose()});
                   }
 
-                  sourcemeta::core::reference_visitor_relativize(
-                      subschema, base, vocabulary, keyword, value);
+                  reference_visitor_relativize(subschema, base, vocabulary,
+                                               keyword, value);
                 }})};
   lock.unlock();
 

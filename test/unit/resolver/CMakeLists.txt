@@ -1,5 +1,5 @@
 sourcemeta_googletest(NAMESPACE sourcemeta PROJECT registry NAME resolver
-  SOURCES resolver_test.cc)
+  SOURCES resolver_test.cc resolver_relativize_test.cc)
 
 target_link_libraries(sourcemeta_registry_resolver_unit
   PRIVATE sourcemeta::registry::configuration)

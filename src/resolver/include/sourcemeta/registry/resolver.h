@@ -6,7 +6,9 @@
 #include <sourcemeta/core/uri.h>
 
 #include <sourcemeta/registry/configuration.h>
+
 #include <sourcemeta/registry/resolver_error.h>
+#include <sourcemeta/registry/resolver_visitor.h>
 
 #include <filesystem>    // std::filesystem
 #include <optional>      // std::optional
@@ -53,8 +55,10 @@ public:
     // TODO: Do we really need this member?
     std::string original_identifier;
     std::string collection_name;
+    // TODO: Directly forward the `extra`, so the attribute checking logic goes
+    // to the indexer
     bool blaze_exhaustive;
-    sourcemeta::core::SchemaVisitorReference reference_visitor;
+    SchemaVisitorReference reference_visitor;
   };
 
 private:
