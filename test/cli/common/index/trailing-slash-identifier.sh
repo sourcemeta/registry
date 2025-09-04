@@ -32,17 +32,26 @@ cat << 'EOF' > "$TMP/schemas/test.json"
 }
 EOF
 
+# TODO: Move this into a `test/unit/resolver` test
+
 export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
-"$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt" && CODE="$?" || CODE="$?"
-test "$CODE" = "1" || exit 1
+"$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt"
+
+# Remove thread information
+if [ "$(uname)" = "Darwin" ]
+then
+  sed -i '' 's/ \[.*\]//g' "$TMP/output.txt"
+else
+  sed -i 's/ \[.*\]//g' "$TMP/output.txt"
+fi
 
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/test.json (#1)
-error: The schema identifier is not relative to the corresponding base
-  at https://example.com/
-  with base https://example.com
+(100%) Ingesting: https://sourcemeta.com/example/schemas/test.json
+(100%) Analysing: https://sourcemeta.com/example/schemas/test.json
+Generating registry explorer
 EOF
 
 diff "$TMP/output.txt" "$TMP/expected.txt"

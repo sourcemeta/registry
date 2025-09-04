@@ -44,9 +44,9 @@ static auto to_lowercase(const std::string_view input) -> std::string {
   {                                                                            \
     const auto result{                                                         \
         RESOLVER_IMPORT(resolver, (collection_name), (relative_path))};        \
-    EXPECT_EQ(result.first, (expected_current_uri));                           \
-    EXPECT_EQ(result.second, (expected_final_uri));                            \
-    RESOLVER_EXPECT(resolver, (result.second), (expected_schema));             \
+    EXPECT_EQ(result.first.get(), (expected_current_uri));                     \
+    EXPECT_EQ(result.second.get(), (expected_final_uri));                      \
+    RESOLVER_EXPECT(resolver, (result.second.get()), (expected_schema));       \
   }
 
 TEST(Resolver, idempotent) {
@@ -288,8 +288,8 @@ TEST(Resolver, example_2020_12_meta) {
                R"JSON({
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "http://localhost:8000/example/2020-12-meta.json",
-    "$vocabulary": { 
-      "https://json-schema.org/draft/2020-12/vocab/core": true 
+    "$vocabulary": {
+      "https://json-schema.org/draft/2020-12/vocab/core": true
     }
   })JSON");
 }
@@ -300,15 +300,27 @@ TEST(Resolver, example_2020_12_meta_schema) {
       RESOLVER_IMPORT(resolver, "example", "2020-12-meta-schema.json")};
 
   // We can't resolve it yet until we first satisfy the metaschema
-  EXPECT_THROW(resolver(schema_result.second),
+  EXPECT_THROW(resolver(schema_result.second.get()),
                sourcemeta::core::SchemaResolutionError);
 
   // Note we add the metaschema AFTER the schema
   RESOLVER_IMPORT(resolver, "example", "2020-12-meta.json");
 
-  RESOLVER_EXPECT(resolver, schema_result.second, R"JSON({
+  RESOLVER_EXPECT(resolver, schema_result.second.get(), R"JSON({
     "$schema": "http://localhost:8000/example/2020-12-meta.json",
     "$id": "http://localhost:8000/example/2020-12-meta-schema.json"
+  })JSON");
+}
+
+TEST(Resolver, example_2020_12_base_with_trailing_slash) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(
+      resolver, "example", "2020-12-base-with-trailing-slash.json",
+      "https://example.com/schemas/2020-12-base-with-trailing-slash.json",
+      "http://localhost:8000/example/2020-12-base-with-trailing-slash.json",
+      R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-base-with-trailing-slash.json"
   })JSON");
 }
 

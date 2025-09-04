@@ -11,7 +11,6 @@
 #include <cassert>   // assert
 #include <cctype>    // std::tolower
 #include <mutex>     // std::mutex, std::lock_guard
-#include <regex>     // std::regex, std::smatch, std::regex_search
 #include <sstream>   // std::ostringstream
 
 static auto to_lowercase(const std::string_view input) -> std::string {
@@ -22,15 +21,28 @@ static auto to_lowercase(const std::string_view input) -> std::string {
   return result;
 }
 
-// TODO: Move this up as a utility function of Core's YAML package
-static auto is_yaml(const std::filesystem::path &path) -> bool {
-  return path.extension() == ".yaml" || path.extension() == ".yml";
-}
-
-static auto internal_schema_reader(const std::filesystem::path &path)
-    -> sourcemeta::core::JSON {
-  return is_yaml(path) ? sourcemeta::core::read_yaml(path)
-                       : sourcemeta::core::read_json(path);
+static auto
+rebase(const sourcemeta::registry::Configuration::Collection &collection,
+       const sourcemeta::core::JSON::String &uri,
+       const sourcemeta::core::JSON::String &new_base,
+       const sourcemeta::core::JSON::String &new_prefix)
+    -> sourcemeta::core::JSON::String {
+  sourcemeta::core::URI maybe_relative{uri};
+  maybe_relative.relative_to(collection.base);
+  if (maybe_relative.is_relative()) {
+    auto suffix{maybe_relative.recompose()};
+    assert(!suffix.empty());
+    return sourcemeta::core::URI{new_base}
+        .append_path(new_prefix)
+        // TODO: Let `append_path` take a URI
+        // TODO: Also implement a move overload
+        .append_path(suffix)
+        .canonicalize()
+        .extension(".json")
+        .recompose();
+  } else {
+    return maybe_relative.recompose();
+  }
 }
 
 namespace sourcemeta::registry {
@@ -63,7 +75,7 @@ auto Resolver::operator()(
       callback(result->second.path);
     }
 
-    auto schema{internal_schema_reader(result->second.path)};
+    auto schema{sourcemeta::core::read_yaml_or_json(result->second.path)};
     assert(sourcemeta::core::is_schema(schema));
     if (schema.is_object()) {
       // Don't modify references to official meta-schemas
@@ -122,125 +134,93 @@ auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
                    const std::filesystem::path &collection_relative_path,
                    const Configuration::Collection &collection,
                    const std::filesystem::path &path)
-    -> std::pair<sourcemeta::core::JSON::String,
-                 sourcemeta::core::JSON::String> {
+    -> std::pair<std::reference_wrapper<const sourcemeta::core::JSON::String>,
+                 std::reference_wrapper<const sourcemeta::core::JSON::String>> {
+  /////////////////////////////////////////////////////////////////////////////
+  // (1) Read the schema file
+  /////////////////////////////////////////////////////////////////////////////
+  assert(path.is_absolute());
+  const auto schema{sourcemeta::core::read_yaml_or_json(path)};
+  assert(sourcemeta::core::is_schema(schema));
+
+  /////////////////////////////////////////////////////////////////////////////
+  // (2) Try our best to determine the identifier of the schema, defaulting to a
+  // file-system-based identifier based on the *current* URI
+  /////////////////////////////////////////////////////////////////////////////
   const auto default_identifier{
       sourcemeta::core::URI{collection.base}
           .append_path(std::filesystem::relative(path, collection.absolute_path)
                            .string())
           .canonicalize()
           .recompose()};
-
-  const auto canonical{std::filesystem::weakly_canonical(path)};
-  const auto schema{internal_schema_reader(canonical)};
-  assert(sourcemeta::core::is_schema(schema));
-  const auto identifier{sourcemeta::core::identify(
-      schema,
-      [this](const auto subidentifier) {
-        return this->operator()(subidentifier);
-      },
-      sourcemeta::core::SchemaIdentificationStrategy::Loose,
-      collection.default_dialect, default_identifier)};
-
-  // Filesystems behave differently with regards to casing. To unify
-  // them, assume they are case-insensitive.
-  const auto effective_identifier{
-      to_lowercase(identifier.value_or(default_identifier))};
-
-  std::optional<std::string> current_dialect{
-      schema.is_object() && schema.defines("$schema") &&
-              schema.at("$schema").is_string()
-          ? schema.at("$schema").to_string()
-          : collection.default_dialect};
-
-  sourcemeta::core::URI base_uri{to_lowercase(collection.base)};
-  base_uri.canonicalize();
-
-  // TODO: We also need to try to apply "resolve" maps to the meta-schema and
-  // test that
-  if (current_dialect.has_value()) {
-    sourcemeta::core::URI dialect_uri{current_dialect.value()};
-    dialect_uri.canonicalize();
-    dialect_uri.relative_to(base_uri);
-    if (dialect_uri.is_relative()) {
-      current_dialect = sourcemeta::core::URI{server_url}
-                            .append_path(collection_relative_path)
-                            // TODO: Let `append_path` take a URI
-                            .append_path(dialect_uri.recompose())
-                            .canonicalize()
-                            .extension(".json")
-                            .recompose();
-    }
+  auto identifier{sourcemeta::core::URI::canonicalize(to_lowercase(
+      sourcemeta::core::identify(
+          schema,
+          [this](const auto subidentifier) {
+            return this->operator()(subidentifier);
+          },
+          sourcemeta::core::SchemaIdentificationStrategy::Loose,
+          collection.default_dialect, default_identifier)
+          // We can safely assume this as we pass a default identifier
+          .value()))};
+  // Otherwise we have things like "../" that should not be there
+  assert(identifier.find("..") == std::string::npos);
+  // While URI canonicalization considers a trailing slash as different, they
+  // are the same to us in the context of schemas
+  if (identifier.back() == '/') {
+    identifier.pop_back();
+  }
+  // We have to do something if the schema is the base
+  if (identifier == collection.base) {
+    identifier = default_identifier;
+  }
+  // A final check that everything went well
+  if (!identifier.starts_with(collection.base)) {
+    throw ResolverOutsideBaseError(identifier, collection.base);
   }
 
-  assert(current_dialect.has_value());
+  /////////////////////////////////////////////////////////////////////////////
+  // (3) Determine the new URI of the schema, from the registry base URI
+  /////////////////////////////////////////////////////////////////////////////
+  const auto new_identifier{
+      rebase(collection, identifier, server_url, collection_relative_path)};
+  // Otherwise we have things like "../" that should not be there
+  assert(new_identifier.find("..") == std::string::npos);
+
+  /////////////////////////////////////////////////////////////////////////////
+  // (4) Determine the dialect of the schema, which we also need to make sure
+  // we rebase according to the registry base URI, etc
+  /////////////////////////////////////////////////////////////////////////////
+  const auto raw_dialect{
+      sourcemeta::core::dialect(schema, collection.default_dialect)};
+  // If we couldn't determine the dialect, we would be in trouble!
+  assert(raw_dialect.has_value());
+  auto current_dialect{rebase(collection, to_lowercase(raw_dialect.value()),
+                              server_url, collection_relative_path)};
+
+  /////////////////////////////////////////////////////////////////////////////
+  // (5) Safely registry the schema entry in the resolver
+  /////////////////////////////////////////////////////////////////////////////
   std::unique_lock lock{this->mutex};
   auto result{this->views.emplace(
-      effective_identifier, Entry{.cache_path = std::nullopt,
-                                  .path = canonical,
-                                  .dialect = current_dialect.value(),
-                                  .relative_path = collection_relative_path,
-                                  .original_identifier = effective_identifier,
-                                  .collection = collection})};
+      new_identifier,
+      Entry{.cache_path = std::nullopt,
+            .path = path,
+            .dialect = std::move(current_dialect),
+            .relative_path = sourcemeta::core::URI{new_identifier}
+                                 .relative_to(server_url)
+                                 .recompose(),
+            .original_identifier = identifier,
+            .collection = collection})};
   lock.unlock();
-
-  if (!result.second && result.first->second.path != canonical) {
+  if (!result.second && result.first->second.path != path) {
     std::ostringstream error;
     error << "Cannot register the same identifier twice: "
-          << effective_identifier;
+          << result.first->first;
     throw sourcemeta::core::SchemaError(error.str());
   }
 
-  const auto &current_identifier{result.first->first};
-
-  auto identifier_uri{sourcemeta::core::URI{
-      current_identifier == base_uri.recompose() ? default_identifier
-                                                 : current_identifier}
-                          .canonicalize()};
-
-  auto current{identifier_uri.recompose()};
-  identifier_uri.relative_to(base_uri);
-  if (identifier_uri.is_absolute()) {
-    throw ResolverOutsideBaseError(current, base_uri.recompose());
-  }
-
-  assert(!identifier_uri.recompose().empty());
-  auto new_identifier = sourcemeta::core::URI{server_url}
-                            .append_path(collection_relative_path)
-                            // TODO: Let `append_path` take a URI
-                            .append_path(identifier_uri.recompose())
-                            .canonicalize()
-                            .extension(".json")
-                            .recompose();
-
-  sourcemeta::core::URI schema_uri{new_identifier};
-  schema_uri.relative_to(server_url);
-  result.first->second.relative_path = to_lowercase(schema_uri.recompose());
-
-  // Otherwise we have things like "../" that should not be there
-  assert(new_identifier.find("..") == std::string::npos);
-  if (to_lowercase(current_identifier) != to_lowercase(new_identifier)) {
-    lock.lock();
-    const auto match{this->views.find(to_lowercase(current_identifier))};
-    assert(match != this->views.cend());
-
-    const auto target{this->views.find(to_lowercase(new_identifier))};
-    const auto ignore_error{target != this->views.cend() &&
-                            target->second.path == match->second.path};
-    const auto subresult{this->views.insert_or_assign(
-        to_lowercase(new_identifier), std::move(match->second))};
-
-    if (!subresult.second && !ignore_error) {
-      std::ostringstream error;
-      error << "Cannot register the same identifier twice: " << new_identifier;
-      throw sourcemeta::core::SchemaError(error.str());
-    }
-
-    this->views.erase(match);
-    lock.unlock();
-  }
-
-  return {std::move(current), std::move(new_identifier)};
+  return {result.first->second.original_identifier, result.first->first};
 }
 
 auto Resolver::cache_path(const sourcemeta::core::JSON::String &uri,
