@@ -1,4 +1,3 @@
-./configuration.json
 ./explorer
 ./explorer/%
 ./explorer/%/directory.metapack

@@ -33,7 +33,7 @@
 // entry
 constexpr auto SENTINEL{"%"};
 
-static auto index_main(const std::string_view &program,
+static auto index_main(const std::filesystem::path &program,
                        const sourcemeta::core::Options &app) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
 #if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
@@ -46,7 +46,7 @@ static auto index_main(const std::string_view &program,
   std::cout << "Edition\n";
 
   if (app.positional().size() != 2) {
-    std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
+    std::cout << "Usage: " << program.filename().string()
               << " <registry.json> <path/to/output/directory>\n";
     return EXIT_FAILURE;
   }
@@ -82,28 +82,6 @@ static auto index_main(const std::string_view &program,
       std::cerr << "error: The URL option must be an absolute HTTP(s) URL\n";
       return EXIT_FAILURE;
     }
-  }
-
-  // We want to keep this file uncompressed and without a leading header to that
-  // the server can quickly read on start
-  // TODO: Get rid of this file
-  const auto configuration_summary_path{output.path() / "configuration.json"};
-  auto summary{sourcemeta::core::JSON::make_object()};
-  summary.assign("version",
-                 sourcemeta::core::JSON{sourcemeta::registry::PROJECT_VERSION});
-  // We use this configuration file to track whether we should invalidate
-  // the cache if running on a different version. Therefore, we need to be
-  // careful to not update it unless its really necessary
-  if (std::filesystem::exists(configuration_summary_path)) {
-    const auto summary_contents{
-        sourcemeta::core::read_json(configuration_summary_path)};
-    if (summary_contents != summary) {
-      output.write_json(configuration_summary_path, summary);
-    } else {
-      output.track(configuration_summary_path);
-    }
-  } else {
-    output.write_json(configuration_summary_path, summary);
   }
 
   for (const auto &element : configuration.entries) {
@@ -163,8 +141,7 @@ static auto index_main(const std::string_view &program,
   sourcemeta::core::parallel_for_each(
       resolver.begin(), resolver.end(),
       [&output, &resolver, &validator, &mutex, &adapter,
-       &configuration_summary_path](const auto &schema, const auto threads,
-                                    const auto cursor) {
+       &program](const auto &schema, const auto threads, const auto cursor) {
         {
           const auto percentage{cursor * 100 / resolver.size()};
           std::lock_guard<std::mutex> lock(mutex);
@@ -185,8 +162,7 @@ static auto index_main(const std::string_view &program,
                 std::reference_wrapper<sourcemeta::registry::Validator>,
                 std::reference_wrapper<sourcemeta::registry::Resolver>>>(
                 adapter, sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA,
-                destination,
-                {schema.second.path.value(), configuration_summary_path},
+                destination, {schema.second.path.value(), program},
                 {schema.first, validator, resolver})) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) "
@@ -203,8 +179,8 @@ static auto index_main(const std::string_view &program,
 
   sourcemeta::core::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [&output, &resolver, &mutex, &adapter, &configuration_summary_path](
-          const auto &schema, const auto threads, const auto cursor) {
+      [&output, &resolver, &mutex, &adapter,
+       &program](const auto &schema, const auto threads, const auto cursor) {
         {
           const auto percentage{cursor * 100 / resolver.size()};
           std::lock_guard<std::mutex> lock(mutex);
@@ -220,8 +196,7 @@ static auto index_main(const std::string_view &program,
         if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_POINTER_POSITIONS,
                 base_path / "positions.metapack",
-                {base_path / "schema.metapack", configuration_summary_path},
-                resolver)) {
+                {base_path / "schema.metapack", program}, resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first << " [positions]\n";
         }
@@ -232,8 +207,7 @@ static auto index_main(const std::string_view &program,
         if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_FRAME_LOCATIONS,
                 base_path / "locations.metapack",
-                {base_path / "schema.metapack", configuration_summary_path},
-                resolver)) {
+                {base_path / "schema.metapack", program}, resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first << " [locations]\n";
         }
@@ -244,8 +218,7 @@ static auto index_main(const std::string_view &program,
         if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_DEPENDENCIES,
                 base_path / "dependencies.metapack",
-                {base_path / "schema.metapack", configuration_summary_path},
-                resolver)) {
+                {base_path / "schema.metapack", program}, resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first
                     << " [dependencies]\n";
@@ -258,8 +231,7 @@ static auto index_main(const std::string_view &program,
                 adapter, sourcemeta::registry::GENERATE_HEALTH,
                 base_path / "health.metapack",
                 {base_path / "schema.metapack",
-                 base_path / "dependencies.metapack",
-                 configuration_summary_path},
+                 base_path / "dependencies.metapack", program},
                 resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first << " [health]\n";
@@ -272,8 +244,7 @@ static auto index_main(const std::string_view &program,
                 adapter, sourcemeta::registry::GENERATE_BUNDLE,
                 base_path / "bundle.metapack",
                 {base_path / "schema.metapack",
-                 base_path / "dependencies.metapack",
-                 configuration_summary_path},
+                 base_path / "dependencies.metapack", program},
                 resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first << " [bundle]\n";
@@ -285,8 +256,7 @@ static auto index_main(const std::string_view &program,
         if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_UNIDENTIFIED,
                 base_path / "unidentified.metapack",
-                {base_path / "bundle.metapack", configuration_summary_path},
-                resolver)) {
+                {base_path / "bundle.metapack", program}, resolver)) {
           std::lock_guard<std::mutex> lock(mutex);
           std::cerr << "(skip) Analysing: " << schema.first
                     << " [unidentified]\n";
@@ -300,8 +270,7 @@ static auto index_main(const std::string_view &program,
                   adapter,
                   sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
                   base_path / "blaze-exhaustive.metapack",
-                  {base_path / "bundle.metapack", configuration_summary_path},
-                  resolver)) {
+                  {base_path / "bundle.metapack", program}, resolver)) {
             std::lock_guard<std::mutex> lock(mutex);
             std::cerr << "(skip) Analysing: " << schema.first
                       << " [blaze-exhaustive]\n";
@@ -459,7 +428,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     // TODO: Support a --help flag
     app.option("url", {"u"});
     app.parse(argc, argv);
-    const std::string_view program{argv[0]};
+    const auto program{std::filesystem::canonical(argv[0])};
     if (!sourcemeta::registry::license_permitted()) {
       std::cerr << sourcemeta::registry::license_error();
       return EXIT_FAILURE;
