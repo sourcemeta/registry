@@ -179,7 +179,7 @@ static auto serve_static_file(uWS::HttpRequest *request,
     return;
   }
 
-  auto file{sourcemeta::registry::read_stream(absolute_path)};
+  auto file{sourcemeta::registry::read_stream_raw(absolute_path)};
   if (!file.has_value()) {
     json_error(request->getMethod(), request->getUrl(), response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
@@ -263,7 +263,7 @@ static auto serve_static_file(uWS::HttpRequest *request,
   std::ostringstream contents;
   contents << file.value().data.rdbuf();
 
-  if (file.value().encoding == sourcemeta::registry::MetaPackEncoding::GZIP) {
+  if (file.value().encoding == sourcemeta::registry::Encoding::GZIP) {
     send_response(code, request->getMethod(), request->getUrl(), response,
                   contents.str(), encoding, ServerContentEncoding::GZIP);
   } else {

@@ -37,6 +37,8 @@ if(REGISTRY_INDEX OR REGISTRY_SERVER)
 endif()
 
 if(REGISTRY_INDEX)
+  add_subdirectory(contrib/file2metapack)
+  include(commands/file2metapack)
   include(commands/esbuild)
   include(commands/redocly)
   add_subdirectory(src/configuration)
@@ -50,18 +52,18 @@ if(REGISTRY_SERVER)
   add_subdirectory(src/server)
 endif()
 
-sourcemeta_target_clang_format(SOURCES src/*.h src/*.cc test/*.cc)
+sourcemeta_target_clang_format(SOURCES src/*.h src/*.cc test/*.cc contrib/*.cc)
 sourcemeta_target_shellcheck(SOURCES test/*.sh)
 
 set(SOURCEMETA_SCHEMAS "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas")
-add_custom_target(jsonschema_fmt_test 
+add_custom_target(jsonschema_fmt_test
   COMMAND "$<TARGET_FILE:jsonschema_cli>" fmt --check --verbose ${SOURCEMETA_SCHEMAS})
-add_custom_target(jsonschema_fmt 
+add_custom_target(jsonschema_fmt
   COMMAND "$<TARGET_FILE:jsonschema_cli>" fmt --verbose ${SOURCEMETA_SCHEMAS})
-add_custom_target(jsonschema_metaschema 
+add_custom_target(jsonschema_metaschema
   COMMAND "$<TARGET_FILE:jsonschema_cli>" metaschema --verbose ${SOURCEMETA_SCHEMAS})
-add_custom_target(jsonschema_lint 
-  COMMAND "$<TARGET_FILE:jsonschema_cli>" lint --strict --verbose 
+add_custom_target(jsonschema_lint
+  COMMAND "$<TARGET_FILE:jsonschema_cli>" lint --strict --verbose
   ${SOURCEMETA_SCHEMAS})
 
 if(REGISTRY_TESTS)
@@ -70,7 +72,7 @@ if(REGISTRY_TESTS)
     "$<TARGET_FILE:jsonschema_cli>" test --extension .test.json
     "${PROJECT_SOURCE_DIR}/collections/sourcemeta")
 
-  if(REGISTRY_INDEX) 
+  if(REGISTRY_INDEX)
     add_subdirectory(test/unit/configuration)
     add_subdirectory(test/unit/resolver)
   endif()

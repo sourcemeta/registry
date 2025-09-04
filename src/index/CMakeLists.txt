@@ -43,6 +43,11 @@ endif()
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
+# TODO: From this point on, none of these CMake stuff are really about the indexer.
+# We just put them here to hook into the indexer target to get them built. Move them
+# to the top-level CMakeLists.txt or something like that, while still attaching them
+# if needed
+
 # Load pre-made collections
 set(REGISTRY_COLLECTION_SOURCES)
 include("${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/registry.cmake")
@@ -110,48 +115,14 @@ set(REGISTRY_STATIC
   "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff"
   "${PROJECT_SOURCE_DIR}/vendor/bootstrap-icons/font/fonts/bootstrap-icons.woff2")
-
 set(REGISTRY_STATIC_METAPACK)
 foreach(file_path IN LISTS REGISTRY_STATIC)
-  get_filename_component(file_extension "${file_path}" EXT)
-  string(TOLOWER "${file_extension}" file_extension)
-  if(file_extension STREQUAL ".png")
-    set(MIME "image/png")
-  elseif(file_extension STREQUAL ".svg")
-    set(MIME "image/svg+xml")
-  elseif(file_extension STREQUAL ".min.css")
-    set(MIME "text/css")
-  elseif(file_extension STREQUAL ".js")
-    set(MIME "text/javascript")
-  elseif(file_extension STREQUAL ".min.js")
-    set(MIME "text/javascript")
-  elseif(file_extension STREQUAL ".ico")
-    set(MIME "image/vnd.microsoft.icon")
-  elseif(file_extension STREQUAL ".webmanifest")
-    set(MIME "application/manifest+json")
-  elseif(file_extension STREQUAL ".woff")
-    set(MIME "font/woff")
-  elseif(file_extension STREQUAL ".woff2")
-    set(MIME "font/woff2")
-  elseif(file_extension STREQUAL ".yaml")
-    set(MIME "application/yaml")
-  elseif(file_extension STREQUAL ".html")
-    set(MIME "text/html")
-  else()
-    message(FATAL_ERROR "Cannot determine MIME type for ${file_extension}")
-  endif()
-
   get_filename_component(file_name "${file_path}" NAME)
-  add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}"
-    COMMAND "$<TARGET_FILE:sourcemeta_registry_metapack_gzip_cli>"
-      "${file_path}" "${MIME}" "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}"
-    DEPENDS "${file_path}" "$<TARGET_FILE:sourcemeta_registry_metapack_gzip_cli>")
-  target_sources(sourcemeta_registry_index
-    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}")
-  list(APPEND REGISTRY_STATIC_METAPACK
-    "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}")
+  set(file_output "${CMAKE_CURRENT_BINARY_DIR}/metapack/${file_name}")
+  sourcemeta_file2metapack_gzip(INPUT "${file_path}" OUTPUT "${file_output}")
+  target_sources(sourcemeta_registry_index PRIVATE "${file_output}")
+  list(APPEND REGISTRY_STATIC_METAPACK "${file_output}")
 endforeach()
-
 install(FILES ${REGISTRY_STATIC_METAPACK}
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/static"
   COMPONENT sourcemeta_registry)

@@ -572,22 +572,21 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON::String &url,
                          // TODO: Compute this argument instead
                          const std::filesystem::path &relative_path)
     -> sourcemeta::core::JSON {
-  const auto schema{sourcemeta::registry::read_contents(absolute_path)};
-  assert(schema.has_value());
-  const auto schema_json{sourcemeta::core::parse_json(schema.value().data)};
+  const auto schema{
+      sourcemeta::registry::read_json_with_metadata(absolute_path)};
   auto id{sourcemeta::core::identify(
-      schema_json,
+      schema.data,
       [&resolver](const auto identifier) { return resolver(identifier); })};
   assert(id.has_value());
   auto result{sourcemeta::core::JSON::make_object()};
 
-  result.assign("bytes", sourcemeta::core::JSON{schema.value().bytes});
+  result.assign("bytes", sourcemeta::core::JSON{schema.bytes});
   result.assign("id", sourcemeta::core::JSON{std::move(id).value()});
   result.assign("url", sourcemeta::core::JSON{"/" + relative_path.string()});
   result.assign("canonical",
                 sourcemeta::core::JSON{url + "/" + relative_path.string()});
   const auto base_dialect{sourcemeta::core::base_dialect(
-      schema_json,
+      schema.data,
       [&resolver](const auto identifier) { return resolver(identifier); })};
   assert(base_dialect.has_value());
   // The idea is to match the URLs from https://www.learnjsonschema.com
@@ -606,23 +605,21 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON::String &url,
     result.assign("baseDialect", sourcemeta::core::JSON{"unknown"});
   }
 
-  const auto dialect{sourcemeta::core::dialect(schema_json, base_dialect)};
+  const auto dialect{sourcemeta::core::dialect(schema.data, base_dialect)};
   assert(dialect.has_value());
   result.assign("dialect", sourcemeta::core::JSON{dialect.value()});
-  if (schema_json.is_object()) {
-    const auto title{schema_json.try_at("title")};
+  if (schema.data.is_object()) {
+    const auto title{schema.data.try_at("title")};
     if (title && title->is_string()) {
       result.assign("title", sourcemeta::core::JSON{title->trim()});
     }
-    const auto description{schema_json.try_at("description")};
+    const auto description{schema.data.try_at("description")};
     if (description && description->is_string()) {
       result.assign("description", sourcemeta::core::JSON{description->trim()});
     }
   }
 
-  const auto health_contents{sourcemeta::registry::read_contents(health_path)};
-  assert(health_contents.has_value());
-  const auto health{sourcemeta::core::parse_json(health_contents.value().data)};
+  const auto health{sourcemeta::registry::read_json(health_path)};
   result.assign("health", health.at("score"));
 
   // Precompute the breadcrumb
@@ -700,11 +697,8 @@ auto GENERATE_NAV_DIRECTORY(
           !output.is_untracked_file(entry.path())) {
         const auto directory_nav_path{navigation_base / entry_relative_path /
                                       "%" / "directory.metapack"};
-        const auto directory_nav{
-            sourcemeta::registry::read_contents(directory_nav_path)};
-        assert(directory_nav.has_value());
         auto directory_nav_json{
-            sourcemeta::core::parse_json(directory_nav.value().data)};
+            sourcemeta::registry::read_json(directory_nav_path)};
         assert(directory_nav_json.is_object());
         assert(directory_nav_json.defines("health"));
         assert(directory_nav_json.at("health").is_integer());
@@ -735,10 +729,8 @@ auto GENERATE_NAV_DIRECTORY(
         schema_nav_path /= "%";
         schema_nav_path /= "schema.metapack";
 
-        const auto nav{sourcemeta::registry::read_contents(schema_nav_path)};
-        assert(nav.has_value());
-        entry_json.merge(
-            sourcemeta::core::parse_json(nav.value().data).as_object());
+        auto nav{sourcemeta::registry::read_json(schema_nav_path)};
+        entry_json.merge(nav.as_object());
         assert(!entry_json.defines("entries"));
         // No need to show breadcrumbs of children
         entry_json.erase("breadcrumb");
@@ -824,9 +816,7 @@ auto GENERATE_SEARCH_INDEX(
   std::vector<sourcemeta::core::JSON> result;
   result.reserve(absolute_paths.size());
   for (const auto &absolute_path : absolute_paths) {
-    auto metadata{sourcemeta::registry::read_contents(absolute_path)};
-    assert(metadata.has_value());
-    auto metadata_json{sourcemeta::core::parse_json(metadata.value().data)};
+    auto metadata_json{sourcemeta::registry::read_json(absolute_path)};
     auto entry{sourcemeta::core::JSON::make_array()};
     std::filesystem::path url = metadata_json.at("url").to_string();
     url.replace_extension("");
@@ -901,9 +891,7 @@ auto GENERATE_EXPLORER_404(
 auto GENERATE_EXPLORER_INDEX(
     const sourcemeta::registry::Configuration &configuration,
     const std::filesystem::path &navigation_path) -> std::string {
-  const auto navigation{sourcemeta::registry::read_contents(navigation_path)};
-  assert(navigation.has_value());
-  const auto meta{sourcemeta::core::parse_json(navigation.value().data)};
+  const auto meta{sourcemeta::registry::read_json(navigation_path)};
   std::ostringstream html;
   sourcemeta::registry::html::SafeOutput output_html{html};
 
@@ -933,9 +921,7 @@ auto GENERATE_EXPLORER_INDEX(
 auto GENERATE_EXPLORER_DIRECTORY_PAGE(
     const sourcemeta::registry::Configuration &configuration,
     const std::filesystem::path &navigation_path) -> std::string {
-  const auto navigation{sourcemeta::registry::read_contents(navigation_path)};
-  assert(navigation.has_value());
-  const auto meta{sourcemeta::core::parse_json(navigation.value().data)};
+  const auto meta{sourcemeta::registry::read_json(navigation_path)};
   std::ostringstream html;
 
   sourcemeta::registry::html::SafeOutput output_html{html};
@@ -959,9 +945,7 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
     const std::filesystem::path &navigation_path,
     const std::filesystem::path &dependencies_path,
     const std::filesystem::path &health_path) -> std::string {
-  const auto navigation{sourcemeta::registry::read_contents(navigation_path)};
-  assert(navigation.has_value());
-  const auto meta{sourcemeta::core::parse_json(navigation.value().data)};
+  const auto meta{sourcemeta::registry::read_json(navigation_path)};
 
   std::ostringstream html;
 
@@ -1080,15 +1064,10 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.text("Loading schema...");
   output_html.close("div");
 
-  const auto dependencies{
-      sourcemeta::registry::read_contents(dependencies_path)};
-  assert(dependencies.has_value());
   const auto dependencies_json{
-      sourcemeta::core::parse_json(dependencies.value().data)};
+      sourcemeta::registry::read_json(dependencies_path)};
 
-  const auto health_contents{sourcemeta::registry::read_contents(health_path)};
-  assert(health_contents.has_value());
-  const auto health{sourcemeta::core::parse_json(health_contents.value().data)};
+  const auto health{sourcemeta::registry::read_json(health_path)};
   assert(health.is_object());
   assert(health.defines("errors"));
 

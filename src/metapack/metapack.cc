@@ -5,15 +5,70 @@
 #include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/time.h>
 
-#include <cassert> // assert
-#include <chrono>  // std::chrono::system_clock::time_point
-#include <sstream> // std::ostringstream
-#include <utility> // std::move
+#include <cassert>    // assert
+#include <chrono>     // std::chrono::system_clock::time_point
+#include <functional> // std::functional
+#include <ostream>    // std::ostream
+#include <sstream>    // std::ostringstream
+#include <utility>    // std::move
+
+namespace {
+
+auto write_stream(const std::filesystem::path &path,
+                  const sourcemeta::core::JSON::String &mime,
+                  const sourcemeta::registry::Encoding encoding,
+                  const sourcemeta::core::JSON &extension,
+                  const std::function<void(std::ostream &)> &callback) -> void {
+  // TODO: Ideally we wouldn't write the file all at once first
+  std::stringstream buffer;
+  callback(buffer);
+
+  auto metadata{sourcemeta::core::JSON::make_object()};
+  metadata.assign("version", sourcemeta::core::JSON{1});
+  std::ostringstream md5;
+  // TODO: Have a shorthand version that doesn't require an intermediary stream
+  sourcemeta::core::md5(buffer.str(), md5);
+  metadata.assign("checksum", sourcemeta::core::JSON{md5.str()});
+  metadata.assign("lastModified",
+                  sourcemeta::core::JSON{sourcemeta::core::to_gmt(
+                      std::chrono::system_clock::now())});
+  metadata.assign("mime", sourcemeta::core::JSON{mime});
+  metadata.assign("bytes", sourcemeta::core::JSON{buffer.tellp()});
+
+  switch (encoding) {
+    case sourcemeta::registry::Encoding::Identity:
+      metadata.assign("encoding", sourcemeta::core::JSON{"identity"});
+      break;
+    case sourcemeta::registry::Encoding::GZIP:
+      metadata.assign("encoding", sourcemeta::core::JSON{"gzip"});
+      break;
+    default:
+      assert(false);
+      break;
+  }
+
+  if (!extension.is_null()) {
+    metadata.assign("extension", extension);
+  }
+
+  std::ofstream output{path};
+  assert(!output.fail());
+  sourcemeta::core::stringify(metadata, output);
+  if (encoding == sourcemeta::registry::Encoding::GZIP) {
+    sourcemeta::core::gzip(buffer, output);
+  } else {
+    output << buffer.str();
+  }
+
+  output.flush();
+}
+
+} // namespace
 
 namespace sourcemeta::registry {
 
-auto read_stream(const std::filesystem::path &path)
-    -> std::optional<MetaPackFile<std::ifstream>> {
+auto read_stream_raw(const std::filesystem::path &path)
+    -> std::optional<File<std::ifstream>> {
   assert(path.is_absolute());
   if (!std::filesystem::exists(path)) {
     return std::nullopt;
@@ -37,14 +92,14 @@ auto read_stream(const std::filesystem::path &path)
   assert(metadata.at("bytes").is_positive());
   assert(metadata.at("encoding").is_string());
 
-  MetaPackEncoding encoding{MetaPackEncoding::Identity};
+  Encoding encoding{Encoding::Identity};
   if (metadata.at("encoding").to_string() == "gzip") {
-    encoding = MetaPackEncoding::GZIP;
+    encoding = Encoding::GZIP;
   } else if (metadata.at("encoding").to_string() != "identity") {
     assert(false);
   }
 
-  return MetaPackFile{
+  return File{
       .data = std::move(stream),
       .version =
           static_cast<std::uint64_t>(metadata.at("version").to_integer()),
@@ -58,82 +113,93 @@ auto read_stream(const std::filesystem::path &path)
                                              sourcemeta::core::JSON{nullptr})};
 }
 
-auto write_stream(const std::filesystem::path &path,
-                  const sourcemeta::core::JSON::String &mime,
-                  const MetaPackEncoding encoding,
-                  const sourcemeta::core::JSON &extension,
-                  const std::function<void(std::ostream &)> &callback) -> void {
-  // TODO: Ideally we wouldn't write the file all at once first
-  std::stringstream buffer;
-  callback(buffer);
-
-  auto metadata{sourcemeta::core::JSON::make_object()};
-  metadata.assign("version", sourcemeta::core::JSON{1});
-  std::ostringstream md5;
-  // TODO: Have a shorthand version that doesn't require an intermediary stream
-  sourcemeta::core::md5(buffer.str(), md5);
-  metadata.assign("checksum", sourcemeta::core::JSON{md5.str()});
-  metadata.assign("lastModified",
-                  sourcemeta::core::JSON{sourcemeta::core::to_gmt(
-                      std::chrono::system_clock::now())});
-  metadata.assign("mime", sourcemeta::core::JSON{mime});
-  metadata.assign("bytes", sourcemeta::core::JSON{buffer.tellp()});
-
-  switch (encoding) {
-    case MetaPackEncoding::Identity:
-      metadata.assign("encoding", sourcemeta::core::JSON{"identity"});
-      break;
-    case MetaPackEncoding::GZIP:
-      metadata.assign("encoding", sourcemeta::core::JSON{"gzip"});
-      break;
-    default:
-      assert(false);
-      break;
-  }
-
-  if (!extension.is_null()) {
-    metadata.assign("extension", extension);
-  }
-
-  std::ofstream output{path};
-  assert(!output.fail());
-  sourcemeta::core::stringify(metadata, output);
-  if (encoding == MetaPackEncoding::GZIP) {
-    sourcemeta::core::gzip(buffer, output);
-  } else {
-    output << buffer.str();
-  }
-
-  output.flush();
+auto read_json(const std::filesystem::path &path,
+               const sourcemeta::core::JSON::ParseCallback &callback)
+    -> sourcemeta::core::JSON {
+  return read_json_with_metadata(path, callback).data;
 }
 
-auto read_contents(MetaPackFile<std::ifstream> &stream)
-    -> MetaPackFile<sourcemeta::core::JSON::String> {
+auto read_json_with_metadata(
+    const std::filesystem::path &path,
+    const sourcemeta::core::JSON::ParseCallback &callback)
+    -> File<sourcemeta::core::JSON> {
+  auto file{read_stream_raw(path)};
+  assert(file.has_value());
   std::ostringstream buffer;
-  if (stream.encoding == MetaPackEncoding::GZIP) {
-    sourcemeta::core::gunzip(stream.data, buffer);
+  if (file.value().encoding == Encoding::GZIP) {
+    sourcemeta::core::gunzip(file.value().data, buffer);
   } else {
-    buffer << stream.data.rdbuf();
+    buffer << file.value().data.rdbuf();
   }
 
-  return MetaPackFile{.data = std::move(buffer).str(),
-                      .version = stream.version,
-                      .checksum = stream.checksum,
-                      .last_modified = stream.last_modified,
-                      .mime = std::move(stream.mime),
-                      .bytes = stream.bytes,
-                      .encoding = stream.encoding,
-                      .extension = stream.extension};
+  return File{.data = sourcemeta::core::parse_json(buffer.str(), callback),
+              .version = file.value().version,
+              .checksum = file.value().checksum,
+              .last_modified = file.value().last_modified,
+              .mime = std::move(file.value().mime),
+              .bytes = file.value().bytes,
+              .encoding = file.value().encoding,
+              .extension = file.value().extension};
 }
 
-auto read_contents(const std::filesystem::path &path)
-    -> std::optional<MetaPackFile<sourcemeta::core::JSON::String>> {
-  auto file{read_stream(path)};
-  if (file.has_value()) {
-    return read_contents(file.value());
-  } else {
-    return std::nullopt;
-  }
+auto write_json(const std::filesystem::path &destination,
+                const sourcemeta::core::JSON &document,
+                const sourcemeta::core::JSON::String &mime,
+                const Encoding encoding,
+                const sourcemeta::core::JSON &extension) -> void {
+  write_stream(destination, mime, encoding, extension,
+               [&document](auto &stream) {
+                 sourcemeta::core::stringify(document, stream);
+               });
+}
+
+auto write_pretty_json(const std::filesystem::path &destination,
+                       const sourcemeta::core::JSON &document,
+                       const sourcemeta::core::JSON::String &mime,
+                       const Encoding encoding,
+                       const sourcemeta::core::JSON &extension,
+                       const sourcemeta::core::JSON::KeyComparison &compare)
+    -> void {
+  write_stream(destination, mime, encoding, extension,
+               [&document, &compare](auto &stream) {
+                 sourcemeta::core::prettify(document, stream, compare);
+               });
+}
+
+auto write_text(const std::filesystem::path &destination,
+                const std::string_view contents,
+                const sourcemeta::core::JSON::String &mime,
+                const Encoding encoding,
+                const sourcemeta::core::JSON &extension) -> void {
+  write_stream(destination, mime, encoding, extension,
+               [&contents](auto &stream) {
+                 stream << contents;
+                 stream << "\n";
+               });
+}
+
+auto write_file(const std::filesystem::path &destination,
+                const std::filesystem::path &source,
+                const sourcemeta::core::JSON::String &mime,
+                const Encoding encoding,
+                const sourcemeta::core::JSON &extension) -> void {
+  auto stream{sourcemeta::core::read_file(source)};
+  write_stream(destination, mime, encoding, extension,
+               [&stream](auto &target) { target << stream.rdbuf(); });
+}
+
+auto write_jsonl(const std::filesystem::path &destination,
+                 const std::vector<sourcemeta::core::JSON> &entries,
+                 const sourcemeta::core::JSON::String &mime,
+                 const Encoding encoding,
+                 const sourcemeta::core::JSON &extension) -> void {
+  write_stream(destination, mime, encoding, extension,
+               [&entries](auto &stream) {
+                 for (const auto &entry : entries) {
+                   sourcemeta::core::stringify(entry, stream);
+                   stream << "\n";
+                 }
+               });
 }
 
 } // namespace sourcemeta::registry

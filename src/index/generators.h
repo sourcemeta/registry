@@ -42,14 +42,11 @@ auto GENERATE_MATERIALISED_SCHEMA(
       "The schema does not adhere to its metaschema");
 
   std::filesystem::create_directories(destination.parent_path());
-  sourcemeta::registry::write_stream(
-      destination, "application/schema+json",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
+  sourcemeta::registry::write_pretty_json(
+      destination, schema.value(), "application/schema+json",
+      sourcemeta::registry::Encoding::GZIP,
       sourcemeta::core::JSON{dialect_identifier.value()},
-      [&schema](auto &stream) {
-        sourcemeta::core::prettify(schema.value(), stream,
-                                   sourcemeta::core::schema_format_compare);
-      });
+      sourcemeta::core::schema_format_compare);
 }
 
 auto GENERATE_POINTER_POSITIONS(
@@ -59,16 +56,12 @@ auto GENERATE_POINTER_POSITIONS(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
     const sourcemeta::registry::Resolver &) -> void {
   sourcemeta::core::PointerPositionTracker tracker;
-  auto contents{sourcemeta::registry::read_contents(dependencies.front())};
-  assert(contents.has_value());
-  sourcemeta::core::parse_json(contents.value().data, std::ref(tracker));
+  sourcemeta::registry::read_json(dependencies.front(), std::ref(tracker));
   const auto result{sourcemeta::core::to_json(tracker)};
   std::filesystem::create_directories(destination.parent_path());
-  sourcemeta::registry::write_stream(
-      destination, "application/json",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
-      sourcemeta::core::JSON{nullptr},
-      [&result](auto &stream) { sourcemeta::core::prettify(result, stream); });
+  sourcemeta::registry::write_pretty_json(
+      destination, result, "application/json",
+      sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr});
 }
 
 auto GENERATE_FRAME_LOCATIONS(
@@ -78,22 +71,18 @@ auto GENERATE_FRAME_LOCATIONS(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  auto contents{sourcemeta::registry::read_contents(dependencies.front())};
-  assert(contents.has_value());
+  const auto contents{sourcemeta::registry::read_json(dependencies.front())};
   sourcemeta::core::SchemaFrame frame{
       sourcemeta::core::SchemaFrame::Mode::Locations};
-  frame.analyse(sourcemeta::core::parse_json(contents.value().data),
-                sourcemeta::core::schema_official_walker,
+  frame.analyse(contents, sourcemeta::core::schema_official_walker,
                 [&callback, &resolver](const auto identifier) {
                   return resolver(identifier, callback);
                 });
   const auto result{frame.to_json().at("locations")};
   std::filesystem::create_directories(destination.parent_path());
-  sourcemeta::registry::write_stream(
-      destination, "application/json",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
-      sourcemeta::core::JSON{nullptr},
-      [&result](auto &stream) { sourcemeta::core::prettify(result, stream); });
+  sourcemeta::registry::write_pretty_json(
+      destination, result, "application/json",
+      sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr});
 }
 
 auto GENERATE_DEPENDENCIES(
@@ -103,12 +92,10 @@ auto GENERATE_DEPENDENCIES(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  auto contents{sourcemeta::registry::read_contents(dependencies.front())};
-  assert(contents.has_value());
+  const auto contents{sourcemeta::registry::read_json(dependencies.front())};
   auto result{sourcemeta::core::JSON::make_array()};
   sourcemeta::core::dependencies(
-      sourcemeta::core::parse_json(contents.value().data),
-      sourcemeta::core::schema_official_walker,
+      contents, sourcemeta::core::schema_official_walker,
       [&callback, &resolver](const auto identifier) {
         return resolver(identifier, callback);
       },
@@ -122,11 +109,9 @@ auto GENERATE_DEPENDENCIES(
       });
 
   std::filesystem::create_directories(destination.parent_path());
-  sourcemeta::registry::write_stream(
-      destination, "application/json",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
-      sourcemeta::core::JSON{nullptr},
-      [&result](auto &stream) { sourcemeta::core::prettify(result, stream); });
+  sourcemeta::registry::write_pretty_json(
+      destination, result, "application/json",
+      sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr});
 }
 
 auto GENERATE_HEALTH(
@@ -136,8 +121,7 @@ auto GENERATE_HEALTH(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  auto contents{sourcemeta::registry::read_contents(dependencies.front())};
-  assert(contents.has_value());
+  const auto contents{sourcemeta::registry::read_json(dependencies.front())};
 
   sourcemeta::core::SchemaTransformer bundle;
   sourcemeta::core::add(bundle, sourcemeta::core::AlterSchemaMode::Readability);
@@ -148,8 +132,7 @@ auto GENERATE_HEALTH(
 
   auto errors{sourcemeta::core::JSON::make_array()};
   const auto result = bundle.check(
-      sourcemeta::core::parse_json(contents.value().data),
-      sourcemeta::core::schema_official_walker,
+      contents, sourcemeta::core::schema_official_walker,
       [&callback, &resolver](const auto identifier) {
         return resolver(identifier, callback);
       },
@@ -180,11 +163,9 @@ auto GENERATE_HEALTH(
   report.assign("errors", std::move(errors));
 
   std::filesystem::create_directories(destination.parent_path());
-  sourcemeta::registry::write_stream(
-      destination, "application/json",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
-      sourcemeta::core::JSON{nullptr},
-      [&report](auto &stream) { sourcemeta::core::prettify(report, stream); });
+  sourcemeta::registry::write_pretty_json(
+      destination, report, "application/json",
+      sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr});
 }
 
 auto GENERATE_BUNDLE(
@@ -194,9 +175,7 @@ auto GENERATE_BUNDLE(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  auto contents{sourcemeta::registry::read_contents(dependencies.front())};
-  assert(contents.has_value());
-  auto schema{sourcemeta::core::parse_json(contents.value().data)};
+  auto schema{sourcemeta::registry::read_json(dependencies.front())};
   sourcemeta::core::bundle(schema, sourcemeta::core::schema_official_walker,
                            [&callback, &resolver](const auto identifier) {
                              return resolver(identifier, callback);
@@ -204,14 +183,11 @@ auto GENERATE_BUNDLE(
   const auto dialect_identifier{sourcemeta::core::dialect(schema)};
   assert(dialect_identifier.has_value());
   std::filesystem::create_directories(destination.parent_path());
-  sourcemeta::registry::write_stream(
-      destination, "application/schema+json",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
+  sourcemeta::registry::write_pretty_json(
+      destination, schema, "application/schema+json",
+      sourcemeta::registry::Encoding::GZIP,
       sourcemeta::core::JSON{dialect_identifier.value()},
-      [&schema](auto &stream) {
-        sourcemeta::core::prettify(schema, stream,
-                                   sourcemeta::core::schema_format_compare);
-      });
+      sourcemeta::core::schema_format_compare);
 }
 
 auto GENERATE_UNIDENTIFIED(
@@ -221,9 +197,7 @@ auto GENERATE_UNIDENTIFIED(
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
         &callback,
     const sourcemeta::registry::Resolver &resolver) -> void {
-  auto contents{sourcemeta::registry::read_contents(dependencies.front())};
-  assert(contents.has_value());
-  auto schema{sourcemeta::core::parse_json(contents.value().data)};
+  auto schema{sourcemeta::registry::read_json(dependencies.front())};
   sourcemeta::core::for_editor(schema, sourcemeta::core::schema_official_walker,
                                [&callback, &resolver](const auto identifier) {
                                  return resolver(identifier, callback);
@@ -231,14 +205,11 @@ auto GENERATE_UNIDENTIFIED(
   const auto dialect_identifier{sourcemeta::core::dialect(schema)};
   assert(dialect_identifier.has_value());
   std::filesystem::create_directories(destination.parent_path());
-  sourcemeta::registry::write_stream(
-      destination, "application/schema+json",
-      sourcemeta::registry::MetaPackEncoding::GZIP,
+  sourcemeta::registry::write_pretty_json(
+      destination, schema, "application/schema+json",
+      sourcemeta::registry::Encoding::GZIP,
       sourcemeta::core::JSON{dialect_identifier.value()},
-      [&schema](auto &stream) {
-        sourcemeta::core::prettify(schema, stream,
-                                   sourcemeta::core::schema_format_compare);
-      });
+      sourcemeta::core::schema_format_compare);
 }
 
 auto GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
@@ -247,22 +218,19 @@ auto GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
         &dependencies,
     const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
     const sourcemeta::registry::Resolver &) -> void {
-  auto contents{sourcemeta::registry::read_contents(dependencies.front())};
-  assert(contents.has_value());
+  const auto contents{sourcemeta::registry::read_json(dependencies.front())};
   const auto schema_template{sourcemeta::blaze::compile(
-      sourcemeta::core::parse_json(contents.value().data),
-      sourcemeta::core::schema_official_walker,
+      contents, sourcemeta::core::schema_official_walker,
       sourcemeta::core::schema_official_resolver,
       sourcemeta::blaze::default_schema_compiler,
       sourcemeta::blaze::Mode::Exhaustive)};
   const auto result{sourcemeta::blaze::to_json(schema_template)};
   std::filesystem::create_directories(destination.parent_path());
-  sourcemeta::registry::write_stream(
-      destination, "application/json",
-      // Don't compress, as we need to internally read from disk
-      sourcemeta::registry::MetaPackEncoding::Identity,
-      sourcemeta::core::JSON{nullptr},
-      [&result](auto &stream) { sourcemeta::core::stringify(result, stream); });
+  sourcemeta::registry::write_json(
+      destination, result, "application/json",
+      // Don't compress, as we only need to internally read from disk
+      sourcemeta::registry::Encoding::Identity,
+      sourcemeta::core::JSON{nullptr});
 }
 
 } // namespace sourcemeta::registry

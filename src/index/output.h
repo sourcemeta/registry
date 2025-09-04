@@ -53,56 +53,38 @@ public:
     return this->track(absolute_path);
   }
 
-  auto
-  write_metapack_json(const std::filesystem::path &path,
-                      const sourcemeta::registry::MetaPackEncoding encoding,
-                      const sourcemeta::core::JSON &document)
+  auto write_metapack_json(const std::filesystem::path &path,
+                           const sourcemeta::registry::Encoding encoding,
+                           const sourcemeta::core::JSON &document)
       -> const std::filesystem::path & {
     const auto absolute_path{this->resolve(path)};
     std::filesystem::create_directories(absolute_path.parent_path());
-    sourcemeta::registry::write_stream(
-        absolute_path, "application/json", encoding,
-        sourcemeta::core::JSON{nullptr}, [&document](auto &stream) {
-          sourcemeta::core::prettify(document, stream);
-        });
-
+    sourcemeta::registry::write_pretty_json(absolute_path, document,
+                                            "application/json", encoding,
+                                            sourcemeta::core::JSON{nullptr});
     return this->track(absolute_path);
   }
 
-  template <typename Iterator>
-  auto
-  write_metapack_jsonl(const std::filesystem::path &path,
-                       const sourcemeta::registry::MetaPackEncoding encoding,
-                       Iterator begin, Iterator end)
+  auto write_metapack_jsonl(const std::filesystem::path &path,
+                            const sourcemeta::registry::Encoding encoding,
+                            const std::vector<sourcemeta::core::JSON> &entries)
       -> const std::filesystem::path & {
     const auto absolute_path{this->resolve(path)};
     std::filesystem::create_directories(absolute_path.parent_path());
-    sourcemeta::registry::write_stream(
-        absolute_path, "application/jsonl", encoding,
-        sourcemeta::core::JSON{nullptr}, [&begin, &end](auto &stream) {
-          for (auto iterator = begin; iterator != end; ++iterator) {
-            sourcemeta::core::stringify(*iterator, stream);
-            stream << "\n";
-          }
-        });
-
+    sourcemeta::registry::write_jsonl(absolute_path, entries,
+                                      "application/jsonl", encoding,
+                                      sourcemeta::core::JSON{nullptr});
     return this->track(absolute_path);
   }
 
-  auto
-  write_metapack_html(const std::filesystem::path &path,
-                      const sourcemeta::registry::MetaPackEncoding encoding,
-                      const std::string_view contents)
+  auto write_metapack_html(const std::filesystem::path &path,
+                           const sourcemeta::registry::Encoding encoding,
+                           const std::string_view contents)
       -> const std::filesystem::path & {
     const auto absolute_path{this->resolve(path)};
     std::filesystem::create_directories(absolute_path.parent_path());
-    sourcemeta::registry::write_stream(absolute_path, "text/html", encoding,
-                                       sourcemeta::core::JSON{nullptr},
-                                       [&contents](auto &stream) {
-                                         stream << contents;
-                                         stream << "\n";
-                                       });
-
+    sourcemeta::registry::write_text(absolute_path, contents, "text/html",
+                                     encoding, sourcemeta::core::JSON{nullptr});
     return this->track(absolute_path);
   }
 

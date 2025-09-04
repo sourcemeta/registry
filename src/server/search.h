@@ -17,7 +17,7 @@ static auto search(const std::filesystem::path &search_index,
                    const std::string_view query) -> sourcemeta::core::JSON {
   assert(std::filesystem::exists(search_index));
   assert(search_index.is_absolute());
-  auto file{read_stream(search_index)};
+  auto file{read_stream_raw(search_index)};
   assert(file.has_value());
 
   auto result{sourcemeta::core::JSON::make_array()};
