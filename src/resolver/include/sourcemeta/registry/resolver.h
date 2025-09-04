@@ -2,18 +2,14 @@
 #define SOURCEMETA_REGISTRY_RESOLVER_H_
 
 #include <sourcemeta/core/json.h>
-#include <sourcemeta/core/jsonschema.h>
-#include <sourcemeta/core/uri.h>
 
 #include <sourcemeta/registry/configuration.h>
 
 #include <sourcemeta/registry/resolver_error.h>
-#include <sourcemeta/registry/resolver_visitor.h>
 
 #include <filesystem>    // std::filesystem
 #include <optional>      // std::optional
 #include <shared_mutex>  // std::shared_mutex
-#include <string>        // std::string
 #include <string_view>   // std::string_view
 #include <unordered_map> // std::unordered_map
 #include <utility>       // std::pair
@@ -29,41 +25,39 @@ public:
   Resolver(Resolver &&) = delete;
   Resolver &operator=(Resolver &&) = delete;
 
+  using Callback = std::function<void(const std::filesystem::path &)>;
+
   auto operator()(std::string_view identifier,
-                  const std::function<void(const std::filesystem::path &)>
-                      &callback = nullptr) const
+                  const Callback &callback = nullptr) const
       -> std::optional<sourcemeta::core::JSON>;
 
-  auto add(const sourcemeta::core::URI &server_url,
-           const std::filesystem::path &relative_path,
+  // Returns the original identifier and the new identifier
+  auto add(const sourcemeta::core::JSON::String &server_url,
+           const std::filesystem::path &collection_relative_path,
            const Configuration::Collection &collection,
            const std::filesystem::path &path)
-      -> std::pair<std::string, std::string>;
+      -> std::pair<sourcemeta::core::JSON::String,
+                   sourcemeta::core::JSON::String>;
 
-  auto materialise(const std::string &uri, const std::filesystem::path &path)
-      -> void;
+  auto cache_path(const sourcemeta::core::JSON::String &uri,
+                  const std::filesystem::path &path) -> void;
 
   auto begin() const -> auto { return this->views.begin(); }
   auto end() const -> auto { return this->views.end(); }
-  auto size() const -> auto { return this->count_; }
+  auto size() const -> auto { return this->views.size(); }
 
   struct Entry {
     std::optional<std::filesystem::path> cache_path;
-    std::optional<std::filesystem::path> path;
-    std::optional<std::string> dialect;
+    std::filesystem::path path;
+    sourcemeta::core::JSON::String dialect;
+    // This is the collection name plus the final schema path component
     std::filesystem::path relative_path;
-    // TODO: Do we really need this member?
-    std::string original_identifier;
-    std::string collection_name;
-    // TODO: Directly forward the `extra`, so the attribute checking logic goes
-    // to the indexer
-    bool blaze_exhaustive;
-    SchemaVisitorReference reference_visitor;
+    sourcemeta::core::JSON::String original_identifier;
+    std::reference_wrapper<const Configuration::Collection> collection;
   };
 
 private:
-  std::unordered_map<std::string, Entry> views;
-  std::size_t count_{0};
+  std::unordered_map<sourcemeta::core::JSON::String, Entry> views;
   std::shared_mutex mutex;
 };
 

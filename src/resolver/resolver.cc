@@ -1,7 +1,11 @@
 #include <sourcemeta/registry/resolver.h>
 #include <sourcemeta/registry/shared.h>
 
+#include <sourcemeta/core/jsonschema.h>
+#include <sourcemeta/core/uri.h>
 #include <sourcemeta/core/yaml.h>
+
+#include "visitor.h"
 
 #include <algorithm> // std::transform
 #include <cassert>   // assert
@@ -31,22 +35,6 @@ static auto internal_schema_reader(const std::filesystem::path &path)
 
 namespace sourcemeta::registry {
 
-ResolverOutsideBaseError::ResolverOutsideBaseError(std::string uri,
-                                                   std::string base)
-    : uri_{std::move(uri)}, base_{std::move(base)} {}
-
-auto ResolverOutsideBaseError::what() const noexcept -> const char * {
-  return "The schema identifier is not relative to the corresponding base";
-}
-
-auto ResolverOutsideBaseError::uri() const noexcept -> const std::string & {
-  return this->uri_;
-}
-
-auto ResolverOutsideBaseError::base() const noexcept -> const std::string & {
-  return this->base_;
-}
-
 auto Resolver::operator()(
     std::string_view identifier,
     const std::function<void(const std::filesystem::path &)> &callback) const
@@ -69,24 +57,22 @@ auto Resolver::operator()(
       }
 
       return sourcemeta::registry::read_json(result->second.cache_path.value());
-    } else if (!result->second.path.has_value()) {
-      return std::nullopt;
     }
 
     if (callback) {
-      callback(result->second.path.value());
+      callback(result->second.path);
     }
 
-    auto schema{internal_schema_reader(result->second.path.value())};
+    auto schema{internal_schema_reader(result->second.path)};
     assert(sourcemeta::core::is_schema(schema));
-    if (schema.is_object() && result->second.dialect.has_value()) {
+    if (schema.is_object()) {
       // Don't modify references to official meta-schemas
       const auto current{sourcemeta::core::dialect(schema)};
       if (!current.has_value() ||
           !sourcemeta::core::schema_official_resolver(current.value())
                .has_value()) {
         schema.assign("$schema",
-                      sourcemeta::core::JSON{result->second.dialect.value()});
+                      sourcemeta::core::JSON{result->second.dialect});
       }
     }
 
@@ -95,8 +81,29 @@ auto Resolver::operator()(
         [this](const auto subidentifier) {
           return this->operator()(subidentifier);
         },
-        result->second.reference_visitor, result->second.dialect,
-        result->second.original_identifier);
+        [&result](sourcemeta::core::JSON &subschema,
+                  const sourcemeta::core::URI &base,
+                  const sourcemeta::core::JSON::String &vocabulary,
+                  const sourcemeta::core::JSON::String &keyword,
+                  sourcemeta::core::URI &value) {
+          const auto match{result->second.collection.get().resolve.find(
+              subschema.at(keyword).to_string())};
+          if (match != result->second.collection.get().resolve.cend()) {
+            subschema.assign(keyword, sourcemeta::core::JSON{match->second});
+            return;
+          }
+
+          const auto current_path{value.path()};
+          if (current_path.has_value()) {
+            value.path(to_lowercase(current_path.value()));
+            subschema.assign(keyword,
+                             sourcemeta::core::JSON{value.recompose()});
+          }
+
+          reference_visitor_relativize(subschema, base, vocabulary, keyword,
+                                       value);
+        },
+        result->second.dialect, result->second.original_identifier);
 
     sourcemeta::core::reidentify(
         schema, result->first,
@@ -111,11 +118,12 @@ auto Resolver::operator()(
   return sourcemeta::core::schema_official_resolver(identifier);
 }
 
-auto Resolver::add(const sourcemeta::core::URI &server_url,
-                   const std::filesystem::path &relative_path,
+auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
+                   const std::filesystem::path &collection_relative_path,
                    const Configuration::Collection &collection,
                    const std::filesystem::path &path)
-    -> std::pair<std::string, std::string> {
+    -> std::pair<sourcemeta::core::JSON::String,
+                 sourcemeta::core::JSON::String> {
   const auto default_identifier{
       sourcemeta::core::URI{collection.base}
           .append_path(std::filesystem::relative(path, collection.absolute_path)
@@ -156,7 +164,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
     dialect_uri.relative_to(base_uri);
     if (dialect_uri.is_relative()) {
       current_dialect = sourcemeta::core::URI{server_url}
-                            .append_path(relative_path)
+                            .append_path(collection_relative_path)
                             // TODO: Let `append_path` take a URI
                             .append_path(dialect_uri.recompose())
                             .canonicalize()
@@ -165,47 +173,15 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
     }
   }
 
+  assert(current_dialect.has_value());
   std::unique_lock lock{this->mutex};
   auto result{this->views.emplace(
-      effective_identifier,
-      Entry{.cache_path = std::nullopt,
-            .path = canonical,
-            .dialect = current_dialect,
-            .relative_path = "",
-            .original_identifier = effective_identifier,
-            .collection_name = relative_path,
-            .blaze_exhaustive =
-                !collection.extra.defines("x-sourcemeta-registry:evaluate") ||
-                !collection.extra.at("x-sourcemeta-registry:evaluate")
-                     .is_boolean() ||
-                collection.extra.at("x-sourcemeta-registry:evaluate")
-                    .to_boolean(),
-            // TODO: We should avoid this map copy
-            .reference_visitor =
-                [resolve_map = collection.resolve](
-                    sourcemeta::core::JSON &subschema,
-                    const sourcemeta::core::URI &base,
-                    const sourcemeta::core::JSON::String &vocabulary,
-                    const sourcemeta::core::JSON::String &keyword,
-                    sourcemeta::core::URI &value) {
-                  const auto match{
-                      resolve_map.find(subschema.at(keyword).to_string())};
-                  if (match != resolve_map.cend()) {
-                    subschema.assign(keyword,
-                                     sourcemeta::core::JSON{match->second});
-                    return;
-                  }
-
-                  const auto current_path{value.path()};
-                  if (current_path.has_value()) {
-                    value.path(to_lowercase(current_path.value()));
-                    subschema.assign(keyword,
-                                     sourcemeta::core::JSON{value.recompose()});
-                  }
-
-                  reference_visitor_relativize(subschema, base, vocabulary,
-                                               keyword, value);
-                }})};
+      effective_identifier, Entry{.cache_path = std::nullopt,
+                                  .path = canonical,
+                                  .dialect = current_dialect.value(),
+                                  .relative_path = collection_relative_path,
+                                  .original_identifier = effective_identifier,
+                                  .collection = collection})};
   lock.unlock();
 
   if (!result.second && result.first->second.path != canonical) {
@@ -230,7 +206,7 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
 
   assert(!identifier_uri.recompose().empty());
   auto new_identifier = sourcemeta::core::URI{server_url}
-                            .append_path(relative_path)
+                            .append_path(collection_relative_path)
                             // TODO: Let `append_path` take a URI
                             .append_path(identifier_uri.recompose())
                             .canonicalize()
@@ -264,13 +240,11 @@ auto Resolver::add(const sourcemeta::core::URI &server_url,
     lock.unlock();
   }
 
-  this->count_ += 1;
-
   return {std::move(current), std::move(new_identifier)};
 }
 
-auto Resolver::materialise(const std::string &uri,
-                           const std::filesystem::path &path) -> void {
+auto Resolver::cache_path(const sourcemeta::core::JSON::String &uri,
+                          const std::filesystem::path &path) -> void {
   assert(std::filesystem::exists(path));
   // As we are modifying the actual map
   std::unique_lock lock{this->mutex};
@@ -278,9 +252,6 @@ auto Resolver::materialise(const std::string &uri,
   assert(entry != this->views.cend());
   assert(!entry->second.cache_path.has_value());
   entry->second.cache_path = path;
-  entry->second.path = std::nullopt;
-  entry->second.dialect = std::nullopt;
-  entry->second.reference_visitor = nullptr;
 }
 
 } // namespace sourcemeta::registry
