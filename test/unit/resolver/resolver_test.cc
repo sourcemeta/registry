@@ -251,7 +251,7 @@ TEST(Resolver, example_2020_12_ref_with_casing) {
                R"JSON({
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "http://localhost:8000/example/2020-12-ref-with-casing.json",
-    "$ref": "2020-12-id.json"
+    "$ref": "2020-12-iD.Json"
   })JSON");
 }
 
