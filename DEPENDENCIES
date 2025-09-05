@@ -13,6 +13,14 @@ collections/geojson/v1.0.2 https://github.com/geojson/schema v1.0.2
 collections/geojson/v1.0.1 https://github.com/geojson/schema v1.0.1
 collections/geojson/v1.0.0 https://github.com/geojson/schema v1.0.0
 collections/modelcontextprotocol https://github.com/modelcontextprotocol/modelcontextprotocol 2025-06-18
+collections/a2a/v0.3.0 https://github.com/a2aproject/A2A v0.3.0
+collections/a2a/v0.2.6 https://github.com/a2aproject/A2A v0.2.6
+collections/a2a/v0.2.5 https://github.com/a2aproject/A2A v0.2.5
+collections/a2a/v0.2.4 https://github.com/a2aproject/A2A v0.2.4
+collections/a2a/v0.2.3 https://github.com/a2aproject/A2A v0.2.3
+collections/a2a/v0.2.2 https://github.com/a2aproject/A2A v0.2.2
+collections/a2a/v0.2.1 https://github.com/a2aproject/A2A v0.2.1
+collections/a2a/v0.2.0 https://github.com/a2aproject/A2A v0.2.0
 public/nasa-gcn-1-0-0 https://github.com/nasa-gcn/gcn-schema v1.0.0
 public/nasa-gcn-2-0-0 https://github.com/nasa-gcn/gcn-schema v2.0.0
 public/nasa-gcn-3-0-0 https://github.com/nasa-gcn/gcn-schema v3.0.0

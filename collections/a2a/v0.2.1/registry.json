@@ -1,0 +1,15 @@
+{
+  "contents": {
+    "a2a": {
+      "title": "Agent2Agent (A2A) Protocol",
+      "description": "An open protocol enabling communication and interoperability between opaque agentic applications",
+      "github": "a2aproject",
+      "website": "https://a2a-protocol.org",
+      "contents": {
+        "v0.2.1": {
+          "include": "./jsonschema.json"
+        }
+      }
+    }
+  }
+}

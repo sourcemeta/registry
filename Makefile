@@ -106,7 +106,7 @@ public:
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-index $(PUBLIC)/registry.json $(OUTPUT)/public
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
-		$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/public
+		$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/public 8000
 
 .PHONY: clean
 clean:
