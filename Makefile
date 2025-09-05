@@ -46,7 +46,6 @@ compile:
 		--component sourcemeta_registry --component sourcemeta_registry
 	$(CMAKE) --install $(OUTPUT) --prefix $(PREFIX) --config $(PRESET) --verbose \
 		--component sourcemeta_registry --component sourcemeta_jsonschema
-	$(CMAKE) --build $(OUTPUT) --config $(PRESET) --target jsonschema_fmt
 
 .PHONY: lint
 lint:
