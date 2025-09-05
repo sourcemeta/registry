@@ -5,8 +5,6 @@
 #include <sourcemeta/core/uri.h>
 #include <sourcemeta/core/yaml.h>
 
-#include "visitor.h"
-
 #include <algorithm> // std::transform
 #include <cassert>   // assert
 #include <cctype>    // std::tolower
@@ -30,7 +28,7 @@ rebase(const sourcemeta::registry::Configuration::Collection &collection,
   sourcemeta::core::URI maybe_relative{uri};
   maybe_relative.relative_to(collection.base);
   if (maybe_relative.is_relative()) {
-    auto suffix{maybe_relative.recompose()};
+    auto suffix{maybe_relative.path().value_or("")};
     assert(!suffix.empty());
     return sourcemeta::core::URI{new_base}
         .append_path(new_prefix)
@@ -48,86 +46,154 @@ rebase(const sourcemeta::registry::Configuration::Collection &collection,
 namespace sourcemeta::registry {
 
 auto Resolver::operator()(
-    std::string_view identifier,
+    std::string_view raw_identifier,
     const std::function<void(const std::filesystem::path &)> &callback) const
     -> std::optional<sourcemeta::core::JSON> {
-  const std::string string_identifier{to_lowercase(identifier)};
+  /////////////////////////////////////////////////////////////////////////////
+  // (1) Lookup the schema
+  /////////////////////////////////////////////////////////////////////////////
 
-  auto result{this->views.find(string_identifier)};
+  // Internally, we keep all schema URI identifiers as lowercase to avoid
+  // tricky cases with case-insensitive operating systems
+  const auto identifier{to_lowercase(raw_identifier)};
+  auto result{this->views.find(identifier)};
+  // Try with a `.json` extension as a fallback, as we do add this
+  // extension when a schema doesn't have it by default
   if (result == this->views.cend() && !identifier.ends_with(".json")) {
-    sourcemeta::core::URI uri_identifier{string_identifier};
-    // Try with a `.json` extension as a fallback, as we do add this
-    // extension when a schema doesn't have it by default
-    uri_identifier.extension("json");
-    result = this->views.find(uri_identifier.recompose());
+    result = this->views.find(identifier + ".json");
+  }
+  // If we don't recognise the schema, try a fallback as a last resort
+  if (result == this->views.cend()) {
+    return sourcemeta::core::schema_official_resolver(identifier);
   }
 
-  if (result != this->views.cend()) {
-    if (result->second.cache_path.has_value()) {
-      if (callback) {
-        callback(result->second.cache_path.value());
-      }
+  /////////////////////////////////////////////////////////////////////////////
+  // (2) Avoid rebasing on the fly if possible
+  /////////////////////////////////////////////////////////////////////////////
 
-      return sourcemeta::registry::read_json(result->second.cache_path.value());
-    }
-
-    if (callback) {
-      callback(result->second.path);
-    }
-
-    auto schema{sourcemeta::core::read_yaml_or_json(result->second.path)};
+  if (result->second.cache_path.has_value()) {
+    // We can guarantee the cached outcome is JSON, so we don't need to try
+    // reading as YAML
+    auto schema{
+        sourcemeta::registry::read_json(result->second.cache_path.value())};
     assert(sourcemeta::core::is_schema(schema));
-    if (schema.is_object()) {
-      // Don't modify references to official meta-schemas
-      const auto current{sourcemeta::core::dialect(schema)};
-      if (!current.has_value() ||
-          !sourcemeta::core::schema_official_resolver(current.value())
-               .has_value()) {
-        schema.assign("$schema",
-                      sourcemeta::core::JSON{result->second.dialect});
-      }
+    if (callback) {
+      callback(result->second.cache_path.value());
     }
-
-    reference_visit(
-        schema, sourcemeta::core::schema_official_walker,
-        [this](const auto subidentifier) {
-          return this->operator()(subidentifier);
-        },
-        [&result](sourcemeta::core::JSON &subschema,
-                  const sourcemeta::core::URI &base,
-                  const sourcemeta::core::JSON::String &vocabulary,
-                  const sourcemeta::core::JSON::String &keyword,
-                  sourcemeta::core::URI &value) {
-          const auto match{result->second.collection.get().resolve.find(
-              subschema.at(keyword).to_string())};
-          if (match != result->second.collection.get().resolve.cend()) {
-            subschema.assign(keyword, sourcemeta::core::JSON{match->second});
-            return;
-          }
-
-          const auto current_path{value.path()};
-          if (current_path.has_value()) {
-            value.path(to_lowercase(current_path.value()));
-            subschema.assign(keyword,
-                             sourcemeta::core::JSON{value.recompose()});
-          }
-
-          reference_visitor_relativize(subschema, base, vocabulary, keyword,
-                                       value);
-        },
-        result->second.dialect, result->second.original_identifier);
-
-    sourcemeta::core::reidentify(
-        schema, result->first,
-        [this](const auto subidentifier) {
-          return this->operator()(subidentifier);
-        },
-        result->second.dialect);
 
     return schema;
   }
 
-  return sourcemeta::core::schema_official_resolver(identifier);
+  /////////////////////////////////////////////////////////////////////////////
+  // (3) Read the original schema file
+  /////////////////////////////////////////////////////////////////////////////
+
+  auto schema{sourcemeta::core::read_yaml_or_json(result->second.path)};
+  assert(sourcemeta::core::is_schema(schema));
+  if (callback) {
+    callback(result->second.path);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // (4) Make sure the schema explicitly declares the intended dialect
+  /////////////////////////////////////////////////////////////////////////////
+
+  // Note that we have to do this before attempting to analyse the schema, so
+  // we can internally resolve any potential custom meta-schema
+  if (schema.is_object()) {
+    schema.assign("$schema", sourcemeta::core::JSON{result->second.dialect});
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+
+  sourcemeta::core::SchemaFrame frame{
+      sourcemeta::core::SchemaFrame::Mode::Locations};
+
+  frame.analyse(
+      schema, sourcemeta::core::schema_official_walker,
+      [this](const auto subidentifier) {
+        return this->operator()(subidentifier);
+      },
+      result->second.dialect, result->second.original_identifier);
+
+  for (const auto &entry : frame.locations()) {
+    if (entry.second.type !=
+            sourcemeta::core::SchemaFrame::LocationType::Resource &&
+        entry.second.type !=
+            sourcemeta::core::SchemaFrame::LocationType::Subschema) {
+      continue;
+    }
+
+    auto &subschema{sourcemeta::core::get(schema, entry.second.pointer)};
+    if (!subschema.is_object()) {
+      continue;
+    }
+
+    const sourcemeta::core::URI base{entry.second.base};
+    // Assume the base is canonicalized already
+    assert(sourcemeta::core::URI::canonicalize(entry.second.base) ==
+           base.recompose());
+    for (const auto &property : subschema.as_object()) {
+      const auto walker_result{sourcemeta::core::schema_official_walker(
+          property.first,
+          frame.vocabularies(entry.second, [this](const auto subidentifier) {
+            return this->operator()(subidentifier);
+          }))};
+      if (walker_result.type !=
+              sourcemeta::core::SchemaKeywordType::Reference ||
+          !property.second.is_string()) {
+        continue;
+      }
+
+      assert(property.second.is_string());
+      assert(walker_result.vocabulary.has_value());
+      sourcemeta::core::URI value{property.second.to_string()};
+      const auto &keyword{property.first};
+
+      const auto match{result->second.collection.get().resolve.find(
+          subschema.at(keyword).to_string())};
+      if (match != result->second.collection.get().resolve.cend()) {
+        subschema.assign(keyword, sourcemeta::core::JSON{match->second});
+        continue;
+      }
+
+      const auto current_path{value.path()};
+      if (current_path.has_value()) {
+        value.path(to_lowercase(current_path.value()));
+        subschema.assign(keyword, sourcemeta::core::JSON{value.recompose()});
+      }
+
+      // Relativise
+
+      // In 2019-09, `$recursiveRef` can only be `#`, so there
+      // is nothing else we can possibly do
+      if (walker_result.vocabulary ==
+              "https://json-schema.org/draft/2019-09/vocab/core" &&
+          keyword == "$recursiveRef") {
+        continue;
+      }
+
+      value.relative_to(base);
+      value.canonicalize();
+
+      if (value.is_relative()) {
+        subschema.assign(keyword, sourcemeta::core::JSON{value.recompose()});
+      }
+    }
+  }
+
+  // Note that we don't use the base dialect approach here as we might only
+  // truly be able to resolve custom meta-schemas at this point, and not when
+  // adding the schemas into the resolver
+  sourcemeta::core::reidentify(
+      schema, result->first,
+      [this](const auto subidentifier) {
+        return this->operator()(subidentifier);
+      },
+      result->second.dialect);
+
+  return schema;
 }
 
 auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
@@ -201,8 +267,20 @@ auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
       sourcemeta::core::dialect(schema, collection.default_dialect)};
   // If we couldn't determine the dialect, we would be in trouble!
   assert(raw_dialect.has_value());
-  auto current_dialect{rebase(collection, to_lowercase(raw_dialect.value()),
-                              server_url, collection_relative_path)};
+  // Don't modify references to official meta-schemas
+  // TODO: This line may be unnecessarily slow. We should have a different
+  // function that just checks for string equality in an `std::unordered_map`
+  // of official dialects without constructing the final object
+  const auto is_official_dialect{
+      sourcemeta::core::schema_official_resolver(raw_dialect.value())
+          .has_value()};
+  auto current_dialect{is_official_dialect
+                           ? raw_dialect.value()
+                           : rebase(collection,
+                                    to_lowercase(raw_dialect.value()),
+                                    server_url, collection_relative_path)};
+  // Otherwise we messed things up
+  assert(!current_dialect.ends_with("#.json"));
 
   /////////////////////////////////////////////////////////////////////////////
   // (5) Safely registry the schema entry in the resolver

@@ -1,5 +1,5 @@
 sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME resolver
-  PRIVATE_HEADERS error.h SOURCES resolver.cc visitor.h visitor.cc)
+  PRIVATE_HEADERS error.h SOURCES resolver.cc)
 
 target_link_libraries(sourcemeta_registry_resolver PUBLIC
   sourcemeta::core::json)
