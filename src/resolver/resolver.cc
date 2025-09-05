@@ -43,6 +43,44 @@ rebase(const sourcemeta::registry::Configuration::Collection &collection,
   }
 }
 
+static auto
+normalise_ref(const sourcemeta::registry::Configuration::Collection &collection,
+              const sourcemeta::core::URI &base, sourcemeta::core::JSON &schema,
+              const sourcemeta::core::JSON::String &keyword,
+              const sourcemeta::core::JSON::String &reference) -> void {
+  // We never want to mess with internal references.
+  // We assume those are always well formed
+  if (reference.starts_with('#')) {
+    return;
+  }
+
+  // If we have a match in the configuration resolver, then trust that
+  const auto match{collection.resolve.find(reference)};
+  if (match != collection.resolve.cend()) {
+    schema.assign(keyword, sourcemeta::core::JSON{match->second});
+    return;
+  }
+
+  sourcemeta::core::URI value{reference};
+  if (value.is_relative()) {
+    schema.assign(keyword, sourcemeta::core::JSON{value.recompose()});
+  } else {
+    // Lowercase only the path component of the reference, as
+    // otherwise `.relative_to` will get confused. Note that
+    // are careful about not lowercasing the entire thing,
+    // as the reference may include a JSON Pointer in the fragment
+    const auto current_path{value.path()};
+    if (current_path.has_value()) {
+      value.path(to_lowercase(current_path.value()));
+    }
+
+    // Turn the reference into a relative one if possible. That way, even
+    // if we change the identifiers, its all well
+    value.relative_to(base);
+    schema.assign(keyword, sourcemeta::core::JSON{value.recompose()});
+  }
+}
+
 namespace sourcemeta::registry {
 
 auto Resolver::operator()(
@@ -94,98 +132,70 @@ auto Resolver::operator()(
     callback(result->second.path);
   }
 
+  // If the schema is not an object schema, then we are done
+  if (!schema.is_object()) {
+    return schema;
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // (4) Make sure the schema explicitly declares the intended dialect
   /////////////////////////////////////////////////////////////////////////////
 
   // Note that we have to do this before attempting to analyse the schema, so
   // we can internally resolve any potential custom meta-schema
-  if (schema.is_object()) {
-    schema.assign("$schema", sourcemeta::core::JSON{result->second.dialect});
-  }
+  schema.assign("$schema", sourcemeta::core::JSON{result->second.dialect});
 
   /////////////////////////////////////////////////////////////////////////////
+  // (5) Normalise all references, if any, to match the new identifier
   /////////////////////////////////////////////////////////////////////////////
 
   sourcemeta::core::SchemaFrame frame{
       sourcemeta::core::SchemaFrame::Mode::Locations};
-
   frame.analyse(
       schema, sourcemeta::core::schema_official_walker,
       [this](const auto subidentifier) {
         return this->operator()(subidentifier);
       },
       result->second.dialect, result->second.original_identifier);
-
+  const auto ref_hash{schema.as_object().hash("$ref")};
+  const auto dynamic_ref_hash{schema.as_object().hash("$dynamicRef")};
   for (const auto &entry : frame.locations()) {
-    if (entry.second.type !=
-            sourcemeta::core::SchemaFrame::LocationType::Resource &&
-        entry.second.type !=
+    if (entry.second.type ==
+            sourcemeta::core::SchemaFrame::LocationType::Resource ||
+        entry.second.type ==
             sourcemeta::core::SchemaFrame::LocationType::Subschema) {
-      continue;
-    }
+      auto &subschema{sourcemeta::core::get(schema, entry.second.pointer)};
+      if (subschema.is_object()) {
+        const auto maybe_ref{subschema.try_at("$ref", ref_hash)};
+        if (maybe_ref) {
+          // This is safe, as at this point we have validated all schemas
+          // against their meta-schemas
+          assert(maybe_ref->is_string());
+          normalise_ref(result->second.collection.get(), entry.second.base,
+                        subschema, "$ref", maybe_ref->to_string());
+        }
 
-    auto &subschema{sourcemeta::core::get(schema, entry.second.pointer)};
-    if (!subschema.is_object()) {
-      continue;
-    }
-
-    const sourcemeta::core::URI base{entry.second.base};
-    // Assume the base is canonicalized already
-    assert(sourcemeta::core::URI::canonicalize(entry.second.base) ==
-           base.recompose());
-    for (const auto &property : subschema.as_object()) {
-      const auto walker_result{sourcemeta::core::schema_official_walker(
-          property.first,
-          frame.vocabularies(entry.second, [this](const auto subidentifier) {
-            return this->operator()(subidentifier);
-          }))};
-      if (walker_result.type !=
-              sourcemeta::core::SchemaKeywordType::Reference ||
-          !property.second.is_string()) {
-        continue;
-      }
-
-      assert(property.second.is_string());
-      assert(walker_result.vocabulary.has_value());
-      sourcemeta::core::URI value{property.second.to_string()};
-      const auto &keyword{property.first};
-
-      const auto match{result->second.collection.get().resolve.find(
-          subschema.at(keyword).to_string())};
-      if (match != result->second.collection.get().resolve.cend()) {
-        subschema.assign(keyword, sourcemeta::core::JSON{match->second});
-        continue;
-      }
-
-      const auto current_path{value.path()};
-      if (current_path.has_value()) {
-        value.path(to_lowercase(current_path.value()));
-        subschema.assign(keyword, sourcemeta::core::JSON{value.recompose()});
-      }
-
-      // Relativise
-
-      // In 2019-09, `$recursiveRef` can only be `#`, so there
-      // is nothing else we can possibly do
-      if (walker_result.vocabulary ==
-              "https://json-schema.org/draft/2019-09/vocab/core" &&
-          keyword == "$recursiveRef") {
-        continue;
-      }
-
-      value.relative_to(base);
-      value.canonicalize();
-
-      if (value.is_relative()) {
-        subschema.assign(keyword, sourcemeta::core::JSON{value.recompose()});
+        if (entry.second.base_dialect ==
+            "https://json-schema.org/draft/2020-12/schema") {
+          const auto maybe_dynamic_ref{
+              subschema.try_at("$dynamicRef", dynamic_ref_hash)};
+          if (maybe_dynamic_ref) {
+            // This is safe, as at this point we have validated all schemas
+            // against their meta-schemas
+            assert(maybe_dynamic_ref->is_string());
+            normalise_ref(result->second.collection.get(), entry.second.base,
+                          subschema, "$dynamicRef",
+                          maybe_dynamic_ref->to_string());
+          }
+        }
       }
     }
   }
 
-  // Note that we don't use the base dialect approach here as we might only
-  // truly be able to resolve custom meta-schemas at this point, and not when
-  // adding the schemas into the resolver
+  /////////////////////////////////////////////////////////////////////////////
+  // (6) Assign the new final identifier to the schema
+  /////////////////////////////////////////////////////////////////////////////
+
   sourcemeta::core::reidentify(
       schema, result->first,
       [this](const auto subidentifier) {
