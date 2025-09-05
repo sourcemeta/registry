@@ -336,6 +336,17 @@ TEST(Resolver, example_2020_12_base_with_trailing_slash) {
   })JSON");
 }
 
+TEST(Resolver, base_slash_2020_12_equal_to_base) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "base-slash", "2020-12-equal-to-base.json",
+               "https://example.com/slash/2020-12-equal-to-base.json",
+               "http://localhost:8000/base-slash/2020-12-equal-to-base.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/base-slash/2020-12-equal-to-base.json"
+  })JSON");
+}
+
 TEST(Resolver, example_2019_09_recursive_ref) {
   RESOLVER_INIT(resolver);
   RESOLVER_ADD(resolver, "example", "2019-09-recursive-ref.json",

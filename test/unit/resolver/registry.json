@@ -9,6 +9,10 @@
         "https://other.com/2020-12-with-id": "/example/2020-12-with-id"
       }
     },
+    "base-slash": {
+      "baseUri": "https://example.com/slash/",
+      "path": "./schemas/base-slash"
+    },
     "meta-draft4": {
       "baseUri": "http://json-schema.org/draft-04",
       "path": "./schemas/meta-draft4"

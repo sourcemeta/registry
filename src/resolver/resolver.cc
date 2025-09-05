@@ -186,13 +186,11 @@ auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
           // `https://example.com/foo/bar.json`. Maybe we need an `append_from`?
           ? (collection.base + "/" + identifier_uri.recompose())
           : identifier_uri.recompose()};
-  // While URI canonicalization considers a trailing slash as different, they
-  // are the same to us in the context of schemas
-  if (identifier.back() == '/') {
-    identifier.pop_back();
-  }
-  // We have to do something if the schema is the base
-  if (identifier == collection.base) {
+  // We have to do something if the schema is the base. Note that URI
+  // canonicalisation technically cannot remove trailing slashes as they might
+  // have meaning in certain use cases. But we still consider them equal in the
+  // context of the Registry
+  if (identifier == collection.base || identifier == collection.base + "/") {
     identifier = default_identifier;
   }
   // A final check that everything went well
