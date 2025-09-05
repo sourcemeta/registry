@@ -5,14 +5,10 @@ sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
 # Compile the configuration schema
 set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/configuration")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.json"
-  # Seems like adding the command directly here confuses CMake dependency
-  # tracking (probably due to the output re-direction)
-  COMMAND "${CMAKE_COMMAND}"
-    -DJSONSCHEMA="$<TARGET_FILE:jsonschema_cli>"
-    -DINPUT="${SCHEMA_BASE_PATH}/configuration.json"
-    -DOUTPUT="${CMAKE_CURRENT_BINARY_DIR}/template.json"
-    -P "${CMAKE_CURRENT_SOURCE_DIR}/compile.cmake"
+  COMMAND "$<TARGET_FILE:jsonschema_cli>" compile --minify "${SCHEMA_BASE_PATH}/configuration.json"
+    > "${CMAKE_CURRENT_BINARY_DIR}/template.json"
   DEPENDS
+    "$<TARGET_FILE:jsonschema_cli>"
     "${SCHEMA_BASE_PATH}/configuration.json"
     "${SCHEMA_BASE_PATH}/collection.json"
     "${SCHEMA_BASE_PATH}/email-address.json"
