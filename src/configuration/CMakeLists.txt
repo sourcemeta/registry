@@ -1,13 +1,18 @@
 sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
-  PRIVATE_HEADERS error.h SOURCES parse.cc read.cc)
+  PRIVATE_HEADERS error.h
+  SOURCES parse.cc read.cc "${CMAKE_CURRENT_BINARY_DIR}/template.h")
 
 # Compile the configuration schema
 set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/configuration")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.json"
-  COMMAND "$<TARGET_FILE:jsonschema_cli>" compile --minify "${SCHEMA_BASE_PATH}/configuration.json"
-    > "${CMAKE_CURRENT_BINARY_DIR}/template.json"
+  # Seems like adding the command directly here confuses CMake dependency
+  # tracking (probably due to the output re-direction)
+  COMMAND "${CMAKE_COMMAND}"
+    -DJSONSCHEMA="$<TARGET_FILE:jsonschema_cli>"
+    -DINPUT="${SCHEMA_BASE_PATH}/configuration.json"
+    -DOUTPUT="${CMAKE_CURRENT_BINARY_DIR}/template.json"
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/compile.cmake"
   DEPENDS
-    "$<TARGET_FILE:jsonschema_cli>"
     "${SCHEMA_BASE_PATH}/configuration.json"
     "${SCHEMA_BASE_PATH}/collection.json"
     "${SCHEMA_BASE_PATH}/email-address.json"
@@ -27,10 +32,9 @@ find_program(XXD_BIN NAMES xxd REQUIRED)
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.h"
   COMMAND "${XXD_BIN}" --include --name SOURCEMETA_CONFIGURATION_SCHEMA_TEMPLATE
     "${CMAKE_CURRENT_BINARY_DIR}/template.json"
-      > "${CMAKE_CURRENT_BINARY_DIR}/template.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/template.h"
   DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/template.json")
 
-target_sources(sourcemeta_registry_configuration PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/template.h")
 target_include_directories(sourcemeta_registry_configuration PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 target_link_libraries(sourcemeta_registry_configuration PUBLIC sourcemeta::core::json)
