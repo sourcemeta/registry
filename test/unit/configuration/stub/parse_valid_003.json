@@ -1,0 +1,13 @@
+{
+  "url": "http://localhost:8000",
+  "html": {
+    "name": "Title",
+    "description": "Description"
+  },
+  "contents": {
+    "example": {
+      "baseUri": "https://EXAMPLE.com/extension/../foo",
+      "path": "./schemas/example/extension"
+    }
+  }
+}

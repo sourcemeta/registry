@@ -147,6 +147,7 @@ static auto index_main(const std::string_view &program,
       }
 #endif
 
+      // TODO: Print the before URI => after URI on `--verbose`
       resolver.add(configuration.url, element.first, collection, entry.path());
     }
   };

@@ -8,6 +8,7 @@
 #include <sourcemeta/registry/resolver_error.h>
 
 #include <filesystem>    // std::filesystem
+#include <functional>    // std::reference_wrapper
 #include <optional>      // std::optional
 #include <shared_mutex>  // std::shared_mutex
 #include <string_view>   // std::string_view
@@ -36,8 +37,9 @@ public:
            const std::filesystem::path &collection_relative_path,
            const Configuration::Collection &collection,
            const std::filesystem::path &path)
-      -> std::pair<sourcemeta::core::JSON::String,
-                   sourcemeta::core::JSON::String>;
+      -> std::pair<
+          std::reference_wrapper<const sourcemeta::core::JSON::String>,
+          std::reference_wrapper<const sourcemeta::core::JSON::String>>;
 
   auto cache_path(const sourcemeta::core::JSON::String &uri,
                   const std::filesystem::path &path) -> void;

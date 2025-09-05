@@ -62,6 +62,8 @@ TEST(Configuration, valid_001) {
   EXPECT_COLLECTION(configuration, "example/extension", absolute_path,
                     std::filesystem::path{STUB_DIRECTORY} / "schemas" /
                         "example" / "extension");
+  EXPECT_COLLECTION(configuration, "example/extension", base,
+                    "https://example.com/extension");
   EXPECT_COLLECTION(configuration, "example/extension", default_dialect,
                     "http://json-schema.org/draft-07/schema#");
   EXPECT_COLLECTION(configuration, "example/extension", resolve.size(), 1);
@@ -87,4 +89,37 @@ TEST(Configuration, valid_002) {
   EXPECT_PAGE(configuration, "test", title, "A sample schema folder");
   EXPECT_PAGE(configuration, "test", description, "For testing purposes");
   EXPECT_PAGE(configuration, "test", github, "sourcemeta/registry");
+}
+
+TEST(Configuration, valid_003) {
+  const auto configuration_path{std::filesystem::path{STUB_DIRECTORY} /
+                                "parse_valid_003.json"};
+  const auto raw_configuration{sourcemeta::registry::Configuration::read(
+      configuration_path, COLLECTIONS_DIRECTORY)};
+  const auto configuration{
+      sourcemeta::registry::Configuration::parse(raw_configuration)};
+
+  EXPECT_EQ(configuration.url, "http://localhost:8000");
+
+  EXPECT_TRUE(configuration.html.has_value());
+  EXPECT_EQ(configuration.html.value().name, "Title");
+  EXPECT_EQ(configuration.html.value().description, "Description");
+  EXPECT_FALSE(configuration.html.value().head.has_value());
+  EXPECT_FALSE(configuration.html.value().hero.has_value());
+  EXPECT_FALSE(configuration.html.value().action.has_value());
+
+  EXPECT_EQ(configuration.entries.size(), 1);
+
+  EXPECT_COLLECTION(configuration, "example", title, std::nullopt);
+  EXPECT_COLLECTION(configuration, "example", description, std::nullopt);
+  EXPECT_COLLECTION(configuration, "example", email, std::nullopt);
+  EXPECT_COLLECTION(configuration, "example", github, std::nullopt);
+  EXPECT_COLLECTION(configuration, "example", website, std::nullopt);
+  EXPECT_COLLECTION(configuration, "example", absolute_path,
+                    std::filesystem::path{STUB_DIRECTORY} / "schemas" /
+                        "example" / "extension");
+  // Note that the base URI is turned into lowercase and canonicalised
+  EXPECT_COLLECTION(configuration, "example", base, "https://example.com/foo");
+  EXPECT_COLLECTION(configuration, "example", default_dialect, std::nullopt);
+  EXPECT_COLLECTION(configuration, "example", resolve.size(), 0);
 }
