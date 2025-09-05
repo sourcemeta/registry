@@ -88,21 +88,6 @@ auto Resolver::operator()(
       }
     }
 
-    // TODO: This is only to workaround this existing framing bug:
-    // See: https://github.com/sourcemeta/core/pull/1979
-    auto current_identifier{sourcemeta::core::identify(
-        schema,
-        [this](const auto subidentifier) {
-          return this->operator()(subidentifier);
-        },
-        sourcemeta::core::SchemaIdentificationStrategy::Strict,
-        result->second.dialect)};
-    if (current_identifier.has_value()) {
-      if (sourcemeta::core::URI{current_identifier.value()}.is_relative()) {
-        sourcemeta::core::anonymize(schema, result->second.dialect);
-      }
-    }
-
     reference_visit(
         schema, sourcemeta::core::schema_official_walker,
         [this](const auto subidentifier) {
