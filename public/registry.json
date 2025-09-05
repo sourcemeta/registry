@@ -21,7 +21,15 @@
     "@geojson/v1.0.0",
     "@modelcontextprotocol/2025-06-18",
     "@modelcontextprotocol/2025-03-26",
-    "@modelcontextprotocol/2024-11-05"
+    "@modelcontextprotocol/2024-11-05",
+    "@a2a/v0.3.0",
+    "@a2a/v0.2.6",
+    "@a2a/v0.2.5",
+    "@a2a/v0.2.4",
+    "@a2a/v0.2.3",
+    "@a2a/v0.2.2",
+    "@a2a/v0.2.1",
+    "@a2a/v0.2.0"
   ],
   "contents": {
     "nasa": {
