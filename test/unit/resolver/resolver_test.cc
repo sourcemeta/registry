@@ -230,6 +230,18 @@ TEST(Resolver, example_2020_12_absolute_ref) {
   })JSON");
 }
 
+TEST(Resolver, example_2020_12_relative_id) {
+  RESOLVER_INIT(resolver);
+
+  RESOLVER_ADD(resolver, "example", "2020-12-relative-id.json",
+               "https://example.com/schemas/2020-12-relative-id.json",
+               "http://localhost:8000/example/2020-12-relative-id.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-relative-id.json"
+  })JSON");
+}
+
 TEST(Resolver, example_2020_12_ref_with_casing) {
   RESOLVER_INIT(resolver);
 

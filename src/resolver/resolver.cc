@@ -88,6 +88,21 @@ auto Resolver::operator()(
       }
     }
 
+    // TODO: This is only to workaround this existing framing bug:
+    // See: https://github.com/sourcemeta/core/pull/1979
+    auto current_identifier{sourcemeta::core::identify(
+        schema,
+        [this](const auto subidentifier) {
+          return this->operator()(subidentifier);
+        },
+        sourcemeta::core::SchemaIdentificationStrategy::Strict,
+        result->second.dialect)};
+    if (current_identifier.has_value()) {
+      if (sourcemeta::core::URI{current_identifier.value()}.is_relative()) {
+        sourcemeta::core::anonymize(schema, result->second.dialect);
+      }
+    }
+
     reference_visit(
         schema, sourcemeta::core::schema_official_walker,
         [this](const auto subidentifier) {
@@ -153,7 +168,7 @@ auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
                            .string())
           .canonicalize()
           .recompose()};
-  auto identifier{sourcemeta::core::URI::canonicalize(to_lowercase(
+  sourcemeta::core::URI identifier_uri{to_lowercase(
       sourcemeta::core::identify(
           schema,
           [this](const auto subidentifier) {
@@ -162,9 +177,15 @@ auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
           sourcemeta::core::SchemaIdentificationStrategy::Loose,
           collection.default_dialect, default_identifier)
           // We can safely assume this as we pass a default identifier
-          .value()))};
-  // Otherwise we have things like "../" that should not be there
-  assert(identifier.find("..") == std::string::npos);
+          .value())};
+  identifier_uri.canonicalize();
+  auto identifier{
+      identifier_uri.is_relative()
+          // TODO: Becase with `try_resolve_from`, `https://example.com/foo` +
+          // `bar.json` will be `https://example.com/bar.json` instead of
+          // `https://example.com/foo/bar.json`. Maybe we need an `append_from`?
+          ? (collection.base + "/" + identifier_uri.recompose())
+          : identifier_uri.recompose()};
   // While URI canonicalization considers a trailing slash as different, they
   // are the same to us in the context of schemas
   if (identifier.back() == '/') {
@@ -178,6 +199,8 @@ auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
   if (!identifier.starts_with(collection.base)) {
     throw ResolverOutsideBaseError(identifier, collection.base);
   }
+  // Otherwise we have things like "../" that should not be there
+  assert(identifier.find("..") == std::string::npos);
 
   /////////////////////////////////////////////////////////////////////////////
   // (3) Determine the new URI of the schema, from the registry base URI
