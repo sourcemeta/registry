@@ -189,7 +189,7 @@ auto html_footer(T &output, const std::string_view version) -> void {
         "border-top text-secondary py-3 d-flex "
         "align-items-center justify-content-between flex-column flex-md-row"}});
   output.open("small", {{"class", "mb-2 mb-md-0"}});
-  image(output, "/static/icon.svg", 25, "Sourcemeta", "me-2");
+  image(output, "/self/static/icon.svg", 25, "Sourcemeta", "me-2");
 
   output
       .open("a", {{"href", "https://github.com/sourcemeta/registry"},
@@ -252,26 +252,26 @@ auto html_start(T &output, const std::string &canonical,
     output.open("link", {{"rel", "canonical"}, {"href", canonical}});
   }
 
-  css(output, "/static/style.min.css");
+  css(output, "/self/static/style.min.css");
 
   // Application icons
   // TODO: Allow changing these by supporing an object in the
   // configuration manifest to select static files to override
   output
-      .open(
-          "link",
-          {{"rel", "icon"}, {"href", "/static/favicon.ico"}, {"sizes", "any"}})
       .open("link", {{"rel", "icon"},
-                     {"href", "/static/icon.svg"},
+                     {"href", "/self/static/favicon.ico"},
+                     {"sizes", "any"}})
+      .open("link", {{"rel", "icon"},
+                     {"href", "/self/static/icon.svg"},
                      {"type", "image/svg+xml"}})
       .open("link", {{"rel", "shortcut icon"},
-                     {"href", "/static/apple-touch-icon.png"},
+                     {"href", "/self/static/apple-touch-icon.png"},
                      {"type", "image/png"}})
       .open("link", {{"rel", "apple-touch-icon"},
-                     {"href", "/static/apple-touch-icon.png"},
+                     {"href", "/self/static/apple-touch-icon.png"},
                      {"sizes", "180x180"}})
-      .open("link",
-            {{"rel", "manifest"}, {"href", "/static/manifest.webmanifest"}});
+      .open("link", {{"rel", "manifest"},
+                     {"href", "/self/static/manifest.webmanifest"}});
 
   output.unsafe(head);
   output.close("head");
@@ -284,7 +284,7 @@ template <typename T>
 auto html_end(T &output, const std::string_view version) -> void {
   output
       .open("script",
-            {{"async", ""}, {"defer", ""}, {"src", "/static/main.min.js"}})
+            {{"async", ""}, {"defer", ""}, {"src", "/self/static/main.min.js"}})
       .close("script");
   output.open("div", {{"class", "container-fluid px-4 mb-2"}});
   html_footer(output, version);

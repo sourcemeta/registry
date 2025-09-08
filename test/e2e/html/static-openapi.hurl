@@ -1,4 +1,4 @@
-GET {{base}}/static/openapi.html
+GET {{base}}/self/static/openapi.html
 Accept-Encoding: gzip
 HTTP 200
 Content-Type: text/html
@@ -9,7 +9,7 @@ header "ETag" exists
 header "Last-Modified" exists
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/static/openapi.yaml
+GET {{base}}/self/static/openapi.yaml
 Accept-Encoding: gzip
 HTTP 200
 Content-Type: application/yaml

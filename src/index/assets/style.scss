@@ -1,6 +1,6 @@
 /*
- * All rights reserved. You can only use this software 
- * under a commercial license, as set out in 
+ * All rights reserved. You can only use this software
+ * under a commercial license, as set out in
  * <https://www.sourcemeta.com/licensing/>.
  */
 
@@ -53,7 +53,7 @@ $breadcrumb-font-size: 15px;
 
 // Bootstrap Icons
 $bootstrap-icons-font: bootstrap-icons;
-$bootstrap-icons-font-dir: "/static";
+$bootstrap-icons-font-dir: "/self/static";
 @import "../../../vendor/bootstrap-icons/font/bootstrap-icons.scss";
 
 // Bootstrap doesn't seem to provide breakpoint-based modifiers to `.w-*`

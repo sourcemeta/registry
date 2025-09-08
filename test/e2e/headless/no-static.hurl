@@ -1,4 +1,4 @@
-GET {{base}}/static/style.min.css
+GET {{base}}/self/static/style.min.css
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
