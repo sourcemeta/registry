@@ -283,19 +283,19 @@ static auto on_request(const std::filesystem::path &base,
     serve_static_file(request, response, encoding,
                       base / "explorer" / SENTINEL / "directory-html.metapack",
                       sourcemeta::registry::STATUS_OK);
-  } else if (request->getUrl() == "/api/schemas/list") {
+  } else if (request->getUrl() == "/self/api/schemas/list") {
     serve_static_file(request, response, encoding,
                       base / "explorer" / SENTINEL / "directory.metapack",
                       sourcemeta::registry::STATUS_OK, true);
-  } else if (request->getUrl().starts_with("/api/schemas/list/")) {
-    const auto absolute_path{base / "explorer" / request->getUrl().substr(18) /
+  } else if (request->getUrl().starts_with("/self/api/schemas/list/")) {
+    const auto absolute_path{base / "explorer" / request->getUrl().substr(23) /
                              SENTINEL / "directory.metapack"};
     serve_static_file(request, response, encoding, absolute_path,
                       sourcemeta::registry::STATUS_OK, true);
-  } else if (request->getUrl().starts_with("/api/schemas/dependencies/")) {
+  } else if (request->getUrl().starts_with("/self/api/schemas/dependencies/")) {
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "schemas"};
-      absolute_path /= request->getUrl().substr(26);
+      absolute_path /= request->getUrl().substr(31);
       absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "dependencies.metapack";
@@ -307,10 +307,10 @@ static auto on_request(const std::filesystem::path &base,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
-  } else if (request->getUrl().starts_with("/api/schemas/health/")) {
+  } else if (request->getUrl().starts_with("/self/api/schemas/health/")) {
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "schemas"};
-      absolute_path /= request->getUrl().substr(20);
+      absolute_path /= request->getUrl().substr(25);
       absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "health.metapack";
@@ -322,10 +322,10 @@ static auto on_request(const std::filesystem::path &base,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
-  } else if (request->getUrl().starts_with("/api/schemas/locations/")) {
+  } else if (request->getUrl().starts_with("/self/api/schemas/locations/")) {
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "schemas"};
-      absolute_path /= request->getUrl().substr(23);
+      absolute_path /= request->getUrl().substr(28);
       absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "locations.metapack";
@@ -337,10 +337,10 @@ static auto on_request(const std::filesystem::path &base,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
-  } else if (request->getUrl().starts_with("/api/schemas/positions/")) {
+  } else if (request->getUrl().starts_with("/self/api/schemas/positions/")) {
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "schemas"};
-      absolute_path /= request->getUrl().substr(23);
+      absolute_path /= request->getUrl().substr(28);
       absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "positions.metapack";
@@ -352,10 +352,10 @@ static auto on_request(const std::filesystem::path &base,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
-  } else if (request->getUrl().starts_with("/api/schemas/metadata/")) {
+  } else if (request->getUrl().starts_with("/self/api/schemas/metadata/")) {
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "explorer"};
-      absolute_path /= request->getUrl().substr(22);
+      absolute_path /= request->getUrl().substr(27);
       absolute_path /= SENTINEL;
       absolute_path /= "schema.metapack";
       serve_static_file(request, response, encoding, absolute_path,
@@ -366,7 +366,7 @@ static auto on_request(const std::filesystem::path &base,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
-  } else if (request->getUrl().starts_with("/api/schemas/evaluate/")) {
+  } else if (request->getUrl().starts_with("/self/api/schemas/evaluate/")) {
     // A CORS pre-flight request
     if (request->getMethod() == "options") {
       response->writeStatus(sourcemeta::registry::STATUS_NO_CONTENT);
@@ -378,7 +378,7 @@ static auto on_request(const std::filesystem::path &base,
                     request->getMethod(), request->getUrl(), response);
     } else if (request->getMethod() == "post") {
       auto template_path{base / "schemas"};
-      template_path /= request->getUrl().substr(22);
+      template_path /= request->getUrl().substr(27);
       template_path += ".json";
       template_path /= SENTINEL;
       template_path /= "blaze-exhaustive.metapack";
@@ -447,7 +447,7 @@ static auto on_request(const std::filesystem::path &base,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
-  } else if (request->getUrl() == "/api/schemas/search") {
+  } else if (request->getUrl() == "/self/api/schemas/search") {
     if (request->getMethod() == "get") {
       const auto query{request->getQuery("q")};
       if (query.empty()) {
@@ -472,7 +472,7 @@ static auto on_request(const std::filesystem::path &base,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
-  } else if (request->getUrl().starts_with("/api/")) {
+  } else if (request->getUrl().starts_with("/self/api/")) {
     json_error(request->getMethod(), request->getUrl(), response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");

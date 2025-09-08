@@ -1,4 +1,4 @@
-GET {{base}}/api/schemas/positions/example/v2.0/schema
+GET {{base}}/self/api/schemas/positions/example/v2.0/schema
 Accept: application/json
 HTTP 200
 Content-Type: application/json
@@ -27,7 +27,7 @@ jsonpath "$['/type'][1]" == 11
 jsonpath "$['/type'][2]" == 4
 jsonpath "$['/type'][3]" == 19
 
-HEAD {{base}}/api/schemas/positions/example/v2.0/schema
+HEAD {{base}}/self/api/schemas/positions/example/v2.0/schema
 Accept: application/json
 HTTP 200
 Content-Type: application/json
@@ -37,29 +37,29 @@ header "ETag" exists
 header "Last-Modified" exists
 bytes count == 0
 
-POST {{base}}/api/schemas/positions/example/v2.0/schema
+POST {{base}}/self/api/schemas/positions/example/v2.0/schema
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *
-[Asserts]  
+[Asserts]
 jsonpath "$.code" == 405
 jsonpath "$.error" == "method-not-allowed"
 jsonpath "$.message" == "This HTTP method is invalid for this URL"
 
-GET {{base}}/api/schemas/positions/xyz/
+GET {{base}}/self/api/schemas/positions/xyz/
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
-[Asserts]  
+[Asserts]
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
 
-GET {{base}}/api/schemas/positions
+GET {{base}}/self/api/schemas/positions
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
-[Asserts]  
+[Asserts]
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"

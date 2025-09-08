@@ -1,4 +1,4 @@
-GET {{base}}/api/schemas/health/example/v2.0/schema
+GET {{base}}/self/api/schemas/health/example/v2.0/schema
 Accept: application/json
 HTTP 200
 Content-Type: application/json
@@ -9,7 +9,7 @@ header "Last-Modified" exists
 jsonpath "$.score" == 100
 jsonpath "$.errors" count == 0
 
-GET {{base}}/api/schemas/health/geojson/v1.0.5/polygon
+GET {{base}}/self/api/schemas/health/geojson/v1.0.5/polygon
 Accept: application/json
 HTTP 200
 Content-Type: application/json
@@ -31,7 +31,7 @@ jsonpath "$.errors[1].name" == "enum_with_type"
 jsonpath "$.errors[1].message" == "Setting `type` alongside `enum` is considered an anti-pattern, as the enumeration choices already imply their respective types"
 jsonpath "$.errors[1].description" == null
 
-HEAD {{base}}/api/schemas/health/geojson/v1.0.5/polygon
+HEAD {{base}}/self/api/schemas/health/geojson/v1.0.5/polygon
 Accept: application/json
 HTTP 200
 Content-Type: application/json
@@ -41,29 +41,29 @@ header "ETag" exists
 header "Last-Modified" exists
 bytes count == 0
 
-POST {{base}}/api/schemas/health/geojson/v1.0.5/polygon
+POST {{base}}/self/api/schemas/health/geojson/v1.0.5/polygon
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *
-[Asserts]  
+[Asserts]
 jsonpath "$.code" == 405
 jsonpath "$.error" == "method-not-allowed"
 jsonpath "$.message" == "This HTTP method is invalid for this URL"
 
-GET {{base}}/api/schemas/health/xyz/
+GET {{base}}/self/api/schemas/health/xyz/
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
-[Asserts]  
+[Asserts]
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
 
-GET {{base}}/api/schemas/health
+GET {{base}}/self/api/schemas/health
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
-[Asserts]  
+[Asserts]
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
