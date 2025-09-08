@@ -1,0 +1,15 @@
+{
+  "contents": {
+    "sdf": {
+      "title": "Semantic Definition Format (SDF)",
+      "description": "A format for domain experts to use in the creation and maintenance of data and interaction models that describe Things",
+      "github": "ietf-wg-asdf",
+      "website": "https://datatracker.ietf.org/doc/draft-ietf-asdf-sdf/",
+      "contents": {
+        "v1.0.0": {
+          "include": "./jsonschema.json"
+        }
+      }
+    }
+  }
+}
