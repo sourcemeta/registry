@@ -42,37 +42,15 @@ endif()
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
-# TODO: From this point on, none of these CMake stuff are really about the indexer.
-# We just put them here to hook into the indexer target to get them built. Move them
-# to the top-level CMakeLists.txt or something like that, while still attaching them
-# if needed
-
-# Load pre-made collections
-set(REGISTRY_COLLECTION_SOURCES)
-include("${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.0/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.1/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.2/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.3/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.4/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/geojson/v1.0.5/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/modelcontextprotocol/2025-06-18/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/modelcontextprotocol/2025-03-26/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/modelcontextprotocol/2024-11-05/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/a2a/v0.3.0/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/a2a/v0.2.6/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/a2a/v0.2.5/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/a2a/v0.2.4/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/a2a/v0.2.3/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/a2a/v0.2.2/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/a2a/v0.2.1/registry.cmake")
-include("${PROJECT_SOURCE_DIR}/collections/a2a/v0.2.0/registry.cmake")
-target_sources(sourcemeta_registry_index PRIVATE "${REGISTRY_COLLECTION_SOURCES}")
-
 include(GNUInstallDirs)
 install(TARGETS sourcemeta_registry_index
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
   COMPONENT sourcemeta_registry)
+
+# TODO: From this point on, none of these CMake stuff are really about the indexer.
+# We just put them here to hook into the indexer target to get them built. Move them
+# to the top-level CMakeLists.txt or something like that, while still attaching them
+# if needed
 
 sourcemeta_esbuild_bundle(
   ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/assets/main.js"
