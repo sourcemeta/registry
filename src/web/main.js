@@ -24,7 +24,7 @@ document.querySelectorAll('[data-sourcemeta-ui-editor-highlight]').forEach((elem
     const url = element.getAttribute('data-sourcemeta-ui-editor-highlight');
     const pointers = JSON.parse(element.getAttribute('data-sourcemeta-ui-editor-highlight-pointers'));
     if (EDITORS[url]) {
-      const positions = await window.fetch(`/api/schemas/positions${url.replace(/\.json$/i, "")}`);
+      const positions = await window.fetch(`/self/api/schemas/positions${url.replace(/\.json$/i, "")}`);
       if (!positions.ok) {
         throw new Error(positions.statusText);
       }

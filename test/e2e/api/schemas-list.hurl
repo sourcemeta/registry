@@ -1,4 +1,4 @@
-GET {{base}}/api/schemas/list
+GET {{base}}/self/api/schemas/list
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -50,7 +50,7 @@ jsonpath "$.entries[6].type" == "directory"
 jsonpath "$.entries[6].health" == 100
 jsonpath "$.entries[6].url" == "/doc"
 
-GET {{base}}/api/schemas/list/example
+GET {{base}}/self/api/schemas/list/example
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -89,7 +89,7 @@ jsonpath "$.entries[4].type" == "directory"
 jsonpath "$.entries[4].health" == 100
 jsonpath "$.entries[4].url" == "/example/bundling"
 
-GET {{base}}/api/schemas/list/example/v2.0
+GET {{base}}/self/api/schemas/list/example/v2.0
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -113,7 +113,7 @@ jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/v2.0/schema"
 jsonpath "$.entries[0].health" == 100
 
-GET {{base}}/api/schemas/list/example/v2.0.json
+GET {{base}}/self/api/schemas/list/example/v2.0.json
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -122,7 +122,7 @@ jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
 
-GET {{base}}/api/schemas/list/example/schemas/versions
+GET {{base}}/self/api/schemas/list/example/schemas/versions
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -149,7 +149,7 @@ jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/schemas/versions/v1.2.3"
 jsonpath "$.entries[0].health" == 100
 
-GET {{base}}/api/schemas/list/example/extension
+GET {{base}}/self/api/schemas/list/example/extension
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
