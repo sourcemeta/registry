@@ -1,6 +1,8 @@
 #ifndef SOURCEMETA_REGISTRY_INDEX_EXPLORER_H_
 #define SOURCEMETA_REGISTRY_INDEX_EXPLORER_H_
 
+// TODO: Move this entire file into src/web
+
 #include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/resolver.h>
 #include <sourcemeta/registry/shared.h>
