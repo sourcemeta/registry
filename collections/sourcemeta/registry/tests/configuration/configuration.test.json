@@ -1,5 +1,5 @@
 {
-  "target": "../../schemas/configuration/configuration.json",
+  "target": "../../schemas/configuration.json",
   "tests": [
     {
       "description": "Sample configuration file format",

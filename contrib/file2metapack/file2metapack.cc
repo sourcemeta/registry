@@ -10,6 +10,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
   try {
     sourcemeta::core::Options app;
     app.flag("gzip", {"g"});
+    app.option("extension", {"e"});
     app.parse(argc, argv);
     if (app.positional().size() != 3) {
       std::cout << "Usage: " << argv[0] << " <input> <mime> <output>\n";
@@ -18,11 +19,21 @@ auto main(int argc, char *argv[]) noexcept -> int {
 
     const std::filesystem::path output{app.positional().at(2)};
     std::filesystem::create_directories(output.parent_path());
-    sourcemeta::registry::write_file(
-        output, app.positional().at(0), std::string{app.positional().at(1)},
-        app.contains("gzip") ? sourcemeta::registry::Encoding::GZIP
-                             : sourcemeta::registry::Encoding::Identity,
-        sourcemeta::core::JSON{nullptr});
+
+    const auto encoding{app.contains("gzip")
+                            ? sourcemeta::registry::Encoding::GZIP
+                            : sourcemeta::registry::Encoding::Identity};
+
+    if (app.contains("extension")) {
+      sourcemeta::registry::write_file(
+          output, app.positional().at(0), std::string{app.positional().at(1)},
+          encoding, sourcemeta::core::JSON{app.at("extension").front()});
+    } else {
+      sourcemeta::registry::write_file(
+          output, app.positional().at(0), std::string{app.positional().at(1)},
+          encoding, sourcemeta::core::JSON{nullptr});
+    }
+
     return EXIT_SUCCESS;
   } catch (const std::exception &error) {
     std::cerr << "unexpected error: " << error.what() << "\n";

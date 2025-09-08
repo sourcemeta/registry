@@ -476,6 +476,12 @@ static auto on_request(const std::filesystem::path &base,
     json_error(request->getMethod(), request->getUrl(), response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
+  } else if (request->getUrl().starts_with("/self/schemas/")) {
+    std::ostringstream absolute_path;
+    absolute_path << SOURCEMETA_REGISTRY_SCHEMAS;
+    absolute_path << request->getUrl().substr(13);
+    serve_static_file(request, response, encoding, absolute_path.str(),
+                      sourcemeta::registry::STATUS_OK);
   } else if (!is_headless && request->getUrl().starts_with("/self/static/")) {
     std::ostringstream absolute_path;
     absolute_path << SOURCEMETA_REGISTRY_STATIC;

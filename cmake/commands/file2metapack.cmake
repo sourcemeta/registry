@@ -32,6 +32,8 @@ function(sourcemeta_file2metapack_gzip)
     set(MIME "application/yaml")
   elseif(file_extension STREQUAL ".html")
     set(MIME "text/html")
+  elseif(file_extension STREQUAL ".json")
+    set(MIME "application/json")
   else()
     message(FATAL_ERROR "Cannot determine MIME type for ${file_extension}")
   endif()
@@ -40,4 +42,23 @@ function(sourcemeta_file2metapack_gzip)
     COMMAND "$<TARGET_FILE:sourcemeta_registry_file2metapack>" --gzip
       "${SOURCEMETA_FILE2METAPACK_INPUT}" "${MIME}" "${SOURCEMETA_FILE2METAPACK_OUTPUT}"
     DEPENDS "${SOURCEMETA_FILE2METAPACK_INPUT}" "$<TARGET_FILE:sourcemeta_registry_file2metapack>")
+endfunction()
+
+function(sourcemeta_schema2metapack_gzip)
+  cmake_parse_arguments(SOURCEMETA_SCHEMA2METAPACK "" "INPUT;OUTPUT;DIALECT" "" ${ARGN})
+  if(NOT SOURCEMETA_SCHEMA2METAPACK_INPUT)
+    message(FATAL_ERROR "You must pass the INPUT option to ${CMAKE_CURRENT_FUNCTION}")
+  endif()
+  if(NOT SOURCEMETA_SCHEMA2METAPACK_OUTPUT)
+    message(FATAL_ERROR "You must pass the OUTPUT option to ${CMAKE_CURRENT_FUNCTION}")
+  endif()
+  if(NOT SOURCEMETA_SCHEMA2METAPACK_DIALECT)
+    message(FATAL_ERROR "You must pass the DIALECT option to ${CMAKE_CURRENT_FUNCTION}")
+  endif()
+
+  add_custom_command(OUTPUT "${SOURCEMETA_SCHEMA2METAPACK_OUTPUT}"
+    COMMAND "$<TARGET_FILE:sourcemeta_registry_file2metapack>"
+      --gzip --extension "${SOURCEMETA_SCHEMA2METAPACK_DIALECT}"
+      "${SOURCEMETA_SCHEMA2METAPACK_INPUT}" "application/schema+json" "${SOURCEMETA_SCHEMA2METAPACK_OUTPUT}"
+    DEPENDS "${SOURCEMETA_SCHEMA2METAPACK_INPUT}" "$<TARGET_FILE:sourcemeta_registry_file2metapack>")
 endfunction()

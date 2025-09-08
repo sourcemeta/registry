@@ -1,5 +1,5 @@
 {
-  "target": "../../schemas/configuration/path-posix-relative.json",
+  "target": "../../schemas/path-posix-relative.json",
   "x-license": "LicenseRef-Sourcemeta-Commercial",
   "tests": [
     {

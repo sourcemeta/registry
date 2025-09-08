@@ -3,7 +3,7 @@ sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
   SOURCES parse.cc read.cc "${CMAKE_CURRENT_BINARY_DIR}/template.h")
 
 # Compile the configuration schema
-set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/configuration")
+set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.json"
   COMMAND "$<TARGET_FILE:jsonschema_cli>" compile --minify "${SCHEMA_BASE_PATH}/configuration.json"
     > "${CMAKE_CURRENT_BINARY_DIR}/template.json"

@@ -1,5 +1,5 @@
 {
-  "target": "../../schemas/configuration/url.json",
+  "target": "../../schemas/url.json",
   "x-license": "LicenseRef-Sourcemeta-Commercial",
   "tests": [
     {
