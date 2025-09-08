@@ -15,6 +15,15 @@ Content-Type: text/html
 xpath "string(/html/head/title)" == "A sample schema folder"
 header "Access-Control-Allow-Origin" not exists
 
+GET {{base}}/doc.json
+HTTP 404
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Asserts]
+jsonpath "$.code" == 404
+jsonpath "$.error" == "not-found"
+jsonpath "$.message" == "There is nothing at this URL"
+
 GET {{base}}/doc/string-1
 HTTP 200
 Content-Type: text/html

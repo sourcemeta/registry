@@ -231,7 +231,7 @@ POST {{base}}/example/schemas/string.json
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *
-[Asserts]  
+[Asserts]
 jsonpath "$.code" == 405
 jsonpath "$.error" == "method-not-allowed"
 jsonpath "$.message" == "This HTTP method is invalid for this URL"
@@ -240,7 +240,7 @@ GET {{base}}/schemas/doc/.period.json
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
-[Asserts]  
+[Asserts]
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
@@ -250,7 +250,7 @@ DELETE {{base}}/example/schemas/string.json
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *
-[Asserts]  
+[Asserts]
 jsonpath "$.code" == 405
 jsonpath "$.error" == "method-not-allowed"
 jsonpath "$.message" == "This HTTP method is invalid for this URL"
@@ -264,3 +264,6 @@ Access-Control-Allow-Origin: *
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
+
+GET {{base}}/.json
+HTTP 404

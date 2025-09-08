@@ -1,5 +1,4 @@
-GET {{base}}
-Accept: application/json
+GET {{base}}/api/schemas/list
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *

@@ -280,17 +280,18 @@ static auto on_request(const std::filesystem::path &base,
                        const ServerContentEncoding encoding,
                        const bool is_headless) -> void {
   if (request->getUrl() == "/") {
-    const auto accept{request->getHeader("accept")};
-    if (accept == "application/json" || is_headless) {
-      serve_static_file(request, response, encoding,
-                        base / "explorer" / SENTINEL / "directory.metapack",
-                        sourcemeta::registry::STATUS_OK, true);
-    } else {
-      serve_static_file(request, response, encoding,
-                        base / "explorer" / SENTINEL /
-                            "directory-html.metapack",
-                        sourcemeta::registry::STATUS_OK);
-    }
+    serve_static_file(request, response, encoding,
+                      base / "explorer" / SENTINEL / "directory-html.metapack",
+                      sourcemeta::registry::STATUS_OK);
+  } else if (request->getUrl() == "/api/schemas/list") {
+    serve_static_file(request, response, encoding,
+                      base / "explorer" / SENTINEL / "directory.metapack",
+                      sourcemeta::registry::STATUS_OK, true);
+  } else if (request->getUrl().starts_with("/api/schemas/list/")) {
+    const auto absolute_path{base / "explorer" / request->getUrl().substr(18) /
+                             SENTINEL / "directory.metapack"};
+    serve_static_file(request, response, encoding, absolute_path,
+                      sourcemeta::registry::STATUS_OK, true);
   } else if (request->getUrl().starts_with("/api/schemas/dependencies/")) {
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "schemas"};
@@ -475,7 +476,7 @@ static auto on_request(const std::filesystem::path &base,
     json_error(request->getMethod(), request->getUrl(), response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
-  } else if (request->getUrl().starts_with("/static/") && !is_headless) {
+  } else if (!is_headless && request->getUrl().starts_with("/static/")) {
     std::ostringstream absolute_path;
     absolute_path << SOURCEMETA_REGISTRY_STATIC;
     absolute_path << request->getUrl().substr(7);
@@ -505,31 +506,12 @@ static auto on_request(const std::filesystem::path &base,
       absolute_path /= "schema.metapack";
     }
 
-    // For convenience
-    if (!std::filesystem::exists(absolute_path)) {
-      auto nav_path{base / "explorer" / lowercase_path};
-      nav_path.replace_extension("");
-      nav_path /= SENTINEL;
-      nav_path /= "directory.metapack";
-      if (std::filesystem::exists(nav_path)) {
-        serve_static_file(request, response, encoding, nav_path,
-                          sourcemeta::registry::STATUS_OK, true);
-        return;
-      }
-    }
-
     serve_static_file(request, response, encoding, absolute_path,
                       sourcemeta::registry::STATUS_OK, true);
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
-    const auto accept{request->getHeader("accept")};
     auto absolute_path{base / "explorer" / request->getUrl().substr(1) /
                        SENTINEL};
-    if (accept == "application/json" || is_headless) {
-      absolute_path /= "directory.metapack";
-      serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK, true);
-    } else if (std::filesystem::exists(absolute_path /
-                                       "schema-html.metapack")) {
+    if (std::filesystem::exists(absolute_path / "schema-html.metapack")) {
       serve_static_file(request, response, encoding,
                         absolute_path / "schema-html.metapack",
                         sourcemeta::registry::STATUS_OK);

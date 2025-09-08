@@ -1,8 +1,4 @@
-GET {{base}}/.json
-HTTP 404
-
-GET {{base}}
-Accept: application/json
+GET {{base}}/api/schemas/list
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -54,8 +50,7 @@ jsonpath "$.entries[6].type" == "directory"
 jsonpath "$.entries[6].health" == 100
 jsonpath "$.entries[6].url" == "/doc"
 
-GET {{base}}/example
-Accept: application/json
+GET {{base}}/api/schemas/list/example
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -94,8 +89,7 @@ jsonpath "$.entries[4].type" == "directory"
 jsonpath "$.entries[4].health" == 100
 jsonpath "$.entries[4].url" == "/example/bundling"
 
-GET {{base}}/example/v2.0
-Accept: application/json
+GET {{base}}/api/schemas/list/example/v2.0
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -119,57 +113,16 @@ jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/v2.0/schema"
 jsonpath "$.entries[0].health" == 100
 
-GET {{base}}/example/v2.0.json
-HTTP 200
+GET {{base}}/api/schemas/list/example/v2.0.json
+HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
 [Asserts]
-header "ETag" exists
-header "Last-Modified" exists
-jsonpath "$.url" == "/example/v2.0"
-jsonpath "$.canonical" == "{{base}}/example/v2.0"
-jsonpath "$.breadcrumb" count == 2
-jsonpath "$.breadcrumb[0].name" == "example"
-jsonpath "$.breadcrumb[0].url" == "/example"
-jsonpath "$.breadcrumb[1].name" == "v2.0"
-jsonpath "$.breadcrumb[1].url" == "/example/v2.0"
-jsonpath "$.entries" count == 1
-jsonpath "$.entries[0].bytes" == 138
-jsonpath "$.entries[0].baseDialect" == "draft7"
-jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[0].id" == "{{base}}/example/v2.0/schema.json"
-jsonpath "$.entries[0].name" == "schema"
-jsonpath "$.entries[0].type" == "schema"
-jsonpath "$.entries[0].url" == "/example/v2.0/schema"
-jsonpath "$.entries[0].health" == 100
+jsonpath "$.code" == 404
+jsonpath "$.error" == "not-found"
+jsonpath "$.message" == "There is nothing at this URL"
 
-GET {{base}}/example/v2.0.json
-Accept: application/json
-HTTP 200
-Content-Type: application/json
-Access-Control-Allow-Origin: *
-[Asserts]
-header "ETag" exists
-header "Last-Modified" exists
-jsonpath "$.url" == "/example/v2.0"
-jsonpath "$.canonical" == "{{base}}/example/v2.0"
-jsonpath "$.breadcrumb" count == 2
-jsonpath "$.breadcrumb[0].name" == "example"
-jsonpath "$.breadcrumb[0].url" == "/example"
-jsonpath "$.breadcrumb[1].name" == "v2.0"
-jsonpath "$.breadcrumb[1].url" == "/example/v2.0"
-jsonpath "$.entries" count == 1
-jsonpath "$.entries[0].bytes" == 138
-jsonpath "$.entries[0].baseDialect" == "draft7"
-jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[0].id" == "{{base}}/example/v2.0/schema.json"
-jsonpath "$.entries[0].name" == "schema"
-jsonpath "$.entries[0].type" == "schema"
-jsonpath "$.entries[0].url" == "/example/v2.0/schema"
-jsonpath "$.entries[0].health" == 100
-
-GET {{base}}/example/schemas/versions.json
-Accept: application/json
+GET {{base}}/api/schemas/list/example/schemas/versions
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -196,8 +149,7 @@ jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/example/schemas/versions/v1.2.3"
 jsonpath "$.entries[0].health" == 100
 
-GET {{base}}/example/extension.json
-Accept: application/json
+GET {{base}}/api/schemas/list/example/extension
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
