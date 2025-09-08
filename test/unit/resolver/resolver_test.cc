@@ -306,6 +306,18 @@ TEST(Resolver, example_2020_12_meta) {
   })JSON");
 }
 
+TEST(Resolver, example_2020_12_circular) {
+  RESOLVER_INIT(resolver);
+  RESOLVER_ADD(resolver, "example", "2020-12-circular.json",
+               "https://example.com/schemas/2020-12-circular.json",
+               "http://localhost:8000/example/2020-12-circular.json",
+               R"JSON({
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "http://localhost:8000/example/2020-12-circular.json",
+    "$ref": "#"
+  })JSON");
+}
+
 TEST(Resolver, example_2020_12_meta_schema) {
   RESOLVER_INIT(resolver);
   const auto schema_result{
