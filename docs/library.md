@@ -95,6 +95,7 @@ your [configuration file](configuration.md) using the `extends` keyword.
 | `@a2a/v0.2.2` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.2) | Registry v1.2.0 |
 | `@a2a/v0.2.1` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.1) | Registry v1.2.0 |
 | `@a2a/v0.2.0` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.0) | Registry v1.2.0 |
+| `@sdf/v1.0.0` | [Semantic Definition Format (SDF)](https://datatracker.ietf.org/doc/draft-ietf-asdf-sdf/) | A format for domain experts to use in the creation and maintenance of data and interaction models that describe Things | [Link](https://schemas.sourcemeta.com/sdf/v1.0.0) | Registry v1.2.0 |
 
 [^1]: The built-in collections we offer are redistributed directly from their
   upstream sources *without modification*. As such, any issues, errors, or

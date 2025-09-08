@@ -1,0 +1,614 @@
+{
+  "title": "sdf-validation.cddl",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/sdf-syntax",
+  "definitions": {
+    "sdf-syntax": {
+      "type": "object",
+      "required": [
+        "info"
+      ],
+      "properties": {
+        "info": {
+          "$ref": "#/definitions/sdfinfo"
+        },
+        "namespace": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "defaultNamespace": {
+          "type": "string"
+        },
+        "sdfThing": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/thingqualities"
+          }
+        },
+        "sdfProduct": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/productqualities"
+          }
+        },
+        "sdfObject": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/objectqualities"
+          }
+        },
+        "sdfProperty": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/propertyqualities"
+          }
+        },
+        "sdfAction": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/actionqualities"
+          }
+        },
+        "sdfEvent": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/eventqualities"
+          }
+        },
+        "sdfData": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/dataqualities"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sdfinfo": {
+      "type": "object",
+      "required": [
+        "title",
+        "version",
+        "copyright",
+        "license"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "copyright": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "thingqualities": {
+      "type": "object",
+      "properties": {
+        "sdfObject": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/objectqualities"
+          }
+        },
+        "sdfThing": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/thingqualities"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "$comment": {
+          "type": "string"
+        },
+        "sdfRef": {
+          "$ref": "#/definitions/sdf-pointer"
+        },
+        "sdfRequired": {
+          "$ref": "#/definitions/pointer-list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "commonqualities": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "$comment": {
+          "type": "string"
+        },
+        "sdfRef": {
+          "$ref": "#/definitions/sdf-pointer"
+        },
+        "sdfRequired": {
+          "$ref": "#/definitions/pointer-list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sdf-pointer": {
+      "type": "string"
+    },
+    "pointer-list": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/sdf-pointer"
+      }
+    },
+    "objectqualities": {
+      "type": "object",
+      "properties": {
+        "sdfProperty": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/propertyqualities"
+          }
+        },
+        "sdfAction": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/actionqualities"
+          }
+        },
+        "sdfEvent": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/eventqualities"
+          }
+        },
+        "sdfData": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/dataqualities"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "$comment": {
+          "type": "string"
+        },
+        "sdfRef": {
+          "$ref": "#/definitions/sdf-pointer"
+        },
+        "sdfRequired": {
+          "$ref": "#/definitions/pointer-list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "propertyqualities": {
+      "$ref": "#/definitions/dataqualities"
+    },
+    "dataqualities": {
+      "type": "object",
+      "properties": {
+        "units": {
+          "type": "string"
+        },
+        "scaleMinimum": {
+          "type": "number"
+        },
+        "scaleMaximum": {
+          "type": "number"
+        },
+        "observable": {
+          "type": "boolean"
+        },
+        "readable": {
+          "type": "boolean"
+        },
+        "writable": {
+          "type": "boolean"
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "subtype": {
+          "type": "string",
+          "enum": [
+            "byte-string",
+            "unix-time"
+          ]
+        },
+        "contentFormat": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "number",
+            "string",
+            "boolean",
+            "integer",
+            "array"
+          ]
+        },
+        "enum": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/allowed-types"
+          },
+          "minItems": 1
+        },
+        "const": {
+          "$ref": "#/definitions/allowed-types"
+        },
+        "default": {
+          "$ref": "#/definitions/allowed-types"
+        },
+        "minimum": {
+          "type": "number"
+        },
+        "maximum": {
+          "type": "number"
+        },
+        "exclusiveMinimum": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "exclusiveMaximum": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "multipleOf": {
+          "type": "number"
+        },
+        "minLength": {
+          "type": "number"
+        },
+        "maxLength": {
+          "type": "number"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "date-time",
+            "date",
+            "time",
+            "uri",
+            "uri-reference",
+            "uuid"
+          ]
+        },
+        "minItems": {
+          "type": "number"
+        },
+        "maxItems": {
+          "type": "number"
+        },
+        "uniqueItems": {
+          "type": "boolean"
+        },
+        "items": {
+          "type": "object",
+          "properties": {
+            "sdfRef": {
+              "$ref": "#/definitions/sdf-pointer"
+            },
+            "description": {
+              "type": "string"
+            },
+            "$comment": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "number",
+                "string",
+                "boolean",
+                "integer"
+              ]
+            },
+            "minimum": {
+              "type": "number"
+            },
+            "maximum": {
+              "type": "number"
+            },
+            "enum": {
+              "type": "array",
+              "minItems": 1
+            },
+            "format": {
+              "type": "string"
+            },
+            "minLength": {
+              "type": "number"
+            },
+            "maxLength": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        },
+        "description": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "$comment": {
+          "type": "string"
+        },
+        "sdfRef": {
+          "$ref": "#/definitions/sdf-pointer"
+        },
+        "sdfRequired": {
+          "$ref": "#/definitions/pointer-list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "jsonschema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "number",
+            "string",
+            "boolean",
+            "integer",
+            "array"
+          ]
+        },
+        "enum": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/allowed-types"
+          },
+          "minItems": 1
+        },
+        "const": {
+          "$ref": "#/definitions/allowed-types"
+        },
+        "default": {
+          "$ref": "#/definitions/allowed-types"
+        },
+        "minimum": {
+          "type": "number"
+        },
+        "maximum": {
+          "type": "number"
+        },
+        "exclusiveMinimum": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "exclusiveMaximum": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "multipleOf": {
+          "type": "number"
+        },
+        "minLength": {
+          "type": "number"
+        },
+        "maxLength": {
+          "type": "number"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "date-time",
+            "date",
+            "time",
+            "uri",
+            "uri-reference",
+            "uuid"
+          ]
+        },
+        "minItems": {
+          "type": "number"
+        },
+        "maxItems": {
+          "type": "number"
+        },
+        "uniqueItems": {
+          "type": "boolean"
+        },
+        "items": {
+          "type": "object",
+          "properties": {
+            "sdfRef": {
+              "$ref": "#/definitions/sdf-pointer"
+            },
+            "description": {
+              "type": "string"
+            },
+            "$comment": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "number",
+                "string",
+                "boolean",
+                "integer"
+              ]
+            },
+            "minimum": {
+              "type": "number"
+            },
+            "maximum": {
+              "type": "number"
+            },
+            "enum": {
+              "type": "array",
+              "minItems": 1
+            },
+            "format": {
+              "type": "string"
+            },
+            "minLength": {
+              "type": "number"
+            },
+            "maxLength": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "allowed-types": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        }
+      ]
+    },
+    "actionqualities": {
+      "type": "object",
+      "properties": {
+        "sdfInputData": {
+          "$ref": "#/definitions/pointer-list"
+        },
+        "sdfRequiredInputData": {
+          "$ref": "#/definitions/pointer-list"
+        },
+        "sdfOutputData": {
+          "$ref": "#/definitions/pointer-list"
+        },
+        "sdfData": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/dataqualities"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "$comment": {
+          "type": "string"
+        },
+        "sdfRef": {
+          "$ref": "#/definitions/sdf-pointer"
+        },
+        "sdfRequired": {
+          "$ref": "#/definitions/pointer-list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "eventqualities": {
+      "type": "object",
+      "properties": {
+        "sdfOutputData": {
+          "$ref": "#/definitions/pointer-list"
+        },
+        "sdfData": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/dataqualities"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "$comment": {
+          "type": "string"
+        },
+        "sdfRef": {
+          "$ref": "#/definitions/sdf-pointer"
+        },
+        "sdfRequired": {
+          "$ref": "#/definitions/pointer-list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "productqualities": {
+      "$ref": "#/definitions/thingqualities"
+    }
+  }
+}

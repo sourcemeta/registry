@@ -21,6 +21,7 @@ collections/a2a/v0.2.3 https://github.com/a2aproject/A2A v0.2.3
 collections/a2a/v0.2.2 https://github.com/a2aproject/A2A v0.2.2
 collections/a2a/v0.2.1 https://github.com/a2aproject/A2A v0.2.1
 collections/a2a/v0.2.0 https://github.com/a2aproject/A2A v0.2.0
+collections/sdf/v1.0.0 https://github.com/ietf-wg-asdf/SDF v1.0.0
 public/nasa-gcn-1-0-0 https://github.com/nasa-gcn/gcn-schema v1.0.0
 public/nasa-gcn-2-0-0 https://github.com/nasa-gcn/gcn-schema v2.0.0
 public/nasa-gcn-3-0-0 https://github.com/nasa-gcn/gcn-schema v3.0.0
