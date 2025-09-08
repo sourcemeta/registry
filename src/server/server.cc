@@ -476,10 +476,10 @@ static auto on_request(const std::filesystem::path &base,
     json_error(request->getMethod(), request->getUrl(), response, encoding,
                sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
                "There is nothing at this URL");
-  } else if (!is_headless && request->getUrl().starts_with("/static/")) {
+  } else if (!is_headless && request->getUrl().starts_with("/self/static/")) {
     std::ostringstream absolute_path;
     absolute_path << SOURCEMETA_REGISTRY_STATIC;
-    absolute_path << request->getUrl().substr(7);
+    absolute_path << request->getUrl().substr(12);
     serve_static_file(request, response, encoding, absolute_path.str(),
                       sourcemeta::registry::STATUS_OK);
   } else if (request->getUrl().ends_with(".json")) {
