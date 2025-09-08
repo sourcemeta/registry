@@ -29,7 +29,7 @@
     },
     "disable_gzip": {
       "title": "Disable gzip compression",
-      "description": "**Enterprise only**. All the output to the end user on the Enterprise Edition uses gzip when accepted by the client. Use this flag to remove gzip compression.\n\nSee: https://www.krakend.io/docs/service-settings/router-options/",
+      "description": "Enterprise only. All the output to the end user on the Enterprise Edition uses gzip when accepted by the client. Use this flag to remove gzip compression.\n\nSee: https://www.krakend.io/docs/service-settings/router-options/",
       "default": false,
       "type": "boolean"
     },
