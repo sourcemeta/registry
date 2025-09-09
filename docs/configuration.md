@@ -103,6 +103,9 @@ A schema collection functions as a curated set of schemas that the Registry
 instance ingests and serves at a specified location. Unlike pages, schema
 collections contain the actual schema definitions that power your registry.
 
+*The Registry supports JSON Schema Draft 4, Draft 6, Draft 7, 2019-09, and
+2020-12; and custom meta-schemas based on those dialects.*
+
 !!! warning
 
     The Registry maintains data integrity by rejecting any schemas that fail
