@@ -1,22 +1,38 @@
-#include <sourcemeta/registry/shared_license.h>
+#!/bin/sh
 
-#include <cstdlib> // std::getenv
+set -o errexit
+set -o nounset
 
-namespace sourcemeta::registry {
+TMP="$(mktemp -d)"
+clean() { rm -rf "$TMP"; }
+trap clean EXIT
 
-#ifdef SOURCEMETA_REGISTRY_STARTER
-auto license_permitted() -> bool { return true; }
-#else
-auto license_permitted() -> bool {
-  // TODO: Investigate this warning
-  // NOLINTNEXTLINE(concurrency-mt-unsafe)
-  const char *check{
-      std::getenv("SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE")};
-  return check != nullptr && check[0] != '\0';
+cat << EOF > "$TMP/registry.json"
+{
+  "url": "http://localhost:8000",
+  "contents": {
+    "example": {
+      "baseUri": "https://example.com",
+      "path": "./schemas"
+    }
+  }
 }
-#endif
+EOF
 
-constexpr std::string_view LICENSE_ERROR{R"EOF(
+mkdir "$TMP/schemas"
+cat << 'EOF' > "$TMP/schemas/schema.json"
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schema"
+}
+EOF
+
+export SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=
+"$1" "$TMP/registry.json" "$TMP/dist" 2> "$TMP/output.txt" && CODE="$?" || CODE="$?"
+test "$CODE" = "1" || exit 1
+
+cat << EOF > "$TMP/expected.txt"
+
 ╔════════════════════════════════════════════════════════════════════╗
 ║                     CONFIRM COMMERCIAL LICENSE                     ║
 ╠════════════════════════════════════════════════════════════════════╣
@@ -32,8 +48,6 @@ constexpr std::string_view LICENSE_ERROR{R"EOF(
 ║ Running this software without a commercial license is strictly     ║
 ║ prohibited and may result in legal action.                         ║
 ╚════════════════════════════════════════════════════════════════════╝
-)EOF"};
+EOF
 
-auto license_error() -> std::string_view { return LICENSE_ERROR; }
-
-} // namespace sourcemeta::registry
+diff "$TMP/output.txt" "$TMP/expected.txt"
