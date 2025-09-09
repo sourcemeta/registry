@@ -453,6 +453,8 @@ static auto index_main(const std::string_view &program,
         sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
   }
 
+  // TODO: Print the size of the output directory here
+
   output.remove_unknown_files();
   return EXIT_SUCCESS;
 }
