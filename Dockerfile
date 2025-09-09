@@ -68,3 +68,19 @@ COPY --from=builder /usr/bin/sourcemeta-registry-server \
   /usr/bin/sourcemeta-registry-server
 COPY --from=builder /usr/share/sourcemeta/registry \
   /usr/share/sourcemeta/registry
+
+# For debugging purposes
+RUN ldd /usr/bin/sourcemeta-registry-index
+RUN ldd /usr/bin/sourcemeta-registry-server
+
+# We expect images that extend this one to use this directory
+ARG SOURCEMETA_REGISTRY_WORKDIR=/source
+ENV SOURCEMETA_REGISTRY_WORKDIR=${SOURCEMETA_REGISTRY_WORKDIR}
+WORKDIR ${SOURCEMETA_REGISTRY_WORKDIR}
+
+# To make it easier for the consumer. So they can generate the index
+# without caring about output locations at all
+ARG SOURCEMETA_REGISTRY_OUTPUT=/sourcemeta
+ENV SOURCEMETA_REGISTRY_OUTPUT=${SOURCEMETA_REGISTRY_OUTPUT}
+RUN echo "#!/bin/sh\nexec /usr/bin/sourcemeta-registry-index \"\$1\" \"${SOURCEMETA_REGISTRY_OUTPUT}\"" \
+  > /usr/bin/sourcemeta && chmod +x /usr/bin/sourcemeta

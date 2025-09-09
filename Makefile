@@ -94,7 +94,7 @@ docker:
 	SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
 	SOURCEMETA_REGISTRY_CONFIGURATION=$(SANDBOX_CONFIGURATION) \
 	SOURCEMETA_REGISTRY_PORT=$(SANDBOX_PORT) \
-		$(DOCKER) compose --file test/sandbox/compose.yaml up --build
+		$(DOCKER) compose --progress plain --file test/sandbox/compose.yaml up --build
 
 .PHONY: docs
 docs: mkdocs.yml
