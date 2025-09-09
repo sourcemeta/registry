@@ -51,6 +51,17 @@ RUN ctest --test-dir /build --build-config Release \
   --output-on-failure --parallel
 
 FROM debian:bookworm-slim
+
+# See https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
+LABEL org.opencontainers.image.url="https://registry.sourcemeta.com"
+LABEL org.opencontainers.image.documentation="https://registry.sourcemeta.com"
+LABEL org.opencontainers.image.source="https://github.com/sourcemeta/registry"
+LABEL org.opencontainers.image.vendor="Sourcemeta"
+LABEL org.opencontainers.image.licenses="Commercial"
+LABEL org.opencontainers.image.title="Sourcemeta Registry"
+LABEL org.opencontainers.image.description="The JSON Schema registry"
+LABEL org.opencontainers.image.authors="Sourcemeta <hello@sourcemeta.com>"
+
 COPY --from=builder /usr/bin/sourcemeta-registry-index \
   /usr/bin/sourcemeta-registry-index
 COPY --from=builder /usr/bin/sourcemeta-registry-server \
