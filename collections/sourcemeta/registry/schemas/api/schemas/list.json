@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "examples": [
+    {
+      "breadcrumb": [
+        {
+          "name": "example",
+          "url": "/example"
+        }
+      ],
+      "canonical": "http://localhost:8000/example",
+      "entries": [
+        {
+          "type": "directory",
+          "health": 100,
+          "name": "v2.0",
+          "url": "/example/v2.0"
+        }
+      ],
+      "health": 100,
+      "url": "/example"
+    }
+  ],
+  "type": "object",
+  "required": [ "health", "entries", "url", "canonical", "breadcrumb" ],
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "breadcrumb": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "name", "url" ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "canonical": {
+      "type": "string",
+      "format": "uri"
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "health", "name", "type", "url" ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "health": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 0
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "github": {
+      "type": "string"
+    },
+    "health": {
+      "type": "number",
+      "maximum": 100,
+      "minimum": 0
+    },
+    "url": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "additionalProperties": false
+}

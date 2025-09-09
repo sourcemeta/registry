@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "examples": [
+    {
+      "id": "http://localhost:8000/example/v2.0/schema.json",
+      "baseDialect": "draft7",
+      "breadcrumb": [
+        {
+          "name": "example",
+          "url": "/example"
+        },
+        {
+          "name": "v2.0",
+          "url": "/example/v2.0"
+        },
+        {
+          "name": "schema",
+          "url": "/example/v2.0/schema"
+        }
+      ],
+      "bytes": 138,
+      "canonical": "http://localhost:8000/example/v2.0/schema.json",
+      "dialect": "http://json-schema.org/draft-07/schema#",
+      "health": 100,
+      "url": "/example/v2.0/schema.json"
+    }
+  ],
+  "type": "object",
+  "required": [
+    "bytes",
+    "id",
+    "url",
+    "canonical",
+    "baseDialect",
+    "dialect",
+    "health",
+    "breadcrumb"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri"
+    },
+    "baseDialect": {
+      "type": "string"
+    },
+    "breadcrumb": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "name", "url" ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "bytes": {
+      "type": "number",
+      "minimum": 0
+    },
+    "canonical": {
+      "type": "string",
+      "format": "uri"
+    },
+    "dialect": {
+      "type": "string",
+      "format": "uri"
+    },
+    "health": {
+      "type": "number",
+      "maximum": 100,
+      "minimum": 0
+    },
+    "url": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

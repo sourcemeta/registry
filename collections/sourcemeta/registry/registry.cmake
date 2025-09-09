@@ -1,6 +1,7 @@
 set(COLLECTION_NAMESPACE "sourcemeta/registry")
 
 include(GNUInstallDirs)
+
 install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/configuration.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/contents.json"
@@ -16,7 +17,25 @@ install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path-posix.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path-posix-absolute.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/configuration/path-posix-relative.json"
-  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}/schemas"
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}/schemas/configuration"
+  COMPONENT sourcemeta_registry)
+
+install(FILES
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/common/error.json"
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}/schemas/api/common"
+  COMPONENT sourcemeta_registry)
+
+install(FILES
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/dependencies.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/evaluate-trace.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/evaluate.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/health.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/list.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/locations.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/metadata.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/positions.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/search.json"
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}/schemas/api/schemas"
   COMPONENT sourcemeta_registry)
 
 install(FILES "${CMAKE_CURRENT_LIST_DIR}/registry.json"

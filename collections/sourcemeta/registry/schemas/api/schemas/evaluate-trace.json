@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "examples": [
+    {
+      "steps": [
+        {
+          "type": "push",
+          "annotation": null,
+          "evaluatePath": "/type",
+          "instanceLocation": "",
+          "instancePositions": [ 1, 1, 1, 13 ],
+          "keywordLocation": "http://localhost:8000/example/schemas/string.json#/type",
+          "message": null,
+          "name": "AssertionTypeStrict",
+          "vocabulary": "http://json-schema.org/draft-07/schema#"
+        },
+        {
+          "type": "pass",
+          "annotation": null,
+          "evaluatePath": "/type",
+          "instanceLocation": "",
+          "instancePositions": [ 1, 1, 1, 13 ],
+          "keywordLocation": "http://localhost:8000/example/schemas/string.json#/type",
+          "message": "The value was expected to be of type string",
+          "name": "AssertionTypeStrict",
+          "vocabulary": "http://json-schema.org/draft-07/schema#"
+        }
+      ],
+      "valid": true
+    }
+  ],
+  "type": "object",
+  "required": [ "valid", "steps" ],
+  "properties": {
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "annotation",
+          "evaluatePath",
+          "instanceLocation",
+          "instancePositions",
+          "message",
+          "keywordLocation",
+          "name",
+          "type",
+          "vocabulary"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "annotation": {
+            "type": [ "string", "null" ]
+          },
+          "evaluatePath": {
+            "type": "string"
+          },
+          "instanceLocation": {
+            "type": "string"
+          },
+          "instancePositions": {
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 4,
+            "items": {
+              "type": "number"
+            }
+          },
+          "keywordLocation": {
+            "type": "string"
+          },
+          "message": {
+            "type": [ "string", "null" ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "vocabulary": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "valid": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

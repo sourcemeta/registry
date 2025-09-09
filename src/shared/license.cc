@@ -9,8 +9,8 @@ auto license_permitted() -> bool { return true; }
 #else
 auto license_permitted() -> bool {
   // TODO: Investigate this warning
-  // NOLINTNEXTLINE(concurrency-mt-unsafe)
   const char *check{
+      // NOLINTNEXTLINE(concurrency-mt-unsafe)
       std::getenv("SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE")};
   return check != nullptr && check[0] != '\0';
 }
