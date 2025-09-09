@@ -22,6 +22,8 @@ install(FILES
 
 install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/common/error.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/common/gmt.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/common/etag.json"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}/schemas/api/common"
   COMPONENT sourcemeta_registry)
 
