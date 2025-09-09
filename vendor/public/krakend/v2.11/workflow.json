@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.11/workflow.json",
+  "title": "Workflow Object",
+  "type": "object",
+  "required": [
+    "endpoint",
+    "backend"
+  ],
+  "properties": {
+    "backend": {
+      "title": "Backend",
+      "description": "List of all the [backend objects](https://www.krakend.io/docs/backends/) called within this workflow. Each backend can initiate another workflow if needed.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "backend.json",
+        "type": "object"
+      }
+    },
+    "concurrent_calls": {
+      "$id": "#workflow/concurrent_calls",
+      "title": "Concurrent calls",
+      "description": "The concurrent requests are an excellent technique to improve the response times and decrease error rates by requesting in parallel the same information multiple times. Yes, you make the same request to several backends instead of asking to just one. When the first backend returns the information, the remaining requests are canceled.\n\nSee: https://www.krakend.io/docs/endpoints/concurrent-requests/",
+      "default": 1,
+      "type": "integer",
+      "maximum": 5,
+      "minimum": 1
+    },
+    "endpoint": {
+      "$id": "#workflow/endpoint",
+      "title": "Workflow endpoint name",
+      "description": "An endpoint name for the workflow that will be used in logs. The name will be appended to the string `/__workflow/` in the logs, and although it does not receive traffic under this route, it is necessary when you want to pass URL `{params}` to the nested backends.\n\nSee: https://www.krakend.io/docs/endpoints/",
+      "examples": [
+        "/workflow-1/{param1}"
+      ],
+      "type": "string"
+    },
+    "extra_config": {
+      "title": "Extra configuration",
+      "description": "Configuration entries for additional components that are executed within this endpoint, during the request, response or merge operations.",
+      "$ref": "workflow_extra_config.json",
+      "type": "object"
+    },
+    "ignore_errors": {
+      "$id": "#workflow/ignore_errors",
+      "title": "Ignore errors",
+      "description": "Allow the workflow to continue with the rest of declared actions when there are errors (like security policies, network errors, etc). The default behavior of KrakenD is to abort an execution that has errors as soon as possible. If you use conditional backends and similar approaches, you might want to allow the gateway to go through all steps.\n\nSee: https://www.krakend.io/docs/endpoints/",
+      "default": false
+    },
+    "output_encoding": {
+      "$id": "#workflow/output_encoding",
+      "title": "Output encoding",
+      "description": "The gateway can work with several content types, even allowing your clients to choose how to consume the content. See the [supported encodings](https://www.krakend.io/docs/endpoints/content-types/)",
+      "default": "json",
+      "enum": [
+        "json",
+        "json-collection",
+        "yaml",
+        "fast-json",
+        "xml",
+        "negotiate",
+        "string",
+        "no-op"
+      ]
+    },
+    "timeout": {
+      "$id": "#workflow/timeout",
+      "title": "Timeout",
+      "description": "The duration you write in the timeout represents the **whole duration of the pipe**, so it counts the time all your backends take to respond and the processing of all the components involved in the endpoint (the request, fetching data, manipulation, etc.). By default the timeout is taken from the parent endpoint, if redefined **make sure that is smaller than the endpoint's**",
+      "examples": [
+        "2s",
+        "1500ms"
+      ],
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.11/governance/quota.json",
+  "title": "Attachment of a quota",
+  "description": "Attach a quota to the endpoint, backend, or service. Needs a governance/processor namespace.",
+  "type": "object",
+  "required": [
+    "quota_name",
+    "tier_key",
+    "tiers"
+  ],
+  "properties": {
+    "disable_quota_headers": {
+      "description": "When set to `true`, the quota headers `X-Quota-Limit`, `X-Quota-Remaining`, and `Retry-After` will not be added to the response. This is useful when you want to hide the quota information from the client.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+      "default": false,
+      "type": "boolean"
+    },
+    "on_unmatched_tier_allow": {
+      "description": "When a tier cannot be infered from the request, whether to allow the request to continue or not. In case a request does not match any of the tiers, the request will be rejected with a 400 error unless you set this to `true`.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+      "default": false,
+      "type": "boolean"
+    },
+    "quota_name": {
+      "description": "Name of the quota you want to reuse, written exactly as declared under the `processors` list.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+      "examples": [
+        "my_quota"
+      ],
+      "type": "string"
+    },
+    "tier_key": {
+      "description": "Header or param used to determine the tier. Use `tier_value` and `tier_value_as` on each tier to determine how to match the value.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+      "examples": [
+        "X-User-Tier",
+        "X-User-ID"
+      ],
+      "type": "string"
+    },
+    "tiers": {
+      "description": "List of tiers to match against the request. The first tier that matches will be used to determine the quota to consume.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule_name"
+        ],
+        "properties": {
+          "key": {
+            "description": "The key (e.g., header name, IP, claim name) that contains the identity of the caller, like the user ID of who is doing the request. The key must be present in the request.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "type": "string"
+          },
+          "rule_name": {
+            "description": "Tier limit defined in the global `processor`. It must be within the defined `limits` of the quota_name processor. If it's not found, the system will complain at startup and affected endpoints will be degraded with a 500 error\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "type": "string"
+          },
+          "strategy": {
+            "description": "Where to find the key containing the identity of the caller. Use `header` for headers, `ip` for the IP address of the caller, and `param` for an endpoint {parameter}.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "default": "header",
+            "enum": [
+              "header",
+              "ip",
+              "param"
+            ]
+          },
+          "tier_value": {
+            "description": "Literal value or CEL expression to match.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "type": "string"
+          },
+          "tier_value_as": {
+            "description": "How to treat the value. In most cases the tier value contains the plan name, like `gold`, so you will choose `literal`. But you can also set in the value a security policy (CEL) that will evaluate to resolve the tier policy accordingly, or put an asterisk `*` to always match and use as your last and default tier.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+            "default": "literal",
+            "enum": [
+              "literal",
+              "policy",
+              "*"
+            ]
+          }
+        }
+      }
+    },
+    "weight_key": {
+      "description": "Instead of incrementing the quota counter by one unit, use the value provided in a field or header with its dynamic value. For instance, an LLM can return how many tokens it consumed, and you can use that value to increment the quota counter. The value must be a parseable number, and the field or header must be present in the backend response. The `weight_key` is only used in the `endpoint` and `backend` scopes, and it is ignored in the service level.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+      "type": "string"
+    },
+    "weight_strategy": {
+      "description": "Where to find the key containing the counter value to increment. Use `body` for any type of encoding different than `no-op` and `header` for `no-op`.\n\nSee: https://www.krakend.io/docs/enterprise/governance/quota/",
+      "default": "body",
+      "enum": [
+        "body",
+        "header"
+      ]
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

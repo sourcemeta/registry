@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.11/auth/api-keys.json",
+  "title": "API-key Authentication",
+  "description": "Enterprise only. Enables a Role-Based Access Control (RBAC) mechanism by reading the `Authorization` header of incoming requests.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+  "type": "object",
+  "required": [
+    "keys"
+  ],
+  "properties": {
+    "hash": {
+      "$id": "#auth/api-keys/hash",
+      "title": "Hash",
+      "description": "The hashing function used to store the value of the key. When you use `plain` the API key is written as it will passed by the user. The rest of the hashes require you to save the API key after applying the desired function.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+      "default": "plain",
+      "enum": [
+        "plain",
+        "fnv128",
+        "sha256",
+        "sha1"
+      ]
+    },
+    "identifier": {
+      "$id": "#auth/api-keys/identifier",
+      "title": "Identifier",
+      "description": "The header name or the query string name that contains the API key. Defaults to `key` when using the `query_string` strategy and to `Authorization` when using the `header` strategy. The identifier set here is used across all endpoints with API key authentication enabled, but they can override this entry individually.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+      "examples": [
+        "Authorization",
+        "X-Key"
+      ],
+      "default": "Authorization",
+      "type": "string"
+    },
+    "keys": {
+      "$id": "#auth/api-keys/keys",
+      "title": "API Keys",
+      "description": "A list of objects defining each API Key.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "title": "API Key",
+            "description": "The secret key used by the client to access the resources. Don't have a key? Execute in a terminal `uuidgen` to generate a random one.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+            "type": "string"
+          },
+          "roles": {
+            "title": "Roles",
+            "description": "All the roles this user has. See roles as all the identifying labels that belong to this client.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "patternProperties": {
+          "^[@$_#]": {}
+        },
+        "additionalProperties": false
+      }
+    },
+    "propagate_role": {
+      "title": "Propagate role as header",
+      "description": "The name of a header that will propagate to the backend containing the matching role. The backend receives no header when the string is empty, or the attribute is not declared. Otherwise, the backend receives the declared header name containing **the first matching role of the user**. The header value will be  `ANY` when the endpoint does not require roles. For instance, if an API key has roles `[A, B]`, and the endpoint demands roles `[B, C]`, the backend will receive a header with the value `B`.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+      "examples": [
+        "X-Krakend-Role"
+      ],
+      "default": "",
+      "type": "string"
+    },
+    "salt": {
+      "$id": "#auth/api-keys/salt",
+      "title": "Salt",
+      "description": "A salt string for the desired hashing function. When provided, the API key is concatenated after the salt string and both hashed together.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+      "examples": [
+        "mySalt"
+      ],
+      "default": "",
+      "type": "string"
+    },
+    "strategy": {
+      "$id": "#auth/api-keys/strategy",
+      "title": "Strategy",
+      "description": "Specifies where to expect the user API key, whether inside a header or as part of the query string. The strategy set here is used across all endpoints with API key authentication enabled, but they can override this entry individually.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/api-keys/",
+      "default": "header",
+      "enum": [
+        "header",
+        "query_string"
+      ]
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

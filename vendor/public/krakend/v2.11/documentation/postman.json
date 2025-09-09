@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.11/documentation/postman.json",
+  "title": "Generate documentation using Postman collections",
+  "description": "Enterprise only. Generates postman documentation automatically through `krakend postman export` command.\n\nSee: https://www.krakend.io/docs/enterprise/developer/postman/",
+  "type": "object",
+  "properties": {
+    "description": {
+      "$id": "#documentation/postman/description",
+      "title": "API Collection Description",
+      "description": "An introductory, optionally verbose, explanation supporting Markdown syntax. If you'd like to load an **external markdown file**, you can use flexible configuration, for instance `\"description\": {{include \"postman/intro.md\" | toJson }}`\n\nSee: https://www.krakend.io/docs/enterprise/developer/postman/",
+      "examples": [
+        "Hi there, I am a [postman collection](https://www.krakend.io/docs/enterprise/developer/postman/)"
+      ],
+      "type": "string"
+    },
+    "folder": {
+      "$id": "#documentation/postman/folder",
+      "title": "Folder",
+      "description": "The folder definition where you will add endpoints",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "description": {
+            "title": "Folder description",
+            "description": "A description explaining the items inside this folder",
+            "examples": [
+              "Books from post-apocalyptic dystopias to brilliant time-travel"
+            ]
+          },
+          "name": {
+            "title": "Folder name",
+            "description": "The folder name. This might look like the path in an operative system with a slash /, but is not strictly necessary. Usage of special chars is allowed.",
+            "examples": [
+              "/Books",
+              "/Books/Science Fiction/Dystopia",
+              "/书籍/科幻小说",
+              "/पुस्तकें/विज्ञान कथा",
+              "/本/サイエンスフィクション"
+            ],
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "name": {
+      "$id": "#documentation/postman/name",
+      "title": "Collection Name",
+      "description": "The name of the Postman collection you are generating.\n\nSee: https://www.krakend.io/docs/enterprise/developer/postman/",
+      "examples": [
+        "KrakenD Config v1"
+      ],
+      "type": "string"
+    },
+    "version": {
+      "$id": "#documentation/postman/version",
+      "title": "Collection Version",
+      "description": "The version you assign to this Postman collection you are generating using **semantic versioning**.\n\nSee: https://www.krakend.io/docs/enterprise/developer/postman/",
+      "examples": [
+        "1.2.3",
+        "0.7.9"
+      ],
+      "type": "string",
+      "pattern": "^[0-9].[0-9].[0-9]+$"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}
