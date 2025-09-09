@@ -82,5 +82,4 @@ WORKDIR ${SOURCEMETA_REGISTRY_WORKDIR}
 # without caring about output locations at all
 ARG SOURCEMETA_REGISTRY_OUTPUT=/sourcemeta
 ENV SOURCEMETA_REGISTRY_OUTPUT=${SOURCEMETA_REGISTRY_OUTPUT}
-RUN echo "#!/bin/sh\nexec /usr/bin/sourcemeta-registry-index \"\$1\" \"${SOURCEMETA_REGISTRY_OUTPUT}\"" \
-  > /usr/bin/sourcemeta && chmod +x /usr/bin/sourcemeta
+COPY docker/wrapper.sh /usr/bin/sourcemeta
