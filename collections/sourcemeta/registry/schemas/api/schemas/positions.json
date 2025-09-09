@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "examples": [
+    {
+      "": [ 1, 1, 5, 1 ],
+      "/$id": [ 3, 10, 3, 57 ],
+      "/$schema": [ 2, 14, 2, 54 ],
+      "/type": [ 4, 11, 4, 19 ]
+    }
+  ],
+  "type": "object",
+  "additionalProperties": {
+    "type": "array",
+    "maxItems": 4,
+    "minItems": 4,
+    "items": {
+      "type": "number"
+    }
+  }
+}

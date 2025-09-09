@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "examples": [
+    [
+      {
+        "at": "/properties/bar/$ref",
+        "from": "http://localhost:8000/example/bundling/double.json",
+        "to": "http://json-schema.org/draft-07/schema"
+      },
+      {
+        "at": "/properties/foo/$ref",
+        "from": "http://localhost:8000/example/bundling/double.json",
+        "to": "http://localhost:8000/example/bundling/single.json"
+      },
+      {
+        "at": "/properties/foo/$ref",
+        "from": "http://localhost:8000/example/bundling/single.json",
+        "to": "http://localhost:8000/example/v2.0/schema.json"
+      }
+    ]
+  ],
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [ "from", "to", "at" ],
+    "properties": {
+      "at": {
+        "type": "string",
+        "format": "json-pointer"
+      },
+      "from": {
+        "type": "string",
+        "format": "uri"
+      },
+      "to": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "additionalProperties": false
+  }
+}

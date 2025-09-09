@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "examples": [
+    {
+      "errors": [
+        {
+          "description": null,
+          "message": "Setting the `additionalProperties` keyword to the true schema does not add any further constraint",
+          "name": "additional_properties_default",
+          "pointers": [
+            "/definitions/AudioContent/properties/_meta/additionalProperties"
+          ]
+        }
+      ],
+      "score": 78
+    }
+  ],
+  "type": "object",
+  "required": [ "score", "errors" ],
+  "properties": {
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "pointers", "name", "message", "description" ],
+        "properties": {
+          "description": {
+            "type": [ "string", "null" ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pointers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "json-pointer"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "score": {
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false
+}
