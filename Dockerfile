@@ -82,4 +82,8 @@ WORKDIR ${SOURCEMETA_REGISTRY_WORKDIR}
 # without caring about output locations at all
 ARG SOURCEMETA_REGISTRY_OUTPUT=/sourcemeta
 ENV SOURCEMETA_REGISTRY_OUTPUT=${SOURCEMETA_REGISTRY_OUTPUT}
-COPY docker/wrapper.sh /usr/bin/sourcemeta
+COPY docker/wrapper-index.sh /usr/bin/sourcemeta
+COPY docker/wrapper-server.sh /usr/bin/sourcemeta-server
+
+ENV SOURCEMETA_REGISTRY_PORT=8000
+ENTRYPOINT [ "/usr/bin/sourcemeta-server" ]

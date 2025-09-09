@@ -28,14 +28,14 @@ runs:
       env:
         SOURCEMETA_REGISTRY_SANDBOX_EDITION: ${{ inputs.edition }}
         SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
-        SOURCEMETA_REGISTRY_PORT: ${{ inputs.port }}
+        SOURCEMETA_REGISTRY_SANDBOX_PORT: ${{ inputs.port }}
     - name: Up Sandbox (${{ inputs.configuration }})
       run: docker compose --file test/sandbox/compose.yaml up --detach --wait
       shell: bash
       env:
         SOURCEMETA_REGISTRY_SANDBOX_EDITION: ${{ inputs.edition }}
         SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
-        SOURCEMETA_REGISTRY_PORT: ${{ inputs.port }}
+        SOURCEMETA_REGISTRY_SANDBOX_PORT: ${{ inputs.port }}
     - name: Test Sandbox (${{ inputs.configuration }})
       run: make test-e2e PRESET=Release EDITION=${{ inputs.edition }}
       shell: bash
@@ -48,4 +48,4 @@ runs:
       env:
         SOURCEMETA_REGISTRY_SANDBOX_EDITION: ${{ inputs.edition }}
         SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
-        SOURCEMETA_REGISTRY_PORT: ${{ inputs.port }}
+        SOURCEMETA_REGISTRY_SANDBOX_PORT: ${{ inputs.port }}
