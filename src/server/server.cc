@@ -274,6 +274,89 @@ static auto serve_static_file(uWS::HttpRequest *request,
 
 constexpr auto SENTINEL{"%"};
 
+static auto on_evaluate(const std::filesystem::path &base,
+                        const std::string_view &path, uWS::HttpRequest *request,
+                        uWS::HttpResponse<true> *response,
+                        const ServerContentEncoding encoding,
+                        const sourcemeta::registry::EvaluateType mode) -> void {
+  // A CORS pre-flight request
+  if (request->getMethod() == "options") {
+    response->writeStatus(sourcemeta::registry::STATUS_NO_CONTENT);
+    response->writeHeader("Access-Control-Allow-Origin", "*");
+    response->writeHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    response->writeHeader("Access-Control-Allow-Headers", "Content-Type");
+    response->writeHeader("Access-Control-Max-Age", "3600");
+    send_response(sourcemeta::registry::STATUS_NO_CONTENT, request->getMethod(),
+                  request->getUrl(), response);
+  } else if (request->getMethod() == "post") {
+    auto template_path{base / "schemas"};
+    template_path /= path;
+    template_path += ".json";
+    template_path /= SENTINEL;
+    template_path /= "blaze-exhaustive.metapack";
+    if (!std::filesystem::exists(template_path)) {
+      const auto schema_path{template_path.parent_path() / "schema.metapack"};
+      if (std::filesystem::exists(schema_path)) {
+        json_error(request->getMethod(), request->getUrl(), response, encoding,
+                   sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                   "no-template",
+                   "This schema was not precompiled for schema evaluation");
+      } else {
+        json_error(request->getMethod(), request->getUrl(), response, encoding,
+                   sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
+                   "There is nothing at this URL");
+      }
+
+      return;
+    }
+
+    response->onAborted([]() {});
+    std::unique_ptr<std::string> buffer;
+    // Because `request` gets de-allocated
+    std::string url{request->getUrl()};
+    response->onData([response, encoding, mode, buffer = std::move(buffer),
+                      template_path = std::move(template_path),
+                      url = std::move(url)](const std::string_view chunk,
+                                            const bool is_last) mutable {
+      try {
+        if (!buffer.get()) {
+          buffer = std::make_unique<std::string>(chunk);
+        } else {
+          buffer->append(chunk);
+        }
+
+        if (is_last) {
+          if (buffer->empty()) {
+            json_error("post", url, response, encoding,
+                       sourcemeta::registry::STATUS_BAD_REQUEST, "no-instance",
+                       "You must pass an instance to validate against");
+          } else {
+            const auto result{
+                sourcemeta::registry::evaluate(template_path, *buffer, mode)};
+            response->writeStatus(sourcemeta::registry::STATUS_OK);
+            response->writeHeader("Content-Type", "application/json");
+            response->writeHeader("Access-Control-Allow-Origin", "*");
+            std::ostringstream payload;
+            sourcemeta::core::prettify(result, payload);
+            send_response(sourcemeta::registry::STATUS_OK, "post", url,
+                          response, payload.str(), encoding,
+                          ServerContentEncoding::Identity);
+          }
+        }
+      } catch (const std::exception &error) {
+        json_error("post", url, response, encoding,
+                   sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                   "uncaught-error", error.what());
+      }
+    });
+  } else {
+    json_error(request->getMethod(), request->getUrl(), response, encoding,
+               sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+               "method-not-allowed",
+               "This HTTP method is invalid for this URL");
+  }
+}
+
 static auto on_request(const std::filesystem::path &base,
                        uWS::HttpRequest *request,
                        uWS::HttpResponse<true> *response,
@@ -367,86 +450,11 @@ static auto on_request(const std::filesystem::path &base,
                  "This HTTP method is invalid for this URL");
     }
   } else if (request->getUrl().starts_with("/self/api/schemas/evaluate/")) {
-    // A CORS pre-flight request
-    if (request->getMethod() == "options") {
-      response->writeStatus(sourcemeta::registry::STATUS_NO_CONTENT);
-      response->writeHeader("Access-Control-Allow-Origin", "*");
-      response->writeHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-      response->writeHeader("Access-Control-Allow-Headers", "Content-Type");
-      response->writeHeader("Access-Control-Max-Age", "3600");
-      send_response(sourcemeta::registry::STATUS_NO_CONTENT,
-                    request->getMethod(), request->getUrl(), response);
-    } else if (request->getMethod() == "post") {
-      auto template_path{base / "schemas"};
-      template_path /= request->getUrl().substr(27);
-      template_path += ".json";
-      template_path /= SENTINEL;
-      template_path /= "blaze-exhaustive.metapack";
-      if (!std::filesystem::exists(template_path)) {
-        const auto schema_path{template_path.parent_path() / "schema.metapack"};
-        if (std::filesystem::exists(schema_path)) {
-          json_error(request->getMethod(), request->getUrl(), response,
-                     encoding, sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
-                     "no-template",
-                     "This schema was not precompiled for schema evaluation");
-        } else {
-          json_error(request->getMethod(), request->getUrl(), response,
-                     encoding, sourcemeta::registry::STATUS_NOT_FOUND,
-                     "not-found", "There is nothing at this URL");
-        }
-
-        return;
-      }
-
-      response->onAborted([]() {});
-      std::unique_ptr<std::string> buffer;
-      // Because `request` gets de-allocated
-      std::string url{request->getUrl()};
-      response->onData([response, encoding, buffer = std::move(buffer),
-                        template_path = std::move(template_path),
-                        trace = !request->getQuery("trace").empty(),
-                        url = std::move(url)](const std::string_view chunk,
-                                              const bool is_last) mutable {
-        try {
-          if (!buffer.get()) {
-            buffer = std::make_unique<std::string>(chunk);
-          } else {
-            buffer->append(chunk);
-          }
-
-          if (is_last) {
-            if (buffer->empty()) {
-              json_error("post", url, response, encoding,
-                         sourcemeta::registry::STATUS_BAD_REQUEST,
-                         "no-instance",
-                         "You must pass an instance to validate against");
-            } else {
-              const auto result{sourcemeta::registry::evaluate(
-                  template_path, *buffer,
-                  trace ? sourcemeta::registry::EvaluateType::Trace
-                        : sourcemeta::registry::EvaluateType::Standard)};
-              response->writeStatus(sourcemeta::registry::STATUS_OK);
-              response->writeHeader("Content-Type", "application/json");
-              response->writeHeader("Access-Control-Allow-Origin", "*");
-              std::ostringstream payload;
-              sourcemeta::core::prettify(result, payload);
-              send_response(sourcemeta::registry::STATUS_OK, "post", url,
-                            response, payload.str(), encoding,
-                            ServerContentEncoding::Identity);
-            }
-          }
-        } catch (const std::exception &error) {
-          json_error("post", url, response, encoding,
-                     sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
-                     "uncaught-error", error.what());
-        }
-      });
-    } else {
-      json_error(request->getMethod(), request->getUrl(), response, encoding,
-                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
-                 "method-not-allowed",
-                 "This HTTP method is invalid for this URL");
-    }
+    on_evaluate(base, request->getUrl().substr(27), request, response, encoding,
+                sourcemeta::registry::EvaluateType::Standard);
+  } else if (request->getUrl().starts_with("/self/api/schemas/trace/")) {
+    on_evaluate(base, request->getUrl().substr(24), request, response, encoding,
+                sourcemeta::registry::EvaluateType::Trace);
   } else if (request->getUrl() == "/self/api/schemas/search") {
     if (request->getMethod() == "get") {
       const auto query{request->getQuery("q")};
