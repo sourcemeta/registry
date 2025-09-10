@@ -598,7 +598,7 @@ auto terminate(int signal) -> void {
 // is for the server to start running and bind to the port as quickly
 // as possible, so we can take better advantage of scale-to-zero.
 auto main(int argc, char *argv[]) noexcept -> int {
-  std::cerr << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
+  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
 #if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
   std::cout << " Enterprise ";
 #elif defined(SOURCEMETA_REGISTRY_PRO)
