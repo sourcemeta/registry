@@ -16,17 +16,6 @@ target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::registry::s
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::evaluator)
 target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::output)
 
-if(REGISTRY_EDITION STREQUAL "enterprise")
-  target_compile_definitions(sourcemeta_registry_server
-    PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
-elseif(REGISTRY_EDITION STREQUAL "pro")
-  target_compile_definitions(sourcemeta_registry_server
-    PRIVATE SOURCEMETA_REGISTRY_PRO)
-else()
-  target_compile_definitions(sourcemeta_registry_server
-    PRIVATE SOURCEMETA_REGISTRY_STARTER)
-endif()
-
 target_compile_definitions(sourcemeta_registry_server
   PRIVATE SOURCEMETA_REGISTRY_STATIC="${REGISTRY_PREFIX}/share/sourcemeta/registry/static")
 

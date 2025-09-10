@@ -28,17 +28,6 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evalu
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::output)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::linter)
 
-if(REGISTRY_EDITION STREQUAL "enterprise")
-  target_compile_definitions(sourcemeta_registry_index
-    PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
-elseif(REGISTRY_EDITION STREQUAL "pro")
-  target_compile_definitions(sourcemeta_registry_index
-    PRIVATE SOURCEMETA_REGISTRY_PRO)
-else()
-  target_compile_definitions(sourcemeta_registry_index
-    PRIVATE SOURCEMETA_REGISTRY_STARTER)
-endif()
-
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
