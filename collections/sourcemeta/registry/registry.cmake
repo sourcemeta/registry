@@ -29,7 +29,6 @@ install(FILES
 
 install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/dependencies.json"
-    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/evaluate-trace.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/evaluate.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/health.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/list.json"
@@ -37,6 +36,7 @@ install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/metadata.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/positions.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/search.json"
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/trace.json"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}/schemas/api/schemas"
   COMPONENT sourcemeta_registry)
 
