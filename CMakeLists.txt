@@ -31,6 +31,15 @@ find_package(JSONSchema REQUIRED)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=native")
 
+# Set these globally to not repeat ourselves in every target
+if(REGISTRY_EDITION STREQUAL "enterprise")
+  add_compile_definitions(SOURCEMETA_REGISTRY_ENTERPRISE)
+elseif(REGISTRY_EDITION STREQUAL "pro")
+  add_compile_definitions(SOURCEMETA_REGISTRY_PRO)
+else()
+  add_compile_definitions(SOURCEMETA_REGISTRY_STARTER)
+endif()
+
 if(REGISTRY_INDEX OR REGISTRY_SERVER)
   add_subdirectory(src/shared)
 endif()
