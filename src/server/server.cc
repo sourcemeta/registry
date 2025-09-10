@@ -366,12 +366,12 @@ static auto on_request(const std::filesystem::path &base,
     serve_static_file(request, response, encoding,
                       base / "explorer" / SENTINEL / "directory-html.metapack",
                       sourcemeta::registry::STATUS_OK);
-  } else if (request->getUrl() == "/self/api/schemas/list") {
+  } else if (request->getUrl() == "/self/api/list") {
     serve_static_file(request, response, encoding,
                       base / "explorer" / SENTINEL / "directory.metapack",
                       sourcemeta::registry::STATUS_OK, true);
-  } else if (request->getUrl().starts_with("/self/api/schemas/list/")) {
-    const auto absolute_path{base / "explorer" / request->getUrl().substr(23) /
+  } else if (request->getUrl().starts_with("/self/api/list/")) {
+    const auto absolute_path{base / "explorer" / request->getUrl().substr(15) /
                              SENTINEL / "directory.metapack"};
     serve_static_file(request, response, encoding, absolute_path,
                       sourcemeta::registry::STATUS_OK, true);
