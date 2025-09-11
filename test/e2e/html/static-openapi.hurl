@@ -11,8 +11,13 @@ header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/self/static/openapi.yaml
 Accept-Encoding: gzip
+HTTP 404
+
+# TODO: Assert on the server URL, etc
+GET {{base}}/self/static/openapi.json
+Accept-Encoding: gzip
 HTTP 200
-Content-Type: application/yaml
+Content-Type: application/json
 Content-Encoding: gzip
 [Asserts]
 bytes count > 0

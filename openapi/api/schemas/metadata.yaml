@@ -1,0 +1,59 @@
+parameters:
+  - name: path
+    in: path
+    required: true
+    schema:
+      type: string
+    example: "path/to/schema"
+
+get:
+  summary: Get schema metadata
+  responses:
+    '200':
+      headers:
+        ETag:
+          schema:
+            $ref: ../../../collections/sourcemeta/registry/schemas/api/common/etag.json
+        Last-Modified:
+          schema:
+            $ref: ../../../collections/sourcemeta/registry/schemas/api/common/gmt.json
+        Access-Control-Allow-Origin:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: ../../../collections/sourcemeta/registry/schemas/api/schemas/metadata.json
+    '404':
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: ../../../collections/sourcemeta/registry/schemas/api/common/error.json
+
+head:
+  summary: Get schema metadata
+  responses:
+    '200':
+      headers:
+        ETag:
+          schema:
+            $ref: ../../../collections/sourcemeta/registry/schemas/api/common/etag.json
+        Last-Modified:
+          schema:
+            $ref: ../../../collections/sourcemeta/registry/schemas/api/common/gmt.json
+        Access-Control-Allow-Origin:
+          schema:
+            type: string
+    '404':
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: ../../../collections/sourcemeta/registry/schemas/api/common/error.json

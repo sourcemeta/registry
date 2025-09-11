@@ -21,6 +21,7 @@ install(FILES
   COMPONENT sourcemeta_registry)
 
 install(FILES
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/common/schema.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/common/error.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/common/gmt.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/common/etag.json"
@@ -28,10 +29,14 @@ install(FILES
   COMPONENT sourcemeta_registry)
 
 install(FILES
+    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/list.json"
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}/schemas/api"
+  COMPONENT sourcemeta_registry)
+
+install(FILES
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/dependencies.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/evaluate.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/health.json"
-    "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/list.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/locations.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/metadata.json"
     "${CMAKE_CURRENT_LIST_DIR}/schemas/api/schemas/positions.json"

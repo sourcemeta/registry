@@ -1,0 +1,35 @@
+parameters:
+  - name: path
+    in: path
+    required: true
+    schema:
+      type: string
+    example: "path/to/schema"
+  - name: q
+    in: query
+    required: false
+    schema:
+      type: string
+    description: Search query string
+
+get:
+  summary: Search for schemas in the registry
+  responses:
+    '200':
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: ../../../collections/sourcemeta/registry/schemas/api/schemas/search.json
+    '400':
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: ../../../collections/sourcemeta/registry/schemas/api/common/error.json
