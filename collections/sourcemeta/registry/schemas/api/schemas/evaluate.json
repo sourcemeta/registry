@@ -1,18 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "examples": [
-    {
-      "errors": [
-        {
-          "absoluteKeywordLocation": "http://localhost:8000/example/schemas/string.json#/type",
-          "error": "The value was expected to be of type string but it was of type integer",
-          "instanceLocation": "",
-          "keywordLocation": "/type"
-        }
-      ],
-      "valid": false
-    }
-  ],
   "type": "object",
   "required": [ "valid" ],
   "properties": {

@@ -1,42 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "examples": [
-    {
-      "dynamic": {},
-      "static": {
-        "http://localhost:8000/example/v2.0/schema.json": {
-          "type": "resource",
-          "base": "http://localhost:8000/example/v2.0/schema.json",
-          "baseDialect": "http://json-schema.org/draft-07/schema#",
-          "dialect": "http://json-schema.org/draft-07/schema#",
-          "parent": null,
-          "pointer": "",
-          "relativePointer": "",
-          "root": "http://localhost:8000/example/v2.0/schema.json"
-        },
-        "http://localhost:8000/example/v2.0/schema.json#/$id": {
-          "type": "pointer",
-          "base": "http://localhost:8000/example/v2.0/schema.json",
-          "baseDialect": "http://json-schema.org/draft-07/schema#",
-          "dialect": "http://json-schema.org/draft-07/schema#",
-          "parent": "",
-          "pointer": "/$id",
-          "relativePointer": "/$id",
-          "root": "http://localhost:8000/example/v2.0/schema.json"
-        },
-        "http://localhost:8000/example/v2.0/schema.json#/$schema": {
-          "type": "pointer",
-          "base": "http://localhost:8000/example/v2.0/schema.json",
-          "baseDialect": "http://json-schema.org/draft-07/schema#",
-          "dialect": "http://json-schema.org/draft-07/schema#",
-          "parent": "",
-          "pointer": "/$schema",
-          "relativePointer": "/$schema",
-          "root": "http://localhost:8000/example/v2.0/schema.json"
-        }
-      }
-    }
-  ],
   "type": "object",
   "required": [ "static", "dynamic" ],
   "properties": {

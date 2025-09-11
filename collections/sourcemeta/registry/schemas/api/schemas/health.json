@@ -1,20 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "examples": [
-    {
-      "errors": [
-        {
-          "description": null,
-          "message": "Setting the `additionalProperties` keyword to the true schema does not add any further constraint",
-          "name": "additional_properties_default",
-          "pointers": [
-            "/definitions/AudioContent/properties/_meta/additionalProperties"
-          ]
-        }
-      ],
-      "score": 78
-    }
-  ],
   "type": "object",
   "required": [ "score", "errors" ],
   "properties": {
@@ -45,7 +30,7 @@
       }
     },
     "score": {
-      "type": "integer"
+      "$ref": "../common/percentage.json"
     }
   },
   "additionalProperties": false

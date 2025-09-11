@@ -1,34 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "examples": [
-    {
-      "steps": [
-        {
-          "type": "push",
-          "annotation": null,
-          "evaluatePath": "/type",
-          "instanceLocation": "",
-          "instancePositions": [ 1, 1, 1, 13 ],
-          "keywordLocation": "http://localhost:8000/example/schemas/string.json#/type",
-          "message": null,
-          "name": "AssertionTypeStrict",
-          "vocabulary": "http://json-schema.org/draft-07/schema#"
-        },
-        {
-          "type": "pass",
-          "annotation": null,
-          "evaluatePath": "/type",
-          "instanceLocation": "",
-          "instancePositions": [ 1, 1, 1, 13 ],
-          "keywordLocation": "http://localhost:8000/example/schemas/string.json#/type",
-          "message": "The value was expected to be of type string",
-          "name": "AssertionTypeStrict",
-          "vocabulary": "http://json-schema.org/draft-07/schema#"
-        }
-      ],
-      "valid": true
-    }
-  ],
   "type": "object",
   "required": [ "valid", "steps" ],
   "properties": {
