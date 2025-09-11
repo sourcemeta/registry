@@ -1,13 +1,5 @@
-parameters:
-  - name: path
-    in: path
-    required: true
-    schema:
-      type: string
-    example: "path/to/directory"
-
 get:
-  summary: List the contents of a directory
+  summary: List the contents of the root directory
   responses:
     '200':
       headers:
@@ -35,7 +27,7 @@ get:
             $ref: ../../collections/sourcemeta/registry/schemas/api/common/error.json
 
 head:
-  summary: List the contents of a directory
+  summary: List the contents of the root directory
   responses:
     '200':
       headers:

@@ -11,6 +11,7 @@ sourcemeta_esbuild_bundle(
 set(OPENAPI_DEPENDENCIES
   "${PROJECT_SOURCE_DIR}/openapi/api/fetch.yaml"
   "${PROJECT_SOURCE_DIR}/openapi/api/list.yaml"
+  "${PROJECT_SOURCE_DIR}/openapi/api/list-root.yaml"
   "${PROJECT_SOURCE_DIR}/openapi/api/schemas/dependencies.yaml"
   "${PROJECT_SOURCE_DIR}/openapi/api/schemas/evaluate.yaml"
   "${PROJECT_SOURCE_DIR}/openapi/api/schemas/health.yaml"

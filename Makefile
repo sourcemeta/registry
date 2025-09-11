@@ -70,6 +70,12 @@ else
 		test/e2e/schemas/*.hurl
 endif
 
+.PHONY: test-e2e-api
+test-e2e-api:
+	$(HURL) --test --variable base=$(SANDBOX_URL) \
+		test/e2e/api/*.hurl \
+		test/e2e/schemas/*.hurl
+
 .PHONY: sandbox
 sandbox: compile
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \

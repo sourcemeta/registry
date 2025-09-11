@@ -18,7 +18,9 @@ paths:
     $ref: "./api/schemas/trace.yaml"
   /self/api/schemas/search:
     $ref: "./api/schemas/search.yaml"
-  /self/api/schemas/list/{path}:
+  /self/api/list:
+    $ref: "./api/list-root.yaml"
+  /self/api/list/{path}:
     $ref: "./api/list.yaml"
   /{path}.json:
     $ref: "./api/fetch.yaml"
