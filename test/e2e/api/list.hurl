@@ -8,47 +8,56 @@ header "Last-Modified" exists
 jsonpath "$.url" == "/"
 jsonpath "$.canonical" == "{{base}}"
 jsonpath "$.breadcrumb" count == 0
-jsonpath "$.entries" count == 7
-jsonpath "$.entries[0].name" == "same"
+jsonpath "$.entries" count == 8
+jsonpath "$.entries[0].name" == "sourcemeta"
 jsonpath "$.entries[0].type" == "directory"
 jsonpath "$.entries[0].health" == 100
-jsonpath "$.entries[0].url" == "/same"
-jsonpath "$.entries[1].name" == "no-blaze"
+jsonpath "$.entries[0].url" == "/sourcemeta"
+jsonpath "$.entries[0].github" == "sourcemeta"
+jsonpath "$.entries[0].description" == "A provider of premium tooling and services to support JSON Schema use in production"
+jsonpath "$.entries[0].email" == "hello@sourcemeta.com"
+jsonpath "$.entries[0].title" == "Sourcemeta"
+jsonpath "$.entries[0].website" == "https://www.sourcemeta.com"
+jsonpath "$.entries[1].name" == "same"
 jsonpath "$.entries[1].type" == "directory"
 jsonpath "$.entries[1].health" == 100
-jsonpath "$.entries[1].url" == "/no-blaze"
-jsonpath "$.entries[2].name" == "modelcontextprotocol"
+jsonpath "$.entries[1].url" == "/same"
+jsonpath "$.entries[2].name" == "no-blaze"
 jsonpath "$.entries[2].type" == "directory"
-jsonpath "$.entries[2].health" == 78
-jsonpath "$.entries[2].url" == "/modelcontextprotocol"
-jsonpath "$.entries[3].name" == "hyper"
+jsonpath "$.entries[2].health" == 100
+jsonpath "$.entries[2].url" == "/no-blaze"
+jsonpath "$.entries[3].name" == "modelcontextprotocol"
 jsonpath "$.entries[3].type" == "directory"
-jsonpath "$.entries[3].health" == 100
-jsonpath "$.entries[3].url" == "/hyper"
-jsonpath "$.entries[4].name" == "geojson"
-jsonpath "$.entries[4].title" == "GeoJSON"
-jsonpath "$.entries[4].description" == "A format for encoding a variety of geographic data structures"
-jsonpath "$.entries[4].github" == "geojson"
-jsonpath "$.entries[4].website" == "https://geojson.org"
+jsonpath "$.entries[3].health" == 78
+jsonpath "$.entries[3].url" == "/modelcontextprotocol"
+jsonpath "$.entries[4].name" == "hyper"
 jsonpath "$.entries[4].type" == "directory"
-jsonpath "$.entries[4].health" == 91
-jsonpath "$.entries[4].url" == "/geojson"
-jsonpath "$.entries[5].name" == "example"
-jsonpath "$.entries[5].title" == "Sourcemeta"
-jsonpath "$.entries[5].description" == "My description"
-jsonpath "$.entries[5].email" == "hello@sourcemeta.com"
-jsonpath "$.entries[5].github" == "sourcemeta"
-jsonpath "$.entries[5].website" == "https://www.sourcemeta.com"
+jsonpath "$.entries[4].health" == 100
+jsonpath "$.entries[4].url" == "/hyper"
+jsonpath "$.entries[5].name" == "geojson"
+jsonpath "$.entries[5].title" == "GeoJSON"
+jsonpath "$.entries[5].description" == "A format for encoding a variety of geographic data structures"
+jsonpath "$.entries[5].github" == "geojson"
+jsonpath "$.entries[5].website" == "https://geojson.org"
 jsonpath "$.entries[5].type" == "directory"
-jsonpath "$.entries[5].health" == 100
-jsonpath "$.entries[5].url" == "/example"
-jsonpath "$.entries[6].name" == "doc"
-jsonpath "$.entries[6].title" == "A sample schema folder"
-jsonpath "$.entries[6].description" == "For testing purposes"
-jsonpath "$.entries[6].github" == "sourcemeta/registry"
+jsonpath "$.entries[5].health" == 91
+jsonpath "$.entries[5].url" == "/geojson"
+jsonpath "$.entries[6].name" == "example"
+jsonpath "$.entries[6].title" == "Sourcemeta"
+jsonpath "$.entries[6].description" == "My description"
+jsonpath "$.entries[6].email" == "hello@sourcemeta.com"
+jsonpath "$.entries[6].github" == "sourcemeta"
+jsonpath "$.entries[6].website" == "https://www.sourcemeta.com"
 jsonpath "$.entries[6].type" == "directory"
 jsonpath "$.entries[6].health" == 100
-jsonpath "$.entries[6].url" == "/doc"
+jsonpath "$.entries[6].url" == "/example"
+jsonpath "$.entries[7].name" == "doc"
+jsonpath "$.entries[7].title" == "A sample schema folder"
+jsonpath "$.entries[7].description" == "For testing purposes"
+jsonpath "$.entries[7].github" == "sourcemeta/registry"
+jsonpath "$.entries[7].type" == "directory"
+jsonpath "$.entries[7].health" == 100
+jsonpath "$.entries[7].url" == "/doc"
 
 GET {{base}}/self/api/list/example
 HTTP 200
@@ -189,3 +198,41 @@ jsonpath "$.entries[2].name" == "to-without"
 jsonpath "$.entries[2].type" == "schema"
 jsonpath "$.entries[2].url" == "/example/extension/to-without"
 jsonpath "$.entries[2].health" == 100
+
+# API specification adherence
+
+GET {{base}}/self/api/list
+HTTP 200
+[Captures]
+list_body: body
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list
+```
+{{list_body}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
+GET {{base}}/self/api/list/example/extension
+HTTP 200
+[Captures]
+list_body: body
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list
+```
+{{list_body}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
+GET {{base}}/self/api/list/example/v2.0.json
+HTTP 404
+[Captures]
+list_body: body
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/common/error
+```
+{{list_body}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true

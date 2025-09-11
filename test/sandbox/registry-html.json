@@ -10,7 +10,7 @@
   },
   "extends": [
     "@geojson/v1.0.5",
-    "@geojson/v1.0.4",
+    "@sourcemeta/registry",
     "@modelcontextprotocol/2025-06-18"
   ],
   "contents": {
