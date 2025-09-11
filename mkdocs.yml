@@ -26,6 +26,7 @@ nav:
   - getting-started.md
   - configuration.md
   - library.md
+  - api.md
   - commercial.md
   - Live Example Instance: https://schemas.sourcemeta.com
   - Community Support: https://github.com/sourcemeta/registry/discussions
@@ -35,6 +36,9 @@ markdown_extensions:
   - pymdownx.superfences
   - footnotes
   - attr_list
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
