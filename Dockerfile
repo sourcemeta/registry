@@ -7,7 +7,6 @@ RUN apt-get --yes update && apt-get install --yes --no-install-recommends \
   build-essential cmake sassc esbuild shellcheck nodejs xxd \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY openapi /source/openapi
 COPY package.json /source/package.json
 COPY package-lock.json /source/package-lock.json
 COPY cmake /source/cmake

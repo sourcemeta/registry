@@ -7,46 +7,6 @@ sourcemeta_esbuild_bundle(
     "${CMAKE_CURRENT_SOURCE_DIR}/tabs.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/editor.js")
 
-# OpenAPI artifacts
-set(OPENAPI_DEPENDENCIES
-  "${PROJECT_SOURCE_DIR}/openapi/api/fetch.yaml"
-  "${PROJECT_SOURCE_DIR}/openapi/api/list.yaml"
-  "${PROJECT_SOURCE_DIR}/openapi/api/schemas/dependencies.yaml"
-  "${PROJECT_SOURCE_DIR}/openapi/api/schemas/evaluate.yaml"
-  "${PROJECT_SOURCE_DIR}/openapi/api/schemas/health.yaml"
-  "${PROJECT_SOURCE_DIR}/openapi/api/schemas/locations.yaml"
-  "${PROJECT_SOURCE_DIR}/openapi/api/schemas/metadata.yaml"
-  "${PROJECT_SOURCE_DIR}/openapi/api/schemas/positions.yaml"
-  "${PROJECT_SOURCE_DIR}/openapi/api/schemas/search.yaml"
-  "${PROJECT_SOURCE_DIR}/openapi/api/schemas/trace.yaml"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/list.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/common/error.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/common/etag.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/common/gmt.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/common/schema.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/schemas/dependencies.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/schemas/evaluate.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/schemas/health.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/schemas/locations.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/schemas/metadata.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/schemas/positions.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/schemas/search.json"
-  "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas/api/schemas/trace.json"
-  "${PROJECT_SOURCE_DIR}/package.json"
-  "${PROJECT_SOURCE_DIR}/package-lock.json")
-sourcemeta_redocly_openapi_to_html(
-  REDOCLY "${PROJECT_SOURCE_DIR}/node_modules/@redocly/cli/bin/cli.js"
-  INPUT "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml"
-  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/openapi.html"
-  DEPENDS ${OPENAPI_DEPENDENCIES})
-# TODO: Serve the OpenAPI.json at `/self/openapi`. Do it dynamically to
-# put the right server URLs and versions on the fly?
-sourcemeta_redocly_openapi_to_json(
-  REDOCLY "${PROJECT_SOURCE_DIR}/node_modules/@redocly/cli/bin/cli.js"
-  INPUT "${PROJECT_SOURCE_DIR}/openapi/openapi.yaml"
-  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/openapi.json"
-  DEPENDS ${OPENAPI_DEPENDENCIES})
-
 # Generate CSS
 include(BootstrapFiles)
 find_program(SASSC_BIN NAMES sassc REQUIRED)
@@ -61,8 +21,6 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
 
 # Generate static files
 set(REGISTRY_STATIC
-  "${CMAKE_CURRENT_BINARY_DIR}/openapi.html"
-  "${CMAKE_CURRENT_BINARY_DIR}/openapi.json"
   "${CMAKE_CURRENT_BINARY_DIR}/style.min.css"
   "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
   "${CMAKE_CURRENT_SOURCE_DIR}/static/favicon.ico"
@@ -90,6 +48,4 @@ install(FILES ${REGISTRY_STATIC_METAPACK}
 add_custom_target(sourcemeta_registry_web DEPENDS
   ${REGISTRY_STATIC_METAPACK}
   "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
-  "${CMAKE_CURRENT_BINARY_DIR}/openapi.html"
-  "${CMAKE_CURRENT_BINARY_DIR}/openapi.json"
   "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
