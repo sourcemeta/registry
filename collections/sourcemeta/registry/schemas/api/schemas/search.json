@@ -1,19 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "examples": [
-    [
-      {
-        "title": "Bundling",
-        "description": "A bundling example",
-        "url": "/example/bundling/single"
-      },
-      {
-        "title": "",
-        "description": "",
-        "url": "/example/bundling/double"
-      }
-    ]
-  ],
   "type": "array",
   "items": {
     "type": "object",
