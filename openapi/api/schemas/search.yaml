@@ -1,10 +1,4 @@
 parameters:
-  - name: path
-    in: path
-    required: true
-    schema:
-      type: string
-    example: "path/to/schema"
   - name: q
     in: query
     required: false

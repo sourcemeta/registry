@@ -2,23 +2,23 @@ openapi: 3.1.0
 info:
   title: Sourcemeta Schema Registry
 paths:
-  /self/api/schemas/dependencies/{path}:
-    $ref: "./api/schemas/dependencies.yaml"
+  /{path}.json:
+    $ref: "./api/fetch.yaml"
+  /self/api/list/{path}:
+    $ref: "./api/list.yaml"
   /self/api/schemas/evaluate/{path}:
     $ref: "./api/schemas/evaluate.yaml"
-  /self/api/schemas/health/{path}:
-    $ref: "./api/schemas/health.yaml"
-  /self/api/schemas/locations/{path}:
-    $ref: "./api/schemas/locations.yaml"
-  /self/api/schemas/metadata/{path}:
-    $ref: "./api/schemas/metadata.yaml"
-  /self/api/schemas/positions/{path}:
-    $ref: "./api/schemas/positions.yaml"
   /self/api/schemas/trace/{path}:
     $ref: "./api/schemas/trace.yaml"
   /self/api/schemas/search:
     $ref: "./api/schemas/search.yaml"
-  /self/api/schemas/list/{path}:
-    $ref: "./api/list.yaml"
-  /{path}.json:
-    $ref: "./api/fetch.yaml"
+  /self/api/schemas/metadata/{path}:
+    $ref: "./api/schemas/metadata.yaml"
+  /self/api/schemas/dependencies/{path}:
+    $ref: "./api/schemas/dependencies.yaml"
+  /self/api/schemas/health/{path}:
+    $ref: "./api/schemas/health.yaml"
+  /self/api/schemas/locations/{path}:
+    $ref: "./api/schemas/locations.yaml"
+  /self/api/schemas/positions/{path}:
+    $ref: "./api/schemas/positions.yaml"

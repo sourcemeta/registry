@@ -60,7 +60,20 @@
         "type": "object",
         "required": [ "health", "name", "type", "url" ],
         "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
           "type": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "github": {
             "type": "string"
           },
           "health": {
@@ -72,6 +85,9 @@
             "type": "string"
           },
           "url": {
+            "type": "string"
+          },
+          "website": {
             "type": "string"
           }
         },
