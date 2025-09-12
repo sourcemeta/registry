@@ -3,17 +3,29 @@ Accept: application/json
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
 jsonpath "$.score" == 100
 jsonpath "$.errors" count == 0
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/health/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 GET {{base}}/self/api/schemas/health/geojson/v1.0.5/polygon
 Accept: application/json
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -31,6 +43,14 @@ jsonpath "$.errors[1].name" == "enum_with_type"
 jsonpath "$.errors[1].message" == "Setting `type` alongside `enum` is considered an anti-pattern, as the enumeration choices already imply their respective types"
 jsonpath "$.errors[1].description" == null
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/health/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 HEAD {{base}}/self/api/schemas/health/geojson/v1.0.5/polygon
 Accept: application/json
 HTTP 200
@@ -45,25 +65,55 @@ POST {{base}}/self/api/schemas/health/geojson/v1.0.5/polygon
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 jsonpath "$.code" == 405
 jsonpath "$.error" == "method-not-allowed"
 jsonpath "$.message" == "This HTTP method is invalid for this URL"
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 GET {{base}}/self/api/schemas/health/xyz/
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 GET {{base}}/self/api/schemas/health
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
+
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true

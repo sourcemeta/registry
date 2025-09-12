@@ -39,6 +39,9 @@
         "type": "object",
         "required": [ "health", "name", "type", "url" ],
         "properties": {
+          "id": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
           },
@@ -46,6 +49,18 @@
             "type": "string"
           },
           "type": {
+            "type": "string"
+          },
+          "baseDialect": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer"
+          },
+          "canonical": {
+            "type": "string"
+          },
+          "dialect": {
             "type": "string"
           },
           "email": {
