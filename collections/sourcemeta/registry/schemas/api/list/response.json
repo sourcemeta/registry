@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": [ "health", "entries", "url", "canonical", "breadcrumb" ],
+  "required": [ "health", "entries", "relativeUrl", "url", "breadcrumb" ],
   "properties": {
     "title": {
       "type": "string"
@@ -13,20 +13,17 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [ "name", "url" ],
+        "required": [ "name", "relativeUrl" ],
         "properties": {
           "name": {
             "type": "string"
           },
-          "url": {
+          "relativeUrl": {
             "$ref": "../../common/uri-relative.json"
           }
         },
         "additionalProperties": false
       }
-    },
-    "canonical": {
-      "$ref": "../../common/url.json"
     },
     "email": {
       "$ref": "../../common/email-address.json"
@@ -37,7 +34,7 @@
         "anyOf": [
           {
             "type": "object",
-            "required": [ "health", "name", "type", "url" ],
+            "required": [ "health", "name", "type", "relativeUrl" ],
             "properties": {
               "title": {
                 "type": "string"
@@ -60,7 +57,7 @@
               "name": {
                 "type": "string"
               },
-              "url": {
+              "relativeUrl": {
                 "$ref": "../../common/uri-relative.json"
               },
               "website": {
@@ -91,8 +88,11 @@
     "health": {
       "$ref": "../../common/percentage.json"
     },
-    "url": {
+    "relativeUrl": {
       "$ref": "../../common/uri-relative.json"
+    },
+    "url": {
+      "$ref": "../../common/url.json"
     },
     "website": {
       "$ref": "../../common/url.json"

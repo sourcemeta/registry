@@ -5,7 +5,7 @@ Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
-jsonpath "$.url" == "/"
-jsonpath "$.canonical" == "{{base}}"
+jsonpath "$.relativeUrl" == "/"
+jsonpath "$.url" == "{{base}}"
 jsonpath "$.breadcrumb" count == 0
 jsonpath "$.entries" count == 0
