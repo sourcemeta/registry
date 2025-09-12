@@ -11,7 +11,7 @@
         "pattern": "^@[a-z0-9/.]+$"
       },
       {
-        "$ref": "./path-posix.json"
+        "$ref": "../common/path-posix.json"
       }
     ]
   }

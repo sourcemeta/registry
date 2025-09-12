@@ -48,7 +48,7 @@
       "format": "uri"
     },
     "health": {
-      "$ref": "../common/percentage.json"
+      "$ref": "../../../common/percentage.json"
     },
     "url": {
       "type": "string"

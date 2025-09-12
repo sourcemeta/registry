@@ -21,7 +21,6 @@ set(GEOJSON_SCRIPTS
   "${GEOJSON_PATH}/src/schema/Point.js"
   "${GEOJSON_PATH}/src/schema/Geometry.js")
 
-include(GNUInstallDirs)
 foreach(script IN LISTS GEOJSON_SCRIPTS)
   get_filename_component(schema_name "${script}" NAME_WE)
   set(schema_output "${CMAKE_CURRENT_BINARY_DIR}/collections/${COLLECTION_NAMESPACE}/${schema_name}.json")

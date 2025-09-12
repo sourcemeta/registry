@@ -39,8 +39,6 @@ foreach(file_path IN LISTS REGISTRY_STATIC)
   list(APPEND REGISTRY_STATIC_METAPACK "${file_output}")
 endforeach()
 
-include(GNUInstallDirs)
-
 install(FILES ${REGISTRY_STATIC_METAPACK}
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/static"
   COMPONENT sourcemeta_registry)

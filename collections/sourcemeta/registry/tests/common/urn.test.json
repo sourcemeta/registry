@@ -1,5 +1,5 @@
 {
-  "target": "../../schemas/configuration/urn.json",
+  "target": "../../schemas/common/urn.json",
   "x-license": "LicenseRef-Sourcemeta-Commercial",
   "tests": [
     {
@@ -153,7 +153,7 @@
       "data": "urn:example:foo-bar-baz?+CCResolve:cc=uk"
     },
     {
-      "description": "URN with q-component (query)",  
+      "description": "URN with q-component (query)",
       "valid": true,
       "data": "urn:example:foo-bar-baz?=querystring"
     },

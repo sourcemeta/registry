@@ -31,7 +31,6 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::linte
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
-include(GNUInstallDirs)
 install(TARGETS sourcemeta_registry_index
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
   COMPONENT sourcemeta_registry)

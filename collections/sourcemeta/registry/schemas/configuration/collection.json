@@ -15,31 +15,31 @@
       "type": "boolean"
     },
     "baseUri": {
-      "$ref": "./uri-reference.json"
+      "$ref": "../common/uri-reference.json"
     },
     "defaultDialect": {
-      "$ref": "./uri.json"
+      "$ref": "../common/uri.json"
     },
     "email": {
-      "$ref": "./email-address.json"
+      "$ref": "../common/email-address.json"
     },
     "github": {
       "type": "string"
     },
     "path": {
-      "$ref": "./path-posix.json"
+      "$ref": "../common/path-posix.json"
     },
     "resolve": {
       "type": "object",
       "propertyNames": {
-        "$ref": "./uri-reference.json"
+        "$ref": "../common/uri-reference.json"
       },
       "additionalProperties": {
-        "$ref": "./uri-reference.json"
+        "$ref": "../common/uri-reference.json"
       }
     },
     "website": {
-      "$ref": "./url.json"
+      "$ref": "../common/url.json"
     }
   },
   "additionalProperties": false

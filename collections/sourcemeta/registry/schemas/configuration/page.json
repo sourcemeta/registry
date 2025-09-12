@@ -17,13 +17,13 @@
       "$ref": "./contents.json"
     },
     "email": {
-      "$ref": "./email-address.json"
+      "$ref": "../common/email-address.json"
     },
     "github": {
       "type": "string"
     },
     "website": {
-      "$ref": "./url.json"
+      "$ref": "../common/url.json"
     }
   },
   "additionalProperties": false

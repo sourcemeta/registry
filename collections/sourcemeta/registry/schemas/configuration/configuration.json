@@ -28,7 +28,7 @@
               "type": "string"
             },
             "url": {
-              "$ref": "./url.json"
+              "$ref": "../common/url.json"
             }
           },
           "additionalProperties": false
@@ -46,7 +46,7 @@
       "additionalProperties": false
     },
     "url": {
-      "$ref": "./url.json"
+      "$ref": "../common/url.json"
     }
   },
   "additionalProperties": false
