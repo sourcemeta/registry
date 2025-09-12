@@ -5,7 +5,7 @@
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "http://localhost:8000/example/v2.0/schema.json"
+      "$ref": "http://localhost:8000/test/v2.0/schema.json"
     }
   }
 }

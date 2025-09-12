@@ -1,4 +1,4 @@
-GET {{base}}/self/api/schemas/positions/example/v2.0/schema
+GET {{base}}/self/api/schemas/positions/test/v2.0/schema
 Accept: application/json
 HTTP 200
 Content-Type: application/json
@@ -15,7 +15,7 @@ jsonpath "$['/$id']" count == 4
 jsonpath "$['/$id'][0]" == 3
 jsonpath "$['/$id'][1]" == 10
 jsonpath "$['/$id'][2]" == 3
-jsonpath "$['/$id'][3]" == 57
+jsonpath "$['/$id'][3]" == 54
 jsonpath "$['/$schema']" count == 4
 jsonpath "$['/$schema'][0]" == 2
 jsonpath "$['/$schema'][1]" == 14
@@ -27,7 +27,7 @@ jsonpath "$['/type'][1]" == 11
 jsonpath "$['/type'][2]" == 4
 jsonpath "$['/type'][3]" == 19
 
-HEAD {{base}}/self/api/schemas/positions/example/v2.0/schema
+HEAD {{base}}/self/api/schemas/positions/test/v2.0/schema
 Accept: application/json
 HTTP 200
 Content-Type: application/json
@@ -37,7 +37,7 @@ header "ETag" exists
 header "Last-Modified" exists
 bytes count == 0
 
-POST {{base}}/self/api/schemas/positions/example/v2.0/schema
+POST {{base}}/self/api/schemas/positions/test/v2.0/schema
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *

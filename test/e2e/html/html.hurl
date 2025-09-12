@@ -8,14 +8,14 @@ Content-Type: text/html
 xpath "string(/html/head/title)" == "Sourcemeta Schemas"
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/doc
+GET {{base}}/test/doc
 HTTP 200
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "A sample schema folder"
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/doc.json
+GET {{base}}/test/doc.json
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -24,25 +24,25 @@ jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
 
-GET {{base}}/doc/string-1
+GET {{base}}/test/doc/string-1
 HTTP 200
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "Non-blank string"
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/doc/string-1.html
+GET {{base}}/test/doc/string-1.html
 HTTP 404
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "Not Found"
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/example/v2.0
+GET {{base}}/test/v2.0
 HTTP 200
 Content-Type: text/html
 [Asserts]
-xpath "string(/html/head/title)" == "/example/v2.0"
+xpath "string(/html/head/title)" == "/test/v2.0"
 header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/xxxxxxx
@@ -52,49 +52,49 @@ Content-Type: text/html
 xpath "string(/html/head/title)" == "Not Found"
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/example/v2.0?locations=1
+GET {{base}}/test/v2.0?locations=1
 Accept: text/html
 HTTP 200
 [Asserts]
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/example/v2.0?health=1
+GET {{base}}/test/v2.0?health=1
 Accept: text/html
 HTTP 200
 [Asserts]
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/example/v2.0?positions=1
+GET {{base}}/test/v2.0?positions=1
 Accept: text/html
 HTTP 200
 [Asserts]
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/example/v2.0?positions=1
+GET {{base}}/test/v2.0?positions=1
 Accept: text/html
 HTTP 200
 [Asserts]
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/example/schemas/%25
+GET {{base}}/test/schemas/%25
 Accept: text/html
 HTTP 200
 [Asserts]
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/example/schemas/%25/test
+GET {{base}}/test/schemas/%25/test
 Accept: text/html
 HTTP 200
 [Asserts]
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/example
+GET {{base}}/test
 HTTP 200
 Content-Type: text/html
 [Asserts]
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/example/foobar/not-found
+GET {{base}}/test/foobar/not-found
 HTTP 404
 Content-Type: text/html
 [Asserts]

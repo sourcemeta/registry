@@ -1,4 +1,4 @@
-GET {{base}}/example/bundling/single.json?unidentify=1
+GET {{base}}/test/bundling/single.json?unidentify=1
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
@@ -6,7 +6,7 @@ Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 
-GET {{base}}/example/bundling/single.json?unidentify=1
+GET {{base}}/test/bundling/single.json?unidentify=1
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -14,18 +14,18 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http:~1~1localhost:8000~1example~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema.json"
     }
   },
   "definitions": {
-    "http://localhost:8000/example/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema.json": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "integer"
     }
   }
 }
 
-GET {{base}}/example/bundling/single.json?unidentify=0
+GET {{base}}/test/bundling/single.json?unidentify=0
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -33,18 +33,18 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http:~1~1localhost:8000~1example~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema.json"
     }
   },
   "definitions": {
-    "http://localhost:8000/example/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema.json": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "integer"
     }
   }
 }
 
-GET {{base}}/example/bundling/single.json?unidentify=true
+GET {{base}}/test/bundling/single.json?unidentify=true
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -52,18 +52,18 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http:~1~1localhost:8000~1example~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema.json"
     }
   },
   "definitions": {
-    "http://localhost:8000/example/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema.json": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "integer"
     }
   }
 }
 
-GET {{base}}/example/bundling/single.json?bundle=1&unidentify=1
+GET {{base}}/test/bundling/single.json?bundle=1&unidentify=1
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -71,18 +71,18 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http:~1~1localhost:8000~1example~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema.json"
     }
   },
   "definitions": {
-    "http://localhost:8000/example/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema.json": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "integer"
     }
   }
 }
 
-GET {{base}}/example/v2.0/schema.json?unidentify=1
+GET {{base}}/test/v2.0/schema.json?unidentify=1
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
@@ -90,7 +90,7 @@ Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 
-GET {{base}}/example/v2.0/schema.json?unidentify=1
+GET {{base}}/test/v2.0/schema.json?unidentify=1
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
