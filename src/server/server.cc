@@ -504,9 +504,8 @@ static auto on_request(const std::filesystem::path &base,
     const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
                          user_agent.starts_with("VSCodium")};
     const auto bundle{!request->getQuery("bundle").empty()};
-    const auto unidentify{!request->getQuery("unidentify").empty()};
     auto absolute_path{base / "schemas" / lowercase_path / SENTINEL};
-    if (unidentify || is_vscode) {
+    if (is_vscode) {
       absolute_path /= "unidentified.metapack";
     } else if (bundle) {
       absolute_path /= "bundle.metapack";
