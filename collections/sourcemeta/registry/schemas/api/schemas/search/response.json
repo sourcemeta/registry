@@ -3,7 +3,7 @@
   "type": "array",
   "items": {
     "type": "object",
-    "required": [ "url", "title", "description" ],
+    "required": [ "path", "title", "description" ],
     "properties": {
       "title": {
         "type": "string"
@@ -11,7 +11,7 @@
       "description": {
         "type": "string"
       },
-      "url": {
+      "path": {
         "$ref": "../../../common/uri-relative.json"
       }
     },

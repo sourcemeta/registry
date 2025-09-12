@@ -7,12 +7,12 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [ "name", "url" ],
+        "required": [ "name", "path" ],
         "properties": {
           "name": {
             "type": "string"
           },
-          "url": {
+          "path": {
             "$ref": "../../../common/uri-relative.json"
           }
         },
@@ -27,25 +27,18 @@
       "type": "object",
       "required": [
         "bytes",
-        "id",
-        "url",
-        "canonical",
+        "identifier",
+        "path",
         "baseDialect",
         "dialect",
         "health"
       ],
       "properties": {
-        "id": {
-          "$ref": "../../../common/url.json"
-        },
         "baseDialect": {
-          "enum": [ "draft4", "draft6", "draft7", "2019-09", "2020-12" ]
+          "$ref": "../../../common/uri.json"
         },
         "bytes": {
           "$ref": "../../../common/bytes.json"
-        },
-        "canonical": {
-          "$ref": "../../../common/url.json"
         },
         "dialect": {
           "$ref": "../../../common/uri.json"
@@ -53,7 +46,10 @@
         "health": {
           "$ref": "../../../common/percentage.json"
         },
-        "url": {
+        "identifier": {
+          "$ref": "../../../common/url.json"
+        },
+        "path": {
           "$ref": "../../../common/uri-relative.json"
         }
       }

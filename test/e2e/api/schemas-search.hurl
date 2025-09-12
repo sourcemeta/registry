@@ -82,10 +82,10 @@ Access-Control-Allow-Origin: *
 last_response: body
 [Asserts]
 jsonpath "$" count == 2
-jsonpath "$[0].url" == "/test/bundling/single"
+jsonpath "$[0].path" == "/test/bundling/single"
 jsonpath "$[0].title" == "Bundling"
 jsonpath "$[0].description" == "A bundling example"
-jsonpath "$[1].url" == "/test/bundling/double"
+jsonpath "$[1].path" == "/test/bundling/double"
 jsonpath "$[1].title" == ""
 jsonpath "$[1].description" == ""
 
@@ -106,10 +106,10 @@ Access-Control-Allow-Origin: *
 last_response: body
 [Asserts]
 jsonpath "$" count == 2
-jsonpath "$[0].url" == "/test/bundling/single"
+jsonpath "$[0].path" == "/test/bundling/single"
 jsonpath "$[0].title" == "Bundling"
 jsonpath "$[0].description" == "A bundling example"
-jsonpath "$[1].url" == "/test/bundling/double"
+jsonpath "$[1].path" == "/test/bundling/double"
 jsonpath "$[1].title" == ""
 jsonpath "$[1].description" == ""
 
@@ -130,7 +130,7 @@ Access-Control-Allow-Origin: *
 last_response: body
 [Asserts]
 jsonpath "$" count == 1
-jsonpath "$[0].url" == "/test/schemas/camelcase"
+jsonpath "$[0].path" == "/test/schemas/camelcase"
 jsonpath "$[0].title" == ""
 jsonpath "$[0].description" == ""
 

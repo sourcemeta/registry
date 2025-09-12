@@ -9,19 +9,18 @@ last_response: body
 header "ETag" exists
 header "Last-Modified" exists
 jsonpath "$.bytes" == 135
-jsonpath "$.baseDialect" == "draft7"
+jsonpath "$.baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.health" == 100
-jsonpath "$.canonical" == "{{base}}/test/v2.0/schema.json"
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.id" == "{{base}}/test/v2.0/schema.json"
-jsonpath "$.url" == "/test/v2.0/schema.json"
+jsonpath "$.identifier" == "{{base}}/test/v2.0/schema.json"
+jsonpath "$.path" == "/test/v2.0/schema.json"
 jsonpath "$.breadcrumb" count == 3
 jsonpath "$.breadcrumb[0].name" == "test"
-jsonpath "$.breadcrumb[0].url" == "/test"
+jsonpath "$.breadcrumb[0].path" == "/test"
 jsonpath "$.breadcrumb[1].name" == "v2.0"
-jsonpath "$.breadcrumb[1].url" == "/test/v2.0"
+jsonpath "$.breadcrumb[1].path" == "/test/v2.0"
 jsonpath "$.breadcrumb[2].name" == "schema"
-jsonpath "$.breadcrumb[2].url" == "/test/v2.0/schema"
+jsonpath "$.breadcrumb[2].path" == "/test/v2.0/schema"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/metadata/response
 ```
