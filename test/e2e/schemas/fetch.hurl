@@ -229,41 +229,41 @@ header "Content-Length" == {{test_schemas_string_json_content_length}}
 
 POST {{base}}/test/schemas/string.json
 HTTP 405
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Asserts]
-jsonpath "$.code" == 405
-jsonpath "$.error" == "method-not-allowed"
-jsonpath "$.message" == "This HTTP method is invalid for this URL"
+jsonpath "$.status" == 405
+jsonpath "$.title" == "sourcemeta:registry/method-not-allowed"
+jsonpath "$.detail" == "This HTTP method is invalid for this URL"
 
 GET {{base}}/schemas/doc/.period.json
 HTTP 404
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Asserts]
-jsonpath "$.code" == 404
-jsonpath "$.error" == "not-found"
-jsonpath "$.message" == "There is nothing at this URL"
+jsonpath "$.status" == 404
+jsonpath "$.title" == "sourcemeta:registry/not-found"
+jsonpath "$.detail" == "There is nothing at this URL"
 
 # Invalid method on found
 DELETE {{base}}/test/schemas/string.json
 HTTP 405
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Asserts]
-jsonpath "$.code" == 405
-jsonpath "$.error" == "method-not-allowed"
-jsonpath "$.message" == "This HTTP method is invalid for this URL"
+jsonpath "$.status" == 405
+jsonpath "$.title" == "sourcemeta:registry/method-not-allowed"
+jsonpath "$.detail" == "This HTTP method is invalid for this URL"
 
 # Invalid method on not found
 PUT {{base}}/test/schemas/xxx.json
 HTTP 404
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Asserts]
-jsonpath "$.code" == 404
-jsonpath "$.error" == "not-found"
-jsonpath "$.message" == "There is nothing at this URL"
+jsonpath "$.status" == 404
+jsonpath "$.title" == "sourcemeta:registry/not-found"
+jsonpath "$.detail" == "There is nothing at this URL"
 
 GET {{base}}/.json
 HTTP 404

@@ -61,14 +61,14 @@ bytes count == 0
 
 POST {{base}}/self/api/schemas/locations/test/v2.0/schema
 HTTP 405
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Captures]
 last_response: body
 [Asserts]
-jsonpath "$.code" == 405
-jsonpath "$.error" == "method-not-allowed"
-jsonpath "$.message" == "This HTTP method is invalid for this URL"
+jsonpath "$.status" == 405
+jsonpath "$.title" == "sourcemeta:registry/method-not-allowed"
+jsonpath "$.detail" == "This HTTP method is invalid for this URL"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
 ```
@@ -80,14 +80,14 @@ jsonpath "$.valid" == true
 
 GET {{base}}/self/api/schemas/locations/xyz/
 HTTP 404
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Captures]
 last_response: body
 [Asserts]
-jsonpath "$.code" == 404
-jsonpath "$.error" == "not-found"
-jsonpath "$.message" == "There is nothing at this URL"
+jsonpath "$.status" == 404
+jsonpath "$.title" == "sourcemeta:registry/not-found"
+jsonpath "$.detail" == "There is nothing at this URL"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
 ```
@@ -99,14 +99,14 @@ jsonpath "$.valid" == true
 
 GET {{base}}/self/api/schemas/locations
 HTTP 404
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Captures]
 last_response: body
 [Asserts]
-jsonpath "$.code" == 404
-jsonpath "$.error" == "not-found"
-jsonpath "$.message" == "There is nothing at this URL"
+jsonpath "$.status" == 404
+jsonpath "$.title" == "sourcemeta:registry/not-found"
+jsonpath "$.detail" == "There is nothing at this URL"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
 ```

@@ -1,8 +1,8 @@
 GET {{base}}/self/static/style.min.css
 HTTP 404
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Asserts]
-jsonpath "$.code" == 404
-jsonpath "$.error" == "not-found"
-jsonpath "$.message" == "There is nothing at this URL"
+jsonpath "$.status" == 404
+jsonpath "$.title" == "sourcemeta:registry/not-found"
+jsonpath "$.detail" == "There is nothing at this URL"

@@ -17,12 +17,12 @@ header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/test/doc.json
 HTTP 404
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Asserts]
-jsonpath "$.code" == 404
-jsonpath "$.error" == "not-found"
-jsonpath "$.message" == "There is nothing at this URL"
+jsonpath "$.status" == 404
+jsonpath "$.title" == "sourcemeta:registry/not-found"
+jsonpath "$.detail" == "There is nothing at this URL"
 
 GET {{base}}/test/doc/string-1
 HTTP 200
@@ -94,7 +94,7 @@ Content-Type: text/html
 [Asserts]
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/test/foobar/not-found
+GET {{base}}/test/foobar/sourcemeta:registry/not-found
 HTTP 404
 Content-Type: text/html
 [Asserts]

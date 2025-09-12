@@ -15,10 +15,9 @@ endpoints.
   cross-origin requests
 - **HTTP conventions**: Every `GET` request has a corresponding `HEAD` method.
   For brevity, we don't specify this every time
-- **Errors**: Error responses follow a consistent structure, returning JSON
-  objects containing an `error` string identifier property, a `message`
-  human-readable string property, and a `code` integer property (matching the
-  HTTP response code)
+- **Errors**: Error responses follow the [RFC 7807 Problem
+  Details](https://www.rfc-editor.org/rfc/rfc7807) specification for
+  consistent, machine-readable error information
 - **Schema Documentation**: While we don't provide an OpenAPI specification due
   to its current limitations with multi-fragment path support ([see OpenAPI
   Issue #2653](https://github.com/OAI/OpenAPI-Specification/issues/2653)) which

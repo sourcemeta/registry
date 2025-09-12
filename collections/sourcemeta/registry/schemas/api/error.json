@@ -1,16 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "required": [ "code", "error", "message" ],
+  "$ref": "../common/problem.json",
+  "required": [ "title", "status", "detail" ],
   "properties": {
-    "code": {
-      "$ref": "../common/http-status.json"
+    "title": {
+      "pattern": "^sourcemeta:registry/[a-z-]+$"
     },
-    "error": {
-      "type": "string"
-    },
-    "message": {
-      "type": "string"
+    "detail": true,
+    "status": {
+      "minimum": 400
     }
   },
   "additionalProperties": false

@@ -138,5 +138,5 @@ header "Access-Control-Allow-Origin" not exists
 # Can't fetch the .meta version
 GET {{base}}/self/static/style.min.css.meta
 HTTP 404
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
