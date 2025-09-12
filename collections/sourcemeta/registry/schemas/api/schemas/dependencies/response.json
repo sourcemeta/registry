@@ -6,16 +6,13 @@
     "required": [ "from", "to", "at" ],
     "properties": {
       "at": {
-        "type": "string",
-        "format": "json-pointer"
+        "$ref": "../../../common/jsonpointer.json"
       },
       "from": {
-        "type": "string",
-        "format": "uri"
+        "$ref": "../../../common/url.json"
       },
       "to": {
-        "type": "string",
-        "format": "uri"
+        "$ref": "../../../common/url.json"
       }
     },
     "additionalProperties": false

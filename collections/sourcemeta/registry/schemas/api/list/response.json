@@ -19,89 +19,83 @@
             "type": "string"
           },
           "url": {
-            "type": "string"
+            "$ref": "../../common/uri-relative.json"
           }
         },
         "additionalProperties": false
       }
     },
     "canonical": {
-      "type": "string",
-      "format": "uri"
+      "$ref": "../../common/url.json"
     },
     "email": {
-      "type": "string",
-      "format": "email"
+      "$ref": "../../common/email-address.json"
     },
     "entries": {
       "type": "array",
       "items": {
-        "type": "object",
-        "required": [ "health", "name", "type", "url" ],
-        "properties": {
-          "id": {
-            "type": "string"
+        "anyOf": [
+          {
+            "type": "object",
+            "required": [ "health", "name", "type", "url" ],
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "type": {
+                "const": "directory"
+              },
+              "email": {
+                "$ref": "../../common/email-address.json"
+              },
+              "github": {
+                "type": "string"
+              },
+              "health": {
+                "$ref": "../../common/percentage.json"
+              },
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "$ref": "../../common/uri-relative.json"
+              },
+              "website": {
+                "$ref": "../../common/url.json"
+              }
+            },
+            "additionalProperties": false
           },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          },
-          "baseDialect": {
-            "type": "string"
-          },
-          "bytes": {
-            "type": "integer"
-          },
-          "canonical": {
-            "type": "string"
-          },
-          "dialect": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "github": {
-            "type": "string"
-          },
-          "health": {
-            "type": "number",
-            "maximum": 100,
-            "minimum": 0
-          },
-          "name": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          },
-          "website": {
-            "type": "string"
+          {
+            "$ref": "../schemas/metadata/response.json#base",
+            "required": [ "type", "name" ],
+            "properties": {
+              "type": {
+                "const": "schema"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "unevaluatedProperties": false
           }
-        },
-        "additionalProperties": false
+        ]
       }
     },
     "github": {
       "type": "string"
     },
     "health": {
-      "type": "number",
-      "maximum": 100,
-      "minimum": 0
+      "$ref": "../../common/percentage.json"
     },
     "url": {
-      "type": "string"
+      "$ref": "../../common/uri-relative.json"
     },
     "website": {
-      "type": "string",
-      "format": "uri"
+      "$ref": "../../common/url.json"
     }
   },
   "additionalProperties": false

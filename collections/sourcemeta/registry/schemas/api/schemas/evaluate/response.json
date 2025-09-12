@@ -5,6 +5,7 @@
   "properties": {
     "errors": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
         "required": [
@@ -15,16 +16,16 @@
         ],
         "properties": {
           "absoluteKeywordLocation": {
-            "type": "string"
+            "$ref": "../../../common/url.json"
           },
           "error": {
             "type": "string"
           },
           "instanceLocation": {
-            "type": "string"
+            "$ref": "../../../common/jsonpointer.json"
           },
           "keywordLocation": {
-            "type": "string"
+            "$ref": "../../../common/jsonpointer.json"
           }
         },
         "additionalProperties": false

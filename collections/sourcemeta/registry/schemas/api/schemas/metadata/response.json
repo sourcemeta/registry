@@ -1,24 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "required": [
-    "bytes",
-    "id",
-    "url",
-    "canonical",
-    "baseDialect",
-    "dialect",
-    "health",
-    "breadcrumb"
-  ],
+  "$ref": "#base",
+  "required": [ "breadcrumb" ],
   "properties": {
-    "id": {
-      "type": "string",
-      "format": "uri"
-    },
-    "baseDialect": {
-      "type": "string"
-    },
     "breadcrumb": {
       "type": "array",
       "items": {
@@ -29,30 +13,50 @@
             "type": "string"
           },
           "url": {
-            "type": "string"
+            "$ref": "../../../common/uri-relative.json"
           }
         },
         "additionalProperties": false
       }
-    },
-    "bytes": {
-      "type": "number",
-      "minimum": 0
-    },
-    "canonical": {
-      "type": "string",
-      "format": "uri"
-    },
-    "dialect": {
-      "type": "string",
-      "format": "uri"
-    },
-    "health": {
-      "$ref": "../../../common/percentage.json"
-    },
-    "url": {
-      "type": "string"
     }
   },
-  "additionalProperties": false
+  "unevaluatedProperties": false,
+  "$defs": {
+    "base": {
+      "$anchor": "base",
+      "type": "object",
+      "required": [
+        "bytes",
+        "id",
+        "url",
+        "canonical",
+        "baseDialect",
+        "dialect",
+        "health"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "../../../common/url.json"
+        },
+        "baseDialect": {
+          "enum": [ "draft4", "draft6", "draft7", "2019-09", "2020-12" ]
+        },
+        "bytes": {
+          "$ref": "../../../common/bytes.json"
+        },
+        "canonical": {
+          "$ref": "../../../common/url.json"
+        },
+        "dialect": {
+          "$ref": "../../../common/uri.json"
+        },
+        "health": {
+          "$ref": "../../../common/percentage.json"
+        },
+        "url": {
+          "$ref": "../../../common/uri-relative.json"
+        }
+      }
+    }
+  }
 }

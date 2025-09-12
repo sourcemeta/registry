@@ -6,7 +6,8 @@
     "maxItems": 4,
     "minItems": 4,
     "items": {
-      "type": "number"
+      "type": "integer",
+      "minimum": 1
     }
   }
 }

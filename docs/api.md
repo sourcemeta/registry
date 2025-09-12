@@ -50,7 +50,7 @@ navigation and discovery purposes.
     | `/url` | String | Yes | The relative URL of the directory |
     | `/canonical` | String | Yes | The absolute URL of the directory |
     | `/breadcrumb` | Array | Yes | The breadcrumb of the directory entry |
-    | `/breadcrumb/*/name` | String | Yes | The breadcrumb entry URL path |
+    | `/breadcrumb/*/name` | String | Yes | The breadcrumb entry URL path segment |
     | `/breadcrumb/*/url` | String | Yes | The relative URL of the breadcrumb location |
     | `/title` | String | No | The title associated with the directory |
     | `/description` | String | No | The description associated with the directory |
@@ -58,18 +58,20 @@ navigation and discovery purposes.
     | `/github` | String | No | The GitHub organisation or repository associated with the directory |
     | `/website` | String | No | The external URL associated with the directory  |
     | `/entries` | Array | Yes | The entries inside the directory |
-    | `/entries/*/name` | String | Yes | The URL path of the entry |
-    | `/entries/*/type` | String | Yes | The type of the entry |
+    | `/entries/*/type` | String | Yes | The type of the entry (`schema` or `directory`) |
+    | `/entries/*/name` | String | Yes | The last URL path segment of the entry |
     | `/entries/*/url` | String | Yes | The relative URL of the entry |
     | `/entries/*/health` | Integer | No | The aggregated health of the entry |
-    | `/entries/*/title` | String | No | The title associated with the entry |
-    | `/entries/*/description` | String | No | The description associated with the entry |
-    | `/entries/*/email` | String | No | The e-mail address associated with the entry |
-    | `/entries/*/github` | String | No | The GitHub organisation or repository associated with the entry |
-    | `/entries/*/bytes` | Integer | No | The bytes that the entry occupies (if a schema) |
-    | `/entries/*/baseDialect` | String | No | The base dialect short identifier of the entry (if a schema) |
-    | `/entries/*/dialect` | String | No | The dialect URI of the entry (if a schema) |
-    | `/entries/*/id` | String | No | The absolute URI of the entry (if a schema) |
+    | `/entries/*/title` | String | No | For `directory` entries, the title associated with the entry |
+    | `/entries/*/description` | String | No | For `directory` entries, the description associated with the entry |
+    | `/entries/*/email` | String | No | For `directory` entries, the e-mail address associated with the entry |
+    | `/entries/*/github` | String | No | For `directory` entries, the GitHub organisation or repository associated with the entry |
+    | `/entries/*/website` | String | No | For `directory` entries, the website URL associated with the entry |
+    | `/entries/*/bytes` | Integer | No | For `schema` entries, the bytes that the entry occupies |
+    | `/entries/*/baseDialect` | String | No | For `schema` entries, the base dialect short identifier of the entry |
+    | `/entries/*/dialect` | String | No | For `schema` entries, the dialect URI of the entry |
+    | `/entries/*/id` | String | No | For `schema` entries, the absolute URI of the entry |
+    | `/entries/*/canonical` | String | No | For `schema` entries, the canonical URI of the entry |
 
 === "404"
 
@@ -213,7 +215,7 @@ GET /self/api/schemas/metadata/{path}
 GET /self/api/schemas/search?q={term}
 ```
 
-Note that the this endpoint has a hard limit of 10 results. 
+Note that the this endpoint has a hard limit of 10 results.
 
 === "200"
 
@@ -287,7 +289,7 @@ GET /self/api/schemas/locations/{path}
     | `/static/*/base` | String | Yes | The base URI of the location |
     | `/static/*/baseDialect` | String | Yes | The base dialect of the schema |
     | `/static/*/dialect` | String | Yes | The JSON Schema dialect URI |
-    | `/static/*/parent` | String / Null | No | The parent URI (if any) |
+    | `/static/*/parent` | String / Null | No | The parent JSON Pointer (if any) |
     | `/static/*/pointer` | String | Yes | The JSON Pointer to this location from the root of the schema |
     | `/static/*/relativePointer` | String | Yes | The relative JSON Pointer from its nearest base URI |
     | `/static/*/root` | String | Yes | The root URI of the schema |
