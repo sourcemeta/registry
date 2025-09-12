@@ -42,6 +42,7 @@ runs:
       env:
         SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
         SANDBOX_PORT: ${{ inputs.port }}
+        HURL: 'docker run --rm --network=host --volume \$(PWD):/workspace --workdir /workspace ghcr.io/orange-opensource/hurl:7.0.0'
     - name: Down Sandbox (${{ inputs.configuration }})
       run: docker compose --file test/sandbox/compose.yaml down
       shell: bash
