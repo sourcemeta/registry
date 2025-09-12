@@ -9,7 +9,10 @@
       "$ref": "./extends.json"
     },
     "contents": {
-      "$ref": "./contents.json"
+      "$ref": "./contents.json",
+      "properties": {
+        "self": false
+      }
     },
     "html": {
       "type": [ "object", "boolean" ],

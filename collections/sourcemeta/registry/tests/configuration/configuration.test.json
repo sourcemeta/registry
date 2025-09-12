@@ -129,6 +129,47 @@
           }
         }
       }
+    },
+    {
+      "description": "Self top-level entry",
+      "valid": false,
+      "data": {
+        "url": "http://localhost:8000",
+        "html": {
+          "name": "Title",
+          "description": "Description"
+        },
+        "contents": {
+          "self": {
+            "title": "A sample schema folder",
+            "description": "For testing purposes",
+            "github": "sourcemeta/registry"
+          }
+        }
+      }
+    },
+    {
+      "description": "Self nested entry",
+      "valid": true,
+      "data": {
+        "url": "http://localhost:8000",
+        "html": {
+          "name": "Title",
+          "description": "Description"
+        },
+        "contents": {
+          "foo": {
+            "title": "A sample schema folder",
+            "description": "For testing purposes",
+            "github": "sourcemeta/registry",
+            "contents": {
+              "self": {
+                "title": "A nested schema folder"
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
