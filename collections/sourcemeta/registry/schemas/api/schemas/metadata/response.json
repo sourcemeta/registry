@@ -35,7 +35,7 @@
       ],
       "properties": {
         "baseDialect": {
-          "enum": [ "draft4", "draft6", "draft7", "2019-09", "2020-12" ]
+          "$ref": "../../../common/uri.json"
         },
         "bytes": {
           "$ref": "../../../common/bytes.json"

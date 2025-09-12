@@ -126,7 +126,7 @@ jsonpath "$.breadcrumb[1].name" == "v2.0"
 jsonpath "$.breadcrumb[1].path" == "/test/v2.0"
 jsonpath "$.entries" count == 1
 jsonpath "$.entries[0].bytes" == 135
-jsonpath "$.entries[0].baseDialect" == "draft7"
+jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].identifier" == "{{base}}/test/v2.0/schema.json"
 jsonpath "$.entries[0].name" == "schema"
@@ -182,7 +182,7 @@ jsonpath "$.breadcrumb[2].name" == "versions"
 jsonpath "$.breadcrumb[2].path" == "/test/schemas/versions"
 jsonpath "$.entries" count == 1
 jsonpath "$.entries[0].bytes" == 146
-jsonpath "$.entries[0].baseDialect" == "draft7"
+jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].identifier" == "{{base}}/test/schemas/versions/v1.2.3.json"
 jsonpath "$.entries[0].name" == "v1.2.3"
@@ -217,7 +217,7 @@ jsonpath "$.breadcrumb[1].name" == "extension"
 jsonpath "$.breadcrumb[1].path" == "/test/extension"
 jsonpath "$.entries" count == 3
 jsonpath "$.entries[0].bytes" == 140
-jsonpath "$.entries[0].baseDialect" == "draft7"
+jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].identifier" == "{{base}}/test/extension/without.json"
 jsonpath "$.entries[0].name" == "without"
@@ -225,7 +225,7 @@ jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].path" == "/test/extension/without"
 jsonpath "$.entries[0].health" == 100
 jsonpath "$.entries[1].bytes" == 144
-jsonpath "$.entries[1].baseDialect" == "draft7"
+jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[1].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[1].identifier" == "{{base}}/test/extension/with.schema.json"
 jsonpath "$.entries[1].name" == "with"
@@ -233,7 +233,7 @@ jsonpath "$.entries[1].type" == "schema"
 jsonpath "$.entries[1].path" == "/test/extension/with.schema"
 jsonpath "$.entries[1].health" == 100
 jsonpath "$.entries[2].bytes" == 177
-jsonpath "$.entries[2].baseDialect" == "draft7"
+jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[2].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[2].identifier" == "{{base}}/test/extension/to-without.json"
 jsonpath "$.entries[2].name" == "to-without"

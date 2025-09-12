@@ -9,7 +9,7 @@ last_response: body
 header "ETag" exists
 header "Last-Modified" exists
 jsonpath "$.bytes" == 135
-jsonpath "$.baseDialect" == "draft7"
+jsonpath "$.baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.health" == 100
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.identifier" == "{{base}}/test/v2.0/schema.json"

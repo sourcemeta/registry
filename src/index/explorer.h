@@ -383,9 +383,36 @@ auto schema_health_progress_bar(T &html,
   html << health_string << "%" << "</div></div>";
 }
 
+auto base_dialect_uri_to_string(
+    const sourcemeta::core::JSON::String &base_dialect) -> std::string {
+  if (base_dialect == "https://json-schema.org/draft/2020-12/schema") {
+    return "2020-12";
+  }
+
+  if (base_dialect == "https://json-schema.org/draft/2019-09/schema") {
+    return "2019-09";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-07/schema#") {
+    return "draft7";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-06/schema#") {
+    return "draft7";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-04/schema#") {
+    return "draft7";
+  }
+
+  return "unknown";
+}
+
 template <typename T>
-auto dialect_badge(T &html, const sourcemeta::core::JSON::String &base_dialect)
+auto dialect_badge(T &html,
+                   const sourcemeta::core::JSON::String &base_dialect_uri)
     -> void {
+  const auto base_dialect{base_dialect_uri_to_string(base_dialect_uri)};
   html << "<a "
           "href=\"https://www.learnjsonschema.com/";
   html << base_dialect;
@@ -586,21 +613,7 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON::String &,
       schema.data,
       [&resolver](const auto identifier) { return resolver(identifier); })};
   assert(base_dialect.has_value());
-  // The idea is to match the URLs from https://www.learnjsonschema.com
-  // so we can provide links to it
-  const std::regex MODERN(R"(^https://json-schema\.org/draft/(\d{4}-\d{2})/)");
-  const std::regex LEGACY(R"(^http://json-schema\.org/draft-0?(\d+)/)");
-  std::smatch match;
-  if (std::regex_search(base_dialect.value(), match, MODERN)) {
-    result.assign("baseDialect", sourcemeta::core::JSON{match[1].str()});
-  } else if (std::regex_search(base_dialect.value(), match, LEGACY)) {
-    result.assign("baseDialect",
-                  sourcemeta::core::JSON{"draft" + match[1].str()});
-  } else {
-    // We should never get here
-    assert(false);
-    result.assign("baseDialect", sourcemeta::core::JSON{"unknown"});
-  }
+  result.assign("baseDialect", sourcemeta::core::JSON{base_dialect.value()});
 
   const auto dialect{sourcemeta::core::dialect(schema.data, base_dialect)};
   assert(dialect.has_value());

@@ -68,7 +68,7 @@ navigation and discovery purposes.
     | `/entries/*/github` | String | No | For `directory` entries, the GitHub organisation or repository associated with the entry |
     | `/entries/*/website` | String | No | For `directory` entries, the website URL associated with the entry |
     | `/entries/*/bytes` | Integer | No | For `schema` entries, the bytes that the entry occupies |
-    | `/entries/*/baseDialect` | String | No | For `schema` entries, the base dialect short identifier of the entry |
+    | `/entries/*/baseDialect` | String | No | For `schema` entries, the base dialect URI of the entry |
     | `/entries/*/dialect` | String | No | For `schema` entries, the dialect URI of the entry |
     | `/entries/*/identifier` | String | No | For `schema` entries, the absolute URI of the entry |
 
@@ -194,7 +194,7 @@ GET /self/api/schemas/metadata/{path}
     | `/path` | String | Yes | The relative URL of the schema |
     | `/identifier` | String | No | The absolute URI of the schema |
     | `/dialect` | String | No | The dialect URI of the schema |
-    | `/baseDialect` | String | No | The base dialect short identifier of the schema |
+    | `/baseDialect` | String | No | The base dialect URI of the schema |
     | `/health` | Integer | Yes | The health score of the schema |
     | `/bytes` | Integer | No | The bytes that the schema occupies |
     | `/breadcrumb` | Array | Yes | The breadcrumb of the schema |
