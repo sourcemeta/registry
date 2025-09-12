@@ -62,8 +62,8 @@ navigation and discovery purposes.
     | `/entries/*/name` | String | Yes | The last URL path segment of the entry |
     | `/entries/*/path` | String | Yes | The relative URL of the entry |
     | `/entries/*/health` | Integer | No | The aggregated health of the entry |
-    | `/entries/*/title` | String | No | For `directory` entries, the title associated with the entry |
-    | `/entries/*/description` | String | No | For `directory` entries, the description associated with the entry |
+    | `/entries/*/title` | String | No | The title associated with the entry |
+    | `/entries/*/description` | String | No | The description associated with the entry |
     | `/entries/*/email` | String | No | For `directory` entries, the e-mail address associated with the entry |
     | `/entries/*/github` | String | No | For `directory` entries, the GitHub organisation or repository associated with the entry |
     | `/entries/*/website` | String | No | For `directory` entries, the website URL associated with the entry |
@@ -197,6 +197,8 @@ GET /self/api/schemas/metadata/{path}
     | `/baseDialect` | String | No | The base dialect URI of the schema |
     | `/health` | Integer | Yes | The health score of the schema |
     | `/bytes` | Integer | No | The bytes that the schema occupies |
+    | `/title` | String | No | The title of the schema, if any |
+    | `/description` | String | No | The description of the schema, if any |
     | `/breadcrumb` | Array | Yes | The breadcrumb of the schema |
     | `/breadcrumb/*/name` | String | Yes | The breadcrumb entry URL path |
     | `/breadcrumb/*/path` | String | Yes | The relative URL of the breadcrumb location |
