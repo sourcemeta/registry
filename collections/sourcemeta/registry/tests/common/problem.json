@@ -1,0 +1,458 @@
+{
+  "target": "../../schemas/common/problem.json",
+  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "tests": [
+    {
+      "description": "Invalid type - string",
+      "valid": false,
+      "data": "not an object"
+    },
+    {
+      "description": "Invalid type - number",
+      "valid": false,
+      "data": 123
+    },
+    {
+      "description": "Invalid type - boolean",
+      "valid": false,
+      "data": true
+    },
+    {
+      "description": "Invalid type - array",
+      "valid": false,
+      "data": []
+    },
+    {
+      "description": "Invalid type - null",
+      "valid": false,
+      "data": null
+    },
+    {
+      "description": "Empty object is valid",
+      "valid": true,
+      "data": {}
+    },
+    {
+      "description": "Valid minimal problem with type only",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/out-of-credit"
+      }
+    },
+    {
+      "description": "Valid minimal problem with title only",
+      "valid": true,
+      "data": {
+        "title": "You do not have enough credit."
+      }
+    },
+    {
+      "description": "Valid minimal problem with status only",
+      "valid": true,
+      "data": {
+        "status": 400
+      }
+    },
+    {
+      "description": "Valid minimal problem with detail only",
+      "valid": true,
+      "data": {
+        "detail": "Your current balance is 30, but that costs 50."
+      }
+    },
+    {
+      "description": "Valid minimal problem with instance only",
+      "valid": true,
+      "data": {
+        "instance": "/account/12345/msgs/abc"
+      }
+    },
+    {
+      "description": "Valid problem with all standard fields",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/out-of-credit",
+        "title": "You do not have enough credit.",
+        "status": 403,
+        "detail": "Your current balance is 30, but that costs 50.",
+        "instance": "/account/12345/msgs/abc"
+      }
+    },
+    {
+      "description": "Valid problem with extension properties",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/out-of-credit",
+        "title": "You do not have enough credit.",
+        "balance": 30,
+        "accounts": [ "/account/12345", "/account/67890" ]
+      }
+    },
+    {
+      "description": "Valid problem with about:blank type",
+      "valid": true,
+      "data": {
+        "type": "about:blank",
+        "title": "Internal Server Error",
+        "status": 500
+      }
+    },
+    {
+      "description": "Valid problem with relative URI type",
+      "valid": true,
+      "data": {
+        "type": "/probs/validation-error",
+        "title": "Validation Error"
+      }
+    },
+    {
+      "description": "Valid problem with fragment-only type",
+      "valid": true,
+      "data": {
+        "type": "#validation-error",
+        "title": "Validation Error"
+      }
+    },
+    {
+      "description": "Valid problem with query-only type",
+      "valid": true,
+      "data": {
+        "type": "?type=validation",
+        "title": "Validation Error"
+      }
+    },
+    {
+      "description": "Valid problem with relative instance",
+      "valid": true,
+      "data": {
+        "instance": "../orders/12345"
+      }
+    },
+    {
+      "description": "Valid problem with absolute instance",
+      "valid": true,
+      "data": {
+        "instance": "https://example.com/orders/12345"
+      }
+    },
+    {
+      "description": "Valid problem with minimum status code",
+      "valid": true,
+      "data": {
+        "status": 100
+      }
+    },
+    {
+      "description": "Valid problem with maximum status code",
+      "valid": true,
+      "data": {
+        "status": 599
+      }
+    },
+    {
+      "description": "Valid problem with common 4xx status",
+      "valid": true,
+      "data": {
+        "status": 404,
+        "title": "Not Found"
+      }
+    },
+    {
+      "description": "Valid problem with common 5xx status",
+      "valid": true,
+      "data": {
+        "status": 500,
+        "title": "Internal Server Error"
+      }
+    },
+    {
+      "description": "Invalid type field - number",
+      "valid": false,
+      "data": {
+        "type": 123
+      }
+    },
+    {
+      "description": "Invalid type field - boolean",
+      "valid": false,
+      "data": {
+        "type": true
+      }
+    },
+    {
+      "description": "Invalid type field - object",
+      "valid": false,
+      "data": {
+        "type": {}
+      }
+    },
+    {
+      "description": "Invalid type field - array",
+      "valid": false,
+      "data": {
+        "type": []
+      }
+    },
+    {
+      "description": "Invalid title field - number",
+      "valid": false,
+      "data": {
+        "title": 123
+      }
+    },
+    {
+      "description": "Invalid title field - boolean",
+      "valid": false,
+      "data": {
+        "title": false
+      }
+    },
+    {
+      "description": "Invalid title field - object",
+      "valid": false,
+      "data": {
+        "title": {}
+      }
+    },
+    {
+      "description": "Invalid title field - array",
+      "valid": false,
+      "data": {
+        "title": []
+      }
+    },
+    {
+      "description": "Invalid status field - string",
+      "valid": false,
+      "data": {
+        "status": "400"
+      }
+    },
+    {
+      "description": "Invalid status field - boolean",
+      "valid": false,
+      "data": {
+        "status": true
+      }
+    },
+    {
+      "description": "Invalid status field - object",
+      "valid": false,
+      "data": {
+        "status": {}
+      }
+    },
+    {
+      "description": "Invalid status field - array",
+      "valid": false,
+      "data": {
+        "status": []
+      }
+    },
+    {
+      "description": "Invalid status field - too low",
+      "valid": false,
+      "data": {
+        "status": 99
+      }
+    },
+    {
+      "description": "Invalid status field - too high",
+      "valid": false,
+      "data": {
+        "status": 600
+      }
+    },
+    {
+      "description": "Invalid status field - negative",
+      "valid": false,
+      "data": {
+        "status": -1
+      }
+    },
+    {
+      "description": "Invalid status field - float",
+      "valid": false,
+      "data": {
+        "status": 400.5
+      }
+    },
+    {
+      "description": "Invalid detail field - number",
+      "valid": false,
+      "data": {
+        "detail": 123
+      }
+    },
+    {
+      "description": "Invalid detail field - boolean",
+      "valid": false,
+      "data": {
+        "detail": true
+      }
+    },
+    {
+      "description": "Invalid detail field - object",
+      "valid": false,
+      "data": {
+        "detail": {}
+      }
+    },
+    {
+      "description": "Invalid detail field - array",
+      "valid": false,
+      "data": {
+        "detail": []
+      }
+    },
+    {
+      "description": "Invalid instance field - number",
+      "valid": false,
+      "data": {
+        "instance": 123
+      }
+    },
+    {
+      "description": "Invalid instance field - boolean",
+      "valid": false,
+      "data": {
+        "instance": false
+      }
+    },
+    {
+      "description": "Invalid instance field - object",
+      "valid": false,
+      "data": {
+        "instance": {}
+      }
+    },
+    {
+      "description": "Invalid instance field - array",
+      "valid": false,
+      "data": {
+        "instance": []
+      }
+    },
+    {
+      "description": "Valid empty string type",
+      "valid": true,
+      "data": {
+        "type": ""
+      }
+    },
+    {
+      "description": "Valid empty string title",
+      "valid": true,
+      "data": {
+        "title": ""
+      }
+    },
+    {
+      "description": "Valid empty string detail",
+      "valid": true,
+      "data": {
+        "detail": ""
+      }
+    },
+    {
+      "description": "Valid empty string instance",
+      "valid": true,
+      "data": {
+        "instance": ""
+      }
+    },
+    {
+      "description": "Valid problem with complex extension object",
+      "valid": true,
+      "data": {
+        "type": "https://example.net/validation-error",
+        "title": "Your request parameters didn't validate.",
+        "invalid-params": [
+          {
+            "name": "age",
+            "reason": "must be a positive integer"
+          },
+          {
+            "name": "color",
+            "reason": "must be 'green', 'red' or 'blue'"
+          }
+        ]
+      }
+    },
+    {
+      "description": "Valid problem with numeric extension property",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/out-of-credit",
+        "balance": 30,
+        "cost": 50
+      }
+    },
+    {
+      "description": "Valid problem with boolean extension property",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/maintenance",
+        "scheduled": true
+      }
+    },
+    {
+      "description": "Valid problem with null extension property",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/user-error",
+        "user": null
+      }
+    },
+    {
+      "description": "Valid problem with mixed extension properties",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/complex",
+        "title": "Complex Problem",
+        "stringProp": "value",
+        "numberProp": 42,
+        "booleanProp": false,
+        "arrayProp": [ 1, 2, 3 ],
+        "objectProp": {
+          "nested": "value"
+        },
+        "nullProp": null
+      }
+    },
+    {
+      "description": "Valid problem with Unicode characters in strings",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/unicode",
+        "title": "Unicode Problem: 你好世界",
+        "detail": "Error with émojis: 🚨❌",
+        "custom": "Ñoño: αβγδε"
+      }
+    },
+    {
+      "description": "Valid problem with percent-encoded URI type",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/out%20of%20credit",
+        "title": "Credit Problem"
+      }
+    },
+    {
+      "description": "Valid problem with percent-encoded URI instance",
+      "valid": true,
+      "data": {
+        "instance": "/users/john%20doe/orders/123"
+      }
+    },
+    {
+      "description": "Valid problem with long strings",
+      "valid": true,
+      "data": {
+        "type": "https://example.com/probs/long-description",
+        "title": "A very long title that goes on and on and on and on and on and on and on and on",
+        "detail": "A very long detail message that provides extensive information about what went wrong in the system and how the user might be able to fix it by following these very detailed instructions that go on for quite a while to test string length handling"
+      }
+    }
+  ]
+}

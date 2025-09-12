@@ -102,6 +102,7 @@ static auto send_response(const char *const code, const std::string_view method,
   log(std::move(line).str());
 }
 
+// See https://www.rfc-editor.org/rfc/rfc7807
 static auto json_error(const std::string_view method,
                        const std::string_view url,
                        uWS::HttpResponse<true> *response,
@@ -109,11 +110,13 @@ static auto json_error(const std::string_view method,
                        const char *const code, std::string &&id,
                        std::string &&message) -> void {
   auto object{sourcemeta::core::JSON::make_object()};
-  object.assign("error", sourcemeta::core::JSON{std::move(id)});
-  object.assign("message", sourcemeta::core::JSON{std::move(message)});
-  object.assign("code", sourcemeta::core::JSON{std::atoi(code)});
+  object.assign("title",
+                // A URI with a custom scheme
+                sourcemeta::core::JSON{"sourcemeta:registry/" + std::move(id)});
+  object.assign("status", sourcemeta::core::JSON{std::atoi(code)});
+  object.assign("detail", sourcemeta::core::JSON{std::move(message)});
   response->writeStatus(code);
-  response->writeHeader("Content-Type", "application/json");
+  response->writeHeader("Content-Type", "application/problem+json");
   response->writeHeader("Access-Control-Allow-Origin", "*");
 
   std::ostringstream output;

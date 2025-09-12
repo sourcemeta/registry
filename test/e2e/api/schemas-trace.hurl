@@ -7,14 +7,14 @@ Access-Control-Max-Age: 3600
 
 POST {{base}}/self/api/schemas/trace/test/schemas/string
 HTTP 400
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Captures]
 last_response: body
 [Asserts]
-jsonpath "$.code" == 400
-jsonpath "$.error" == "no-instance"
-jsonpath "$.message" == "You must pass an instance to validate against"
+jsonpath "$.status" == 400
+jsonpath "$.title" == "sourcemeta:registry/no-instance"
+jsonpath "$.detail" == "You must pass an instance to validate against"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
 ```
@@ -70,16 +70,16 @@ HTTP 200
 jsonpath "$.valid" == true
 
 POST {{base}}/self/api/schemas/trace/test/no-blaze/string
-Content-Type: application/json
+Content-Type: application/problem+json
 "Hello World"
 HTTP 405
 Access-Control-Allow-Origin: *
 [Captures]
 last_response: body
 [Asserts]
-jsonpath "$.code" == 405
-jsonpath "$.error" == "no-template"
-jsonpath "$.message" == "This schema was not precompiled for schema evaluation"
+jsonpath "$.status" == 405
+jsonpath "$.title" == "sourcemeta:registry/no-template"
+jsonpath "$.detail" == "This schema was not precompiled for schema evaluation"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
 ```

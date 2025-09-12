@@ -1,13 +1,13 @@
 GET {{base}}/self/api/schemas/search
 HTTP 400
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Captures]
 last_response: body
 [Asserts]
-jsonpath "$.code" == 400
-jsonpath "$.error" == "missing-query"
-jsonpath "$.message" == "You must provide a query parameter to search for"
+jsonpath "$.status" == 400
+jsonpath "$.title" == "sourcemeta:registry/missing-query"
+jsonpath "$.detail" == "You must provide a query parameter to search for"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
 ```
@@ -19,14 +19,14 @@ jsonpath "$.valid" == true
 
 GET {{base}}/self/api/schemas/search?q=
 HTTP 400
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Captures]
 last_response: body
 [Asserts]
-jsonpath "$.code" == 400
-jsonpath "$.error" == "missing-query"
-jsonpath "$.message" == "You must provide a query parameter to search for"
+jsonpath "$.status" == 400
+jsonpath "$.title" == "sourcemeta:registry/missing-query"
+jsonpath "$.detail" == "You must provide a query parameter to search for"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
 ```
@@ -38,14 +38,14 @@ jsonpath "$.valid" == true
 
 POST {{base}}/self/api/schemas/search?q=foo
 HTTP 405
-Content-Type: application/json
+Content-Type: application/problem+json
 Access-Control-Allow-Origin: *
 [Captures]
 last_response: body
 [Asserts]
-jsonpath "$.code" == 405
-jsonpath "$.error" == "method-not-allowed"
-jsonpath "$.message" == "This HTTP method is invalid for this URL"
+jsonpath "$.status" == 405
+jsonpath "$.title" == "sourcemeta:registry/method-not-allowed"
+jsonpath "$.detail" == "This HTTP method is invalid for this URL"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
 ```
