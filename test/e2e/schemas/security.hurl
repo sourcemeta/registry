@@ -1,5 +1,5 @@
 GET {{base}}/../explorer/index.json
 HTTP 404
 
-GET {{base}}/doc/../../explorer/index.json
+GET {{base}}/test/doc/../../../explorer/index.json
 HTTP 404

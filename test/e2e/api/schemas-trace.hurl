@@ -1,11 +1,11 @@
-OPTIONS {{base}}/self/api/schemas/trace/example/schemas/string
+OPTIONS {{base}}/self/api/schemas/trace/test/schemas/string
 HTTP 204
 Access-Control-Allow-Origin: *
 Access-Control-Allow-Methods: POST, OPTIONS
 Access-Control-Allow-Headers: Content-Type
 Access-Control-Max-Age: 3600
 
-POST {{base}}/self/api/schemas/trace/example/schemas/string
+POST {{base}}/self/api/schemas/trace/test/schemas/string
 HTTP 400
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -14,7 +14,7 @@ jsonpath "$.code" == 400
 jsonpath "$.error" == "no-instance"
 jsonpath "$.message" == "You must pass an instance to validate against"
 
-POST {{base}}/self/api/schemas/trace/example/schemas/string
+POST {{base}}/self/api/schemas/trace/test/schemas/string
 Content-Type: application/json
 "Hello World"
 HTTP 200
@@ -31,7 +31,7 @@ jsonpath "$.steps[0].instancePositions[1]" == 1
 jsonpath "$.steps[0].instancePositions[2]" == 1
 jsonpath "$.steps[0].instancePositions[3]" == 13
 jsonpath "$.steps[0].message" == null
-jsonpath "$.steps[0].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
+jsonpath "$.steps[0].keywordLocation" == "http://localhost:8000/test/schemas/string.json#/type"
 jsonpath "$.steps[0].name" == "AssertionTypeStrict"
 jsonpath "$.steps[0].type" == "push"
 jsonpath "$.steps[0].vocabulary" == "http://json-schema.org/draft-07/schema#"
@@ -43,13 +43,13 @@ jsonpath "$.steps[1].instancePositions[0]" == 1
 jsonpath "$.steps[1].instancePositions[1]" == 1
 jsonpath "$.steps[1].instancePositions[2]" == 1
 jsonpath "$.steps[1].instancePositions[3]" == 13
-jsonpath "$.steps[1].keywordLocation" == "http://localhost:8000/example/schemas/string.json#/type"
+jsonpath "$.steps[1].keywordLocation" == "http://localhost:8000/test/schemas/string.json#/type"
 jsonpath "$.steps[1].name" == "AssertionTypeStrict"
 jsonpath "$.steps[1].type" == "pass"
 jsonpath "$.steps[1].vocabulary" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.steps[1].message" == "The value was expected to be of type string"
 
-POST {{base}}/self/api/schemas/trace/no-blaze/string
+POST {{base}}/self/api/schemas/trace/test/no-blaze/string
 Content-Type: application/json
 "Hello World"
 HTTP 405

@@ -9,12 +9,10 @@
     }
   },
   "extends": [
-    "@geojson/v1.0.5",
-    "@geojson/v1.0.4",
-    "@modelcontextprotocol/2025-06-18"
+    "@geojson/v1.0.5"
   ],
   "contents": {
-    "example": {
+    "test": {
       "title": "Sourcemeta",
       "description": "My description",
       "email": "hello@sourcemeta.com",
@@ -23,53 +21,53 @@
       "contents": {
         "extension": {
           "baseUri": "https://example.com/extension",
-          "path": "./schemas/example/extension"
+          "path": "./schemas/test/extension"
         },
         "schemas": {
           "baseUri": "https://example.com/schemas",
-          "path": "./schemas/example/folder",
+          "path": "./schemas/test/folder",
           "defaultDialect": "http://json-schema.org/draft-07/schema#",
           "resolve": {
-            "https://other.com/single.json": "/example/bundling/single.json"
+            "https://other.com/single.json": "/test/bundling/single.json"
           }
         },
         "camelcase": {
           "contents": {
             "test": {
               "baseUri": "https://sourcemeta.com/camelcase",
-              "path": "./schemas/example/camelcase"
+              "path": "./schemas/test/camelcase"
             }
           }
         },
         "v2.0": {
           "baseUri": "https://example.com/schemas",
-          "path": "./schemas/example/v2.0"
+          "path": "./schemas/test/v2.0"
         },
         "bundling": {
           "baseUri": "https://example.com/bundling",
-          "path": "./schemas/example/bundling"
+          "path": "./schemas/test/bundling"
+        },
+        "doc": {
+          "title": "A sample schema folder",
+          "description": "For testing purposes",
+          "github": "sourcemeta/registry",
+          "baseUri": "https://example.com/doc",
+          "path": "./schemas/test/doc"
+        },
+        "hyper": {
+          "baseUri": "https://example.com/hyper",
+          "path": "./schemas/test/hyper"
+        },
+        "same": {
+          "baseUri": "http://localhost:8000/same",
+          "path": "./schemas/test/same"
+        },
+        "no-blaze": {
+          "baseUri": "https://other.com",
+          "path": "./schemas/test/no-blaze",
+          "x-sourcemeta-registry:evaluate": false
         }
       }
-    },
-    "doc": {
-      "title": "A sample schema folder",
-      "description": "For testing purposes",
-      "github": "sourcemeta/registry",
-      "baseUri": "https://example.com/doc",
-      "path": "./schemas/doc"
-    },
-    "hyper": {
-      "baseUri": "https://example.com/hyper",
-      "path": "./schemas/hyper"
-    },
-    "same": {
-      "baseUri": "http://localhost:8000/same",
-      "path": "./schemas/same"
-    },
-    "no-blaze": {
-      "baseUri": "https://other.com",
-      "path": "./schemas/no-blaze",
-      "x-sourcemeta-registry:evaluate": false
     }
   }
 }

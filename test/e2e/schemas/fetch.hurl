@@ -1,4 +1,4 @@
-GET {{base}}/example/schemas/string.json
+GET {{base}}/test/schemas/string.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
@@ -6,19 +6,19 @@ Access-Control-Allow-Origin: *
 [Asserts]
 header "ETag" exists
 
-GET {{base}}/example/schemas/string.json
+GET {{base}}/test/schemas/string.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/string.json",
+  "$id": "{{base}}/test/schemas/string.json",
   "type": "string"
 }
 
-GET {{base}}/example/schemas/draft4-top-level-ref.json
+GET {{base}}/test/schemas/draft4-top-level-ref.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "{{base}}/example/schemas/draft4-top-level-ref.json",
+  "id": "{{base}}/test/schemas/draft4-top-level-ref.json",
   "allOf": [
     {
       "$ref": "#/definitions/foo"
@@ -31,72 +31,72 @@ HTTP 200
   }
 }
 
-GET {{base}}/example/schemas/with-rebase-same-host.json
+GET {{base}}/test/schemas/with-rebase-same-host.json
 HTTP 200
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "{{base}}/example/schemas/with-rebase-same-host.json",
+  "$id": "{{base}}/test/schemas/with-rebase-same-host.json",
   "$ref": "../bundling/single.json"
 }
 
-GET {{base}}/example/schemas/with-rebase.json
+GET {{base}}/test/schemas/with-rebase.json
 HTTP 200
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "{{base}}/example/schemas/with-rebase.json",
-  "$ref": "/example/bundling/single.json"
+  "$id": "{{base}}/test/schemas/with-rebase.json",
+  "$ref": "/test/bundling/single.json"
 }
 
-GET {{base}}/example/schemas/id-same-as-base.json
+GET {{base}}/test/schemas/id-same-as-base.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/id-same-as-base.json",
+  "$id": "{{base}}/test/schemas/id-same-as-base.json",
   "type": "string"
 }
 
 # With random unknown query parameters
-GET {{base}}/example/schemas/string.json?foo=bar&baz=qux
+GET {{base}}/test/schemas/string.json?foo=bar&baz=qux
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/string.json",
+  "$id": "{{base}}/test/schemas/string.json",
   "type": "string"
 }
 
 # Identifier derived from file path
-GET {{base}}/example/schemas/no-id.json
+GET {{base}}/test/schemas/no-id.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/no-id.json",
+  "$id": "{{base}}/test/schemas/no-id.json",
   "type": "string"
 }
 
 # Applied default dialect
-GET {{base}}/example/schemas/no-schema.json
+GET {{base}}/test/schemas/no-schema.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/no-schema.json",
+  "$id": "{{base}}/test/schemas/no-schema.json",
   "type": "string"
 }
 
 # Applied default dialect and file identifier
-GET {{base}}/example/schemas/no-schema-nor-id.json
+GET {{base}}/test/schemas/no-schema-nor-id.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/no-schema-nor-id.json",
+  "$id": "{{base}}/test/schemas/no-schema-nor-id.json",
   "type": "string"
 }
 
 # Adding `$id` when there is a top-level `$ref`
-GET {{base}}/example/schemas/no-id-draft7-ref.json
+GET {{base}}/test/schemas/no-id-draft7-ref.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/no-id-draft7-ref.json",
+  "$id": "{{base}}/test/schemas/no-id-draft7-ref.json",
   "allOf": [
     {
       "$ref": "string.json"
@@ -105,129 +105,129 @@ HTTP 200
 }
 
 # With absolute references
-GET {{base}}/example/schemas/absolute-refs.json
+GET {{base}}/test/schemas/absolute-refs.json
 HTTP 200
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "{{base}}/example/schemas/absolute-refs.json",
+  "$id": "{{base}}/test/schemas/absolute-refs.json",
   "$ref": "string.json"
 }
 
 # Folder with period
-GET {{base}}/example/v2.0/schema.json
+GET {{base}}/test/v2.0/schema.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/v2.0/schema.json",
+  "$id": "{{base}}/test/v2.0/schema.json",
   "type": "integer"
 }
 
 # .schema.json extension
-GET {{base}}/example/extension/with.schema.json
+GET {{base}}/test/extension/with.schema.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/extension/with.schema.json",
+  "$id": "{{base}}/test/extension/with.schema.json",
   "type": "string"
 }
 
 # No extension
-GET {{base}}/example/extension/without.json
+GET {{base}}/test/extension/without.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/extension/without.json",
+  "$id": "{{base}}/test/extension/without.json",
   "type": "string"
 }
 
 # With correct casing
-GET {{base}}/example/schemas/CamelCase.json
+GET {{base}}/test/schemas/CamelCase.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/camelcase.json",
+  "$id": "{{base}}/test/schemas/camelcase.json",
   "type": "string"
 }
 
 # With lower casing
-GET {{base}}/example/schemas/camelcase.json
+GET {{base}}/test/schemas/camelcase.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/camelcase.json",
+  "$id": "{{base}}/test/schemas/camelcase.json",
   "type": "string"
 }
 
-GET {{base}}/example/schemas/html.json
+GET {{base}}/test/schemas/html.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/html.json"
+  "$id": "{{base}}/test/schemas/html.json"
 }
 
-GET {{base}}/example/schemas/index.html.json
+GET {{base}}/test/schemas/index.html.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/index.html.json"
+  "$id": "{{base}}/test/schemas/index.html.json"
 }
 
-GET {{base}}/doc/.period.json
+GET {{base}}/test/doc/.period.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/doc/.period.json",
+  "$id": "{{base}}/test/doc/.period.json",
   "type": "string"
 }
 
-GET {{base}}/example/schemas/%25/test.json
+GET {{base}}/test/schemas/%25/test.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/example/schemas/%25/test.json"
+  "$id": "{{base}}/test/schemas/%25/test.json"
 }
 
-GET {{base}}/example/schemas/string.json
+GET {{base}}/test/schemas/string.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 [Captures]
-example_schemas_string_json_etag: header "ETag"
-example_schemas_string_json_content_length: header "Content-Length"
+test_schemas_string_json_etag: header "ETag"
+test_schemas_string_json_content_length: header "Content-Length"
 
-HEAD {{base}}/example/schemas/string.json
+HEAD {{base}}/test/schemas/string.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 [Asserts]
 bytes count == 0
-header "ETag" == {{example_schemas_string_json_etag}}
-header "Content-Length" == {{example_schemas_string_json_content_length}}
+header "ETag" == {{test_schemas_string_json_etag}}
+header "Content-Length" == {{test_schemas_string_json_content_length}}
 
-POST {{base}}/example/schemas/string.json
+POST {{base}}/test/schemas/string.json
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -246,7 +246,7 @@ jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
 
 # Invalid method on found
-DELETE {{base}}/example/schemas/string.json
+DELETE {{base}}/test/schemas/string.json
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -256,7 +256,7 @@ jsonpath "$.error" == "method-not-allowed"
 jsonpath "$.message" == "This HTTP method is invalid for this URL"
 
 # Invalid method on not found
-PUT {{base}}/example/schemas/xxx.json
+PUT {{base}}/test/schemas/xxx.json
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *

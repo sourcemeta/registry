@@ -39,12 +39,12 @@ Content-Type: application/json
 Access-Control-Allow-Origin: *
 [
   {
-    "url": "/example/bundling/single",
+    "url": "/test/bundling/single",
     "title": "Bundling",
     "description": "A bundling example"
   },
   {
-    "url": "/example/bundling/double",
+    "url": "/test/bundling/double",
     "title": "",
     "description": ""
   }
@@ -57,12 +57,12 @@ Content-Type: application/json
 Access-Control-Allow-Origin: *
 [
   {
-    "url": "/example/bundling/single",
+    "url": "/test/bundling/single",
     "title": "Bundling",
     "description": "A bundling example"
   },
   {
-    "url": "/example/bundling/double",
+    "url": "/test/bundling/double",
     "title": "",
     "description": ""
   }
@@ -75,7 +75,7 @@ Content-Type: application/json
 Access-Control-Allow-Origin: *
 [
   {
-    "url": "/example/schemas/camelcase",
+    "url": "/test/schemas/camelcase",
     "title": "",
     "description": ""
   }

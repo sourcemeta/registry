@@ -3,7 +3,7 @@
   "$id": "https://example.com/bundling/double.json",
   "properties": {
     "foo": {
-      "$ref": "/example/bundling/single.json"
+      "$ref": "/test/bundling/single.json"
     },
     "bar": {
       "$ref": "http://json-schema.org/draft-07/schema#"

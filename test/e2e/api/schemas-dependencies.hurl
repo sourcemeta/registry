@@ -1,4 +1,4 @@
-GET {{base}}/self/api/schemas/dependencies/example/bundling/single
+GET {{base}}/self/api/schemas/dependencies/test/bundling/single
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -6,11 +6,11 @@ Access-Control-Allow-Origin: *
 header "ETag" exists
 header "Last-Modified" exists
 jsonpath "$" count == 1
-jsonpath "$[0].from" == "{{base}}/example/bundling/single.json"
-jsonpath "$[0].to" == "{{base}}/example/v2.0/schema.json"
+jsonpath "$[0].from" == "{{base}}/test/bundling/single.json"
+jsonpath "$[0].to" == "{{base}}/test/v2.0/schema.json"
 jsonpath "$[0].at" == "/properties/foo/$ref"
 
-GET {{base}}/self/api/schemas/dependencies/example/v2.0/schema
+GET {{base}}/self/api/schemas/dependencies/test/v2.0/schema
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -19,7 +19,7 @@ header "ETag" exists
 header "Last-Modified" exists
 jsonpath "$" count == 0
 
-HEAD {{base}}/self/api/schemas/dependencies/example/v2.0/schema
+HEAD {{base}}/self/api/schemas/dependencies/test/v2.0/schema
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -28,7 +28,7 @@ header "ETag" exists
 header "Last-Modified" exists
 bytes count == 0
 
-POST {{base}}/self/api/schemas/dependencies/example/v2.0/schema
+POST {{base}}/self/api/schemas/dependencies/test/v2.0/schema
 HTTP 405
 Content-Type: application/json
 Access-Control-Allow-Origin: *
