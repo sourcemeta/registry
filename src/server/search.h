@@ -36,7 +36,7 @@ static auto search(const std::filesystem::path &search_index,
 
     auto entry{sourcemeta::core::JSON::make_object()};
     auto line_json{sourcemeta::core::parse_json(line)};
-    entry.assign("relativeUrl", std::move(line_json.at(0)));
+    entry.assign("path", std::move(line_json.at(0)));
     entry.assign("title", std::move(line_json.at(1)));
     entry.assign("description", std::move(line_json.at(2)));
     result.push_back(std::move(entry));

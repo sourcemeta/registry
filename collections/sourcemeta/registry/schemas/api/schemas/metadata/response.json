@@ -7,12 +7,12 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [ "name", "relativeUrl" ],
+        "required": [ "name", "path" ],
         "properties": {
           "name": {
             "type": "string"
           },
-          "relativeUrl": {
+          "path": {
             "$ref": "../../../common/uri-relative.json"
           }
         },
@@ -28,7 +28,7 @@
       "required": [
         "bytes",
         "identifier",
-        "relativeUrl",
+        "path",
         "baseDialect",
         "dialect",
         "health"
@@ -49,7 +49,7 @@
         "identifier": {
           "$ref": "../../../common/url.json"
         },
-        "relativeUrl": {
+        "path": {
           "$ref": "../../../common/uri-relative.json"
         }
       }

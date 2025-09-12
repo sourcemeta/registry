@@ -13,14 +13,14 @@ jsonpath "$.baseDialect" == "draft7"
 jsonpath "$.health" == 100
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.identifier" == "{{base}}/test/v2.0/schema.json"
-jsonpath "$.relativeUrl" == "/test/v2.0/schema.json"
+jsonpath "$.path" == "/test/v2.0/schema.json"
 jsonpath "$.breadcrumb" count == 3
 jsonpath "$.breadcrumb[0].name" == "test"
-jsonpath "$.breadcrumb[0].relativeUrl" == "/test"
+jsonpath "$.breadcrumb[0].path" == "/test"
 jsonpath "$.breadcrumb[1].name" == "v2.0"
-jsonpath "$.breadcrumb[1].relativeUrl" == "/test/v2.0"
+jsonpath "$.breadcrumb[1].path" == "/test/v2.0"
 jsonpath "$.breadcrumb[2].name" == "schema"
-jsonpath "$.breadcrumb[2].relativeUrl" == "/test/v2.0/schema"
+jsonpath "$.breadcrumb[2].path" == "/test/v2.0/schema"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/metadata/response
 ```

@@ -48,7 +48,7 @@ navigation and discovery purposes.
     | Property                       | Type                     | Required | Description |
     |--------------------------------|--------------------------|-----|-------------------------------------|
     | `/url` | String | Yes | The absolute URL of the directory |
-    | `/relativeUrl` | String | Yes | The relative URL of the directory |
+    | `/path` | String | Yes | The relative URL of the directory |
     | `/breadcrumb` | Array | Yes | The breadcrumb of the directory entry |
     | `/breadcrumb/*/name` | String | Yes | The breadcrumb entry URL path segment |
     | `/breadcrumb/*/url` | String | Yes | The relative URL of the breadcrumb location |
@@ -60,7 +60,7 @@ navigation and discovery purposes.
     | `/entries` | Array | Yes | The entries inside the directory |
     | `/entries/*/type` | String | Yes | The type of the entry (`schema` or `directory`) |
     | `/entries/*/name` | String | Yes | The last URL path segment of the entry |
-    | `/entries/*/relativeUrl` | String | Yes | The relative URL of the entry |
+    | `/entries/*/path` | String | Yes | The relative URL of the entry |
     | `/entries/*/health` | Integer | No | The aggregated health of the entry |
     | `/entries/*/title` | String | No | For `directory` entries, the title associated with the entry |
     | `/entries/*/description` | String | No | For `directory` entries, the description associated with the entry |
@@ -191,7 +191,7 @@ GET /self/api/schemas/metadata/{path}
 
     | Property                       | Type                     | Required | Description |
     |--------------------------------|--------------------------|-----|-------------------------------------|
-    | `/relativeUrl` | String | Yes | The relative URL of the schema |
+    | `/path` | String | Yes | The relative URL of the schema |
     | `/identifier` | String | No | The absolute URI of the schema |
     | `/dialect` | String | No | The dialect URI of the schema |
     | `/baseDialect` | String | No | The base dialect short identifier of the schema |
@@ -199,7 +199,7 @@ GET /self/api/schemas/metadata/{path}
     | `/bytes` | Integer | No | The bytes that the schema occupies |
     | `/breadcrumb` | Array | Yes | The breadcrumb of the schema |
     | `/breadcrumb/*/name` | String | Yes | The breadcrumb entry URL path |
-    | `/breadcrumb/*/relativeUrl` | String | Yes | The relative URL of the breadcrumb location |
+    | `/breadcrumb/*/path` | String | Yes | The relative URL of the breadcrumb location |
 
 === "404"
 
@@ -219,7 +219,7 @@ Note that the this endpoint has a hard limit of 10 results.
 
     | Property | Type | Required | Description |
     |----------|------|----------|-------------|
-    | `/*/relativeUrl` | String | Yes | The relative URL of the schema |
+    | `/*/path` | String | Yes | The relative URL of the schema |
     | `/*/title` | String | No | The title of the schema (may be an empty string) |
     | `/*/description` | String | No | The description of the schema (may be an empty string) |
 
