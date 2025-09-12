@@ -20,27 +20,26 @@
         ],
         "properties": {
           "type": {
-            "type": "string"
+            "enum": [ "push", "pass", "fail" ]
           },
-          "annotation": {
-            "type": [ "string", "null" ]
-          },
+          "annotation": true,
           "evaluatePath": {
-            "type": "string"
+            "$ref": "../../../common/jsonpointer.json"
           },
           "instanceLocation": {
-            "type": "string"
+            "$ref": "../../../common/jsonpointer.json"
           },
           "instancePositions": {
             "type": "array",
             "maxItems": 4,
             "minItems": 4,
             "items": {
-              "type": "number"
+              "type": "integer",
+              "minimum": 1
             }
           },
           "keywordLocation": {
-            "type": "string"
+            "$ref": "../../../common/url.json"
           },
           "message": {
             "type": [ "string", "null" ]
@@ -49,7 +48,14 @@
             "type": "string"
           },
           "vocabulary": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "../../../common/uri.json"
+              }
+            ]
           }
         },
         "additionalProperties": false

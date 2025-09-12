@@ -32,28 +32,35 @@
       ],
       "properties": {
         "type": {
-          "type": "string"
+          "enum": [ "resource", "anchor", "pointer", "subschema" ]
         },
         "base": {
-          "type": "string"
+          "$ref": "../../../common/url.json"
         },
         "baseDialect": {
-          "type": "string"
+          "$ref": "../../../common/uri.json"
         },
         "dialect": {
-          "type": "string"
+          "$ref": "../../../common/url.json"
         },
         "parent": {
-          "type": [ "string", "null" ]
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "../../../common/jsonpointer"
+            }
+          ]
         },
         "pointer": {
-          "type": "string"
+          "$ref": "../../../common/jsonpointer"
         },
         "relativePointer": {
-          "type": "string"
+          "$ref": "../../../common/jsonpointer"
         },
         "root": {
-          "type": "string"
+          "$ref": "../../../common/url.json"
         }
       },
       "additionalProperties": false
