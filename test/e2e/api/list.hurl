@@ -2,6 +2,8 @@ GET {{base}}/self/api/list
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -33,10 +35,20 @@ jsonpath "$.entries[2].type" == "directory"
 jsonpath "$.entries[2].health" == 91
 jsonpath "$.entries[2].url" == "/geojson"
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 GET {{base}}/self/api/list/test
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -88,10 +100,20 @@ jsonpath "$.entries[8].type" == "directory"
 jsonpath "$.entries[8].health" == 100
 jsonpath "$.entries[8].url" == "/test/bundling"
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 GET {{base}}/self/api/list/test/v2.0
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -112,19 +134,39 @@ jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/test/v2.0/schema"
 jsonpath "$.entries[0].health" == 100
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 GET {{base}}/self/api/list/test/v2.0.json
 HTTP 404
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 jsonpath "$.code" == 404
 jsonpath "$.error" == "not-found"
 jsonpath "$.message" == "There is nothing at this URL"
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 GET {{base}}/self/api/list/test/schemas/versions
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -148,10 +190,20 @@ jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].url" == "/test/schemas/versions/v1.2.3"
 jsonpath "$.entries[0].health" == 100
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 GET {{base}}/self/api/list/test/extension
 HTTP 200
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
@@ -188,3 +240,11 @@ jsonpath "$.entries[2].name" == "to-without"
 jsonpath "$.entries[2].type" == "schema"
 jsonpath "$.entries[2].url" == "/test/extension/to-without"
 jsonpath "$.entries[2].health" == 100
+
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true

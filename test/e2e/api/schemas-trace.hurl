@@ -9,16 +9,28 @@ POST {{base}}/self/api/schemas/trace/test/schemas/string
 HTTP 400
 Content-Type: application/json
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 jsonpath "$.code" == 400
 jsonpath "$.error" == "no-instance"
 jsonpath "$.message" == "You must pass an instance to validate against"
+
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
 
 POST {{base}}/self/api/schemas/trace/test/schemas/string
 Content-Type: application/json
 "Hello World"
 HTTP 200
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 2
@@ -49,12 +61,30 @@ jsonpath "$.steps[1].type" == "pass"
 jsonpath "$.steps[1].vocabulary" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.steps[1].message" == "The value was expected to be of type string"
 
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/trace/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 POST {{base}}/self/api/schemas/trace/test/no-blaze/string
 Content-Type: application/json
 "Hello World"
 HTTP 405
 Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
 [Asserts]
 jsonpath "$.code" == 405
 jsonpath "$.error" == "no-template"
 jsonpath "$.message" == "This schema was not precompiled for schema evaluation"
+
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
