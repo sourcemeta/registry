@@ -8,24 +8,30 @@ header "Last-Modified" exists
 jsonpath "$.url" == "/"
 jsonpath "$.canonical" == "{{base}}"
 jsonpath "$.breadcrumb" count == 0
-jsonpath "$.entries" count == 2
+jsonpath "$.entries" count == 3
 jsonpath "$.entries[0].name" == "test"
-jsonpath "$.entries[0].title" == "Sourcemeta"
-jsonpath "$.entries[0].description" == "My description"
-jsonpath "$.entries[0].email" == "hello@sourcemeta.com"
-jsonpath "$.entries[0].github" == "sourcemeta"
-jsonpath "$.entries[0].website" == "https://www.sourcemeta.com"
+jsonpath "$.entries[0].title" == "Test"
+jsonpath "$.entries[0].description" == "A directory full of testing schemas"
 jsonpath "$.entries[0].type" == "directory"
 jsonpath "$.entries[0].health" == 100
 jsonpath "$.entries[0].url" == "/test"
-jsonpath "$.entries[1].name" == "geojson"
-jsonpath "$.entries[1].title" == "GeoJSON"
-jsonpath "$.entries[1].description" == "A format for encoding a variety of geographic data structures"
-jsonpath "$.entries[1].github" == "geojson"
-jsonpath "$.entries[1].website" == "https://geojson.org"
+jsonpath "$.entries[1].name" == "sourcemeta"
+jsonpath "$.entries[1].title" == "Sourcemeta"
+jsonpath "$.entries[1].description" == "A provider of premium tooling and services to support JSON Schema use in production"
+jsonpath "$.entries[1].email" == "hello@sourcemeta.com"
+jsonpath "$.entries[1].github" == "sourcemeta"
+jsonpath "$.entries[1].website" == "https://www.sourcemeta.com"
 jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.entries[1].health" == 91
-jsonpath "$.entries[1].url" == "/geojson"
+jsonpath "$.entries[1].health" == 100
+jsonpath "$.entries[1].url" == "/sourcemeta"
+jsonpath "$.entries[2].name" == "geojson"
+jsonpath "$.entries[2].title" == "GeoJSON"
+jsonpath "$.entries[2].description" == "A format for encoding a variety of geographic data structures"
+jsonpath "$.entries[2].github" == "geojson"
+jsonpath "$.entries[2].website" == "https://geojson.org"
+jsonpath "$.entries[2].type" == "directory"
+jsonpath "$.entries[2].health" == 91
+jsonpath "$.entries[2].url" == "/geojson"
 
 GET {{base}}/self/api/list/test
 HTTP 200
@@ -39,11 +45,8 @@ jsonpath "$.canonical" == "{{base}}/test"
 jsonpath "$.breadcrumb" count == 1
 jsonpath "$.breadcrumb[0].name" == "test"
 jsonpath "$.breadcrumb[0].url" == "/test"
-jsonpath "$.description" == "My description"
-jsonpath "$.email" == "hello@sourcemeta.com"
-jsonpath "$.github" == "sourcemeta"
-jsonpath "$.title" == "Sourcemeta"
-jsonpath "$.website" == "https://www.sourcemeta.com"
+jsonpath "$.description" == "A directory full of testing schemas"
+jsonpath "$.title" == "Test"
 jsonpath "$.entries" count == 9
 jsonpath "$.entries[0].name" == "v2.0"
 jsonpath "$.entries[0].type" == "directory"
