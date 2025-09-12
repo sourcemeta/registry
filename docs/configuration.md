@@ -54,6 +54,12 @@ nodes.  Each node in this tree serves as either a [Collection](#collections)
 groups other pages and schema collections), giving you complete flexibility in
 structuring your instance.
 
+!!! note
+
+    While any content tree structure is supported, you cannot create a
+    top-level entry called `self`, as this namespace is reserved for the
+    [Registry API](api.md) and other internal functionality.
+
 | Property        | Type | Required | Default | Description |
 |-----------------|------|----------|---------|-------------|
 | `/url`          | String  | :red_circle: **Yes** | N/A | The absolute URL on which the Registry will be served. The Registry will automatically add URI identifiers relative to this URL for every ingested schema |
@@ -81,9 +87,9 @@ schema at `./schemas/foo.json` will be available at
 ### HTML
 
 When enabled through the optional `html` top-level property, the Registry
-generates an HTML explorer interface. Unlike the basic JSON API, this explorer
-provides a user-friendly web interface for browsing and examining your schemas.
-You can customize the explorer's appearance and behavior using the
+generates an HTML explorer interface. Unlike the [JSON API](api.md), this
+explorer provides a user-friendly web interface for browsing and examining your
+schemas.  You can customize the explorer's appearance and behavior using the
 configuration options detailed below.
 
 | Property        | Type | Required | Default | Description |
@@ -131,7 +137,7 @@ collections contain the actual schema definitions that power your registry.
 | `/website`      | String  | No  | None | The absolute URL to the website associated with the schema collection |
 | `/includes`     | String  | No  | None | A `jsonschema.json` manifest definition to include in-place. See the [Includes](#includes) section for more information. **If this property is set, none of the other properties can be set (including `path`)** |
 | `/resolve`      | Object  | No  | None | A URI-to-URI map to hook into the schema reference resolution process. See the [Resolve](#resolve) section for more information |
-| `/x-sourcemeta-registry:evaluate`      | Boolean  | No  | `true` | When set to `false`, disable the evaluation API for this schema collection. This is useful if you will never make use of the evaluation API and want to speed up the generation of the Registry |
+| `/x-sourcemeta-registry:evaluate`      | Boolean  | No  | `true` | When set to `false`, disable the evaluation API for this schema collection. This is useful if you will never make use of the [evaluation API](api.md) and want to speed up the generation of the Registry |
 
 ### Includes
 

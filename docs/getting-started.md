@@ -12,7 +12,7 @@ cache that enables blazing-fast schema retrieval and evaluation during the
 *serving* phase.
 
 As you will see in this guide, setting up the Sourcemeta Registry is
-straightforward: 
+straightforward:
 
 1. Create a [configuration file](configuration.md) that sets up your registry
    exactly as you want it
@@ -126,7 +126,7 @@ you've got the perfect foundation to experiment and expand.
 Ready to take things further? We recommend exploring the full range of options
 in the Registry [configuration file](configuration.md), discovering how to
 import ready-made schema collections through our [built-in schema
-library](library.md), and having a peek at
+library](library.md), exploring the [HTTP API](api.md), and having a peek at
 [schemas.sourcemeta.com](https://schemas.sourcemeta.com) to see what a
 fully-fledged public instance looks like in the wild.
 
@@ -157,7 +157,7 @@ COPY registry.json .
 COPY schemas schemas
 
 # [OPTIONAL] If you are running a commercial edition of the Registry,
-# you need to explicitly confirm that you own a commercial license 
+# you need to explicitly confirm that you own a commercial license
 # by setting this environment variable before running the Registry
 # build step. See https://registry.sourcemeta.com/commercial/
 ENV SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
