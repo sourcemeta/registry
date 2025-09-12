@@ -1,5 +1,5 @@
 {
-  "target": "../../schemas/configuration/email-address.json",
+  "target": "../../schemas/common/email-address.json",
   "x-license": "LicenseRef-Sourcemeta-Commercial",
   "tests": [
     {

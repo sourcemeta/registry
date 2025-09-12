@@ -1,26 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "examples": [
-    {
-      "breadcrumb": [
-        {
-          "name": "example",
-          "url": "/example"
-        }
-      ],
-      "canonical": "http://localhost:8000/example",
-      "entries": [
-        {
-          "type": "directory",
-          "health": 100,
-          "name": "v2.0",
-          "url": "/example/v2.0"
-        }
-      ],
-      "health": 100,
-      "url": "/example"
-    }
-  ],
   "type": "object",
   "required": [ "health", "entries", "url", "canonical", "breadcrumb" ],
   "properties": {

@@ -1,8 +1,6 @@
 set(COLLECTION_NAMESPACE "sdf/v1.0.0")
 set(SDF_PATH "${PROJECT_SOURCE_DIR}/vendor/collections/${COLLECTION_NAMESPACE}")
 
-include(GNUInstallDirs)
-
 install(FILES "${SDF_PATH}/sdf-framework.jso.json"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}/schemas"
   RENAME framework.json

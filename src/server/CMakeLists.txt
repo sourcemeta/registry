@@ -22,7 +22,6 @@ target_compile_definitions(sourcemeta_registry_server
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(sourcemeta_registry_server PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
-include(GNUInstallDirs)
 install(TARGETS sourcemeta_registry_server
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
   COMPONENT sourcemeta_registry)

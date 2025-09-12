@@ -27,6 +27,8 @@ find_package(Blaze REQUIRED)
 find_package(JSONBinPack REQUIRED)
 find_package(JSONSchema REQUIRED)
 
+include(GNUInstallDirs)
+
 # Always optimize the current architecture
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=native")

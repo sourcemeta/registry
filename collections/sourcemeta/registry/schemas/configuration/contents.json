@@ -10,7 +10,7 @@
         "required": [ "include" ],
         "properties": {
           "include": {
-            "$ref": "./path-posix.json"
+            "$ref": "../common/path-posix.json"
           }
         },
         "additionalProperties": false

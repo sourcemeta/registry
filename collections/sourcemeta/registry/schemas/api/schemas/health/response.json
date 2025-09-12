@@ -30,7 +30,7 @@
       }
     },
     "score": {
-      "$ref": "../common/percentage.json"
+      "$ref": "../../../common/percentage.json"
     }
   },
   "additionalProperties": false

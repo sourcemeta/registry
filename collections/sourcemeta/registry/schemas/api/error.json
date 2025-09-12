@@ -4,7 +4,7 @@
   "required": [ "code", "error", "message" ],
   "properties": {
     "code": {
-      "$ref": "./http-status.json"
+      "$ref": "../common/http-status.json"
     },
     "error": {
       "type": "string"
