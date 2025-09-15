@@ -1,11 +1,50 @@
-Sourcemeta Registry
-===================
+# Sourcemeta Registry
 
-A high-performance OEM micro-service to serve collections of JSON Schema over
-HTTP and build a schema registry for your organisation.
+A high-performance, self-hosted JSON Schema registry that transforms your
+existing Git repositories of schemas into searchable, discoverable schema
+catalogs with enterprise-grade governance capabilities.
 
-> [!IMPORTANT]
-> We are working hard to get the Registry to its first stable release, which
-> include proper documentation. For now, please star the project to show us
-> your support and feel free to explore the live sample instance at
-> [schemas.sourcemeta.com](https://schemas.sourcemeta.com).
+***
+
+[![A screenshot of the Sourcemeta Registry](https://www.sourcemeta.com/screenshot.webp)](https://schemas.sourcemeta.com)
+
+***
+
+## :rocket: Quick Links
+
+- **[:book: Documentation](https://registry.sourcemeta.com)** - Complete setup and usage guide
+- **[:dart: Getting Started](https://registry.sourcemeta.com/getting-started)** - Deploy in minutes
+- **[:globe_with_meridians: Live Sample Instance](https://schemas.sourcemeta.com)** - See it in action
+- **[:briefcase: Commercial Licensing](https://registry.sourcemeta.com/commercial)** - Enterprise support
+- **[:speech_balloon: Community Support](https://github.com/sourcemeta/registry/discussions)** - GitHub Discussions
+
+## :page_facing_up: License
+
+While the project is publicly available on GitHub, it operates under a
+[source-available
+license](https://github.com/sourcemeta/registry/blob/main/LICENSE) rather than
+a traditional open-source model. You are free to use the [Started
+edition](https://github.com/sourcemeta/registry/pkgs/container/registry) for
+free, but using any other edition for any purpose other than for contributing
+back to the project requires a [paid commercial
+license](https://registry.sourcemeta.com/commercial/).
+
+> We are typically happy to provide free commercial licenses to open-source
+> projects, non-profits, educational institutions, and research projects.
+> [Reach out](mailto:hello@sourcemeta.com) if you think you qualify!
+
+## :handshake: Contributing
+
+We welcome contributions! By sending a pull request, you agree to our
+[contributing
+guidelines](https://github.com/sourcemeta/.github/blob/main/CONTRIBUTING.md).
+Meaningful contributions to the Registry or any of its Sourcemeta dependencies
+can be taken into consideration towards a discounted (or even free) [commercial
+license](https://registry.sourcemeta.com/commercial/).
+
+## Contact
+
+If you have any questions or comments, don't hesitate in opening a ticket on
+[GitHub Discussions](https://github.com/sourcemeta/registry/discussions) or
+writing to us at [hello@sourcemeta.com](mailto:hello@sourcemeta.com). We are
+friendly!
