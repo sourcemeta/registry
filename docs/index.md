@@ -8,7 +8,7 @@ hide:
 
 A high-performance, self-hosted [JSON Schema](https://json-schema.org) registry
 that transforms your existing Git repositories of schemas into searchable,
-discoverable schema catalogs with enterprise-grade governance capabilities. 
+discoverable schema catalogs with enterprise-grade governance capabilities.
 
 !!! info "About Us"
 
@@ -98,8 +98,8 @@ throughput. The stateless design ensures infinite horizontal scalability.
 
 > We have a proven track record on high-performance JSON Schema work. As a
 > notable example, check out [Blaze](https://github.com/sourcemeta/blaze), our
-> ultra high-performance JSON Schema evaluator, which we found to [at least 10x
-> faster than alternatives](https://arxiv.org/abs/2503.02770).
+> ultra high-performance JSON Schema evaluator, which we found to be [at least
+> 10x faster than alternatives](https://arxiv.org/abs/2503.02770).
 
 **Expert commercial support & training**: [Commercial
 Licenses](./commercial.md) give you access to world-class JSON Schema expertise
@@ -131,7 +131,7 @@ solution the industry needs.
   business teams and non-technical stakeholders can easily understand
 - **Specification Support**: Native ingestion of OpenAPI, AsyncAPI, SDF, W3C
   Web of Things, and other specifications that embed JSON Schema, with the full
-  benefits of the Registry 
+  benefits of the Registry
 - **Gateway Functionality**: Structured Output LLM negotiation, API
   specification testing proxy, data ingestion endpoints, and other advanced
   validation gateway capabilities (such as dynamically testing strictness of
