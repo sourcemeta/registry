@@ -51,30 +51,41 @@ end users) without building complex JSON Schema infrastructure from scratch.
 
 ## Key Features
 
-- **GitOps-native**: [Easy setup](configuration.md) from your existing Git
-  repositories.  Governance-friendly by design—all schema changes go through
-  Git approval workflows
-- **Web Explorer**: Search and browse schemas across your organisation from an
-  intuitive web interface. Disable for headless API-only deployments
-- **Editor integration**: Edit schemas in your IDE with full autocomplete
-  support. Automatically accommodates Visual Studio Code
+<div class="grid cards" markdown>
+
+- :material-git: __GitOps-Native__ [Easy setup](configuration.md) from your
+  existing Git repositories.  Governance-friendly by design—all schema changes
+  go through Git approval workflows
+- :material-language-html5: __Web Explorer__ Search and browse schemas across
+  your organisation from an intuitive web interface. Disable for headless
+  API-only deployments
+- :material-code-braces: __Editor Integration__ Edit schemas in your IDE with
+  full autocomplete support. Automatically accommodates Visual Studio Code
   [quirks](https://github.com/microsoft/vscode-json-languageservice/issues/224)
   like [broken auto-completion of
   meta-schemas](https://github.com/microsoft/vscode-json-languageservice/issues/149)
-- **Advanced health checks**: Monitor and guarantee schema best practices with
-  comprehensive built-in linting. The most advanced JSON Schema linter
-  available, designed with input from the JSON Schema organisation
-- **Rich HTTP API**: High-performance programmatic access for CI/CD pipelines,
-  tooling integration, and custom workflows. Check out the
+- :material-check: __Schema Health Checks__ Monitor and guarantee schema best
+  practices with comprehensive built-in linting. The most advanced JSON Schema
+  linter available, designed with input from the JSON Schema organisation
+- :material-api: __Rich HTTP API__ High-performance programmatic access for
+  CI/CD pipelines, tooling integration, and custom workflows. Check out the
   [documentation](api.md) to learn more
-- **Built-in schema collections**: [Curated schemas](library.md) from industry
-  leaders eliminate fragile copy-pasting of upstream schemas
-- **Cross-version compatibility**: Full support for JSON Schema Draft 4, Draft
-  6, Draft 7, 2019-09, and 2020-12, plus custom meta-schemas, [Standard Output
+- :material-library:  __Built-in Schema Collections__ [Curated
+  schemas](library.md) from industry leaders eliminate fragile copy-pasting of
+  upstream schemas
+- :octicons-versions-16: __JSON Schema Compatibility__ Full support for JSON
+  Schema Draft 4, Draft 6, Draft 7, 2019-09, and 2020-12, plus custom
+  meta-schemas, [Standard Output
   Formats](https://json-schema.org/draft/2020-12/json-schema-core#name-output-formatting),
   annotation collection, JSON Schema
   [Bundling](https://json-schema.org/blog/posts/bundling-json-schema-compound-documents),
   and more
+- :material-rocket: __High Performance__ Written in C++, delivering exceptional
+  performance with minimal compute resources. Run instances on modest hardware,
+  reducing infrastructure costs while maintaining enterprise-scale throughput
+  with a stateless horizontally-scalable design
+
+</div>
 
 ## Enterprise Ready
 
@@ -91,16 +102,6 @@ modification. Enterprises can examine every line of code, eliminating black-box
 concerns and ensuring no vendor lock-in. If Sourcemeta would ever cease
 operations, you retain full access to continue running and maintaining your
 Registry instances.
-
-**High-performance architecture**: Written in C++, the Registry delivers
-exceptional performance with minimal compute resources. Run instances on modest
-hardware, reducing infrastructure costs while maintaining enterprise-scale
-throughput. The stateless design ensures infinite horizontal scalability.
-
-> We have a proven track record on high-performance JSON Schema work. As a
-> notable example, check out [Blaze](https://github.com/sourcemeta/blaze), our
-> ultra high-performance JSON Schema evaluator, which we found to be [at least
-> 10x faster than alternatives](https://arxiv.org/abs/2503.02770).
 
 **Expert commercial support & training**: [Commercial
 Licenses](./commercial.md) give you access to world-class JSON Schema expertise
