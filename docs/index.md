@@ -10,6 +10,8 @@ A high-performance, self-hosted [JSON Schema](https://json-schema.org) registry
 that transforms your **existing Git repositories of schemas** into searchable,
 discoverable schema catalogs with enterprise-grade governance capabilities.
 
+<img alt="A screenshot of the Registry" loading="lazy" src="https://www.sourcemeta.com/screenshot.webp" id="screenshot">
+
 !!! info "About Us"
 
     [Sourcemeta](https://www.sourcemeta.com) is led by a member of the JSON
