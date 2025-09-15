@@ -65,7 +65,8 @@ end users) without building complex JSON Schema infrastructure from scratch.
   comprehensive built-in linting. The most advanced JSON Schema linter
   available, designed with input from the JSON Schema organisation
 - **Rich HTTP API**: High-performance programmatic access for CI/CD pipelines,
-  tooling integration, and custom workflows
+  tooling integration, and custom workflows. Check out the
+  [documentation](api.md) to learn more
 - **Built-in schema collections**: [Curated schemas](library.md) from industry
   leaders eliminate fragile copy-pasting of upstream schemas
 - **Cross-version compatibility**: Full support for JSON Schema Draft 4, Draft
