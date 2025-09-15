@@ -18,6 +18,14 @@ catalogs with enterprise-grade governance capabilities.
 - **[:briefcase: Commercial Licensing](https://registry.sourcemeta.com/commercial)** - Enterprise support
 - **[:speech_balloon: Community Support](https://github.com/sourcemeta/registry/discussions)** - GitHub Discussions
 
+> Do you want to level up your JSON Schema skills? Check out
+> [learnjsonschema.com](https://www.learnjsonschema.com), our growing JSON
+> Schema documentation website, our O'Reilly book [Unifying Business, Data, and
+> Code: Designing Data Products with JSON
+> Schema](https://www.oreilly.com/library/view/unifying-business-data/9781098144999/),
+> and our popular open-source [JSON Schema
+> CLI](https://github.com/sourcemeta/jsonschema).
+
 ## :page_facing_up: License
 
 While the project is publicly available on GitHub, it operates under a
