@@ -3,7 +3,7 @@
   "html": {
     "name": "Sourcemeta",
     "description": "The universal JSON Schema index, bringing together and supercharging the world's open-source schemas",
-    "hero": "<p class=\"mb-1\">The universal JSON Schema index, bringing together and supercharging the world's open-source schemas</p> <small class=\"fw-light\">Are we missing any schema collection you know about? <a href=\"https://github.com/sourcemeta/registry/issues/new\" target=\"_blank\">Let us know!</a></small>",
+    "hero": "<p class=\"mb-1\">A public instance of the <a href=\"https://github.com/sourcemeta/registry\">Sourcemeta Registry</a> microservice, listing and supercharging the world's open-source schemas</p> <small class=\"fw-light\">Ready to deploy your own internal JSON Schema registry? <a href=\"https://registry.sourcemeta.com\" target=\"_blank\">Head over to the docs!</a></small>",
     "head": "<script defer data-app-id=\"BBDECA33-5DA2-4309-B092-7EFC3D803B81\" src=\"https://cdn.telemetrydeck.com/websdk/telemetrydeck.min.js\"></script>",
     "action": {
       "title": "Star on GitHub",
