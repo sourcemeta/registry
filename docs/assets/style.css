@@ -2,3 +2,7 @@
 table code {
   white-space: nowrap;
 }
+
+img#screenshot {
+  border: 1px solid #ccc;
+}
