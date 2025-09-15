@@ -50,9 +50,9 @@ search.addEventListener('input', function(event) {
           hasSearchResults = true;
           response.forEach(function(entry) {
             var anchor = document.createElement('a');
-            anchor.href = entry.url;
+            anchor.href = entry.path;
             anchor.className = 'list-group-item list-group-item-action';
-            createChild(anchor, 'small', 'font-monospace', entry.url);
+            createChild(anchor, 'small', 'font-monospace', entry.path);
             if (entry.title) {
               createChild(anchor, 'span', 'fw-bold d-block', entry.title);
             }
