@@ -7,7 +7,7 @@ hide:
 # Welcome to the Sourcemeta JSON Schema Registry
 
 A high-performance, self-hosted [JSON Schema](https://json-schema.org) registry
-that transforms your existing Git repositories of schemas into searchable,
+that transforms your **existing Git repositories of schemas** into searchable,
 discoverable schema catalogs with enterprise-grade governance capabilities.
 
 !!! info "About Us"
