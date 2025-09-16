@@ -15,6 +15,7 @@ jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.identifier" == "{{base}}/test/v2.0/schema.json"
 jsonpath "$.path" == "/test/v2.0/schema.json"
 jsonpath "$.protected" == false
+jsonpath "$.alert" == null
 jsonpath "$.breadcrumb" count == 3
 jsonpath "$.breadcrumb[0].name" == "test"
 jsonpath "$.breadcrumb[0].path" == "/test"
@@ -48,6 +49,7 @@ jsonpath "$.dialect" == "https://json-schema.org/draft/2020-12/schema"
 jsonpath "$.identifier" == "{{base}}/test/no-serve/schema.json"
 jsonpath "$.path" == "/test/no-serve/schema.json"
 jsonpath "$.protected" == true
+jsonpath "$.alert" == "This collection is private"
 jsonpath "$.breadcrumb" count == 3
 jsonpath "$.breadcrumb[0].name" == "test"
 jsonpath "$.breadcrumb[0].path" == "/test"

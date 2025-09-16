@@ -11,6 +11,9 @@
     "description": {
       "type": "string"
     },
+    "x-sourcemeta-registry:alert": {
+      "type": "string"
+    },
     "x-sourcemeta-registry:evaluate": {
       "type": "boolean"
     },

@@ -71,6 +71,7 @@ navigation and discovery purposes.
     | `/entries/*/dialect` | String | No | For `schema` entries, the dialect URI of the entry |
     | `/entries/*/identifier` | String | No | For `schema` entries, the absolute URI of the entry |
     | `/entries/*/protected` | Boolean | No | For `schema` entries, whether the schema is listed but not accessible |
+    | `/entries/*/alert` | String / Null | No | For `schema` entries, the human readable alert message for the schema collection |
 
 === "404"
 
@@ -202,6 +203,7 @@ GET /self/api/schemas/metadata/{path}
     | `/health` | Integer | Yes | The health score of the schema |
     | `/bytes` | Integer | Yes | The bytes that the schema occupies |
     | `/protected` | Boolean | Yes | Whether the schema is listed but not accessible |
+    | `/alert` | String / Null | No | The human readable alert message for the schema collection, if any |
     | `/title` | String | No | The title of the schema, if any |
     | `/description` | String | No | The description of the schema, if any |
     | `/breadcrumb` | Array | Yes | The breadcrumb of the schema |
