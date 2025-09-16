@@ -40,7 +40,7 @@
           "contents": {
             "v0.0.1": {
               "x-sourcemeta-registry:protected": true,
-              "x-sourcemeta-registry:alert": "The JSON Schema Standard Library is a work in progress, and will only available on <a href=\"https://registry.sourcemeta.com/commercial\">commercial</a> editions of the Sourcemeta Registry"
+              "x-sourcemeta-registry:alert": "The JSON Schema Standard Library is a work in progress, and will only be available on <a href=\"https://registry.sourcemeta.com/commercial\">commercial</a> editions of the Sourcemeta Registry"
             }
           }
         }
