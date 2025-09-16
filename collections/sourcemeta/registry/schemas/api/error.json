@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$ref": "../../../std/v0.0.1/problem.json",
+  "$ref": "../../std/v0.0.1/problem.json",
   "required": [ "title", "status", "detail" ],
   "properties": {
     "title": {

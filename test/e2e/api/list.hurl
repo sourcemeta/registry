@@ -10,38 +10,30 @@ header "Last-Modified" exists
 jsonpath "$.path" == "/"
 jsonpath "$.url" == "{{base}}"
 jsonpath "$.breadcrumb" count == 0
-jsonpath "$.entries" count == 4
+jsonpath "$.entries" count == 3
 jsonpath "$.entries[0].name" == "test"
 jsonpath "$.entries[0].title" == "Test"
 jsonpath "$.entries[0].description" == "A directory full of testing schemas"
 jsonpath "$.entries[0].type" == "directory"
 jsonpath "$.entries[0].health" == 100
 jsonpath "$.entries[0].path" == "/test"
-jsonpath "$.entries[1].name" == "std"
-jsonpath "$.entries[1].title" == "The JSON Schema Standard Library"
-jsonpath "$.entries[1].description" == "A growing collection of hand-crafted high-quality schemas by Sourcemeta"
+jsonpath "$.entries[1].name" == "sourcemeta"
+jsonpath "$.entries[1].title" == "Sourcemeta"
+jsonpath "$.entries[1].description" == "A provider of premium tooling and services to support JSON Schema use in production"
 jsonpath "$.entries[1].email" == "hello@sourcemeta.com"
 jsonpath "$.entries[1].github" == "sourcemeta"
-jsonpath "$.entries[1].website" == "https://registry.sourcemeta.com"
+jsonpath "$.entries[1].website" == "https://www.sourcemeta.com"
 jsonpath "$.entries[1].type" == "directory"
 jsonpath "$.entries[1].health" == 100
-jsonpath "$.entries[2].name" == "sourcemeta"
-jsonpath "$.entries[2].title" == "Sourcemeta"
-jsonpath "$.entries[2].description" == "A provider of premium tooling and services to support JSON Schema use in production"
-jsonpath "$.entries[2].email" == "hello@sourcemeta.com"
-jsonpath "$.entries[2].github" == "sourcemeta"
-jsonpath "$.entries[2].website" == "https://www.sourcemeta.com"
+jsonpath "$.entries[1].path" == "/sourcemeta"
+jsonpath "$.entries[2].name" == "geojson"
+jsonpath "$.entries[2].title" == "GeoJSON"
+jsonpath "$.entries[2].description" == "A format for encoding a variety of geographic data structures"
+jsonpath "$.entries[2].github" == "geojson"
+jsonpath "$.entries[2].website" == "https://geojson.org"
 jsonpath "$.entries[2].type" == "directory"
-jsonpath "$.entries[2].health" == 100
-jsonpath "$.entries[2].path" == "/sourcemeta"
-jsonpath "$.entries[3].name" == "geojson"
-jsonpath "$.entries[3].title" == "GeoJSON"
-jsonpath "$.entries[3].description" == "A format for encoding a variety of geographic data structures"
-jsonpath "$.entries[3].github" == "geojson"
-jsonpath "$.entries[3].website" == "https://geojson.org"
-jsonpath "$.entries[3].type" == "directory"
-jsonpath "$.entries[3].health" == 91
-jsonpath "$.entries[3].path" == "/geojson"
+jsonpath "$.entries[2].health" == 91
+jsonpath "$.entries[2].path" == "/geojson"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response
 ```

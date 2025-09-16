@@ -1,4 +1,4 @@
-set(COLLECTION_NAMESPACE "std/v0.0.1")
+set(COLLECTION_NAMESPACE "sourcemeta/std/v0.0.1")
 
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/schemas"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}"

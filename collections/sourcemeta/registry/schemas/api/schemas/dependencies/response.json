@@ -6,13 +6,13 @@
     "required": [ "from", "to", "at" ],
     "properties": {
       "at": {
-        "$ref": "../../../../../../std/v0.0.1/schemas/jsonpointer.json"
+        "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
       },
       "from": {
-        "$ref": "../../../../../../std/v0.0.1/schemas/url.json"
+        "$ref": "../../../../../std/v0.0.1/schemas/url.json"
       },
       "to": {
-        "$ref": "../../../../../../std/v0.0.1/schemas/url.json"
+        "$ref": "../../../../../std/v0.0.1/schemas/url.json"
       }
     },
     "additionalProperties": false

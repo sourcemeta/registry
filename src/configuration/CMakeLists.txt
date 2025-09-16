@@ -4,7 +4,7 @@ sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
 
 # Compile the configuration schema
 set(REGISTRY_SCHEMAS "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas")
-set(STD_SCHEMAS "${PROJECT_SOURCE_DIR}/collections/std/v0.0.1/schemas")
+set(STD_SCHEMAS "${PROJECT_SOURCE_DIR}/collections/sourcemeta/std/v0.0.1/schemas")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.json"
   COMMAND "$<TARGET_FILE:jsonschema_cli>" compile --minify
     "${REGISTRY_SCHEMAS}/configuration/configuration.json"

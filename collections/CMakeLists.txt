@@ -1,5 +1,5 @@
 set(REGISTRY_COLLECTION_SOURCES)
-include("./std/v0.0.1/registry.cmake")
+include("./sourcemeta/std/v0.0.1/registry.cmake")
 include("./sourcemeta/registry/registry.cmake")
 include("./geojson/v1.0.0/registry.cmake")
 include("./geojson/v1.0.1/registry.cmake")

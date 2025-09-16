@@ -31,7 +31,7 @@
               "type": "string"
             },
             "url": {
-              "$ref": "../../../../std/v0.0.1/schemas/url.json"
+              "$ref": "../../../std/v0.0.1/schemas/url.json"
             }
           },
           "additionalProperties": false
@@ -49,7 +49,7 @@
       "additionalProperties": false
     },
     "url": {
-      "$ref": "../../../../std/v0.0.1/schemas/url.json"
+      "$ref": "../../../std/v0.0.1/schemas/url.json"
     }
   },
   "additionalProperties": false

@@ -21,31 +21,31 @@
       "type": "boolean"
     },
     "baseUri": {
-      "$ref": "../../../../std/v0.0.1/schemas/uri-reference.json"
+      "$ref": "../../../std/v0.0.1/schemas/uri-reference.json"
     },
     "defaultDialect": {
-      "$ref": "../../../../std/v0.0.1/schemas/uri.json"
+      "$ref": "../../../std/v0.0.1/schemas/uri.json"
     },
     "email": {
-      "$ref": "../../../../std/v0.0.1/schemas/email-address.json"
+      "$ref": "../../../std/v0.0.1/schemas/email-address.json"
     },
     "github": {
       "type": "string"
     },
     "path": {
-      "$ref": "../../../../std/v0.0.1/schemas/path-posix.json"
+      "$ref": "../../../std/v0.0.1/schemas/path-posix.json"
     },
     "resolve": {
       "type": "object",
       "propertyNames": {
-        "$ref": "../../../../std/v0.0.1/schemas/uri-reference.json"
+        "$ref": "../../../std/v0.0.1/schemas/uri-reference.json"
       },
       "additionalProperties": {
-        "$ref": "../../../../std/v0.0.1/schemas/uri-reference.json"
+        "$ref": "../../../std/v0.0.1/schemas/uri-reference.json"
       }
     },
     "website": {
-      "$ref": "../../../../std/v0.0.1/schemas/url.json"
+      "$ref": "../../../std/v0.0.1/schemas/url.json"
     }
   },
   "additionalProperties": false
