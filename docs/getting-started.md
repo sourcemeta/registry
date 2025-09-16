@@ -88,14 +88,14 @@ directory we just created. Save this as `registry.json` alongside your
 ### Writing a `Dockerfile`
 
 Time to put it all together! Create a `Dockerfile` with these contents. We're
-extending the official `sourcemeta/registry:3.0` image from [GitHub
+extending the official `sourcemeta/registry` image from [GitHub
 Packages](https://github.com/orgs/sourcemeta/packages?repo_name=registry),
 copying our configuration file and schemas directory into the container, and
 then running the indexing process with the `sourcemeta` command. Simple as
 that!
 
 ```docker title="Dockerfile"
-FROM ghcr.io/sourcemeta/registry:3.0
+FROM ghcr.io/sourcemeta/registry:3.1
 COPY registry.json .
 COPY schemas schemas
 RUN sourcemeta registry.json
