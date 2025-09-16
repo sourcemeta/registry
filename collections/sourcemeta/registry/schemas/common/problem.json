@@ -33,7 +33,7 @@
       "status": 500
     }
   ],
-  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
   "type": "object",
   "properties": {
     "title": {

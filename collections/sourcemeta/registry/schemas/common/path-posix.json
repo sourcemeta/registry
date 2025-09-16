@@ -11,7 +11,7 @@
     "documents/project/readme.md",
     "../config/settings.conf"
   ],
-  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
   "anyOf": [
     {
       "$ref": "./path-posix-absolute.json"

@@ -10,7 +10,7 @@
     "http://[2001:db8::8a2e:370:7334]/ipv6/test",
     "custom+scheme://host.example.com/resource"
   ],
-  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
   "type": "string",
   "anyOf": [
     {

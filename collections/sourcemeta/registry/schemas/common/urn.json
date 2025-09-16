@@ -17,7 +17,7 @@
     "urn:example:foo:bar:baz",
     "urn:example:foo/bar/"
   ],
-  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
   "type": "string",
   "not": {
     "$comment": "Disallow reserved NID value 'urn'",

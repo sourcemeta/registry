@@ -10,7 +10,7 @@
     "//cdn.example.com/assets/style.css",
     "/absolute/path/to/resource?query=value#section"
   ],
-  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
   "anyOf": [
     {
       "$ref": "./uri.json"
