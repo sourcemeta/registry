@@ -311,6 +311,11 @@ static auto on_evaluate(const std::filesystem::path &base,
       }
 
       return;
+    } else if (std::filesystem::exists(template_path.parent_path() /
+                                       "protected.metapack")) {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
+                 "This schema is protected");
     }
 
     response->onAborted([]() {});
@@ -415,8 +420,16 @@ static auto on_request(const std::filesystem::path &base,
       absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "locations.metapack";
-      serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK, true);
+
+      if (std::filesystem::exists(absolute_path.parent_path() /
+                                  "protected.metapack")) {
+        json_error(request->getMethod(), request->getUrl(), response, encoding,
+                   sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
+                   "This schema is protected");
+      } else {
+        serve_static_file(request, response, encoding, absolute_path,
+                          sourcemeta::registry::STATUS_OK, true);
+      }
     } else {
       json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
@@ -430,8 +443,16 @@ static auto on_request(const std::filesystem::path &base,
       absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "positions.metapack";
-      serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK, true);
+
+      if (std::filesystem::exists(absolute_path.parent_path() /
+                                  "protected.metapack")) {
+        json_error(request->getMethod(), request->getUrl(), response, encoding,
+                   sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
+                   "This schema is protected");
+      } else {
+        serve_static_file(request, response, encoding, absolute_path,
+                          sourcemeta::registry::STATUS_OK, true);
+      }
     } else {
       json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
@@ -516,8 +537,15 @@ static auto on_request(const std::filesystem::path &base,
       absolute_path /= "schema.metapack";
     }
 
-    serve_static_file(request, response, encoding, absolute_path,
-                      sourcemeta::registry::STATUS_OK, true);
+    if (std::filesystem::exists(absolute_path.parent_path() /
+                                "protected.metapack")) {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
+                 "This schema is protected");
+    } else {
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true);
+    }
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
     auto absolute_path{base / "explorer" / request->getUrl().substr(1) /
                        SENTINEL};

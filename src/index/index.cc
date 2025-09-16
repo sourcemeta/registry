@@ -32,6 +32,14 @@
 // entry
 constexpr auto SENTINEL{"%"};
 
+static auto
+attribute(const sourcemeta::registry::Configuration::Collection &collection,
+          const sourcemeta::core::JSON::String &property) -> bool {
+  return !collection.extra.defines(property) ||
+         !collection.extra.at(property).is_boolean() ||
+         collection.extra.at(property).to_boolean();
+}
+
 static auto index_main(const std::string_view &program,
                        const sourcemeta::core::Options &app) -> int {
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
@@ -88,6 +96,9 @@ static auto index_main(const std::string_view &program,
   // TODO: Get rid of this file
   const auto configuration_summary_path{output.path() / "configuration.json"};
   auto summary{sourcemeta::core::JSON::make_object()};
+  // TODO: Add an MD5 checksum of the original config file, otherwise
+  // we won't know if we need to re-create many files that only depend
+  // on the collection settings, etc
   summary.assign("version",
                  sourcemeta::core::JSON{sourcemeta::registry::PROJECT_VERSION});
   // We use this configuration file to track whether we should invalidate
@@ -215,6 +226,24 @@ static auto index_main(const std::string_view &program,
         const auto base_path{output.path() / std::filesystem::path{"schemas"} /
                              schema.second.relative_path / SENTINEL};
 
+        if (schema.second.collection.get().extra.defines(
+                "x-sourcemeta-registry:protected") &&
+            schema.second.collection.get()
+                .extra.at("x-sourcemeta-registry:protected")
+                .to_boolean()) {
+          if (!sourcemeta::core::build<sourcemeta::core::JSON>(
+                  adapter, sourcemeta::registry::GENERATE_MARKER,
+                  base_path / "protected.metapack",
+                  {configuration_summary_path}, sourcemeta::core::JSON{true})) {
+            std::lock_guard<std::mutex> lock(mutex);
+            std::cerr << "(skip) Analysing: " << schema.first
+                      << " [protected]\n";
+          }
+
+          output.track(base_path / "protected.metapack");
+          output.track(base_path / "protected.metapack.deps");
+        }
+
         if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                 adapter, sourcemeta::registry::GENERATE_POINTER_POSITIONS,
                 base_path / "positions.metapack",
@@ -293,14 +322,8 @@ static auto index_main(const std::string_view &program,
         output.track(base_path / "unidentified.metapack");
         output.track(base_path / "unidentified.metapack.deps");
 
-        if (!schema.second.collection.get().extra.defines(
-                "x-sourcemeta-registry:evaluate") ||
-            !schema.second.collection.get()
-                 .extra.at("x-sourcemeta-registry:evaluate")
-                 .is_boolean() ||
-            schema.second.collection.get()
-                .extra.at("x-sourcemeta-registry:evaluate")
-                .to_boolean()) {
+        if (attribute(schema.second.collection.get(),
+                      "x-sourcemeta-registry:evaluate")) {
           if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
                   adapter,
                   sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
@@ -334,6 +357,8 @@ static auto index_main(const std::string_view &program,
                 "schema.metapack",
             output.path() / "schemas" / schema.second.relative_path / SENTINEL /
                 "health.metapack",
+            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
+                "protected.metapack",
             schema.second.relative_path));
   }
 
