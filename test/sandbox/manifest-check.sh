@@ -14,10 +14,11 @@ clean() { rm -rf "$TMP"; }
 trap clean EXIT
 
 DIRECTORY="$1"
-MANIFEST="$2"
+INPUT="$2"
 
+cp "$INPUT" "$TMP/current.txt"
 cd "$DIRECTORY"
 find . -mindepth 1 | LC_ALL=C sort > "$TMP/manifest.txt"
-cat "$TMP/manifest.txt"
 cd - > /dev/null
-diff "$TMP/manifest.txt" "$MANIFEST"
+cp "$TMP/manifest.txt" "$INPUT"
+diff "$TMP/manifest.txt" "$TMP/current.txt"

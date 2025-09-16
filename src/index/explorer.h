@@ -595,6 +595,7 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON::String &,
                          const sourcemeta::registry::Resolver &resolver,
                          const std::filesystem::path &absolute_path,
                          const std::filesystem::path &health_path,
+                         const std::filesystem::path &protected_path,
                          // TODO: Compute this argument instead
                          const std::filesystem::path &relative_path)
     -> sourcemeta::core::JSON {
@@ -631,6 +632,9 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON::String &,
 
   const auto health{sourcemeta::registry::read_json(health_path)};
   result.assign("health", health.at("score"));
+
+  result.assign("protected", sourcemeta::core::JSON{
+                                 std::filesystem::exists(protected_path)});
 
   // Precompute the breadcrumb
   result.assign("breadcrumb", sourcemeta::core::JSON::make_array());
@@ -991,19 +995,36 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
         .close("p");
   }
 
-  output_html
-      .open("a", {{"href", meta.at("path").to_string()},
-                  {"class", "btn btn-primary me-2"},
-                  {"role", "button"}})
-      .text("Get JSON Schema")
-      .close("a");
+  if (meta.at("protected").to_boolean()) {
+    output_html
+        .open("a", {{"href", meta.at("path").to_string()},
+                    {"class", "btn btn-primary me-2 disabled"},
+                    {"aria-disabled", "true"},
+                    {"role", "button"}})
+        .text("Get JSON Schema")
+        .close("a");
+    output_html
+        .open("a", {{"href", meta.at("path").to_string() + "?bundle=1"},
+                    {"class", "btn btn-secondary disabled"},
+                    {"aria-disabled", "true"},
+                    {"role", "button"}})
+        .text("Bundle")
+        .close("a");
+  } else {
+    output_html
+        .open("a", {{"href", meta.at("path").to_string()},
+                    {"class", "btn btn-primary me-2"},
+                    {"role", "button"}})
+        .text("Get JSON Schema")
+        .close("a");
+    output_html
+        .open("a", {{"href", meta.at("path").to_string() + "?bundle=1"},
+                    {"class", "btn btn-secondary"},
+                    {"role", "button"}})
+        .text("Bundle")
+        .close("a");
+  }
 
-  output_html
-      .open("a", {{"href", meta.at("path").to_string() + "?bundle=1"},
-                  {"class", "btn btn-secondary"},
-                  {"role", "button"}})
-      .text("Bundle")
-      .close("a");
   output_html.close("div");
 
   output_html.open("table", {{"class", "table table-bordered my-4"}});
@@ -1012,13 +1033,23 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
       .text("Identifier")
       .close("th");
-  output_html.open("td")
-      .open("code")
-      .open("a", {{"href", meta.at("identifier").to_string()}})
-      .text(meta.at("identifier").to_string())
-      .close("a")
-      .close("code")
-      .close("td");
+
+  if (meta.at("protected").to_boolean()) {
+    output_html.open("td")
+        .open("code")
+        .text(meta.at("identifier").to_string())
+        .close("code")
+        .close("td");
+  } else {
+    output_html.open("td")
+        .open("code")
+        .open("a", {{"href", meta.at("identifier").to_string()}})
+        .text(meta.at("identifier").to_string())
+        .close("a")
+        .close("code")
+        .close("td");
+  }
+
   output_html.close("tr");
 
   output_html.open("tr");
@@ -1066,14 +1097,22 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.close("table");
   output_html.close("div");
 
-  output_html.open("div",
-                   {{"class", "border overflow-auto"},
-                    {"style", "max-height: 400px;"},
-                    {"data-sourcemeta-ui-editor", meta.at("path").to_string()},
-                    {"data-sourcemeta-ui-editor-mode", "readonly"},
-                    {"data-sourcemeta-ui-editor-language", "json"}});
-  output_html.text("Loading schema...");
-  output_html.close("div");
+  if (meta.at("protected").to_boolean()) {
+    output_html.open("div",
+                     {{"class", "alert alert-warning"}, {"role", "alert"}});
+    output_html.text("This schema is marked as protected. It is listed, but "
+                     "it cannot be directly accessed");
+    output_html.close("div");
+  } else {
+    output_html.open(
+        "div", {{"class", "border overflow-auto"},
+                {"style", "max-height: 400px;"},
+                {"data-sourcemeta-ui-editor", meta.at("path").to_string()},
+                {"data-sourcemeta-ui-editor-mode", "readonly"},
+                {"data-sourcemeta-ui-editor-language", "json"}});
+    output_html.text("Loading schema...");
+    output_html.close("div");
+  }
 
   const auto dependencies_json{
       sourcemeta::registry::read_json(dependencies_path)};

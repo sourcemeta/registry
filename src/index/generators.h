@@ -233,6 +233,18 @@ auto GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE(
       sourcemeta::core::JSON{nullptr});
 }
 
+auto GENERATE_MARKER(
+    const std::filesystem::path &destination,
+    const sourcemeta::core::BuildDependencies<std::filesystem::path> &,
+    const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
+    const sourcemeta::core::JSON &value) -> void {
+  std::filesystem::create_directories(destination.parent_path());
+  sourcemeta::registry::write_pretty_json(
+      destination, value, "application/json",
+      sourcemeta::registry::Encoding::Identity,
+      sourcemeta::core::JSON{nullptr});
+}
+
 } // namespace sourcemeta::registry
 
 #endif

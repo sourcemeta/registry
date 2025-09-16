@@ -70,6 +70,7 @@ navigation and discovery purposes.
     | `/entries/*/baseDialect` | String | No | For `schema` entries, the base dialect URI of the entry |
     | `/entries/*/dialect` | String | No | For `schema` entries, the dialect URI of the entry |
     | `/entries/*/identifier` | String | No | For `schema` entries, the absolute URI of the entry |
+    | `/entries/*/protected` | Boolean | No | For `schema` entries, whether the schema is listed but not accessible |
 
 === "404"
 
@@ -98,6 +99,10 @@ process.
 
     The schema does not exist.
 
+=== "405"
+
+    The [configuration file](configuration.md) marks the schema collection as listed but not served.
+
 ### Evaluate
 
 *This endpoint takes a JSON instance as a request body and evaluates it against
@@ -125,7 +130,7 @@ Format](https://json-schema.org/draft/2020-12/json-schema-core#name-output-struc
 
 === "405"
 
-    The [configuration file](configuration.md) excludes evaluation for this schema.
+    The [configuration file](configuration.md) excludes evaluation for this schema, or the [configuration file](configuration.md) marks the schema collection as listed but not served.
 
 ### Trace
 
@@ -175,7 +180,7 @@ insight into the validation engine's behavior and logic flow.
 
 === "405"
 
-    The [configuration file](configuration.md) excludes evaluation for this schema.
+    The [configuration file](configuration.md) excludes evaluation for this schema, or the [configuration file](configuration.md) marks the schema collection as listed but not served.
 
 ### Metadata
 
@@ -191,11 +196,12 @@ GET /self/api/schemas/metadata/{path}
     | Property                       | Type                     | Required | Description |
     |--------------------------------|--------------------------|-----|-------------------------------------|
     | `/path` | String | Yes | The relative URL of the schema |
-    | `/identifier` | String | No | The absolute URI of the schema |
-    | `/dialect` | String | No | The dialect URI of the schema |
-    | `/baseDialect` | String | No | The base dialect URI of the schema |
+    | `/identifier` | String | Yes | The absolute URI of the schema |
+    | `/dialect` | String | Yes | The dialect URI of the schema |
+    | `/baseDialect` | String | Yes | The base dialect URI of the schema |
     | `/health` | Integer | Yes | The health score of the schema |
-    | `/bytes` | Integer | No | The bytes that the schema occupies |
+    | `/bytes` | Integer | Yes | The bytes that the schema occupies |
+    | `/protected` | Boolean | Yes | Whether the schema is listed but not accessible |
     | `/title` | String | No | The title of the schema, if any |
     | `/description` | String | No | The description of the schema, if any |
     | `/breadcrumb` | Array | Yes | The breadcrumb of the schema |
@@ -308,6 +314,10 @@ GET /self/api/schemas/locations/{path}
 
     The schema does not exist.
 
+=== "405"
+
+    The [configuration file](configuration.md) marks the schema collection as listed but not served.
+
 ### Positions
 
 *This endpoint retrieves line and column position information for every token
@@ -332,3 +342,7 @@ schema.
 === "404"
 
     The schema does not exist.
+
+=== "405"
+
+    The [configuration file](configuration.md) marks the schema collection as listed but not served.

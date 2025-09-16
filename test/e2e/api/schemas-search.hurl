@@ -159,3 +159,26 @@ POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/search/r
 HTTP 200
 [Asserts]
 jsonpath "$.valid" == true
+
+GET {{base}}/self/api/schemas/search?q=no-serve
+HTTP 200
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
+[Asserts]
+jsonpath "$" count == 2
+jsonpath "$[0].path" == "/test/no-serve/schema"
+jsonpath "$[0].title" == "This schema is NOT directly served"
+jsonpath "$[0].description" == ""
+jsonpath "$[1].path" == "/test/schemas/no-serve-ref"
+jsonpath "$[1].title" == ""
+jsonpath "$[1].description" == ""
+
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/search/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true

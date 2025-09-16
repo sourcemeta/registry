@@ -124,3 +124,29 @@ HTTP 200
     }
   }
 }
+
+# Note that we still bundle references to protected schemas
+# The Registry maintainer is responsible for these cases
+GET {{base}}/test/schemas/no-serve-ref.json?bundle=1
+HTTP 200
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "{{base}}/test/schemas/no-serve-ref.json",
+  "$ref": "/test/no-serve/schema.json",
+  "$defs": {
+    "{{base}}/test/no-serve/schema.json": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$id": "{{base}}/test/no-serve/schema.json",
+      "title": "This schema is NOT directly served",
+      "type": "string"
+    }
+  }
+}
+
+GET {{base}}/test/no-serve/schema.json?bundle=1
+HTTP 405
+Content-Type: application/problem+json
+[Asserts]
+jsonpath "$.status" == 405
+jsonpath "$.title" == "sourcemeta:registry/protected"
+jsonpath "$.detail" == "This schema is protected"

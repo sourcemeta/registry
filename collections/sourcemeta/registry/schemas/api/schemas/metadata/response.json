@@ -31,9 +31,16 @@
         "path",
         "baseDialect",
         "dialect",
+        "protected",
         "health"
       ],
       "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
         "baseDialect": {
           "$ref": "../../../common/uri.json"
         },
@@ -51,6 +58,9 @@
         },
         "path": {
           "$ref": "../../../common/uri-relative.json"
+        },
+        "protected": {
+          "type": "boolean"
         }
       }
     }

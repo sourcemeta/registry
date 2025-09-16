@@ -14,6 +14,7 @@ jsonpath "$.health" == 100
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.identifier" == "{{base}}/test/v2.0/schema.json"
 jsonpath "$.path" == "/test/v2.0/schema.json"
+jsonpath "$.protected" == false
 jsonpath "$.breadcrumb" count == 3
 jsonpath "$.breadcrumb[0].name" == "test"
 jsonpath "$.breadcrumb[0].path" == "/test"
@@ -21,6 +22,39 @@ jsonpath "$.breadcrumb[1].name" == "v2.0"
 jsonpath "$.breadcrumb[1].path" == "/test/v2.0"
 jsonpath "$.breadcrumb[2].name" == "schema"
 jsonpath "$.breadcrumb[2].path" == "/test/v2.0/schema"
+
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/metadata/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
+GET {{base}}/self/api/schemas/metadata/test/no-serve/schema
+Accept: application/json
+HTTP 200
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
+[Asserts]
+header "ETag" exists
+header "Last-Modified" exists
+jsonpath "$.bytes" == 192
+jsonpath "$.baseDialect" == "https://json-schema.org/draft/2020-12/schema"
+jsonpath "$.health" == 100
+jsonpath "$.dialect" == "https://json-schema.org/draft/2020-12/schema"
+jsonpath "$.identifier" == "{{base}}/test/no-serve/schema.json"
+jsonpath "$.path" == "/test/no-serve/schema.json"
+jsonpath "$.protected" == true
+jsonpath "$.breadcrumb" count == 3
+jsonpath "$.breadcrumb[0].name" == "test"
+jsonpath "$.breadcrumb[0].path" == "/test"
+jsonpath "$.breadcrumb[1].name" == "no-serve"
+jsonpath "$.breadcrumb[1].path" == "/test/no-serve"
+jsonpath "$.breadcrumb[2].name" == "schema"
+jsonpath "$.breadcrumb[2].path" == "/test/no-serve/schema"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/metadata/response
 ```

@@ -19,6 +19,27 @@ HTTP 200
 [Asserts]
 jsonpath "$.valid" == true
 
+GET {{base}}/self/api/schemas/health/test/no-serve/schema
+Accept: application/json
+HTTP 200
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
+[Asserts]
+header "ETag" exists
+header "Last-Modified" exists
+jsonpath "$.score" == 100
+jsonpath "$.errors" count == 0
+
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/health/response
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
 GET {{base}}/self/api/schemas/health/geojson/v1.0.5/polygon
 Accept: application/json
 HTTP 200
