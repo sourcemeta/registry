@@ -31,7 +31,7 @@ catalogs with enterprise-grade governance capabilities.
 While the project is publicly available on GitHub, it operates under a
 [source-available
 license](https://github.com/sourcemeta/registry/blob/main/LICENSE) rather than
-a traditional open-source model. You are free to use the [Started
+a traditional open-source model. You can use the [Starter
 edition](https://github.com/sourcemeta/registry/pkgs/container/registry) for
 free, but using any other edition for any purpose other than for contributing
 back to the project requires a [paid commercial
