@@ -18,17 +18,17 @@
             ],
             "properties": {
               "absoluteKeywordLocation": {
-                "$ref": "../../../common/url.json"
+                "$ref": "../../../../../../std/v0.0.1/schemas/url.json"
               },
               "annotation": {
                 "type": "array",
                 "minItems": 1
               },
               "instanceLocation": {
-                "$ref": "../../../common/jsonpointer.json"
+                "$ref": "../../../../../../std/v0.0.1/schemas/jsonpointer.json"
               },
               "keywordLocation": {
-                "$ref": "../../../common/jsonpointer.json"
+                "$ref": "../../../../../../std/v0.0.1/schemas/jsonpointer.json"
               }
             },
             "additionalProperties": false
@@ -57,16 +57,16 @@
             ],
             "properties": {
               "absoluteKeywordLocation": {
-                "$ref": "../../../common/url.json"
+                "$ref": "../../../../../../std/v0.0.1/schemas/url.json"
               },
               "error": {
                 "type": "string"
               },
               "instanceLocation": {
-                "$ref": "../../../common/jsonpointer.json"
+                "$ref": "../../../../../../std/v0.0.1/schemas/jsonpointer.json"
               },
               "keywordLocation": {
-                "$ref": "../../../common/jsonpointer.json"
+                "$ref": "../../../../../../std/v0.0.1/schemas/jsonpointer.json"
               }
             },
             "additionalProperties": false

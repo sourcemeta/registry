@@ -85,6 +85,7 @@ if(REGISTRY_TESTS)
   enable_testing()
   add_test(NAME registry.schemas COMMAND
     "$<TARGET_FILE:jsonschema_cli>" test --extension .test.json
+    "${PROJECT_SOURCE_DIR}/collections/std"
     "${PROJECT_SOURCE_DIR}/collections/sourcemeta")
 
   if(REGISTRY_INDEX)

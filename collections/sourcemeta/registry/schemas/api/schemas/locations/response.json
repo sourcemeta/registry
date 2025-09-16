@@ -35,13 +35,13 @@
           "enum": [ "resource", "anchor", "pointer", "subschema" ]
         },
         "base": {
-          "$ref": "../../../common/url.json"
+          "$ref": "../../../../../../std/v0.0.1/schemas/url.json"
         },
         "baseDialect": {
-          "$ref": "../../../common/uri.json"
+          "$ref": "../../../../../../std/v0.0.1/schemas/uri.json"
         },
         "dialect": {
-          "$ref": "../../../common/url.json"
+          "$ref": "../../../../../../std/v0.0.1/schemas/url.json"
         },
         "parent": {
           "anyOf": [
@@ -49,18 +49,18 @@
               "type": "null"
             },
             {
-              "$ref": "../../../common/jsonpointer"
+              "$ref": "../../../../../../std/v0.0.1/schemas/jsonpointer.json"
             }
           ]
         },
         "pointer": {
-          "$ref": "../../../common/jsonpointer"
+          "$ref": "../../../../../../std/v0.0.1/schemas/jsonpointer.json"
         },
         "relativePointer": {
-          "$ref": "../../../common/jsonpointer"
+          "$ref": "../../../../../../std/v0.0.1/schemas/jsonpointer.json"
         },
         "root": {
-          "$ref": "../../../common/url.json"
+          "$ref": "../../../../../../std/v0.0.1/schemas/url.json"
         }
       },
       "additionalProperties": false

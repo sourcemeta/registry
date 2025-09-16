@@ -11,7 +11,7 @@
     "jo(comment)hn@example.com",
     "user@[abc.def]"
   ],
-  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/std/v0.0.1/LICENSE",
   "type": "string",
   "anyOf": [
     {

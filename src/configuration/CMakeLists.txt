@@ -3,27 +3,28 @@ sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
   SOURCES parse.cc read.cc "${CMAKE_CURRENT_BINARY_DIR}/template.h")
 
 # Compile the configuration schema
-set(SCHEMA_BASE_PATH "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas")
+set(REGISTRY_SCHEMAS "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas")
+set(STD_SCHEMAS "${PROJECT_SOURCE_DIR}/collections/std/v0.0.1/schemas")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.json"
   COMMAND "$<TARGET_FILE:jsonschema_cli>" compile --minify
-    "${SCHEMA_BASE_PATH}/configuration/configuration.json"
+    "${REGISTRY_SCHEMAS}/configuration/configuration.json"
     > "${CMAKE_CURRENT_BINARY_DIR}/template.json"
   DEPENDS
     "$<TARGET_FILE:jsonschema_cli>"
-    "${SCHEMA_BASE_PATH}/configuration/configuration.json"
-    "${SCHEMA_BASE_PATH}/configuration/collection.json"
-    "${SCHEMA_BASE_PATH}/configuration/contents.json"
-    "${SCHEMA_BASE_PATH}/configuration/extends.json"
-    "${SCHEMA_BASE_PATH}/configuration/page.json"
-    "${SCHEMA_BASE_PATH}/common/email-address.json"
-    "${SCHEMA_BASE_PATH}/common/path-posix.json"
-    "${SCHEMA_BASE_PATH}/common/path-posix-absolute.json"
-    "${SCHEMA_BASE_PATH}/common/path-posix-relative.json"
-    "${SCHEMA_BASE_PATH}/common/uri-reference.json"
-    "${SCHEMA_BASE_PATH}/common/uri-relative.json"
-    "${SCHEMA_BASE_PATH}/common/uri.json"
-    "${SCHEMA_BASE_PATH}/common/url.json"
-    "${SCHEMA_BASE_PATH}/common/urn.json")
+    "${REGISTRY_SCHEMAS}/configuration/configuration.json"
+    "${REGISTRY_SCHEMAS}/configuration/collection.json"
+    "${REGISTRY_SCHEMAS}/configuration/contents.json"
+    "${REGISTRY_SCHEMAS}/configuration/extends.json"
+    "${REGISTRY_SCHEMAS}/configuration/page.json"
+    "${STD_SCHEMAS}/email-address.json"
+    "${STD_SCHEMAS}/path-posix.json"
+    "${STD_SCHEMAS}/path-posix-absolute.json"
+    "${STD_SCHEMAS}/path-posix-relative.json"
+    "${STD_SCHEMAS}/uri-reference.json"
+    "${STD_SCHEMAS}/uri-relative.json"
+    "${STD_SCHEMAS}/uri.json"
+    "${STD_SCHEMAS}/url.json"
+    "${STD_SCHEMAS}/urn.json")
 
 find_program(XXD_BIN NAMES xxd REQUIRED)
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.h"

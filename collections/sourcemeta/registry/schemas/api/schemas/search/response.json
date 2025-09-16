@@ -12,7 +12,7 @@
         "type": "string"
       },
       "path": {
-        "$ref": "../../../common/uri-relative.json"
+        "$ref": "../../../../../../std/v0.0.1/schemas/uri-relative.json"
       }
     },
     "additionalProperties": false

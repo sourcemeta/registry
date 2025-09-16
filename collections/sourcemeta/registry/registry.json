@@ -1,4 +1,5 @@
 {
+  "extends": [ "@std/v0.0.1" ],
   "contents": {
     "sourcemeta": {
       "title": "Sourcemeta",

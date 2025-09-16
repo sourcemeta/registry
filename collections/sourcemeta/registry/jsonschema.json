@@ -4,5 +4,22 @@
   "email": "hello@sourcemeta.com",
   "github": "sourcemeta/registry",
   "website": "https://registry.sourcemeta.com",
-  "path": "./schemas"
+  "path": "./schemas",
+  "resolve": {
+    "../../../../../std/v0.0.1/schemas/uri-relative.json": "../../../../../std/v0.0.1/uri-relative.json",
+    "../../../../../../std/v0.0.1/schemas/uri-relative.json": "../../../../../std/v0.0.1/uri-relative.json",
+    "../../../../std/v0.0.1/schemas/uri-reference.json": "../../../../../std/v0.0.1/uri-reference.json",
+    "../../../../std/v0.0.1/schemas/uri.json": "../../../../../std/v0.0.1/uri.json",
+    "../../../../../../std/v0.0.1/schemas/uri.json": "../../../../../std/v0.0.1/uri.json",
+    "../../../../std/v0.0.1/schemas/url.json": "../../../../../std/v0.0.1/url.json",
+    "../../../../../std/v0.0.1/schemas/url.json": "../../../../../std/v0.0.1/url.json",
+    "../../../../../../std/v0.0.1/schemas/url.json": "../../../../../std/v0.0.1/url.json",
+    "../../../../std/v0.0.1/schemas/email-address.json": "../../../../../std/v0.0.1/email-address.json",
+    "../../../../../std/v0.0.1/schemas/email-address.json": "../../../../../std/v0.0.1/email-address.json",
+    "../../../../../../std/v0.0.1/schemas/bytes.json": "../../../../../std/v0.0.1/bytes.json",
+    "../../../../../../std/v0.0.1/schemas/jsonpointer.json": "../../../../../std/v0.0.1/jsonpointer.json",
+    "../../../../../std/v0.0.1/schemas/percentage.json": "../../../../../std/v0.0.1/percentage.json",
+    "../../../../../../std/v0.0.1/schemas/percentage.json": "../../../../../std/v0.0.1/percentage.json",
+    "../../../../std/v0.0.1/schemas/path-posix.json": "../../../../../std/v0.0.1/path-posix.json"
+  }
 }
