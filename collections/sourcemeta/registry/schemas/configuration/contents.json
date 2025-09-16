@@ -10,7 +10,7 @@
         "required": [ "include" ],
         "properties": {
           "include": {
-            "$ref": "../common/path-posix.json"
+            "$ref": "../../../std/v0.0.1/schemas/path-posix.json"
           }
         },
         "additionalProperties": false

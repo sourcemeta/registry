@@ -19,14 +19,14 @@
             "type": "string"
           },
           "path": {
-            "$ref": "../../common/uri-relative.json"
+            "$ref": "../../../../std/v0.0.1/schemas/uri-relative.json"
           }
         },
         "additionalProperties": false
       }
     },
     "email": {
-      "$ref": "../../common/email-address.json"
+      "$ref": "../../../../std/v0.0.1/schemas/email-address.json"
     },
     "entries": {
       "type": "array",
@@ -46,22 +46,22 @@
                 "const": "directory"
               },
               "email": {
-                "$ref": "../../common/email-address.json"
+                "$ref": "../../../../std/v0.0.1/schemas/email-address.json"
               },
               "github": {
                 "type": "string"
               },
               "health": {
-                "$ref": "../../common/percentage.json"
+                "$ref": "../../../../std/v0.0.1/schemas/percentage.json"
               },
               "name": {
                 "type": "string"
               },
               "path": {
-                "$ref": "../../common/uri-relative.json"
+                "$ref": "../../../../std/v0.0.1/schemas/uri-relative.json"
               },
               "website": {
-                "$ref": "../../common/url.json"
+                "$ref": "../../../../std/v0.0.1/schemas/url.json"
               }
             },
             "additionalProperties": false
@@ -86,16 +86,16 @@
       "type": "string"
     },
     "health": {
-      "$ref": "../../common/percentage.json"
+      "$ref": "../../../../std/v0.0.1/schemas/percentage.json"
     },
     "path": {
-      "$ref": "../../common/uri-relative.json"
+      "$ref": "../../../../std/v0.0.1/schemas/uri-relative.json"
     },
     "url": {
-      "$ref": "../../common/url.json"
+      "$ref": "../../../../std/v0.0.1/schemas/url.json"
     },
     "website": {
-      "$ref": "../../common/url.json"
+      "$ref": "../../../../std/v0.0.1/schemas/url.json"
     }
   },
   "additionalProperties": false

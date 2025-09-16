@@ -10,7 +10,7 @@
     "/etc/systemd/system/service.conf",
     "/tmp/temp_file-123.tmp"
   ],
-  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/std/v0.0.1/LICENSE",
   "type": "string",
   "not": {
     "$comment": "Cannot contain null bytes",

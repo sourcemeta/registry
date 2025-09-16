@@ -13,7 +13,7 @@
             "type": "string"
           },
           "path": {
-            "$ref": "../../../common/uri-relative.json"
+            "$ref": "../../../../../std/v0.0.1/schemas/uri-relative.json"
           }
         },
         "additionalProperties": false
@@ -46,22 +46,22 @@
           "type": [ "string", "null" ]
         },
         "baseDialect": {
-          "$ref": "../../../common/uri.json"
+          "$ref": "../../../../../std/v0.0.1/schemas/uri.json"
         },
         "bytes": {
-          "$ref": "../../../common/bytes.json"
+          "$ref": "../../../../../std/v0.0.1/schemas/bytes.json"
         },
         "dialect": {
-          "$ref": "../../../common/uri.json"
+          "$ref": "../../../../../std/v0.0.1/schemas/uri.json"
         },
         "health": {
-          "$ref": "../../../common/percentage.json"
+          "$ref": "../../../../../std/v0.0.1/schemas/percentage.json"
         },
         "identifier": {
-          "$ref": "../../../common/url.json"
+          "$ref": "../../../../../std/v0.0.1/schemas/url.json"
         },
         "path": {
-          "$ref": "../../../common/uri-relative.json"
+          "$ref": "../../../../../std/v0.0.1/schemas/uri-relative.json"
         },
         "protected": {
           "type": "boolean"

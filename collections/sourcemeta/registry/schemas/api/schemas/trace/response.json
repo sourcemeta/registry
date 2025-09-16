@@ -24,10 +24,10 @@
           },
           "annotation": true,
           "evaluatePath": {
-            "$ref": "../../../common/jsonpointer.json"
+            "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
           },
           "instanceLocation": {
-            "$ref": "../../../common/jsonpointer.json"
+            "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
           },
           "instancePositions": {
             "type": "array",
@@ -39,7 +39,7 @@
             }
           },
           "keywordLocation": {
-            "$ref": "../../../common/url.json"
+            "$ref": "../../../../../std/v0.0.1/schemas/url.json"
           },
           "message": {
             "type": [ "string", "null" ]
@@ -53,7 +53,7 @@
                 "type": "null"
               },
               {
-                "$ref": "../../../common/uri.json"
+                "$ref": "../../../../../std/v0.0.1/schemas/uri.json"
               }
             ]
           }

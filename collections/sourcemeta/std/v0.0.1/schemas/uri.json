@@ -9,7 +9,7 @@
     "mailto:user@example.com",
     "tel:+1-555-555-5555"
   ],
-  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/std/v0.0.1/LICENSE",
   "anyOf": [
     {
       "$ref": "./urn.json"

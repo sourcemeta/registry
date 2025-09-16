@@ -1,6 +1,6 @@
 {
-  "target": "../../schemas/common/uri.json",
-  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
+  "target": "../schemas/uri.json",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/std/v0.0.1/LICENSE",
   "tests": [
     {
       "description": "Invalid type - number",
