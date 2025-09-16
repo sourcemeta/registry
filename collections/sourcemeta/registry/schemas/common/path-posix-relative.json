@@ -10,7 +10,7 @@
     "../config/settings.conf",
     ".ssh/id_rsa"
   ],
-  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
   "type": "string",
   "not": {
     "anyOf": [

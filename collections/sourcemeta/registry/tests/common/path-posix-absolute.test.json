@@ -1,6 +1,6 @@
 {
   "target": "../../schemas/common/path-posix-absolute.json",
-  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
   "tests": [
     {
       "description": "Invalid type - number",

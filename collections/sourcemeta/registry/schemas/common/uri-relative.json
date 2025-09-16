@@ -10,7 +10,7 @@
     "relative/path/document.pdf",
     "?search=term#results"
   ],
-  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
   "type": "string",
   "allOf": [
     {

@@ -9,7 +9,7 @@
     "mailto:user@example.com",
     "tel:+1-555-555-5555"
   ],
-  "x-license": "LicenseRef-Sourcemeta-Commercial",
+  "x-license": "https://github.com/sourcemeta/registry/blob/main/collections/sourcemeta/registry/schemas/common/LICENSE",
   "anyOf": [
     {
       "$ref": "./urn.json"
