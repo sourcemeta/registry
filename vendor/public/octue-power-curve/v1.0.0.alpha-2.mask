@@ -1,0 +1,9 @@
+.vscode/
+docs/
+power-curve-schema/examples/
+test/
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+poetry.lock
+pyproject.toml
+README.md

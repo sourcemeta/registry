@@ -228,7 +228,10 @@
           "github": "octue/power-curve-schema",
           "contents": {
             "v1.0.0.alpha-1": {
-              "path": "../vendor/public/octue-power-curve/power-curve-schema"
+              "path": "../vendor/public/octue-power-curve/v1.0.0.alpha-1/power-curve-schema"
+            },
+            "v1.0.0.alpha-2": {
+              "path": "../vendor/public/octue-power-curve/v1.0.0.alpha-2/power-curve-schema"
             }
           }
         }
