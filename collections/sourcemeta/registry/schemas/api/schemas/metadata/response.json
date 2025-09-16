@@ -32,6 +32,7 @@
         "baseDialect",
         "dialect",
         "protected",
+        "alert",
         "health"
       ],
       "properties": {
@@ -40,6 +41,9 @@
         },
         "description": {
           "type": "string"
+        },
+        "alert": {
+          "type": [ "string", "null" ]
         },
         "baseDialect": {
           "$ref": "../../../common/uri.json"

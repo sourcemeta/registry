@@ -359,7 +359,7 @@ static auto index_main(const std::string_view &program,
                 "health.metapack",
             output.path() / "schemas" / schema.second.relative_path / SENTINEL /
                 "protected.metapack",
-            schema.second.relative_path));
+            schema.second.collection.get(), schema.second.relative_path));
   }
 
   const auto base{output.path() / "schemas"};

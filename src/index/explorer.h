@@ -591,14 +591,15 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
 
 namespace sourcemeta::registry {
 
-auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON::String &,
-                         const sourcemeta::registry::Resolver &resolver,
-                         const std::filesystem::path &absolute_path,
-                         const std::filesystem::path &health_path,
-                         const std::filesystem::path &protected_path,
-                         // TODO: Compute this argument instead
-                         const std::filesystem::path &relative_path)
-    -> sourcemeta::core::JSON {
+auto GENERATE_NAV_SCHEMA(
+    const sourcemeta::core::JSON::String &,
+    const sourcemeta::registry::Resolver &resolver,
+    const std::filesystem::path &absolute_path,
+    const std::filesystem::path &health_path,
+    const std::filesystem::path &protected_path,
+    const sourcemeta::registry::Configuration::Collection &collection,
+    // TODO: Compute this argument instead
+    const std::filesystem::path &relative_path) -> sourcemeta::core::JSON {
   const auto schema{
       sourcemeta::registry::read_json_with_metadata(absolute_path)};
   auto id{sourcemeta::core::identify(
@@ -635,6 +636,15 @@ auto GENERATE_NAV_SCHEMA(const sourcemeta::core::JSON::String &,
 
   result.assign("protected", sourcemeta::core::JSON{
                                  std::filesystem::exists(protected_path)});
+
+  // TODO: This means we need this target to depend on the config file or the
+  // relevant include!
+  if (collection.extra.defines("x-sourcemeta-registry:alert")) {
+    assert(collection.extra.at("x-sourcemeta-registry:alert").is_string());
+    result.assign("alert", collection.extra.at("x-sourcemeta-registry:alert"));
+  } else {
+    result.assign("alert", sourcemeta::core::JSON{nullptr});
+  }
 
   // Precompute the breadcrumb
   result.assign("breadcrumb", sourcemeta::core::JSON::make_array());
@@ -1100,10 +1110,22 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   if (meta.at("protected").to_boolean()) {
     output_html.open("div",
                      {{"class", "alert alert-warning"}, {"role", "alert"}});
-    output_html.text("This schema is marked as protected. It is listed, but "
-                     "it cannot be directly accessed");
+    if (meta.at("alert").is_string()) {
+      output_html.text(meta.at("alert").to_string());
+    } else {
+      output_html.text("This schema is marked as protected. It is listed, but "
+                       "it cannot be directly accessed");
+    }
+
     output_html.close("div");
   } else {
+    if (meta.at("alert").is_string()) {
+      output_html.open(
+          "div", {{"class", "alert alert-warning mb-3"}, {"role", "alert"}});
+      output_html.text(meta.at("alert").to_string());
+      output_html.close("div");
+    }
+
     output_html.open(
         "div", {{"class", "border overflow-auto"},
                 {"style", "max-height: 400px;"},

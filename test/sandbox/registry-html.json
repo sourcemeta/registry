@@ -67,7 +67,8 @@
         },
         "no-serve": {
           "path": "./schemas/test/no-serve",
-          "x-sourcemeta-registry:protected": true
+          "x-sourcemeta-registry:protected": true,
+          "x-sourcemeta-registry:alert": "This collection is private"
         }
       }
     }
