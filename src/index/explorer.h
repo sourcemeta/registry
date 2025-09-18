@@ -398,11 +398,11 @@ auto base_dialect_uri_to_string(
   }
 
   if (base_dialect == "http://json-schema.org/draft-06/schema#") {
-    return "draft7";
+    return "draft6";
   }
 
   if (base_dialect == "http://json-schema.org/draft-04/schema#") {
-    return "draft7";
+    return "draft4";
   }
 
   return "unknown";
