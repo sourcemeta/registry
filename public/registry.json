@@ -31,7 +31,11 @@
     "@a2a/v0.2.1",
     "@a2a/v0.2.0",
     "@sdf/v1.0.0",
-    "@sourcemeta/std/v0.0.1"
+    "@sourcemeta/std/v0.0.1",
+    "@openapi/v2.0",
+    "@openapi/v3.0",
+    "@openapi/v3.1",
+    "@openapi/v3.2"
   ],
   "contents": {
     "sourcemeta": {
@@ -349,31 +353,6 @@
         "draft4": {
           "baseUri": "http://json-schema.org/draft-04",
           "path": "../vendor/public/jsonschema-draft4"
-        }
-      }
-    },
-    "openapi": {
-      "title": "OpenAPI",
-      "description": "The world's most widely used API description standard",
-      "email": "tsc@openapi.groups.io",
-      "github": "oai",
-      "website": "https://openapis.org",
-      "contents": {
-        "v1.2": {
-          "baseUri": "https://raw.githubusercontent.com/oai/openapi-specification/master/schemas/v1.2",
-          "path": "../vendor/public/openapi/schemas/v1.2"
-        },
-        "v2.0": {
-          "baseUri": "http://swagger.io/v2",
-          "path": "../vendor/public/openapi/schemas/v2.0"
-        },
-        "v3.0": {
-          "baseUri": "https://spec.openapis.org/oas/3.0/schema/2021-09-28",
-          "path": "../vendor/public/openapi/schemas/v3.0"
-        },
-        "v3.1": {
-          "baseUri": "https://spec.openapis.org/oas/3.1",
-          "path": "../vendor/public/openapi/schemas/v3.1"
         }
       }
     },
