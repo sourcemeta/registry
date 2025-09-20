@@ -1,0 +1,16 @@
+{
+  "contents": {
+    "openapi": {
+      "title": "OpenAPI",
+      "description": "The world's most widely used API description standard",
+      "email": "tsc@openapi.groups.io",
+      "github": "oai",
+      "website": "https://openapis.org",
+      "contents": {
+        "v3.2": {
+          "include": "./jsonschema.json"
+        }
+      }
+    }
+  }
+}

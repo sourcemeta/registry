@@ -75,27 +75,31 @@ your [configuration file](configuration.md) using the `extends` keyword.
 <!-- TODO: Generate this table from code using the CSV import plugin: -->
 <!-- https://squidfunk.github.io/mkdocs-material/reference/data-tables/#import-table-from-file -->
 
-| Identifier | Source | Description | Preview | Introduced In |
-|------------|------|-------------|---------|---------------|
-| `@geojson/v1.0.5` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.5) | Registry v1.2.0 |
-| `@geojson/v1.0.4` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.4) | Registry v1.2.0 |
-| `@geojson/v1.0.3` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.3) | Registry v1.2.0 |
-| `@geojson/v1.0.2` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.2) | Registry v1.2.0 |
-| `@geojson/v1.0.1` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.1) | Registry v1.2.0 |
-| `@geojson/v1.0.0` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.0) | Registry v1.2.0 |
-| `@modelcontextprotocol/2025-06-18` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2025-06-18) | Registry v1.2.0 |
-| `@modelcontextprotocol/2025-03-26` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2025-03-26) | Registry v1.2.0 |
-| `@modelcontextprotocol/2024-11-05` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2024-11-05) | Registry v1.2.0 |
-| `@sourcemeta/registry` | [Sourcemeta Registry](https://registry.sourcemeta.com) | Schemas that define the Sourcemeta Registry itself | [Link](https://schemas.sourcemeta.com/sourcemeta/registry) | Registry v1.2.0 |
-| `@a2a/v0.3.0` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.3.0) | Registry v1.2.0 |
-| `@a2a/v0.2.6` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.6) | Registry v1.2.0 |
-| `@a2a/v0.2.5` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.5) | Registry v1.2.0 |
-| `@a2a/v0.2.4` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.4) | Registry v1.2.0 |
-| `@a2a/v0.2.3` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.3) | Registry v1.2.0 |
-| `@a2a/v0.2.2` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.2) | Registry v1.2.0 |
-| `@a2a/v0.2.1` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.1) | Registry v1.2.0 |
-| `@a2a/v0.2.0` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.0) | Registry v1.2.0 |
-| `@sdf/v1.0.0` | [Semantic Definition Format (SDF)](https://datatracker.ietf.org/doc/draft-ietf-asdf-sdf/) | A format for domain experts to use in the creation and maintenance of data and interaction models that describe Things | [Link](https://schemas.sourcemeta.com/sdf/v1.0.0) | Registry v1.2.0 |
+| Identifier | Source | Description | Preview |
+|------------|------|-------------|---------|
+| `@geojson/v1.0.5` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.5) |
+| `@geojson/v1.0.4` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.4) |
+| `@geojson/v1.0.3` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.3) |
+| `@geojson/v1.0.2` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.2) |
+| `@geojson/v1.0.1` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.1) |
+| `@geojson/v1.0.0` | [GeoJSON](https://geojson.org) | A standard format (RFC 7946) for encoding a variety of geographic data structures | [Link](https://schemas.sourcemeta.com/geojson/v1.0.0) |
+| `@modelcontextprotocol/2025-06-18` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2025-06-18) |
+| `@modelcontextprotocol/2025-03-26` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2025-03-26) |
+| `@modelcontextprotocol/2024-11-05` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2024-11-05) |
+| `@sourcemeta/registry` | [Sourcemeta Registry](https://registry.sourcemeta.com) | Schemas that define the Sourcemeta Registry itself | [Link](https://schemas.sourcemeta.com/sourcemeta/registry) |
+| `@a2a/v0.3.0` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.3.0) |
+| `@a2a/v0.2.6` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.6) |
+| `@a2a/v0.2.5` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.5) |
+| `@a2a/v0.2.4` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.4) |
+| `@a2a/v0.2.3` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.3) |
+| `@a2a/v0.2.2` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.2) |
+| `@a2a/v0.2.1` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.1) |
+| `@a2a/v0.2.0` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.0) |
+| `@sdf/v1.0.0` | [Semantic Definition Format (SDF)](https://datatracker.ietf.org/doc/draft-ietf-asdf-sdf/) | A format for domain experts to use in the creation and maintenance of data and interaction models that describe Things | [Link](https://schemas.sourcemeta.com/sdf/v1.0.0) |
+| `@openapi/v3.2` | [OpenAPI](https://www.openapis.org) | The world's most widely used API description standard | [Link](https://schemas.sourcemeta.com/openapi/v3.2) |
+| `@openapi/v3.1` | [OpenAPI](https://www.openapis.org) | The world's most widely used API description standard | [Link](https://schemas.sourcemeta.com/openapi/v3.1) |
+| `@openapi/v3.0` | [OpenAPI](https://www.openapis.org) | The world's most widely used API description standard | [Link](https://schemas.sourcemeta.com/openapi/v3.0) |
+| `@openapi/v2.0` | [OpenAPI](https://www.openapis.org) | The world's most widely used API description standard | [Link](https://schemas.sourcemeta.com/openapi/v2.0) |
 
 [^1]: The built-in collections we offer are redistributed directly from their
   upstream sources *without modification*. As such, any issues, errors, or
