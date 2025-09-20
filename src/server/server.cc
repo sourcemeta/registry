@@ -161,12 +161,13 @@ static auto header_list(const std::string_view &value)
   return result;
 }
 
-static auto serve_static_file(uWS::HttpRequest *request,
-                              uWS::HttpResponse<true> *response,
-                              const ServerContentEncoding encoding,
-                              const std::filesystem::path &absolute_path,
-                              const char *const code,
-                              const bool enable_cors = false) -> void {
+static auto
+serve_static_file(uWS::HttpRequest *request, uWS::HttpResponse<true> *response,
+                  const ServerContentEncoding encoding,
+                  const std::filesystem::path &absolute_path,
+                  const char *const code, const bool enable_cors = false,
+                  const std::optional<std::string> &mime = std::nullopt)
+    -> void {
   if (request->getMethod() != "get" && request->getMethod() != "head") {
     if (std::filesystem::exists(absolute_path)) {
       json_error(request->getMethod(), request->getUrl(), response, encoding,
@@ -246,7 +247,12 @@ static auto serve_static_file(uWS::HttpRequest *request,
     response->writeHeader("Access-Control-Allow-Origin", "*");
   }
 
-  response->writeHeader("Content-Type", file.value().mime);
+  if (mime.has_value()) {
+    response->writeHeader("Content-Type", mime.value());
+  } else {
+    response->writeHeader("Content-Type", file.value().mime);
+  }
+
   response->writeHeader("Last-Modified",
                         sourcemeta::core::to_gmt(file.value().last_modified));
 
@@ -527,11 +533,12 @@ static auto on_request(const std::filesystem::path &base,
     const auto &user_agent{request->getHeader("user-agent")};
     const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
                          user_agent.starts_with("VSCodium")};
+    const auto is_deno{user_agent.starts_with("Deno/")};
     const auto bundle{!request->getQuery("bundle").empty()};
     auto absolute_path{base / "schemas" / lowercase_path / SENTINEL};
     if (is_vscode) {
       absolute_path /= "unidentified.metapack";
-    } else if (bundle) {
+    } else if (bundle || is_deno) {
       absolute_path /= "bundle.metapack";
     } else {
       absolute_path /= "schema.metapack";
@@ -542,6 +549,12 @@ static auto on_request(const std::filesystem::path &base,
       json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
                  "This schema is protected");
+    } else if (is_deno) {
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true,
+                        // For HTTP imports, as Deno won't like the
+                        // `application/schema+json` one
+                        "application/json");
     } else {
       serve_static_file(request, response, encoding, absolute_path,
                         sourcemeta::registry::STATUS_OK, true);
