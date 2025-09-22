@@ -3,7 +3,7 @@ hide:
   - navigation
 ---
 
-# Configuration Reference
+# Configuration
 
 The Sourcemeta Registry is designed around a GitOps workflow: all of its
 behavior is determined by the configuration file documented here, and runtime
