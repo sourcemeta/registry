@@ -25,6 +25,7 @@ nav:
   - index.md
   - getting-started.md
   - configuration.md
+  - integrations.md
   - library.md
   - api.md
   - commercial.md
@@ -54,10 +55,12 @@ theme:
   icon:
     repo: fontawesome/brands/github
   features:
+    - navigation.expand
     - navigation.tabs
     - navigation.path
     - navigation.top
     - navigation.footer
+    - navigation.sections
     - search.share
     - content.action.edit
     - content.code.copy
