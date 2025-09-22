@@ -28,7 +28,7 @@ mkdir "$TMP/schemas"
 cat << 'EOF' > "$TMP/schemas/test.json"
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://example.com/foo.json"
+  "$id": "https://example.com/foo"
 }
 EOF
 
@@ -46,15 +46,15 @@ exists() {
 
 exists "$TMP/output/explorer/example/schemas/foo/%/schema.metapack"
 mkdir "$TMP/output/explorer/example/schemas/bar"
-echo "{}" > "$TMP/output/explorer/example/schemas/bar/test.json"
+echo "{}" > "$TMP/output/explorer/example/schemas/bar/test"
 mkdir "$TMP/output/explorer/example/bar"
 mkdir "$TMP/output/explorer/bar"
 
-exists "$TMP/output/schemas/example/schemas/foo.json/%/schema.metapack"
-mkdir "$TMP/output/schemas/example/schemas/bar.json"
-echo "{}" > "$TMP/output/schemas/example/schemas/bar.json/test.json"
-mkdir "$TMP/output/schemas/example/bar.json"
-mkdir "$TMP/output/schemas/bar.json"
+exists "$TMP/output/schemas/example/schemas/foo/%/schema.metapack"
+mkdir "$TMP/output/schemas/example/schemas/bar"
+echo "{}" > "$TMP/output/schemas/example/schemas/bar/test"
+mkdir "$TMP/output/schemas/example/bar"
+mkdir "$TMP/output/schemas/bar"
 
 "$1" "$TMP/registry.json" "$TMP/output"
 

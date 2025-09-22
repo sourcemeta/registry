@@ -10,7 +10,24 @@ GET {{base}}/test/schemas/string.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/string.json",
+  "$id": "{{base}}/test/schemas/string",
+  "type": "string"
+}
+
+# Without extension
+GET {{base}}/test/schemas/string
+HTTP 200
+Content-Type: application/schema+json
+Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
+Access-Control-Allow-Origin: *
+[Asserts]
+header "ETag" exists
+
+GET {{base}}/test/schemas/string
+HTTP 200
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "{{base}}/test/schemas/string",
   "type": "string"
 }
 
@@ -18,15 +35,15 @@ GET {{base}}/test/schemas/no-serve-ref.json
 HTTP 200
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "{{base}}/test/schemas/no-serve-ref.json",
-  "$ref": "/test/no-serve/schema.json"
+  "$id": "{{base}}/test/schemas/no-serve-ref",
+  "$ref": "/test/no-serve/schema"
 }
 
 GET {{base}}/test/schemas/draft4-top-level-ref.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "{{base}}/test/schemas/draft4-top-level-ref.json",
+  "id": "{{base}}/test/schemas/draft4-top-level-ref",
   "allOf": [
     {
       "$ref": "#/definitions/foo"
@@ -43,15 +60,15 @@ GET {{base}}/test/schemas/with-rebase-same-host.json
 HTTP 200
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "{{base}}/test/schemas/with-rebase-same-host.json",
-  "$ref": "../bundling/single.json"
+  "$id": "{{base}}/test/schemas/with-rebase-same-host",
+  "$ref": "../bundling/single"
 }
 
 GET {{base}}/test/schemas/with-rebase.json
 HTTP 200
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "{{base}}/test/schemas/with-rebase.json",
+  "$id": "{{base}}/test/schemas/with-rebase",
   "$ref": "/test/bundling/single.json"
 }
 
@@ -59,7 +76,7 @@ GET {{base}}/test/schemas/id-same-as-base.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/id-same-as-base.json",
+  "$id": "{{base}}/test/schemas/id-same-as-base",
   "type": "string"
 }
 
@@ -68,7 +85,7 @@ GET {{base}}/test/schemas/string.json?foo=bar&baz=qux
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/string.json",
+  "$id": "{{base}}/test/schemas/string",
   "type": "string"
 }
 
@@ -77,7 +94,7 @@ GET {{base}}/test/schemas/no-id.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/no-id.json",
+  "$id": "{{base}}/test/schemas/no-id",
   "type": "string"
 }
 
@@ -86,7 +103,7 @@ GET {{base}}/test/schemas/no-schema.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/no-schema.json",
+  "$id": "{{base}}/test/schemas/no-schema",
   "type": "string"
 }
 
@@ -95,7 +112,7 @@ GET {{base}}/test/schemas/no-schema-nor-id.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/no-schema-nor-id.json",
+  "$id": "{{base}}/test/schemas/no-schema-nor-id",
   "type": "string"
 }
 
@@ -104,10 +121,10 @@ GET {{base}}/test/schemas/no-id-draft7-ref.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/no-id-draft7-ref.json",
+  "$id": "{{base}}/test/schemas/no-id-draft7-ref",
   "allOf": [
     {
-      "$ref": "string.json"
+      "$ref": "string"
     }
   ]
 }
@@ -117,8 +134,8 @@ GET {{base}}/test/schemas/absolute-refs.json
 HTTP 200
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "{{base}}/test/schemas/absolute-refs.json",
-  "$ref": "string.json"
+  "$id": "{{base}}/test/schemas/absolute-refs",
+  "$ref": "string"
 }
 
 # Folder with period
@@ -129,19 +146,19 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/v2.0/schema.json",
+  "$id": "{{base}}/test/v2.0/schema",
   "type": "integer"
 }
 
 # .schema.json extension
-GET {{base}}/test/extension/with.schema.json
+GET {{base}}/test/extension/with.json
 HTTP 200
 Content-Type: application/schema+json
 Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/extension/with.schema.json",
+  "$id": "{{base}}/test/extension/with",
   "type": "string"
 }
 
@@ -153,7 +170,7 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/extension/without.json",
+  "$id": "{{base}}/test/extension/without",
   "type": "string"
 }
 
@@ -165,7 +182,7 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/camelcase.json",
+  "$id": "{{base}}/test/schemas/camelcase",
   "type": "string"
 }
 
@@ -177,7 +194,7 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/camelcase.json",
+  "$id": "{{base}}/test/schemas/camelcase",
   "type": "string"
 }
 
@@ -188,7 +205,7 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/html.json"
+  "$id": "{{base}}/test/schemas/html"
 }
 
 GET {{base}}/test/schemas/index.html.json
@@ -198,14 +215,14 @@ Link: <http://json-schema.org/draft-07/schema\#>; rel="describedby"
 Access-Control-Allow-Origin: *
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/index.html.json"
+  "$id": "{{base}}/test/schemas/index.html"
 }
 
 GET {{base}}/test/doc/.period.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/doc/.period.json",
+  "$id": "{{base}}/test/doc/.period",
   "type": "string"
 }
 
@@ -213,7 +230,7 @@ GET {{base}}/test/schemas/%25/test.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/%25/test.json"
+  "$id": "{{base}}/test/schemas/%25/test"
 }
 
 GET {{base}}/test/schemas/string.json

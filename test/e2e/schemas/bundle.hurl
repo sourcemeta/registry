@@ -10,18 +10,18 @@ GET {{base}}/test/bundling/single.json?bundle=1
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/bundling/single.json",
+  "$id": "{{base}}/test/bundling/single",
   "title": "Bundling",
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "http://localhost:8000/test/v2.0/schema.json"
+      "$ref": "http://localhost:8000/test/v2.0/schema"
     }
   },
   "definitions": {
-    "http://localhost:8000/test/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "$id": "http://localhost:8000/test/v2.0/schema.json",
+      "$id": "http://localhost:8000/test/v2.0/schema",
       "type": "integer"
     }
   }
@@ -31,18 +31,18 @@ GET {{base}}/test/bundling/single.json?bundle=0
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/bundling/single.json",
+  "$id": "{{base}}/test/bundling/single",
   "title": "Bundling",
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "http://localhost:8000/test/v2.0/schema.json"
+      "$ref": "http://localhost:8000/test/v2.0/schema"
     }
   },
   "definitions": {
-    "http://localhost:8000/test/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "$id": "http://localhost:8000/test/v2.0/schema.json",
+      "$id": "http://localhost:8000/test/v2.0/schema",
       "type": "integer"
     }
   }
@@ -52,18 +52,18 @@ GET {{base}}/test/bundling/single.json?bundle=foo
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/bundling/single.json",
+  "$id": "{{base}}/test/bundling/single",
   "title": "Bundling",
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "http://localhost:8000/test/v2.0/schema.json"
+      "$ref": "http://localhost:8000/test/v2.0/schema"
     }
   },
   "definitions": {
-    "http://localhost:8000/test/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "$id": "http://localhost:8000/test/v2.0/schema.json",
+      "$id": "http://localhost:8000/test/v2.0/schema",
       "type": "integer"
     }
   }
@@ -81,7 +81,7 @@ GET {{base}}/test/v2.0/schema.json?bundle=1
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/v2.0/schema.json",
+  "$id": "{{base}}/test/v2.0/schema",
   "type": "integer"
 }
 
@@ -89,18 +89,18 @@ GET {{base}}/test/bundling/single.json?foo=2&bundle=1
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/bundling/single.json",
+  "$id": "{{base}}/test/bundling/single",
   "title": "Bundling",
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "http://localhost:8000/test/v2.0/schema.json"
+      "$ref": "http://localhost:8000/test/v2.0/schema"
     }
   },
   "definitions": {
-    "http://localhost:8000/test/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "$id": "http://localhost:8000/test/v2.0/schema.json",
+      "$id": "http://localhost:8000/test/v2.0/schema",
       "type": "integer"
     }
   }
@@ -110,7 +110,7 @@ GET {{base}}/test/extension/to-without.json?bundle=1
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/extension/to-without.json",
+  "$id": "{{base}}/test/extension/to-without",
   "allOf": [
     {
       "$ref": "without"
@@ -131,12 +131,12 @@ GET {{base}}/test/schemas/no-serve-ref.json?bundle=1
 HTTP 200
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "{{base}}/test/schemas/no-serve-ref.json",
-  "$ref": "/test/no-serve/schema.json",
+  "$id": "{{base}}/test/schemas/no-serve-ref",
+  "$ref": "/test/no-serve/schema",
   "$defs": {
-    "{{base}}/test/no-serve/schema.json": {
+    "{{base}}/test/no-serve/schema": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "$id": "{{base}}/test/no-serve/schema.json",
+      "$id": "{{base}}/test/no-serve/schema",
       "title": "This schema is NOT directly served",
       "type": "string"
     }

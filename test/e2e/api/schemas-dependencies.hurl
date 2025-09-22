@@ -8,8 +8,8 @@ last_response: body
 header "ETag" exists
 header "Last-Modified" exists
 jsonpath "$" count == 1
-jsonpath "$[0].from" == "{{base}}/test/bundling/single.json"
-jsonpath "$[0].to" == "{{base}}/test/v2.0/schema.json"
+jsonpath "$[0].from" == "{{base}}/test/bundling/single"
+jsonpath "$[0].to" == "{{base}}/test/v2.0/schema"
 jsonpath "$[0].at" == "/properties/foo/$ref"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/dependencies/response

@@ -281,6 +281,12 @@ serve_static_file(uWS::HttpRequest *request, uWS::HttpResponse<true> *response,
   }
 }
 
+static auto prefers_html(uWS::HttpRequest *const request) -> bool {
+  // TODO: We probably want to take Accept sequences and q= into account
+  return request->getHeader("accept").find("text/html") !=
+         std::string_view::npos;
+}
+
 constexpr auto SENTINEL{"%"};
 
 static auto on_evaluate(const std::filesystem::path &base,
@@ -300,7 +306,6 @@ static auto on_evaluate(const std::filesystem::path &base,
   } else if (request->getMethod() == "post") {
     auto template_path{base / "schemas"};
     template_path /= path;
-    template_path += ".json";
     template_path /= SENTINEL;
     template_path /= "blaze-exhaustive.metapack";
     if (!std::filesystem::exists(template_path)) {
@@ -371,15 +376,72 @@ static auto on_evaluate(const std::filesystem::path &base,
   }
 }
 
+static auto on_schema(const std::filesystem::path &base,
+                      const std::string_view &path, uWS::HttpRequest *request,
+                      uWS::HttpResponse<true> *response,
+                      const ServerContentEncoding encoding) -> void {
+  // Otherwise we may get unexpected results in case-sensitive file-systems
+  std::string lowercase_path{path};
+  std::transform(
+      lowercase_path.begin(), lowercase_path.end(), lowercase_path.begin(),
+      [](const unsigned char character) { return std::tolower(character); });
+
+  // Because Visual Studio Code famously does not support `$id` or `id`
+  // See
+  // https://github.com/microsoft/vscode-json-languageservice/issues/224
+  const auto &user_agent{request->getHeader("user-agent")};
+  const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
+                       user_agent.starts_with("VSCodium")};
+  const auto is_deno{user_agent.starts_with("Deno/")};
+  const auto bundle{!request->getQuery("bundle").empty()};
+  auto absolute_path{base / "schemas" / lowercase_path / SENTINEL};
+  if (is_vscode) {
+    absolute_path /= "unidentified.metapack";
+  } else if (bundle || is_deno) {
+    absolute_path /= "bundle.metapack";
+  } else {
+    absolute_path /= "schema.metapack";
+  }
+
+  if (std::filesystem::exists(absolute_path.parent_path() /
+                              "protected.metapack")) {
+    json_error(request->getMethod(), request->getUrl(), response, encoding,
+               sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
+               "This schema is protected");
+  } else if (is_deno) {
+    serve_static_file(request, response, encoding, absolute_path,
+                      sourcemeta::registry::STATUS_OK, true,
+                      // For HTTP imports, as Deno won't like the
+                      // `application/schema+json` one
+                      "application/json");
+  } else {
+    serve_static_file(request, response, encoding, absolute_path,
+                      sourcemeta::registry::STATUS_OK, true);
+  }
+}
+
 static auto on_request(const std::filesystem::path &base,
                        uWS::HttpRequest *request,
                        uWS::HttpResponse<true> *response,
                        const ServerContentEncoding encoding,
                        const bool is_headless) -> void {
   if (request->getUrl() == "/") {
-    serve_static_file(request, response, encoding,
-                      base / "explorer" / SENTINEL / "directory-html.metapack",
-                      sourcemeta::registry::STATUS_OK);
+    if (prefers_html(request)) {
+      serve_static_file(request, response, encoding,
+                        base / "explorer" / SENTINEL /
+                            "directory-html.metapack",
+                        sourcemeta::registry::STATUS_OK);
+    } else if (request->getMethod() == "get" ||
+               request->getMethod() == "head") {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_NOT_FOUND, "not-found",
+                 "There is nothing at this URL");
+    } else {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                 "method-not-allowed",
+                 "This HTTP method is invalid for this URL");
+    }
   } else if (request->getUrl() == "/self/api/list") {
     serve_static_file(request, response, encoding,
                       base / "explorer" / SENTINEL / "directory.metapack",
@@ -393,7 +455,6 @@ static auto on_request(const std::filesystem::path &base,
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "schemas"};
       absolute_path /= request->getUrl().substr(31);
-      absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "dependencies.metapack";
       serve_static_file(request, response, encoding, absolute_path,
@@ -408,7 +469,6 @@ static auto on_request(const std::filesystem::path &base,
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "schemas"};
       absolute_path /= request->getUrl().substr(25);
-      absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "health.metapack";
       serve_static_file(request, response, encoding, absolute_path,
@@ -423,7 +483,6 @@ static auto on_request(const std::filesystem::path &base,
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "schemas"};
       absolute_path /= request->getUrl().substr(28);
-      absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "locations.metapack";
 
@@ -446,7 +505,6 @@ static auto on_request(const std::filesystem::path &base,
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "schemas"};
       absolute_path /= request->getUrl().substr(28);
-      absolute_path += ".json";
       absolute_path /= SENTINEL;
       absolute_path /= "positions.metapack";
 
@@ -521,61 +579,29 @@ static auto on_request(const std::filesystem::path &base,
     serve_static_file(request, response, encoding, absolute_path.str(),
                       sourcemeta::registry::STATUS_OK);
   } else if (request->getUrl().ends_with(".json")) {
-    // Otherwise we may get unexpected results in case-sensitive file-systems
-    std::string lowercase_path{request->getUrl().substr(1)};
-    std::transform(
-        lowercase_path.begin(), lowercase_path.end(), lowercase_path.begin(),
-        [](const unsigned char character) { return std::tolower(character); });
-
-    // Because Visual Studio Code famously does not support `$id` or `id`
-    // See
-    // https://github.com/microsoft/vscode-json-languageservice/issues/224
-    const auto &user_agent{request->getHeader("user-agent")};
-    const auto is_vscode{user_agent.starts_with("Visual Studio Code") ||
-                         user_agent.starts_with("VSCodium")};
-    const auto is_deno{user_agent.starts_with("Deno/")};
-    const auto bundle{!request->getQuery("bundle").empty()};
-    auto absolute_path{base / "schemas" / lowercase_path / SENTINEL};
-    if (is_vscode) {
-      absolute_path /= "unidentified.metapack";
-    } else if (bundle || is_deno) {
-      absolute_path /= "bundle.metapack";
-    } else {
-      absolute_path /= "schema.metapack";
-    }
-
-    if (std::filesystem::exists(absolute_path.parent_path() /
-                                "protected.metapack")) {
-      json_error(request->getMethod(), request->getUrl(), response, encoding,
-                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
-                 "This schema is protected");
-    } else if (is_deno) {
-      serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK, true,
-                        // For HTTP imports, as Deno won't like the
-                        // `application/schema+json` one
-                        "application/json");
-    } else {
-      serve_static_file(request, response, encoding, absolute_path,
-                        sourcemeta::registry::STATUS_OK, true);
-    }
+    on_schema(base, request->getUrl().substr(1, request->getUrl().size() - 6),
+              request, response, encoding);
   } else if (request->getMethod() == "get" || request->getMethod() == "head") {
-    auto absolute_path{base / "explorer" / request->getUrl().substr(1) /
-                       SENTINEL};
-    if (std::filesystem::exists(absolute_path / "schema-html.metapack")) {
-      serve_static_file(request, response, encoding,
-                        absolute_path / "schema-html.metapack",
-                        sourcemeta::registry::STATUS_OK);
-    } else {
-      absolute_path /= "directory-html.metapack";
-      if (std::filesystem::exists(absolute_path)) {
-        serve_static_file(request, response, encoding, absolute_path,
+    if (prefers_html(request)) {
+      auto absolute_path{base / "explorer" / request->getUrl().substr(1) /
+                         SENTINEL};
+      if (std::filesystem::exists(absolute_path / "schema-html.metapack")) {
+        serve_static_file(request, response, encoding,
+                          absolute_path / "schema-html.metapack",
                           sourcemeta::registry::STATUS_OK);
       } else {
-        serve_static_file(request, response, encoding,
-                          base / "explorer" / SENTINEL / "404.metapack",
-                          sourcemeta::registry::STATUS_NOT_FOUND);
+        absolute_path /= "directory-html.metapack";
+        if (std::filesystem::exists(absolute_path)) {
+          serve_static_file(request, response, encoding, absolute_path,
+                            sourcemeta::registry::STATUS_OK);
+        } else {
+          serve_static_file(request, response, encoding,
+                            base / "explorer" / SENTINEL / "404.metapack",
+                            sourcemeta::registry::STATUS_NOT_FOUND);
+        }
       }
+    } else {
+      on_schema(base, request->getUrl().substr(1), request, response, encoding);
     }
   } else {
     json_error(request->getMethod(), request->getUrl(), response, encoding,

@@ -17,7 +17,7 @@ jsonpath "$['/$id']" count == 4
 jsonpath "$['/$id'][0]" == 3
 jsonpath "$['/$id'][1]" == 10
 jsonpath "$['/$id'][2]" == 3
-jsonpath "$['/$id'][3]" == 54
+jsonpath "$['/$id'][3]" == 49
 jsonpath "$['/$schema']" count == 4
 jsonpath "$['/$schema'][0]" == 2
 jsonpath "$['/$schema'][1]" == 14
