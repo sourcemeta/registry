@@ -6,8 +6,7 @@
   "type": "object",
   "required": [
     "region",
-    "service",
-    "assume_role_arn"
+    "service"
   ],
   "properties": {
     "assume_role_arn": {

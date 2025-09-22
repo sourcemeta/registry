@@ -52,7 +52,7 @@ public/manfred-mac-0-5 https://github.com/getmanfred/mac v0.5
 public/manfred-mac-0-4 https://github.com/getmanfred/mac v0.4
 public/manfred-mac-0-3 https://github.com/getmanfred/mac v0.3
 public/movielabs-omc-2-6 https://github.com/MovieLabs/OMC v2.6-release-1
-public/krakend https://github.com/krakend/krakend-schema ae3f55f45ea86274c1b45bbdabd61cf157ccb67a
+public/krakend https://github.com/krakend/krakend-schema 0ba322c0d242136cd9ca92ace08a34aebe57fb99
 public/octue-power-curve/v1.0.0.alpha-1 https://github.com/octue/power-curve-schema 1.0.0.alpha-1
 public/octue-power-curve/v1.0.0.alpha-2 https://github.com/octue/power-curve-schema 1.0.0.alpha-2
 public/usnistgov-mgi-2022-08 https://github.com/usnistgov/mgi-json-schema e5e6aaf3f5eae0d15b88ecbd57f44cc28b035f11
