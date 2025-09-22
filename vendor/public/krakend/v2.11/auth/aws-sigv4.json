@@ -13,11 +13,18 @@
     "assume_role_arn": {
       "$id": "#auth/aws-sigv4/assume_role_arn",
       "title": "Assume Role ARN",
-      "description": "The Amazon Resource Name (ARN) of the role to assume.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/aws-sigv4",
+      "description": "The Amazon Resource Name (ARN) of the role to assume.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/aws-sigv4/",
       "examples": [
         "arn:aws:sts::{account ID}:assumed-role/{resource}"
       ],
       "type": "string"
+    },
+    "debug": {
+      "$id": "#auth/aws-sigv4/debug",
+      "title": "Debug",
+      "description": "Enables debug logging for AWS Sigv4 signing process.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/aws-sigv4/",
+      "default": false,
+      "type": "boolean"
     },
     "region": {
       "$id": "#auth/aws-sigv4/region",
@@ -40,7 +47,7 @@
     "sts_region": {
       "$id": "#auth/aws-sigv4/sts_region",
       "title": "STS Region",
-      "description": "The AWS region where the STS service is deployed.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/aws-sigv4",
+      "description": "The AWS region where the STS service is deployed.\n\nSee: https://www.krakend.io/docs/enterprise/authentication/aws-sigv4/",
       "examples": [
         "us-west-1"
       ],
