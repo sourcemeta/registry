@@ -339,6 +339,20 @@
                   "default": false,
                   "type": "boolean"
                 },
+                "skip_headers": {
+                  "title": "Skip headers",
+                  "description": "A list of headers you want to skip when reporting the headers that reached the backend. This is useful to avoid reporting sensitive data.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry/",
+                  "examples": [
+                    [
+                      "X-Backend-Secret",
+                      "X-All-Secret"
+                    ]
+                  ],
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "static_attributes": {
                   "title": "Static attributes",
                   "description": "A list of tags or labels you want to associate to these traces.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry/",

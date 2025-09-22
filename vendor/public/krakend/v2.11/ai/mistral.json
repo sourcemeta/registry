@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.11/ai/mistral.json",
+  "title": "Mistral integration",
+  "description": "Connect to Mistral models easily by providing your API key and optional parameters.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+  "type": "object",
+  "maxProperties": 1,
+  "minProperties": 1,
+  "properties": {
+    "v1": {
+      "title": "Version v1",
+      "description": "All settings depend on  a specific version, as the vendor might change the API over time.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+      "required": [
+        "credentials",
+        "variables"
+      ],
+      "properties": {
+        "credentials": {
+          "title": "API Key",
+          "description": "Your Mistral API key. You can set it as an environment variable for better security.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+          "type": "string"
+        },
+        "debug": {
+          "title": "Debug Mode",
+          "description": "Enables the debug mode to log activity for troubleshooting. Do not set this value to true in production as it may log sensitive data.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+          "default": false,
+          "type": "boolean"
+        },
+        "input_template": {
+          "title": "Input Template",
+          "description": "A path to a custom [Go template](https://pkg.go.dev/text/template) that sets the payload format sent to Mistral. You don't need to set this value unless you want to override the default template making use of all the `variables` listed in this configuration.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+          "type": "string"
+        },
+        "output_template": {
+          "title": "Output Template",
+          "description": "A path to a custom [Go template](https://pkg.go.dev/text/template) that sets how the response from Mistral is transformed before being sent to the client. The default template extracts the text from the first choice returned by Mistral so in most cases you don't need to set a custom output template.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+          "type": "string"
+        },
+        "variables": {
+          "title": "Model Variables",
+          "description": "The variables specific to the Mistral usage that are used to construct the payload.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+          "type": "object",
+          "required": [
+            "model"
+          ],
+          "properties": {
+            "extra_payload": {
+              "title": "Extra Payload",
+              "description": "A map of additional payload attributes you want to use in your custom `input_template` (this payload is not used in the default template). The attributes set here are accessible in your custom template as `{{ .variables.extra_payload.yourchosenkey }}`. This option helps adding rare customization and future attributes.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+              "type": "object"
+            },
+            "max_tokens": {
+              "title": "Max Tokens",
+              "description": "An upper bound for the number of tokens that can be generated for a response, including visible output tokens and reasoning tokens.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+              "type": "integer"
+            },
+            "model": {
+              "title": "Model Name",
+              "description": "The name of the Mistral model you want to use. The value you provide is passed as is to Mistral and KrakenD does not prove if the model is currently accepted by the vendor. Check the available models on Mistral documentation.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+              "examples": [
+                "mistral-small-latest",
+                "codestral-latest"
+              ],
+              "type": "string"
+            },
+            "n": {
+              "title": "Number of Completions",
+              "description": "An integer value that specifies how many different completions (responses) the model should generate for a single input prompt. This can be useful for exploring multiple variations of the output.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+              "default": 1,
+              "type": "integer"
+            },
+            "random_seed": {
+              "title": "Random Seed",
+              "description": "An integer value to seed the random number generator used by the model. Setting a specific seed can help produce reproducible results across different requests.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+              "type": "integer"
+            },
+            "safe_prompt": {
+              "title": "Safe Prompt",
+              "description": "A boolean flag to enable or disable Mistral's safe prompt feature, which helps filter out inappropriate or harmful content from the model's responses. By default, this feature is enabled to ensure safer interactions.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+              "default": false,
+              "type": "boolean"
+            },
+            "stop": {
+              "title": "Stop Sequences",
+              "description": "An array of sequences where the model will stop generating further tokens if found. This can be useful to control the length and content of the output.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "temperature": {
+              "title": "Temperature",
+              "description": "What sampling temperature to use, recommended between 0.0 and 0.7. Higher values like 0.7 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. Change this or top_p but not both.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+              "type": "number",
+              "maximum": 2,
+              "minimum": 0
+            },
+            "top_p": {
+              "title": "Top P",
+              "description": "A float value between 0 and 1 that controls the nucleus sampling for text generation. It represents the cumulative probability threshold for token selection, where only the most probable tokens that add up to this threshold are considered. A higher value (closer to 1) allows for more diverse outputs, while a lower value (closer to 0) makes the output more focused and deterministic. Change this or temperature but not both.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mistral/",
+              "type": "number"
+            }
+          }
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

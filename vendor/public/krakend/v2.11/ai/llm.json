@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.11/ai/llm.json",
+  "title": "AI LLM Connectors",
+  "description": "Ready-to-use LLM connectors available for major AI vendors.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/unified-llm-interface/",
+  "type": "object",
+  "maxProperties": 1,
+  "properties": {
+    "anthropic": {
+      "$ref": "anthropic.json"
+    },
+    "gemini": {
+      "$ref": "gemini.json"
+    },
+    "mistral": {
+      "$ref": "mistral.json"
+    },
+    "openai": {
+      "$ref": "openai.json"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

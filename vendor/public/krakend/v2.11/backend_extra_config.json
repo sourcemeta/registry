@@ -4,6 +4,12 @@
   "title": "Extra configuration for backends",
   "type": "object",
   "properties": {
+    "ai/llm": {
+      "$ref": "ai/llm.json"
+    },
+    "auth/aws-sigv4": {
+      "$ref": "auth/aws-sigv4.json"
+    },
     "auth/client-credentials": {
       "$ref": "auth/client-credentials.json"
     },
@@ -18,6 +24,9 @@
     },
     "backend/amqp/producer": {
       "$ref": "backend/amqp/producer.json"
+    },
+    "backend/conditional": {
+      "$ref": "backend/conditional.json"
     },
     "backend/graphql": {
       "$ref": "backend/graphql.json"
