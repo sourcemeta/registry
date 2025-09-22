@@ -95,7 +95,7 @@ then running the indexing process with the `sourcemeta` command. Simple as
 that!
 
 ```docker title="Dockerfile"
-FROM ghcr.io/sourcemeta/registry:3.1
+FROM ghcr.io/sourcemeta/registry:3.2
 COPY registry.json .
 COPY schemas schemas
 RUN sourcemeta registry.json
