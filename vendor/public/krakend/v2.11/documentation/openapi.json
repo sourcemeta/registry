@@ -93,6 +93,41 @@
       ],
       "type": "string"
     },
+    "cookie_name": {
+      "$id": "#documentation/openapi/cookie_name",
+      "title": "Cookie name",
+      "description": "When generating an OpenAPI spec, the name of the cookie used under components securitySchemes.",
+      "default": "SESSIONID",
+      "type": "string"
+    },
+    "custom_security_schemes": {
+      "$id": "#documentation/openapi/custom_security_schemes",
+      "title": "Custom security schemes",
+      "description": "Allows you to add custom security schemes under `components/securitySchemes` in the generated OpenAPI spec. This is useful when you want to define your own security schemes, different from the built-in ones (e.g., `jwt`, `apikey`, `cookie`, etc.). When the property is in the service level you must declare the schema (e.g., `\"OAuth2Security\":{...}`), and when it is in the endpoint you should only write the object name with not properties inside, e.g, `{\"OAuth2Security\":{}`.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "examples": [
+        {
+          "OAuth2Security": {
+            "description": "OAuth2 security scheme",
+            "type": "oauth2",
+            "flows": {
+              "authorizationCode": {
+                "authorizationUrl": "https://example.com/oauth/authorize",
+                "scopes": {},
+                "tokenUrl": "https://example.com/oauth/token"
+              }
+            }
+          }
+        }
+      ],
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "title": "Security Scheme",
+          "description": "A valid OpenAPI Security Scheme object.",
+          "type": "object"
+        }
+      }
+    },
     "example": {
       "$id": "#documentation/openapi/example",
       "title": "Example",
@@ -260,6 +295,22 @@
             "description": "The description of the parameter",
             "type": "string"
           },
+          "examples": {
+            "title": "Examples",
+            "description": "Guess what? Multiple example values for this parameter.",
+            "type": "object",
+            "patternProperties": {
+              "^.*$": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object"
+                ]
+              }
+            }
+          },
           "type": {
             "title": "Type",
             "description": "The type of data according to the OpenAPI spec",
@@ -298,11 +349,37 @@
               ]
             }
           },
+          "format": {
+            "title": "Format",
+            "description": "The extending format for the previously defined type. If the type is `number` or `string` you can apply them one of the available formats. If you choose string formats for numbers or viceversa de linter does not check it.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+            "enum": [
+              "int32",
+              "int64",
+              "float",
+              "double",
+              "date",
+              "date-time",
+              "byte",
+              "uuid",
+              ""
+            ]
+          },
           "required": {
             "title": "Required",
             "description": "A path parameter is always mandatory on KrakenD, but you can still generate the OpenAPI documentation saying otherwise.",
             "default": true,
             "type": "boolean"
+          },
+          "example": {
+            "title": "Example",
+            "description": "An example value for this parameter. This example is injected in the spec as is.",
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object"
+            ]
           },
           "hide": {
             "title": "Hide param",

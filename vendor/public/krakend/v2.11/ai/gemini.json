@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.11/ai/gemini.json",
+  "title": "Google Gemini integration",
+  "description": "Connect to Google Gemini models easily by providing your API key and optional parameters.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+  "type": "object",
+  "maxProperties": 1,
+  "minProperties": 1,
+  "properties": {
+    "v1beta": {
+      "title": "Version v1",
+      "description": "All settings depend on  a specific version, as the vendor might change the API over time.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+      "type": "object",
+      "required": [
+        "credentials"
+      ],
+      "properties": {
+        "credentials": {
+          "title": "API Key",
+          "description": "Your Google Gemini API key. You can set it as an environment variable for better security.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+          "type": "string"
+        },
+        "debug": {
+          "title": "Debug Mode",
+          "description": "Enables the debug mode to log activity for troubleshooting. Do not set this value to true in production as it may log sensitive data.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+          "default": false,
+          "type": "boolean"
+        },
+        "input_template": {
+          "title": "Input Template",
+          "description": "A path to a custom [Go template](https://pkg.go.dev/text/template) that sets the payload format sent to Google Gemini. You don't need to set this value unless you want to override the default template making use of all the `variables` listed in this configuration.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+          "type": "string"
+        },
+        "output_template": {
+          "title": "Output Template",
+          "description": "A path to a custom [Go template](https://pkg.go.dev/text/template) that sets how the response from Google Gemini is transformed before being sent to the client. The default template extracts the text from the first choice returned by Google Gemini so in most cases you don't need to set a custom output template.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+          "type": "string"
+        },
+        "variables": {
+          "title": "Model Variables",
+          "description": "The variables specific to the Google Gemini usage that are used to construct the payload.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+          "type": "object",
+          "properties": {
+            "candidate_count": {
+              "title": "Candidate Count",
+              "description": "An integer value that specifies how many different completions (responses) the model should generate for a single input prompt. This can be useful for exploring multiple variations of the output.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+              "default": 1,
+              "type": "integer"
+            },
+            "extra_payload": {
+              "title": "Extra Payload",
+              "description": "A map of additional payload attributes you want to use in your custom `input_template` (this payload is not used in the default template). The attributes set here are accessible in your custom template as `{{ .variables.extra_payload.yourchosenkey }}`. This option helps adding rare customization and future attributes.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+              "type": "object"
+            },
+            "max_output_tokens": {
+              "title": "Max Tokens",
+              "description": "Maximum number of tokens that can be generated in the response. A token is approximately four characters. 100 tokens correspond to roughly 60-80 words.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+              "type": "integer"
+            },
+            "stop_sequences": {
+              "title": "Stop Sequences",
+              "description": "An array of sequences where the model will stop generating further tokens if found. This can be useful to control the length and content of the output.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "temperature": {
+              "title": "Temperature",
+              "description": "The temperature is used for sampling during response generation, which occurs when topP and topK are applied. Temperature controls the degree of randomness in token selection. Lower temperatures are good for prompts that require a less open-ended or creative response, while higher temperatures can lead to more diverse or creative results.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+              "type": "number",
+              "maximum": 2,
+              "minimum": 0
+            },
+            "top_k": {
+              "title": "Top K",
+              "description": "Top-K changes how the model selects tokens for output. A top-K of 1 means the next selected token is the most probable among all tokens in the model's vocabulary (also called greedy decoding), while a top-K of 3 means that the next token is selected from among the three most probable tokens by using temperature.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+              "type": "integer"
+            },
+            "top_p": {
+              "title": "Top P",
+              "description": "Top-P changes how the model selects tokens for output. Tokens are selected from the most probable to least probable until the sum of their probabilities equals the top-P value. For example, if tokens A, B, and C have a probability of 0.3, 0.2, and 0.1 and the top-P value is 0.5, then the model will select either A or B as the next token by using temperature and excludes C as a candidate.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/gemini/",
+              "type": "number"
+            }
+          }
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}
