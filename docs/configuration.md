@@ -125,6 +125,13 @@ collections contain the actual schema definitions that power your registry.
     Discussions](https://github.com/sourcemeta/registry/discussions). We are
     here to help!
 
+!!! note
+
+    To consolidate differences across operating systems, the Sourcemeta
+    Registry assumes the file system is case-insensitive and will not
+    distinguish between two schema URIs that only differ in casing.
+    Furthermore, URI paths will be turned into lowercase.
+
 | Property        | Type | Required | Default | Description |
 |-----------------|------|----------|---------|-------------|
 | `/path`         | String  | :red_circle: **Yes** (unless `includes` is set) | N/A | The path (relative to the location of the configuration file) to the directory which includes the schemas for this collection. The directory will be recursively traversed in search of `.json`, `.yaml`, or `.yml` schemas |
