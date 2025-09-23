@@ -55,5 +55,5 @@ exists "$TMP/output/explorer/example/schemas/foo/%/directory-html.metapack"
 exists "$TMP/output/explorer/example/schemas/foo/bar/%/schema.metapack"
 exists "$TMP/output/explorer/example/schemas/foo/bar/%/schema-html.metapack"
 
-exists "$TMP/output/schemas/example/schemas/foo.json/%/schema.metapack"
-exists "$TMP/output/schemas/example/schemas/foo/bar.json/%/schema.metapack"
+exists "$TMP/output/schemas/example/schemas/foo/%/schema.metapack"
+exists "$TMP/output/schemas/example/schemas/foo/bar/%/schema.metapack"

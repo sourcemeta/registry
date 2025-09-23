@@ -7,11 +7,11 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema"
     }
   },
   "definitions": {
-    "http://localhost:8000/test/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "integer"
     }
@@ -27,11 +27,11 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema"
     }
   },
   "definitions": {
-    "http://localhost:8000/test/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "integer"
     }
@@ -47,11 +47,11 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema"
     }
   },
   "definitions": {
-    "http://localhost:8000/test/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "integer"
     }
@@ -67,11 +67,11 @@ HTTP 200
   "description": "A bundling example",
   "properties": {
     "foo": {
-      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema.json"
+      "$ref": "#/definitions/http:~1~1localhost:8000~1test~1v2.0~1schema"
     }
   },
   "definitions": {
-    "http://localhost:8000/test/v2.0/schema.json": {
+    "http://localhost:8000/test/v2.0/schema": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "integer"
     }

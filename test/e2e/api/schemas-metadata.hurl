@@ -8,12 +8,12 @@ last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
-jsonpath "$.bytes" == 135
+jsonpath "$.bytes" == 130
 jsonpath "$.baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.health" == 100
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.identifier" == "{{base}}/test/v2.0/schema.json"
-jsonpath "$.path" == "/test/v2.0/schema.json"
+jsonpath "$.identifier" == "{{base}}/test/v2.0/schema"
+jsonpath "$.path" == "/test/v2.0/schema"
 jsonpath "$.protected" == false
 jsonpath "$.alert" == null
 jsonpath "$.breadcrumb" count == 3
@@ -42,12 +42,12 @@ last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
-jsonpath "$.bytes" == 192
+jsonpath "$.bytes" == 187
 jsonpath "$.baseDialect" == "https://json-schema.org/draft/2020-12/schema"
 jsonpath "$.health" == 100
 jsonpath "$.dialect" == "https://json-schema.org/draft/2020-12/schema"
-jsonpath "$.identifier" == "{{base}}/test/no-serve/schema.json"
-jsonpath "$.path" == "/test/no-serve/schema.json"
+jsonpath "$.identifier" == "{{base}}/test/no-serve/schema"
+jsonpath "$.path" == "/test/no-serve/schema"
 jsonpath "$.protected" == true
 jsonpath "$.alert" == "This collection is private"
 jsonpath "$.breadcrumb" count == 3

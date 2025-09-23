@@ -49,10 +49,10 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/test.json (#1)
-(100%) Ingesting: https://sourcemeta.com/example/schemas/test.json
-(100%) Analysing: https://sourcemeta.com/example/schemas/test.json
+(100%) Ingesting: https://sourcemeta.com/example/schemas/test
+(100%) Analysing: https://sourcemeta.com/example/schemas/test
 error: Could not resolve schema reference
-  https://sourcemeta.com/example/schemas/test.json#foo
+  https://sourcemeta.com/example/schemas/test#foo
     at schema location "/allOf/0/\$ref"
 EOF
 

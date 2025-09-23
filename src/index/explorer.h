@@ -650,7 +650,6 @@ auto GENERATE_NAV_SCHEMA(
   result.assign("breadcrumb", sourcemeta::core::JSON::make_array());
   std::filesystem::path current_path{"/"};
   auto copy = relative_path;
-  copy.replace_extension("");
   for (const auto &part : copy) {
     current_path = current_path / part;
     auto breadcrumb_entry{sourcemeta::core::JSON::make_object()};
@@ -716,7 +715,7 @@ auto GENERATE_NAV_DIRECTORY(
       const auto entry_relative_path{
           entry.path().string().substr(base.string().size() + 1)};
       assert(!entry_relative_path.starts_with('/'));
-      if (entry.is_directory() &&
+      if (entry.is_directory() && entry.path().filename() != "%" &&
           !std::filesystem::exists(entry.path() / "%" / "schema.metapack") &&
           !output.is_untracked_file(entry.path())) {
         const auto directory_nav_path{navigation_base / entry_relative_path /
@@ -742,14 +741,9 @@ auto GENERATE_NAV_DIRECTORY(
       } else if (entry.is_directory() &&
                  std::filesystem::exists(entry.path() / "%" /
                                          "schema.metapack")) {
-        auto name{entry.path().stem()};
-        if (name.extension() == ".schema") {
-          name.replace_extension("");
-        }
-
+        auto name{entry.path().filename()};
         entry_json.assign("name", sourcemeta::core::JSON{std::move(name)});
         auto schema_nav_path{navigation_base / entry_relative_path};
-        schema_nav_path.replace_extension("");
         schema_nav_path /= "%";
         schema_nav_path /= "schema.metapack";
 
@@ -762,7 +756,6 @@ auto GENERATE_NAV_DIRECTORY(
 
         assert(entry_json.defines("path"));
         std::filesystem::path url{entry_json.at("path").to_string()};
-        url.replace_extension("");
         entry_json.at("path").into(sourcemeta::core::JSON{url});
 
         assert(entry_json.defines("health"));
@@ -843,7 +836,6 @@ auto GENERATE_SEARCH_INDEX(
     auto metadata_json{sourcemeta::registry::read_json(absolute_path)};
     auto entry{sourcemeta::core::JSON::make_array()};
     std::filesystem::path url = metadata_json.at("path").to_string();
-    url.replace_extension("");
     entry.push_back(sourcemeta::core::JSON{url});
     // TODO: Can we move these?
     entry.push_back(metadata_json.at_or("title", sourcemeta::core::JSON{""}));
@@ -1007,14 +999,14 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
 
   if (meta.at("protected").to_boolean()) {
     output_html
-        .open("a", {{"href", meta.at("path").to_string()},
+        .open("a", {{"href", meta.at("path").to_string() + ".json"},
                     {"class", "btn btn-primary me-2 disabled"},
                     {"aria-disabled", "true"},
                     {"role", "button"}})
         .text("Get JSON Schema")
         .close("a");
     output_html
-        .open("a", {{"href", meta.at("path").to_string() + "?bundle=1"},
+        .open("a", {{"href", meta.at("path").to_string() + ".json?bundle=1"},
                     {"class", "btn btn-secondary disabled"},
                     {"aria-disabled", "true"},
                     {"role", "button"}})
@@ -1022,13 +1014,13 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
         .close("a");
   } else {
     output_html
-        .open("a", {{"href", meta.at("path").to_string()},
+        .open("a", {{"href", meta.at("path").to_string() + ".json"},
                     {"class", "btn btn-primary me-2"},
                     {"role", "button"}})
         .text("Get JSON Schema")
         .close("a");
     output_html
-        .open("a", {{"href", meta.at("path").to_string() + "?bundle=1"},
+        .open("a", {{"href", meta.at("path").to_string() + ".json?bundle=1"},
                     {"class", "btn btn-secondary"},
                     {"role", "button"}})
         .text("Bundle")
@@ -1126,12 +1118,12 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       output_html.close("div");
     }
 
-    output_html.open(
-        "div", {{"class", "border overflow-auto"},
-                {"style", "max-height: 400px;"},
-                {"data-sourcemeta-ui-editor", meta.at("path").to_string()},
-                {"data-sourcemeta-ui-editor-mode", "readonly"},
-                {"data-sourcemeta-ui-editor-language", "json"}});
+    output_html.open("div", {{"class", "border overflow-auto"},
+                             {"style", "max-height: 400px;"},
+                             {"data-sourcemeta-ui-editor",
+                              meta.at("path").to_string() + ".json"},
+                             {"data-sourcemeta-ui-editor-mode", "readonly"},
+                             {"data-sourcemeta-ui-editor-language", "json"}});
     output_html.text("Loading schema...");
     output_html.close("div");
   }
@@ -1233,7 +1225,6 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
       if (dependency.at("to").to_string().starts_with(configuration.url)) {
         std::filesystem::path dependency_schema_url{
             dependency.at("to").to_string().substr(configuration.url.size())};
-        dependency_schema_url.replace_extension("");
         output_html.open("td")
             .open("code")
             .open("a", {{"href", dependency_schema_url.string()}})

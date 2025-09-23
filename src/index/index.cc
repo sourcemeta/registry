@@ -346,7 +346,6 @@ static auto index_main(const std::string_view &program,
   for (const auto &schema : resolver) {
     auto schema_nav_path{std::filesystem::path{"explorer"} /
                          schema.second.relative_path};
-    schema_nav_path.replace_extension("");
     schema_nav_path /= SENTINEL;
     schema_nav_path /= "schema.metapack";
     output.write_metapack_json(
@@ -370,8 +369,16 @@ static auto index_main(const std::string_view &program,
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{base}) {
       if (entry.is_directory() && entry.path().filename() != SENTINEL &&
-          !std::filesystem::exists(entry.path() / SENTINEL) &&
           !output.is_untracked_file(entry.path())) {
+        const auto children{
+            std::distance(std::filesystem::directory_iterator(entry.path()),
+                          std::filesystem::directory_iterator{})};
+        if (children == 0 ||
+            (std::filesystem::exists(entry.path() / SENTINEL) &&
+             children == 1)) {
+          continue;
+        }
+
         schema_directories.push_back(entry.path());
       }
     }
@@ -410,7 +417,6 @@ static auto index_main(const std::string_view &program,
   for (const auto &schema : resolver) {
     auto schema_nav_path{output.path() / "explorer" /
                          schema.second.relative_path};
-    schema_nav_path.replace_extension("");
     schema_nav_path /= "%";
     schema_nav_path /= "schema.metapack";
     navs.push_back(std::move(schema_nav_path));
@@ -445,13 +451,13 @@ static auto index_main(const std::string_view &program,
             std::filesystem::relative(entry.path().parent_path(),
                                       output.path()) /
             "schema-html.metapack"};
+
         const auto schema_base_path{
             output.path() / "schemas" /
             (std::filesystem::relative(entry.path().parent_path(),
                                        output.path() / "explorer")
                  .parent_path()
-                 .string() +
-             ".json")};
+                 .string())};
 
         const auto dependencies_path{schema_base_path / SENTINEL /
                                      "dependencies.metapack"};

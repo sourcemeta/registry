@@ -52,7 +52,7 @@ last_response: body
 [Asserts]
 jsonpath "$.valid" == false
 jsonpath "$.errors" count == 1
-jsonpath "$.errors[0].absoluteKeywordLocation" == "{{base}}/test/schemas/string.json#/type"
+jsonpath "$.errors[0].absoluteKeywordLocation" == "{{base}}/test/schemas/string#/type"
 jsonpath "$.errors[0].error" == "The value was expected to be of type string but it was of type integer"
 jsonpath "$.errors[0].instanceLocation" == ""
 jsonpath "$.errors[0].keywordLocation" == "/type"
@@ -75,7 +75,7 @@ last_response: body
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.annotations" count == 1
-jsonpath "$.annotations[0].absoluteKeywordLocation" == "{{base}}/test/schemas/annotation.json#/title"
+jsonpath "$.annotations[0].absoluteKeywordLocation" == "{{base}}/test/schemas/annotation#/title"
 jsonpath "$.annotations[0].instanceLocation" == ""
 jsonpath "$.annotations[0].keywordLocation" == "/title"
 jsonpath "$.annotations[0].annotation" count == 1

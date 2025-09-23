@@ -84,13 +84,16 @@ navigation and discovery purposes.
 *This endpoint fetches the JSON Schema located at the `{path}` parameter.*
 
 ```
-GET /{path}.json[?bundle=1]
+GET /{path}[.json][?bundle=1]
 ```
 
-If the `bundle` query parameter is set, the schema references are embedded
-using the standard [JSON Schema
+The `.json` extension is optional unless the HTML UI is enabled and the
+`Accept` header is set to prefer an HTML response.  If the `bundle` query
+parameter is set, the schema references are embedded using the standard [JSON
+Schema
 Bundling](https://json-schema.org/blog/posts/bundling-json-schema-compound-documents)
 process.
+
 
 === "200"
 

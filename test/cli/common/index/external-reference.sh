@@ -28,7 +28,7 @@ mkdir "$TMP/schemas"
 cat << 'EOF' > "$TMP/schemas/test.json"
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://example.com/test.json",
+  "$id": "https://example.com/test",
   "allOf": [ { "$ref": "https://sourcemeta.com/external" } ]
 }
 EOF
@@ -49,8 +49,8 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/test.json (#1)
-(100%) Ingesting: https://sourcemeta.com/example/schemas/test.json
-(100%) Analysing: https://sourcemeta.com/example/schemas/test.json
+(100%) Ingesting: https://sourcemeta.com/example/schemas/test
+(100%) Analysing: https://sourcemeta.com/example/schemas/test
 error: Could not resolve the reference to an external schema
   https://sourcemeta.com/external
 

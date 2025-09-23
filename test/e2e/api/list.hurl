@@ -128,10 +128,10 @@ jsonpath "$.breadcrumb[0].path" == "/test"
 jsonpath "$.breadcrumb[1].name" == "v2.0"
 jsonpath "$.breadcrumb[1].path" == "/test/v2.0"
 jsonpath "$.entries" count == 1
-jsonpath "$.entries[0].bytes" == 135
+jsonpath "$.entries[0].bytes" == 130
 jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[0].identifier" == "{{base}}/test/v2.0/schema.json"
+jsonpath "$.entries[0].identifier" == "{{base}}/test/v2.0/schema"
 jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].protected" == false
@@ -186,10 +186,10 @@ jsonpath "$.breadcrumb[1].path" == "/test/schemas"
 jsonpath "$.breadcrumb[2].name" == "versions"
 jsonpath "$.breadcrumb[2].path" == "/test/schemas/versions"
 jsonpath "$.entries" count == 1
-jsonpath "$.entries[0].bytes" == 146
+jsonpath "$.entries[0].bytes" == 141
 jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[0].identifier" == "{{base}}/test/schemas/versions/v1.2.3.json"
+jsonpath "$.entries[0].identifier" == "{{base}}/test/schemas/versions/v1.2.3"
 jsonpath "$.entries[0].name" == "v1.2.3"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].protected" == false
@@ -223,30 +223,30 @@ jsonpath "$.breadcrumb[0].path" == "/test"
 jsonpath "$.breadcrumb[1].name" == "extension"
 jsonpath "$.breadcrumb[1].path" == "/test/extension"
 jsonpath "$.entries" count == 3
-jsonpath "$.entries[0].bytes" == 140
+jsonpath "$.entries[0].bytes" == 135
 jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[0].identifier" == "{{base}}/test/extension/without.json"
+jsonpath "$.entries[0].identifier" == "{{base}}/test/extension/without"
 jsonpath "$.entries[0].name" == "without"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].protected" == false
 jsonpath "$.entries[0].alert" == null
 jsonpath "$.entries[0].path" == "/test/extension/without"
 jsonpath "$.entries[0].health" == 100
-jsonpath "$.entries[1].bytes" == 144
+jsonpath "$.entries[1].bytes" == 132
 jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[1].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[1].identifier" == "{{base}}/test/extension/with.schema.json"
+jsonpath "$.entries[1].identifier" == "{{base}}/test/extension/with"
 jsonpath "$.entries[1].name" == "with"
 jsonpath "$.entries[1].type" == "schema"
 jsonpath "$.entries[1].protected" == false
 jsonpath "$.entries[1].alert" == null
-jsonpath "$.entries[1].path" == "/test/extension/with.schema"
+jsonpath "$.entries[1].path" == "/test/extension/with"
 jsonpath "$.entries[1].health" == 100
-jsonpath "$.entries[2].bytes" == 177
+jsonpath "$.entries[2].bytes" == 172
 jsonpath "$.entries[0].baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[2].dialect" == "http://json-schema.org/draft-07/schema#"
-jsonpath "$.entries[2].identifier" == "{{base}}/test/extension/to-without.json"
+jsonpath "$.entries[2].identifier" == "{{base}}/test/extension/to-without"
 jsonpath "$.entries[2].name" == "to-without"
 jsonpath "$.entries[2].type" == "schema"
 jsonpath "$.entries[2].protected" == false
@@ -281,8 +281,8 @@ jsonpath "$.breadcrumb[1].name" == "no-serve"
 jsonpath "$.breadcrumb[1].path" == "/test/no-serve"
 jsonpath "$.entries" count == 1
 jsonpath "$.entries[0].name" == "schema"
-jsonpath "$.entries[0].bytes" == 192
-jsonpath "$.entries[0].identifier" == "{{base}}/test/no-serve/schema.json"
+jsonpath "$.entries[0].bytes" == 187
+jsonpath "$.entries[0].identifier" == "{{base}}/test/no-serve/schema"
 jsonpath "$.entries[0].path" == "/test/no-serve/schema"
 jsonpath "$.entries[0].baseDialect" == "https://json-schema.org/draft/2020-12/schema"
 jsonpath "$.entries[0].dialect" == "https://json-schema.org/draft/2020-12/schema"

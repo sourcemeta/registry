@@ -15,7 +15,7 @@ GET {{base}}/test/schemas/yaml.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/yaml.json",
+  "$id": "{{base}}/test/schemas/yaml",
   "type": "string"
 }
 
@@ -36,6 +36,6 @@ GET {{base}}/test/schemas/yml.json
 HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/yml.json",
+  "$id": "{{base}}/test/schemas/yml",
   "type": "string"
 }

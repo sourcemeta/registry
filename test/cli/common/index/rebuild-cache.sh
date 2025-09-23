@@ -49,8 +49,8 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
-(100%) Ingesting: https://sourcemeta.com/example/schemas/foo.json
-(100%) Analysing: https://sourcemeta.com/example/schemas/foo.json
+(100%) Ingesting: https://sourcemeta.com/example/schemas/foo
+(100%) Analysing: https://sourcemeta.com/example/schemas/foo
 Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
@@ -63,16 +63,16 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
-(100%) Ingesting: https://sourcemeta.com/example/schemas/foo.json
-(skip) Ingesting: https://sourcemeta.com/example/schemas/foo.json
-(100%) Analysing: https://sourcemeta.com/example/schemas/foo.json
-(skip) Analysing: https://sourcemeta.com/example/schemas/foo.json [positions]
-(skip) Analysing: https://sourcemeta.com/example/schemas/foo.json [locations]
-(skip) Analysing: https://sourcemeta.com/example/schemas/foo.json [dependencies]
-(skip) Analysing: https://sourcemeta.com/example/schemas/foo.json [health]
-(skip) Analysing: https://sourcemeta.com/example/schemas/foo.json [bundle]
-(skip) Analysing: https://sourcemeta.com/example/schemas/foo.json [unidentified]
-(skip) Analysing: https://sourcemeta.com/example/schemas/foo.json [blaze-exhaustive]
+(100%) Ingesting: https://sourcemeta.com/example/schemas/foo
+(skip) Ingesting: https://sourcemeta.com/example/schemas/foo
+(100%) Analysing: https://sourcemeta.com/example/schemas/foo
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [positions]
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [locations]
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [dependencies]
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [health]
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [bundle]
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [unidentified]
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [blaze-exhaustive]
 Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
@@ -91,8 +91,8 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
-(100%) Ingesting: https://sourcemeta.com/example/schemas/foo.json
-(100%) Analysing: https://sourcemeta.com/example/schemas/foo.json
+(100%) Ingesting: https://sourcemeta.com/example/schemas/foo
+(100%) Analysing: https://sourcemeta.com/example/schemas/foo
 Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
@@ -105,8 +105,8 @@ cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
-(100%) Ingesting: https://sourcemeta.com/example/schemas/foo.json
-(100%) Analysing: https://sourcemeta.com/example/schemas/foo.json
+(100%) Ingesting: https://sourcemeta.com/example/schemas/foo
+(100%) Analysing: https://sourcemeta.com/example/schemas/foo
 Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"

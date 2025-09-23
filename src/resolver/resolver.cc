@@ -11,14 +11,6 @@
 #include <mutex>     // std::mutex, std::lock_guard
 #include <sstream>   // std::ostringstream
 
-static auto to_lowercase(const std::string_view input) -> std::string {
-  std::string result{input};
-  std::ranges::transform(result, result.begin(), [](const auto character) {
-    return static_cast<char>(std::tolower(character));
-  });
-  return result;
-}
-
 static auto
 rebase(const sourcemeta::registry::Configuration::Collection &collection,
        const sourcemeta::core::JSON::String &uri,
@@ -36,11 +28,35 @@ rebase(const sourcemeta::registry::Configuration::Collection &collection,
         // TODO: Also implement a move overload
         .append_path(suffix)
         .canonicalize()
-        .extension(".json")
         .recompose();
   } else {
     return maybe_relative.recompose();
   }
+}
+
+static auto normalise_identifier(const std::string_view identifier)
+    -> std::string {
+  std::string lowercase{identifier};
+  std::ranges::transform(lowercase, lowercase.begin(),
+                         [](const auto character) {
+                           return static_cast<char>(std::tolower(character));
+                         });
+
+  while (true) {
+    if (lowercase.ends_with("#")) {
+      lowercase.resize(lowercase.size() - 1);
+    } else if (lowercase.ends_with(".json") || lowercase.ends_with(".yaml")) {
+      lowercase.resize(lowercase.size() - 5);
+    } else if (lowercase.ends_with(".yml")) {
+      lowercase.resize(lowercase.size() - 4);
+    } else if (lowercase.ends_with(".schema")) {
+      lowercase.resize(lowercase.size() - 7);
+    } else {
+      break;
+    }
+  }
+
+  return lowercase;
 }
 
 static auto
@@ -54,7 +70,7 @@ normalise_ref(const sourcemeta::registry::Configuration::Collection &collection,
     return;
   }
 
-  // If we have a match in the configuration resolver, then trust that
+  // If we have a match in the configuration resolver, then trust that.
   const auto match{collection.resolve.find(reference)};
   if (match != collection.resolve.cend()) {
     schema.assign(keyword, sourcemeta::core::JSON{match->second});
@@ -62,23 +78,21 @@ normalise_ref(const sourcemeta::registry::Configuration::Collection &collection,
   }
 
   sourcemeta::core::URI value{reference};
-  if (value.is_relative()) {
-    schema.assign(keyword, sourcemeta::core::JSON{value.recompose()});
-  } else {
-    // Lowercase only the path component of the reference, as
-    // otherwise `.relative_to` will get confused. Note that
-    // are careful about not lowercasing the entire thing,
-    // as the reference may include a JSON Pointer in the fragment
-    const auto current_path{value.path()};
-    if (current_path.has_value()) {
-      value.path(to_lowercase(current_path.value()));
-    }
-
-    // Turn the reference into a relative one if possible. That way, even
-    // if we change the identifiers, its all well
-    value.relative_to(base);
-    schema.assign(keyword, sourcemeta::core::JSON{value.recompose()});
+  // Lowercase only the path component of the reference. Note that are careful
+  // about not lowercasing the entire thing, as the reference may include a
+  // JSON Pointer in the fragment
+  const auto current_path{value.path()};
+  if (current_path.has_value()) {
+    value.path(normalise_identifier(current_path.value()));
   }
+
+  if (value.is_absolute()) {
+    // Turn the reference into a relative one if possible. That way, everything
+    // is good even if we change the identifiers
+    value.relative_to(base);
+  }
+
+  schema.assign(keyword, sourcemeta::core::JSON{value.recompose()});
 }
 
 namespace sourcemeta::registry {
@@ -93,13 +107,8 @@ auto Resolver::operator()(
 
   // Internally, we keep all schema URI identifiers as lowercase to avoid
   // tricky cases with case-insensitive operating systems
-  const auto identifier{to_lowercase(raw_identifier)};
+  const auto identifier{normalise_identifier(raw_identifier)};
   auto result{this->views.find(identifier)};
-  // Try with a `.json` extension as a fallback, as we do add this
-  // extension when a schema doesn't have it by default
-  if (result == this->views.cend() && !identifier.ends_with(".json")) {
-    result = this->views.find(identifier + ".json");
-  }
   // If we don't recognise the schema, try a fallback as a last resort
   if (result == this->views.cend()) {
     return sourcemeta::core::schema_official_resolver(identifier);
@@ -151,12 +160,26 @@ auto Resolver::operator()(
 
   sourcemeta::core::SchemaFrame frame{
       sourcemeta::core::SchemaFrame::Mode::Locations};
+  const auto has_identifier{
+      sourcemeta::core::identify(
+          schema,
+          [this](const auto subidentifier) {
+            return this->operator()(subidentifier);
+          },
+          sourcemeta::core::SchemaIdentificationStrategy::Strict,
+          result->second.dialect)
+          .has_value()};
   frame.analyse(
       schema, sourcemeta::core::schema_official_walker,
       [this](const auto subidentifier) {
         return this->operator()(subidentifier);
       },
-      result->second.dialect, result->second.original_identifier);
+      result->second.dialect,
+      // Otherwise we will loop over all locations twice
+      has_identifier
+          ? std::optional<sourcemeta::core::JSON::String>{std::nullopt}
+          : result->second.original_identifier);
+
   const auto ref_hash{schema.as_object().hash("$ref")};
   const auto dynamic_ref_hash{schema.as_object().hash("$dynamicRef")};
   for (const auto &entry : frame.locations()) {
@@ -225,11 +248,12 @@ auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
   /////////////////////////////////////////////////////////////////////////////
   const auto default_identifier{
       sourcemeta::core::URI{collection.base}
-          .append_path(std::filesystem::relative(path, collection.absolute_path)
-                           .string())
+          .append_path(normalise_identifier(
+              std::filesystem::relative(path, collection.absolute_path)
+                  .string()))
           .canonicalize()
           .recompose()};
-  sourcemeta::core::URI identifier_uri{to_lowercase(
+  sourcemeta::core::URI identifier_uri{normalise_identifier(
       sourcemeta::core::identify(
           schema,
           [this](const auto subidentifier) {
@@ -287,7 +311,7 @@ auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
   auto current_dialect{is_official_dialect
                            ? raw_dialect.value()
                            : rebase(collection,
-                                    to_lowercase(raw_dialect.value()),
+                                    normalise_identifier(raw_dialect.value()),
                                     server_url, collection_relative_path)};
   // Otherwise we messed things up
   assert(!current_dialect.ends_with("#.json"));
