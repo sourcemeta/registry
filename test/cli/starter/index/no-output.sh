@@ -26,7 +26,7 @@ EOF
 "$1" "$TMP/registry.json" > "$TMP/output.txt" && CODE="$?" || CODE="$?"
 test "$CODE" = "1" || exit 1
 
-VERSION="$(grep '^project' < CMakeLists.txt | head -n 1 | cut -d ' ' -f 3)"
+VERSION="$2"
 
 cat << EOF > "$TMP/expected.txt"
 Sourcemeta Registry v$VERSION Starter Edition
