@@ -670,11 +670,13 @@ auto terminate(int signal) -> void {
   std::exit(EXIT_SUCCESS);
 }
 
-// We try to keep this function as straight to point as possible
+// We try to keep this function as straight to the point as possible
 // with minimal input validation (outside debug builds). The intention
 // is for the server to start running and bind to the port as quickly
 // as possible, so we can take better advantage of scale-to-zero.
 auto main(int argc, char *argv[]) noexcept -> int {
+  const auto timestamp_start{std::chrono::steady_clock::now()};
+
   std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
 #if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
   std::cout << " Enterprise ";
@@ -707,28 +709,37 @@ auto main(int argc, char *argv[]) noexcept -> int {
     const auto is_headless{!std::filesystem::exists(
         base / "explorer" / SENTINEL / "directory-html.metapack")};
 
-    uWS::LocalCluster({}, [&base, port, is_headless](uWS::SSLApp &app) -> void {
-      app.any("/*",
-              [&base, is_headless](auto *const response,
-                                   auto *const request) noexcept -> void {
-                dispatch(base, response, request, is_headless);
+    uWS::LocalCluster(
+        {},
+        [&base, port, is_headless, timestamp_start](uWS::SSLApp &app) -> void {
+          app.any("/*",
+                  [&base, is_headless](auto *const response,
+                                       auto *const request) noexcept -> void {
+                    dispatch(base, response, request, is_headless);
+                  });
+
+          app.listen(
+              static_cast<int>(port),
+              [port,
+               timestamp_start](us_listen_socket_t *const socket) -> void {
+                const auto timestamp_end{std::chrono::steady_clock::now()};
+                const auto duration{
+                    std::chrono::duration_cast<std::chrono::milliseconds>(
+                        timestamp_end - timestamp_start)};
+                if (socket) {
+                  const auto socket_port = us_socket_local_port(
+                      true, reinterpret_cast<struct us_socket_t *>(socket));
+                  assert(socket_port > 0);
+                  assert(port == static_cast<std::uint32_t>(socket_port));
+                  log("Listening on port " + std::to_string(socket_port) +
+                      " in " + std::to_string(duration.count()) + " ms");
+                } else {
+                  log("Failed to listen on port " + std::to_string(port));
+                }
               });
+        });
 
-      app.listen(static_cast<int>(port),
-                 [port](us_listen_socket_t *const socket) -> void {
-                   if (socket) {
-                     const auto socket_port = us_socket_local_port(
-                         true, reinterpret_cast<struct us_socket_t *>(socket));
-                     assert(socket_port > 0);
-                     assert(port == static_cast<std::uint32_t>(socket_port));
-                     log("Listening on port " + std::to_string(socket_port));
-                   } else {
-                     log("Failed to listen on port " + std::to_string(port));
-                   }
-                 });
-    });
-
-    log("Failed to listen on port " + std::to_string(port));
+    log("The server could not start");
     return EXIT_FAILURE;
   } catch (const std::exception &error) {
     std::cerr << "unexpected error: " << error.what() << "\n";
