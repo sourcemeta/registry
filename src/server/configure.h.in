@@ -4,7 +4,7 @@
 #include <string_view> // std::string_view
 
 namespace sourcemeta::registry {
-constexpr std::string_view PROJECT_VERSION{"@PROJECT_VERSION@"};
+constexpr std::string_view PROJECT_VERSION{"@REGISTRY_VERSION@"};
 }
 
 #endif

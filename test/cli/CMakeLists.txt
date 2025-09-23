@@ -3,6 +3,7 @@ macro(sourcemeta_registry_test_cli_common program name)
     add_test(NAME registry.${program}.common.${name} COMMAND
       "${CMAKE_CURRENT_SOURCE_DIR}/common/${program}/${name}.sh"
       "$<TARGET_FILE:sourcemeta_registry_${program}>"
+      "${REGISTRY_VERSION}"
       WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
     set_tests_properties(registry.${program}.common.${name} PROPERTIES
       ENVIRONMENT "REGISTRY_PREFIX=${REGISTRY_PREFIX}")
@@ -14,6 +15,7 @@ macro(sourcemeta_registry_test_cli_edition program name)
     add_test(NAME registry.${program}.${REGISTRY_EDITION}.${name} COMMAND
       "${CMAKE_CURRENT_SOURCE_DIR}/${REGISTRY_EDITION}/${program}/${name}.sh"
       "$<TARGET_FILE:sourcemeta_registry_${program}>"
+      "${REGISTRY_VERSION}"
       WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
     set_tests_properties(registry.${program}.${REGISTRY_EDITION}.${name} PROPERTIES
       ENVIRONMENT "REGISTRY_PREFIX=${REGISTRY_PREFIX}")

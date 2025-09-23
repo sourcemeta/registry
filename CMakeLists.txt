@@ -46,6 +46,30 @@ if(REGISTRY_INDEX OR REGISTRY_SERVER)
   add_subdirectory(src/shared)
 endif()
 
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(REGISTRY_VERSION "${PROJECT_VERSION}")
+else()
+  find_program(GIT_BIN NAMES git)
+  if(GIT_BIN AND JSONSCHEMA_CONTINUOUS)
+    execute_process(COMMAND "${GIT_BIN}" rev-parse --git-dir
+      ERROR_QUIET
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      OUTPUT_VARIABLE GIT_DIR)
+  endif()
+  if(GIT_BIN AND EXISTS "${GIT_DIR}")
+    execute_process(
+      COMMAND "${GIT_BIN}" rev-parse --short=8 HEAD
+      WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+      OUTPUT_VARIABLE PROJECT_GIT_SHA
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      COMMAND_ERROR_IS_FATAL ANY)
+  else()
+    set(PROJECT_GIT_SHA "unknown")
+  endif()
+  set(REGISTRY_VERSION "${PROJECT_VERSION}+${PROJECT_GIT_SHA}")
+endif()
+message(STATUS "Registry version: ${REGISTRY_VERSION}")
+
 if(REGISTRY_INDEX)
   add_subdirectory(contrib/file2metapack)
   include(commands/file2metapack)
