@@ -181,7 +181,7 @@ jobs:
       deployments: write
       contents: write
     env:
-      KRAFTCLOUD_METRO: was1
+      KRAFTCLOUD_METRO: fra0
       KRAFTKIT_NO_CHECK_UPDATES: true
       SERVICE_DOMAIN: schemas.sourcemeta.com
     steps:
