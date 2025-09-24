@@ -223,7 +223,7 @@ jobs:
             set -o errexit
             set -o nounset
             kraft cloud service create --name schemas --domain ${{ env.SERVICE_DOMAIN }} 443:8000 || true
-            kraft cloud deploy --memory 2048 --rollout remove --image schemas --service schemas \
+            kraft cloud deploy --memory 2048 --rollout sequential --image schemas --service schemas \
               --kraftfile public/Kraftfile --restart on-failure --replicas 8 --env SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 ./public
             kraft cloud service get schemas
             kraft cloud instance logs "$(kraft cloud service get schemas --output json | jq --raw-output '.[0].instances | split(" ") | .[0]')"
