@@ -5,3 +5,4 @@
 ./explorer/%/directory-html.metapack
 ./explorer/%/directory.metapack
 ./explorer/%/search.metapack
+./version.json

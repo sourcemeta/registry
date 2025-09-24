@@ -898,7 +898,7 @@ auto GENERATE_EXPLORER_404(
       .close("div")
       .close("div");
   sourcemeta::registry::html::partials::html_end(
-      output_html, sourcemeta::registry::PROJECT_VERSION);
+      output_html, sourcemeta::registry::version());
   return stream.str();
 }
 
@@ -928,7 +928,7 @@ auto GENERATE_EXPLORER_INDEX(
 
   sourcemeta::registry::html::partials::html_file_manager(html, meta);
   sourcemeta::registry::html::partials::html_end(
-      output_html, sourcemeta::registry::PROJECT_VERSION);
+      output_html, sourcemeta::registry::version());
   return html.str();
 }
 
@@ -952,7 +952,7 @@ auto GENERATE_EXPLORER_DIRECTORY_PAGE(
       meta.at("path").to_string());
   sourcemeta::registry::html::partials::html_file_manager(html, meta);
   sourcemeta::registry::html::partials::html_end(
-      output_html, sourcemeta::registry::PROJECT_VERSION);
+      output_html, sourcemeta::registry::version());
   return html.str();
 }
 
@@ -1300,7 +1300,7 @@ auto GENERATE_EXPLORER_SCHEMA_PAGE(
   output_html.close("div");
 
   sourcemeta::registry::html::partials::html_end(
-      output_html, sourcemeta::registry::PROJECT_VERSION);
+      output_html, sourcemeta::registry::version());
   return html.str();
 }
 

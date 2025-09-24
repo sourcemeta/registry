@@ -54,6 +54,20 @@ public:
     return this->track(absolute_path);
   }
 
+  auto write_json_if_different(const std::filesystem::path &path,
+                               const sourcemeta::core::JSON &document) -> void {
+    if (std::filesystem::exists(path)) {
+      const auto current{sourcemeta::core::read_json(path)};
+      if (current != document) {
+        this->write_json(path, document);
+      } else {
+        this->track(path);
+      }
+    } else {
+      this->write_json(path, document);
+    }
+  }
+
   auto write_metapack_json(const std::filesystem::path &path,
                            const sourcemeta::registry::Encoding encoding,
                            const sourcemeta::core::JSON &document)

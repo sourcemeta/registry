@@ -1,7 +1,6 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME server
   FOLDER "Registry/Server"
-  SOURCES search.h status.h evaluate.h
-    server.cc uwebsockets.h configure.h.in)
+  SOURCES search.h status.h evaluate.h server.cc uwebsockets.h)
 
 set_target_properties(sourcemeta_registry_server PROPERTIES OUTPUT_NAME sourcemeta-registry-server)
 
@@ -18,9 +17,6 @@ target_link_libraries(sourcemeta_registry_server PRIVATE sourcemeta::blaze::outp
 
 target_compile_definitions(sourcemeta_registry_server
   PRIVATE SOURCEMETA_REGISTRY_STATIC="${REGISTRY_PREFIX}/share/sourcemeta/registry/static")
-
-configure_file(configure.h.in configure.h @ONLY)
-target_include_directories(sourcemeta_registry_server PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 install(TARGETS sourcemeta_registry_server
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"

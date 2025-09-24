@@ -1,6 +1,6 @@
 sourcemeta_executable(NAMESPACE sourcemeta PROJECT registry NAME index
   FOLDER "Registry/Index"
-  SOURCES index.cc output.h generators.h configure.h.in validator.h explorer.h)
+  SOURCES index.cc output.h generators.h explorer.h)
 
 set_target_properties(sourcemeta_registry_index PROPERTIES OUTPUT_NAME sourcemeta-registry-index)
 
@@ -27,9 +27,6 @@ target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::compi
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::evaluator)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::output)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::blaze::linter)
-
-configure_file(configure.h.in configure.h @ONLY)
-target_include_directories(sourcemeta_registry_index PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 install(TARGETS sourcemeta_registry_index
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
