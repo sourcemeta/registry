@@ -52,7 +52,11 @@ Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 https://example.com/foo => https://sourcemeta.com/example/schemas/foo
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
-Generating registry explorer
+(100%) Reviewing: $(realpath "$TMP")/output/schemas
+(  0%) Producing: $(realpath "$TMP")/output/explorer
+( 33%) Producing: example/schemas
+( 66%) Producing: example
+(100%) Producing: .
 Generating registry web interface
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
