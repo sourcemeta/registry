@@ -1,0 +1,1009 @@
+#ifndef SOURCEMETA_REGISTRY_INDEX_WEB_H_
+#define SOURCEMETA_REGISTRY_INDEX_WEB_H_
+
+// TODO: Move this entire file into src/web
+
+#include <sourcemeta/registry/configuration.h>
+#include <sourcemeta/registry/shared.h>
+
+#include "output.h"
+
+#include <algorithm>        // std::sort
+#include <cassert>          // assert
+#include <chrono>           // std::chrono::system_clock::time_point
+#include <cmath>            // std::lround
+#include <filesystem>       // std::filesystem
+#include <fstream>          // std::ifstream
+#include <initializer_list> // std::initializer_list
+#include <numeric>          // std::accumulate
+#include <optional>         // std::optional
+#include <regex>            // std::regex, std::regex_search, std::smatch
+#include <sstream>          // std::ostringstream
+#include <string>           // std::string, std::stoul
+#include <string_view>      // std::string_view
+#include <tuple>            // std::tuple, std::make_tuple
+#include <utility>          // std::move, std::pair
+#include <vector>           // std::vector
+
+namespace sourcemeta::registry::html {
+using Attribute = std::pair<std::string_view, std::string_view>;
+
+template <typename T> class SafeOutput {
+public:
+  SafeOutput(T &output) : stream{output} {};
+
+  auto doctype() -> SafeOutput & { return this->open("!DOCTYPE html"); }
+
+  auto open(const std::string_view tag,
+            std::initializer_list<Attribute> attributes = {}) -> SafeOutput & {
+    this->stream << "<" << tag;
+    for (const auto &attribute : attributes) {
+      this->stream << " " << attribute.first;
+      if (!attribute.second.empty()) {
+        // Single quotes make it easier to embed JSON in attributes
+        this->stream << "='" << attribute.second << "'";
+      }
+    }
+    this->stream << ">";
+    return *this;
+  }
+
+  auto close(const std::string_view tag) -> SafeOutput & {
+    this->stream << "</" << tag << ">";
+    return *this;
+  }
+
+  auto text(const std::string_view content) -> SafeOutput & {
+    // TODO: Perform escaping
+    this->stream << content;
+    return *this;
+  }
+
+  auto unsafe(const std::string_view content) -> SafeOutput & {
+    this->stream << content;
+    return *this;
+  }
+
+private:
+  T &stream;
+};
+
+namespace partials {
+
+template <typename T> auto css(T &output, const std::string_view url) -> T & {
+  output.open("link", {{"rel", "stylesheet"}, {"href", url}});
+  return output;
+}
+
+template <typename T>
+auto image(T &output, const std::string_view url, const std::uint64_t height,
+           const std::uint64_t width, const std::string_view alt,
+           const std::optional<std::string_view> classes) -> T & {
+  if (classes.has_value()) {
+    output.open("img", {{"src", url},
+                        {"alt", alt},
+                        {"height", std::to_string(height)},
+                        {"width", std::to_string(width)},
+                        {"class", classes.value()}});
+  } else {
+    output.open("img", {{"src", url},
+                        {"alt", alt},
+                        {"height", std::to_string(height)},
+                        {"width", std::to_string(width)}});
+  }
+
+  return output;
+}
+
+template <typename T>
+auto image(T &output, const std::string_view url, const std::uint64_t size,
+           const std::string_view alt,
+           const std::optional<std::string_view> classes) -> T & {
+  return image(output, url, size, size, alt, classes);
+}
+
+template <typename T>
+auto html_navigation(T &output,
+                     const sourcemeta::registry::Configuration &configuration)
+    -> void {
+  output.open("nav", {{"class", "navbar navbar-expand border-bottom bg-body"}});
+  output.open("div", {{"class", "container-fluid px-4 py-1 align-items-center "
+                                "flex-column flex-md-row"}});
+
+  output.open(
+      "a",
+      {{"class",
+        "navbar-brand me-0 me-md-3 d-flex align-items-center w-100 w-md-auto"},
+       {"href", configuration.url}});
+
+  output.open("span", {{"class", "fw-bold me-1"}})
+      .text(configuration.html->name)
+      .close("span")
+      .open("span", {{"class", "fw-lighter"}})
+      .text(" Schemas")
+      .close("span");
+  output.close("a");
+
+  output
+      .open("div",
+            {{"class",
+              "mt-2 mt-md-0 flex-grow-1 position-relative w-100 w-md-auto"}})
+      .open("div", {{"class", "input-group"}})
+      .open("span", {{"class", "input-group-text"}})
+      .open("i", {{"class", "bi bi-search"}})
+      .close("i")
+      .close("span")
+      .open("input", {{"class", "form-control"},
+                      {"type", "search"},
+                      {"id", "search"},
+                      {"placeholder", "Search"},
+                      {"aria-label", "Search"},
+                      {"autocomplete", "off"}})
+      .close("div")
+      .open("ul", {{"class",
+                    "d-none list-group position-absolute w-100 mt-2 shadow-sm"},
+                   {"id", "search-result"}})
+      .close("ul")
+      .close("div");
+
+  if (configuration.html->action.has_value()) {
+    output.open("a",
+                {{"class", "ms-md-3 btn btn-dark mt-2 mt-md-0 w-100 w-md-auto"},
+                 {"role", "button"},
+                 {"href", configuration.html->action.value().url}});
+    output
+        .open("i", {{"class",
+                     "me-2 bi bi-" + configuration.html->action.value().icon}})
+        .close("i");
+
+    output.text(configuration.html->action.value().title);
+    output.close("a");
+  }
+
+  output.close("div");
+  output.close("nav");
+}
+
+template <typename T>
+auto html_footer(T &output, const std::string_view version) -> void {
+  output.open(
+      "footer",
+      {{"class",
+        "border-top text-secondary py-3 d-flex "
+        "align-items-center justify-content-between flex-column flex-md-row"}});
+  output.open("small", {{"class", "mb-2 mb-md-0"}});
+  image(output, "/self/static/icon.svg", 25, "Sourcemeta", "me-2");
+
+  output
+      .open("a", {{"href", "https://github.com/sourcemeta/registry"},
+                  {"class", "text-secondary"},
+                  {"target", "_blank"}})
+      .text("Registry")
+      .close("a")
+      .text(" v")
+      .text(version)
+#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
+      .text(" (Enterprise)")
+#elif defined(SOURCEMETA_REGISTRY_PRO)
+      .text(" (Pro)")
+#else
+      .text(" (Starter)")
+#endif
+      .text(" © 2025 ")
+      .open("a", {{"href", "https://www.sourcemeta.com"},
+                  {"class", "text-secondary"},
+                  {"target", "_blank"}})
+      .text("Sourcemeta")
+      .close("a")
+      .close("small");
+  output.open("small")
+      .open("a",
+            {{"href", "https://github.com/sourcemeta/registry/discussions"},
+             {"class", "text-secondary"},
+             {"target", "_blank"}})
+      .open("i", {{"class", "bi bi-question-square me-2"}})
+      .close("i")
+      .text("Need Help?")
+      .close("a");
+
+  output.close("small");
+  output.close("footer");
+}
+
+template <typename T>
+auto html_start(T &output, const std::string &canonical,
+                const std::string &head,
+                const sourcemeta::registry::Configuration &configuration,
+                const std::string &title, const std::string &description,
+                const std::optional<std::string> &path) -> void {
+  output.doctype();
+  output.open("html", {{"class", "h-100"}, {"lang", "en"}});
+  output.open("head");
+
+  // Meta headers
+  output.open("meta", {{"charset", "utf-8"}})
+      .open("meta", {{"name", "referrer"}, {"content", "no-referrer"}})
+      .open("meta", {{"name", "viewport"},
+                     {"content", "width=device-width, initial-scale=1.0"}})
+      .open("meta",
+            {{"http-equiv", "x-ua-compatible"}, {"content", "ie=edge"}});
+
+  // Site metadata
+  output.open("title").text(title).close("title");
+  output.open("meta", {{"name", "description"}, {"content", description}});
+  if (path.has_value()) {
+    output.open("link", {{"rel", "canonical"}, {"href", canonical}});
+  }
+
+  css(output, "/self/static/style.min.css");
+
+  // Application icons
+  // TODO: Allow changing these by supporing an object in the
+  // configuration manifest to select static files to override
+  output
+      .open("link", {{"rel", "icon"},
+                     {"href", "/self/static/favicon.ico"},
+                     {"sizes", "any"}})
+      .open("link", {{"rel", "icon"},
+                     {"href", "/self/static/icon.svg"},
+                     {"type", "image/svg+xml"}})
+      .open("link", {{"rel", "shortcut icon"},
+                     {"href", "/self/static/apple-touch-icon.png"},
+                     {"type", "image/png"}})
+      .open("link", {{"rel", "apple-touch-icon"},
+                     {"href", "/self/static/apple-touch-icon.png"},
+                     {"sizes", "180x180"}})
+      .open("link", {{"rel", "manifest"},
+                     {"href", "/self/static/manifest.webmanifest"}});
+
+  output.unsafe(head);
+  output.close("head");
+  output.open("body", {{"class", "h-100 d-flex flex-column"}});
+
+  html_navigation(output, configuration);
+}
+
+template <typename T>
+auto html_end(T &output, const std::string_view version) -> void {
+  output
+      .open("script",
+            {{"async", ""}, {"defer", ""}, {"src", "/self/static/main.min.js"}})
+      .close("script");
+  output.open("div", {{"class", "container-fluid px-4 mb-2"}});
+  html_footer(output, version);
+  output.close("div");
+  output.close("body");
+  output.close("html");
+}
+
+// TODO: Refactor this function to use new HTML utilities
+template <typename T>
+static auto profile_picture(T &html, const sourcemeta::core::JSON &meta,
+                            const std::uint64_t size,
+                            const std::string_view classes = "") -> bool {
+  if (meta.defines("github") && !meta.at("github").contains('/')) {
+    html << "<img";
+    if (!classes.empty()) {
+      html << " class=\"" << classes << "\"";
+    }
+
+    html << " src=\"https://github.com/";
+    html << meta.at("github").to_string();
+    html << ".png?size=";
+    html << size * 2;
+    html << "\" width=\"" << size << "\" height=\"" << size << "\">";
+    return true;
+  }
+
+  return false;
+}
+
+template <typename T>
+auto breadcrumb(T &html, const sourcemeta::core::JSON &meta) -> void {
+  assert(meta.defines("breadcrumb"));
+  assert(meta.at("breadcrumb").is_array());
+  if (!meta.at("breadcrumb").empty()) {
+    html << "<nav class=\"container-fluid px-4 py-2 bg-light bg-gradient "
+            "border-bottom font-monospace\" aria-label=\"breadcrumb\">";
+    html << "<ol class=\"breadcrumb mb-0\">";
+    html << "<li class=\"breadcrumb-item\">";
+    html << "<a href=\"/\">";
+    html << "<i class=\"bi bi-arrow-left\"></i>";
+    html << "</a>";
+    html << "</li>";
+
+    const auto &breadcrumb{meta.at("breadcrumb").as_array()};
+    for (auto iterator = breadcrumb.cbegin(); iterator != breadcrumb.cend();
+         iterator++) {
+      assert(iterator->is_object());
+      assert(iterator->defines("name"));
+      assert(iterator->at("name").is_string());
+      assert(iterator->defines("path"));
+      assert(iterator->at("path").is_string());
+      if (std::next(iterator) == breadcrumb.cend()) {
+        html << "<li class=\"breadcrumb-item active\" aria-current=\"page\">";
+        html << iterator->at("name").to_string();
+        html << "</li>";
+      } else {
+        html << "<li class=\"breadcrumb-item\">";
+        html << "<a href=\"" << iterator->at("path").to_string() << "\">";
+        html << iterator->at("name").to_string();
+        html << "</a>";
+        html << "</li>";
+      }
+    }
+
+    html << "</ol>";
+    html << "</nav>";
+  }
+}
+
+template <typename T>
+auto schema_health_progress_bar(T &html,
+                                const sourcemeta::core::JSON::Integer health)
+    -> void {
+  const auto health_string{std::to_string(health)};
+  html << "<div class=\"progress\" role=\"progressbar\" aria-label=\"Schema "
+          "health score\" aria-valuenow="
+       << health << " aria-valuemin=0 aria-valuemax=100>";
+
+  if (health > 90) {
+    html << "<div class=\"progress-bar text-bg-success\" style=\"width:"
+         << health << "%\">";
+  } else if (health > 60) {
+    html << "<div class=\"progress-bar text-bg-warning\" style=\"width:"
+         << health << "%\">";
+  } else if (health == 0) {
+    // Otherwise if we set width: 0px, then the label is not shown
+    html << "<div class=\"progress-bar text-bg-danger\"" << health << "%\">";
+  } else {
+    html << "<div class=\"progress-bar text-bg-danger\" style=\"width:"
+         << health << "%\">";
+  }
+
+  html << health_string << "%" << "</div></div>";
+}
+
+auto base_dialect_uri_to_string(
+    const sourcemeta::core::JSON::String &base_dialect) -> std::string {
+  if (base_dialect == "https://json-schema.org/draft/2020-12/schema") {
+    return "2020-12";
+  }
+
+  if (base_dialect == "https://json-schema.org/draft/2019-09/schema") {
+    return "2019-09";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-07/schema#") {
+    return "draft7";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-06/schema#") {
+    return "draft6";
+  }
+
+  if (base_dialect == "http://json-schema.org/draft-04/schema#") {
+    return "draft4";
+  }
+
+  return "unknown";
+}
+
+template <typename T>
+auto dialect_badge(T &html,
+                   const sourcemeta::core::JSON::String &base_dialect_uri)
+    -> void {
+  const auto base_dialect{base_dialect_uri_to_string(base_dialect_uri)};
+  html << "<a "
+          "href=\"https://www.learnjsonschema.com/";
+  html << base_dialect;
+  html << "\" target=\"_blank\">";
+  html << "<span class=\"align-middle badge ";
+
+  // Highlight the latest version in a different manner
+  if (base_dialect == "2020-12") {
+    html << "text-bg-primary";
+  } else {
+    html << "text-bg-danger";
+  }
+
+  html << "\">";
+  for (auto iterator = base_dialect.cbegin(); iterator != base_dialect.cend();
+       ++iterator) {
+    if (iterator == base_dialect.cbegin()) {
+      html << static_cast<char>(std::toupper(*iterator));
+    } else {
+      html << *iterator;
+    }
+  }
+
+  html << "</span>";
+  html << "</a>";
+}
+
+// TODO: Refactor this function to use new HTML utilities
+template <typename T>
+auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
+  breadcrumb(html, meta);
+
+  html << "<div class=\"container-fluid p-4 flex-grow-1\">";
+  html << "<table class=\"table table-bordered border-light-subtle "
+          "table-light\">";
+
+  if (!meta.at("breadcrumb").empty() && meta.defines("title")) {
+    html << "<div class=\"mb-4 d-flex\">";
+    profile_picture(html, meta, 100, "img-thumbnail me-4");
+    html << "<div>";
+    html << "<h2 class=\"fw-bold h4\">";
+    html << meta.at("title").to_string();
+    html << "</h2>";
+
+    if (meta.defines("description")) {
+      html << "<p class=\"text-secondary\">";
+      html << meta.at("description").to_string();
+      html << "</p>";
+    }
+
+    if (meta.defines("email") || meta.defines("github") ||
+        meta.defines("website")) {
+      html << "<div>";
+
+      if (meta.defines("github")) {
+        html << "<small class=\"me-3 d-block mb-2 mb-md-0 d-md-inline-block\">";
+        html << "<i class=\"bi bi-github text-secondary me-1\"></i>";
+        html << "<a href=\"https://github.com/";
+        html << meta.at("github").to_string();
+        html << "\" class=\"text-secondary\" target=\"_blank\">";
+        html << meta.at("github").to_string();
+        html << "</a>";
+        html << "</small>";
+      }
+
+      if (meta.defines("website")) {
+        html << "<small class=\"me-3 d-block mb-2 mb-md-0 d-md-inline-block\">";
+        html << "<i class=\"bi bi-link-45deg text-secondary me-1\"></i>";
+        html << "<a href=\"";
+        html << meta.at("website").to_string();
+        html << "\" class=\"text-secondary\" target=\"_blank\">";
+        html << meta.at("website").to_string();
+        html << "</a>";
+        html << "</small>";
+      }
+
+      if (meta.defines("email")) {
+        html << "<small class=\"me-3 d-block mb-2 mb-md-0 d-md-inline-block\">";
+        html << "<i class=\"bi bi-envelope text-secondary me-1\"></i>";
+        html << "<a href=\"mailto:";
+        html << meta.at("email").to_string();
+        html << "\" class=\"text-secondary\">";
+        html << meta.at("email").to_string();
+        html << "</a>";
+        html << "</small>";
+      }
+
+      html << "</div>";
+    }
+
+    html << "</div>";
+    html << "</div>";
+  }
+
+  assert(meta.is_object());
+  assert(meta.defines("entries"));
+  assert(meta.at("entries").is_array());
+
+  if (meta.at("entries").empty()) {
+    html << "<p>Things look a bit empty over here. Try ingesting some schemas "
+            "in the configuration file!</p>";
+  } else {
+    html << "<thead>";
+    html << "<tr>";
+    html << "<th scope=\"col\" style=\"width: 50px\"></th>";
+    html << "<th scope=\"col\">Name</th>";
+    html << "<th scope=\"col\">Title</th>";
+    html << "<th scope=\"col\">Description</th>";
+    html << "<th scope=\"col\" style=\"width: 150px\">Health</th>";
+    html << "</tr>";
+    html << "</thead>";
+    html << "<tbody>";
+    for (const auto &entry : meta.at("entries").as_array()) {
+      assert(entry.is_object());
+      html << "<tr>";
+
+      assert(entry.defines("type"));
+      assert(entry.at("type").is_string());
+      html << "<td class=\"text-nowrap\">";
+      if (entry.at("type").to_string() == "directory") {
+        const auto has_picture{profile_picture(html, entry, 40)};
+        if (!has_picture) {
+          html << "<i class=\"bi bi-folder-fill\"></i>";
+        }
+      } else {
+        const auto &base_dialect{entry.at("baseDialect").to_string()};
+        dialect_badge(html, base_dialect);
+      }
+      html << "</td>";
+
+      assert(entry.defines("name"));
+      assert(entry.at("name").is_string());
+      html << "<td class=\"font-monospace text-nowrap\">";
+      html << "<a href=\"" << entry.at("path").to_string() << "\">";
+      html << entry.at("name").to_string();
+      html << "</a>";
+      html << "</td>";
+
+      html << "<td>";
+      html << "<small>";
+      if (entry.defines("title")) {
+        html << entry.at("title").to_string();
+      } else {
+        html << "-";
+      }
+      html << "</small>";
+      html << "</td>";
+
+      html << "<td>";
+      html << "<small>";
+      if (entry.defines("description")) {
+        html << entry.at("description").to_string();
+      } else {
+        html << "-";
+      }
+      html << "</small>";
+      html << "</td>";
+
+      html << "<td class=\"align-middle\">";
+      schema_health_progress_bar(html, entry.at("health").to_integer());
+      html << "</td>";
+
+      html << "</tr>";
+    }
+  }
+
+  html << "</tbody>";
+
+  html << "</table>";
+  html << "</div>";
+}
+
+} // namespace partials
+
+} // namespace sourcemeta::registry::html
+
+namespace sourcemeta::registry {
+
+// TODO: HTML generators should not depend on the config file, as
+// all the necessary information should be present in the nav file
+auto GENERATE_EXPLORER_404(
+    const sourcemeta::registry::Configuration &configuration) -> std::string {
+  std::ostringstream stream;
+  assert(!stream.fail());
+  sourcemeta::registry::html::SafeOutput output_html{stream};
+
+  const auto head{configuration.html->head.value_or("")};
+
+  sourcemeta::registry::html::partials::html_start(
+      output_html, configuration.url, head, configuration, "Not Found",
+      "What you are looking for is not here", std::nullopt);
+  output_html.open("div", {{"class", "container-fluid p-4"}})
+      .open("h2", {{"class", "fw-bold"}})
+      .text("Oops! What you are looking for is not here")
+      .close("h2")
+      .open("p", {{"class", "lead"}})
+      .text("Are you sure the link you got is correct?")
+      .close("p")
+      .open("a", {{"href", "/"}})
+      .text("Get back to the home page")
+      .close("a")
+      .close("div")
+      .close("div");
+  sourcemeta::registry::html::partials::html_end(
+      output_html, sourcemeta::registry::version());
+  return stream.str();
+}
+
+// TODO: HTML generators should not depend on the config file, as
+// all the necessary information should be present in the nav file
+auto GENERATE_EXPLORER_INDEX(
+    const sourcemeta::registry::Configuration &configuration,
+    const std::filesystem::path &navigation_path) -> std::string {
+  const auto meta{sourcemeta::registry::read_json(navigation_path)};
+  std::ostringstream html;
+  sourcemeta::registry::html::SafeOutput output_html{html};
+
+  const auto head{configuration.html->head.value_or("")};
+
+  sourcemeta::registry::html::partials::html_start(
+      output_html, meta.at("url").to_string(), head, configuration,
+      configuration.html->name + " Schemas", configuration.html->description,
+      "");
+
+  if (configuration.html->hero.has_value()) {
+    output_html.open("div", {{"class", "container-fluid px-4"}})
+        .open("div", {{"class",
+                       "bg-light border border-light-subtle mt-4 px-3 py-3"}});
+    output_html.unsafe(configuration.html->hero.value());
+    output_html.close("div").close("div");
+  }
+
+  sourcemeta::registry::html::partials::html_file_manager(html, meta);
+  sourcemeta::registry::html::partials::html_end(
+      output_html, sourcemeta::registry::version());
+  return html.str();
+}
+
+// TODO: HTML generators should not depend on the config file, as
+// all the necessary information should be present in the nav file
+auto GENERATE_EXPLORER_DIRECTORY_PAGE(
+    const sourcemeta::registry::Configuration &configuration,
+    const std::filesystem::path &navigation_path) -> std::string {
+  const auto meta{sourcemeta::registry::read_json(navigation_path)};
+  std::ostringstream html;
+
+  sourcemeta::registry::html::SafeOutput output_html{html};
+  const auto head{configuration.html->head.value_or("")};
+  sourcemeta::registry::html::partials::html_start(
+      output_html, meta.at("url").to_string(), head, configuration,
+      meta.defines("title") ? meta.at("title").to_string()
+                            : meta.at("path").to_string(),
+      meta.defines("description")
+          ? meta.at("description").to_string()
+          : ("Schemas located at " + meta.at("path").to_string()),
+      meta.at("path").to_string());
+  sourcemeta::registry::html::partials::html_file_manager(html, meta);
+  sourcemeta::registry::html::partials::html_end(
+      output_html, sourcemeta::registry::version());
+  return html.str();
+}
+
+auto GENERATE_EXPLORER_SCHEMA_PAGE(
+    const sourcemeta::registry::Configuration &configuration,
+    const std::filesystem::path &navigation_path,
+    const std::filesystem::path &dependencies_path,
+    const std::filesystem::path &health_path) -> std::string {
+  const auto meta{sourcemeta::registry::read_json(navigation_path)};
+
+  std::ostringstream html;
+
+  const auto &title{meta.defines("title") ? meta.at("title").to_string()
+                                          : meta.at("path").to_string()};
+
+  sourcemeta::registry::html::SafeOutput output_html{html};
+  const auto head{configuration.html->head.value_or("")};
+  sourcemeta::registry::html::partials::html_start(
+      output_html, meta.at("identifier").to_string(), head, configuration,
+      title,
+      meta.defines("description")
+          ? meta.at("description").to_string()
+          : ("Schemas located at " + meta.at("path").to_string()),
+      meta.at("path").to_string());
+
+  sourcemeta::registry::html::partials::breadcrumb(html, meta);
+
+  output_html.open("div", {{"class", "container-fluid p-4"}});
+  output_html.open("div");
+
+  output_html.open("div");
+
+  if (meta.defines("title")) {
+    output_html.open("h2", {{"class", "fw-bold h4"}});
+    output_html.text(title);
+    output_html.close("h2");
+  }
+
+  if (meta.defines("description")) {
+    output_html.open("p", {{"class", "text-secondary"}})
+        .text(meta.at("description").to_string())
+        .close("p");
+  }
+
+  if (meta.at("protected").to_boolean()) {
+    output_html
+        .open("a", {{"href", meta.at("path").to_string() + ".json"},
+                    {"class", "btn btn-primary me-2 disabled"},
+                    {"aria-disabled", "true"},
+                    {"role", "button"}})
+        .text("Get JSON Schema")
+        .close("a");
+    output_html
+        .open("a", {{"href", meta.at("path").to_string() + ".json?bundle=1"},
+                    {"class", "btn btn-secondary disabled"},
+                    {"aria-disabled", "true"},
+                    {"role", "button"}})
+        .text("Bundle")
+        .close("a");
+  } else {
+    output_html
+        .open("a", {{"href", meta.at("path").to_string() + ".json"},
+                    {"class", "btn btn-primary me-2"},
+                    {"role", "button"}})
+        .text("Get JSON Schema")
+        .close("a");
+    output_html
+        .open("a", {{"href", meta.at("path").to_string() + ".json?bundle=1"},
+                    {"class", "btn btn-secondary"},
+                    {"role", "button"}})
+        .text("Bundle")
+        .close("a");
+  }
+
+  output_html.close("div");
+
+  output_html.open("table", {{"class", "table table-bordered my-4"}});
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Identifier")
+      .close("th");
+
+  if (meta.at("protected").to_boolean()) {
+    output_html.open("td")
+        .open("code")
+        .text(meta.at("identifier").to_string())
+        .close("code")
+        .close("td");
+  } else {
+    output_html.open("td")
+        .open("code")
+        .open("a", {{"href", meta.at("identifier").to_string()}})
+        .text(meta.at("identifier").to_string())
+        .close("a")
+        .close("code")
+        .close("td");
+  }
+
+  output_html.close("tr");
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Base Dialect")
+      .close("th");
+  output_html.open("td");
+  sourcemeta::registry::html::partials::dialect_badge(
+      html, meta.at("baseDialect").to_string());
+  output_html.close("td");
+  output_html.close("tr");
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Dialect")
+      .close("th");
+  output_html.open("td")
+      .open("code")
+      .text(meta.at("dialect").to_string())
+      .close("code")
+      .close("td");
+  output_html.close("tr");
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Health")
+      .close("th");
+  output_html.open("td", {{"class", "align-middle"}});
+  output_html.open("div", {{"style", "max-width: 300px"}});
+  html::partials::schema_health_progress_bar(html,
+                                             meta.at("health").to_integer());
+  output_html.close("div");
+  output_html.close("td");
+  output_html.close("tr");
+
+  output_html.open("tr");
+  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+      .text("Size")
+      .close("th");
+  output_html.open("td")
+      .text(std::to_string(meta.at("bytes").as_real() / (1024 * 1024)) + " MB")
+      .close("td");
+  output_html.close("tr");
+
+  output_html.close("table");
+  output_html.close("div");
+
+  if (meta.at("protected").to_boolean()) {
+    output_html.open("div",
+                     {{"class", "alert alert-warning"}, {"role", "alert"}});
+    if (meta.at("alert").is_string()) {
+      output_html.text(meta.at("alert").to_string());
+    } else {
+      output_html.text("This schema is marked as protected. It is listed, but "
+                       "it cannot be directly accessed");
+    }
+
+    output_html.close("div");
+  } else {
+    if (meta.at("alert").is_string()) {
+      output_html.open(
+          "div", {{"class", "alert alert-warning mb-3"}, {"role", "alert"}});
+      output_html.text(meta.at("alert").to_string());
+      output_html.close("div");
+    }
+
+    output_html.open("div", {{"class", "border overflow-auto"},
+                             {"style", "max-height: 400px;"},
+                             {"data-sourcemeta-ui-editor",
+                              meta.at("path").to_string() + ".json"},
+                             {"data-sourcemeta-ui-editor-mode", "readonly"},
+                             {"data-sourcemeta-ui-editor-language", "json"}});
+    output_html.text("Loading schema...");
+    output_html.close("div");
+  }
+
+  const auto dependencies_json{
+      sourcemeta::registry::read_json(dependencies_path)};
+
+  const auto health{sourcemeta::registry::read_json(health_path)};
+  assert(health.is_object());
+  assert(health.defines("errors"));
+
+  output_html.open("ul", {{"class", "nav nav-tabs mt-4 mb-3"}});
+  output_html.open("li", {{"class", "nav-item"}});
+  output_html
+      .open("button", {{"class", "nav-link"},
+                       {"type", "button"},
+                       {"role", "tab"},
+                       {"data-sourcemeta-ui-tab-target", "dependencies"}})
+      .open("span")
+      .text("Dependencies")
+      .close("span")
+      .open("span",
+            {{"class",
+              "ms-2 badge rounded-pill text-bg-secondary align-text-top"}})
+      .text(std::to_string(dependencies_json.size()))
+      .close("span")
+      .close("a");
+  output_html.close("li");
+  output_html.open("li", {{"class", "nav-item"}});
+  output_html
+      .open("button", {{"class", "nav-link"},
+                       {"type", "button"},
+                       {"role", "tab"},
+                       {"data-sourcemeta-ui-tab-target", "health"}})
+      .open("span")
+      .text("Health")
+      .close("span")
+      .open("span",
+            {{"class",
+              "ms-2 badge rounded-pill text-bg-secondary align-text-top"}})
+      .text(std::to_string(health.at("errors").size()))
+      .close("span")
+      .close("a");
+  output_html.close("li");
+  output_html.close("ul");
+
+  output_html.open("div", {{"data-sourcemeta-ui-tab-id", "dependencies"},
+                           {"class", "d-none"}});
+  std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> direct;
+  std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> indirect;
+  for (const auto &dependency : dependencies_json.as_array()) {
+    if (dependency.at("from") == meta.at("identifier")) {
+      direct.emplace_back(dependency);
+    } else {
+      indirect.emplace_back(dependency);
+    }
+  }
+  std::ostringstream dependency_summary;
+  dependency_summary << "This schema has " << direct.size() << " direct "
+                     << (direct.size() == 1 ? "dependency" : "dependencies")
+                     << " and " << indirect.size() << " indirect "
+                     << (indirect.size() == 1 ? "dependency" : "dependencies")
+                     << ".";
+  output_html.open("p").text(dependency_summary.str()).close("p");
+  if (direct.size() + indirect.size() > 0) {
+    output_html.open("table", {{"class", "table table-bordered"}});
+    output_html.open("thead");
+    output_html.open("tr");
+    output_html.open("th", {{"scope", "col"}}).text("Origin").close("th");
+    output_html.open("th", {{"scope", "col"}}).text("Dependency").close("th");
+    output_html.close("tr");
+    output_html.close("thead");
+    output_html.open("tbody");
+    for (const auto &dependency : dependencies_json.as_array()) {
+      output_html.open("tr");
+
+      if (dependency.at("from") == meta.at("identifier")) {
+        std::ostringstream dependency_attribute;
+        sourcemeta::core::stringify(dependency.at("at"), dependency_attribute);
+        output_html.open("td")
+            .open("a", {{"href", "#"},
+                        {"data-sourcemeta-ui-editor-highlight",
+                         meta.at("path").to_string()},
+                        {"data-sourcemeta-ui-editor-highlight-pointers",
+                         dependency_attribute.str()}})
+            .open("code")
+            .text(dependency.at("at").to_string())
+            .close("code")
+            .close("a")
+            .close("td");
+      } else {
+        output_html.open("td")
+            .open("span", {{"class", "badge text-bg-dark"}})
+            .text("Indirect")
+            .close("span")
+            .close("td");
+      }
+
+      if (dependency.at("to").to_string().starts_with(configuration.url)) {
+        std::filesystem::path dependency_schema_url{
+            dependency.at("to").to_string().substr(configuration.url.size())};
+        output_html.open("td")
+            .open("code")
+            .open("a", {{"href", dependency_schema_url.string()}})
+            .text(dependency_schema_url.string())
+            .close("a")
+            .close("code")
+            .close("td");
+      } else {
+        output_html.open("td")
+            .open("code")
+            .text(dependency.at("to").to_string())
+            .close("code")
+            .close("td");
+      }
+
+      output_html.close("tr");
+    }
+
+    output_html.close("tbody");
+    output_html.close("table");
+  }
+  output_html.close("div");
+
+  output_html.open(
+      "div", {{"data-sourcemeta-ui-tab-id", "health"}, {"class", "d-none"}});
+
+  const auto errors_count{health.at("errors").size()};
+  if (errors_count == 1) {
+    output_html.open("p")
+        .text("This schema has " + std::to_string(errors_count) +
+              " quality error.")
+        .close("p");
+  } else {
+    output_html.open("p")
+        .text("This schema has " + std::to_string(errors_count) +
+              " quality errors.")
+        .close("p");
+  }
+  if (errors_count > 0) {
+    output_html.open("div", {{"class", "list-group"}});
+
+    for (const auto &error : health.at("errors").as_array()) {
+      assert(error.at("pointers").size() >= 1);
+      std::ostringstream pointers;
+      sourcemeta::core::stringify(error.at("pointers"), pointers);
+      output_html.open(
+          "a",
+          {{"href", "#"},
+           {"data-sourcemeta-ui-editor-highlight", meta.at("path").to_string()},
+           {"data-sourcemeta-ui-editor-highlight-pointers", pointers.str()},
+           {"class", "list-group-item list-group-item-action py-3"}});
+      output_html.open("code", {{"class", "d-block text-primary"}})
+          .text(error.at("pointers").front().to_string())
+          .close("code");
+      output_html.open("small", {{"class", "d-block text-body-secondary"}})
+          .text(error.at("name").to_string())
+          .close("small");
+      output_html.open("p", {{"class", "mb-0 mt-2"}})
+          .text(error.at("message").to_string())
+          .close("p");
+      if (error.at("description").is_string()) {
+        output_html.open("small", {{"class", "mt-2"}})
+            .text(error.at("description").to_string())
+            .close("small");
+      }
+      output_html.close("a");
+    }
+
+    output_html.close("div");
+  }
+  output_html.close("div");
+
+  output_html.close("div");
+
+  sourcemeta::registry::html::partials::html_end(
+      output_html, sourcemeta::registry::version());
+  return html.str();
+}
+
+} // namespace sourcemeta::registry
+
+#endif
