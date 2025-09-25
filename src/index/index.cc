@@ -11,6 +11,7 @@
 #include "explorer.h"
 #include "generators.h"
 #include "output.h"
+#include "web.h"
 
 // TODO: Revise these includes
 #include <cassert>     // assert
@@ -339,7 +340,8 @@ static auto index_main(const std::string_view &program,
   // This is a pretty fast step that will be useful for us to properly declare
   // dependencies for HTML and navigational targets
 
-  std::cerr << "Planning schema directory layout\n";
+  std::cerr << "Generating registry explorer\n";
+
   // TODO: We could make this a vector of pairs where the values are the
   // directory entries to a full list of dependencies for navigation targets
   std::vector<std::filesystem::path> directories;
@@ -383,18 +385,17 @@ static auto index_main(const std::string_view &program,
   /////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
 
-  std::cerr << "Generating registry explorer\n";
-
   const auto explorer_path{output.path() / "explorer"};
-
+  std::vector<std::filesystem::path> navs;
+  navs.reserve(resolver.size());
   for (const auto &schema : resolver) {
     auto schema_nav_path{std::filesystem::path{"explorer"} /
                          schema.second.relative_path};
     schema_nav_path /= SENTINEL;
     schema_nav_path /= "schema.metapack";
+
     output.write_metapack_json(
         schema_nav_path, sourcemeta::registry::Encoding::GZIP,
-        // TODO: Call this metadata.metapack and put in the schema directory?
         sourcemeta::registry::GENERATE_NAV_SCHEMA(
             configuration.url, resolver,
             output.path() / "schemas" / schema.second.relative_path / SENTINEL /
@@ -404,7 +405,16 @@ static auto index_main(const std::string_view &program,
             output.path() / "schemas" / schema.second.relative_path / SENTINEL /
                 "protected.metapack",
             schema.second.collection.get(), schema.second.relative_path));
+
+    navs.push_back(output.path() / schema_nav_path);
   }
+
+  const auto search_index{sourcemeta::registry::GENERATE_SEARCH_INDEX(navs)};
+  output.write_metapack_jsonl(
+      std::filesystem::path{"explorer"} / SENTINEL / "search.metapack",
+      // We don't want to compress this one so we can
+      // quickly skim through it while streaming it
+      sourcemeta::registry::Encoding::Identity, search_index);
 
   for (const auto &entry : directories) {
     const auto relative_path{std::filesystem::path{"explorer"} /
@@ -422,26 +432,16 @@ static auto index_main(const std::string_view &program,
       sourcemeta::registry::GENERATE_NAV_DIRECTORY(
           configuration, explorer_path, schemas_path, schemas_path, output));
 
-  // TODO: Could we collect this vector while creating metadata entries?
-  std::vector<std::filesystem::path> navs;
-  navs.reserve(resolver.size());
-  for (const auto &schema : resolver) {
-    auto schema_nav_path{output.path() / "explorer" /
-                         schema.second.relative_path};
-    schema_nav_path /= "%";
-    schema_nav_path /= "schema.metapack";
-    navs.push_back(std::move(schema_nav_path));
-  }
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
 
-  const auto search_index{sourcemeta::registry::GENERATE_SEARCH_INDEX(navs)};
-  output.write_metapack_jsonl(
-      std::filesystem::path{"explorer"} / SENTINEL / "search.metapack",
-      // We don't want to compress this one so we can
-      // quickly skim through it while streaming it
-      sourcemeta::registry::Encoding::Identity, search_index);
-
-  // TODO: Add a test for this
   if (configuration.html.has_value()) {
+    std::cerr << "Generating registry web interface\n";
+
     const auto explorer_base{output.path() / "explorer"};
 
     for (const auto &entry :

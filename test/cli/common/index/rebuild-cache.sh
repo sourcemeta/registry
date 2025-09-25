@@ -51,8 +51,8 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
-Planning schema directory layout
 Generating registry explorer
+Generating registry web interface
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
 
@@ -74,8 +74,8 @@ Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [bundle]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [editor]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [blaze-exhaustive]
-Planning schema directory layout
 Generating registry explorer
+Generating registry web interface
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
 
@@ -95,8 +95,8 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
-Planning schema directory layout
 Generating registry explorer
+Generating registry web interface
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
 
@@ -110,7 +110,7 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
-Planning schema directory layout
 Generating registry explorer
+Generating registry web interface
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
