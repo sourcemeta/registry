@@ -51,6 +51,7 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
+Planning schema directory layout
 Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
@@ -64,15 +65,16 @@ Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
-(skip) Ingesting: https://sourcemeta.com/example/schemas/foo
+(skip) Ingesting: https://sourcemeta.com/example/schemas/foo [materialise]
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [positions]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [locations]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [dependencies]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [health]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [bundle]
-(skip) Analysing: https://sourcemeta.com/example/schemas/foo [unidentified]
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [editor]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [blaze-exhaustive]
+Planning schema directory layout
 Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
@@ -93,6 +95,7 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
+Planning schema directory layout
 Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
@@ -107,6 +110,7 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
+Planning schema directory layout
 Generating registry explorer
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"

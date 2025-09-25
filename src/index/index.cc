@@ -8,12 +8,11 @@
 #include <sourcemeta/registry/resolver.h>
 #include <sourcemeta/registry/shared.h>
 
-#include "configure.h"
 #include "explorer.h"
 #include "generators.h"
 #include "output.h"
-#include "validator.h"
 
+// TODO: Revise these includes
 #include <cassert>     // assert
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>   // std::exception
@@ -32,17 +31,58 @@
 // entry
 constexpr auto SENTINEL{"%"};
 
-static auto
-attribute(const sourcemeta::registry::Configuration::Collection &collection,
-          const sourcemeta::core::JSON::String &property) -> bool {
+static auto attribute_not_disabled(
+    const sourcemeta::registry::Configuration::Collection &collection,
+    const sourcemeta::core::JSON::String &property) -> bool {
   return !collection.extra.defines(property) ||
          !collection.extra.at(property).is_boolean() ||
          collection.extra.at(property).to_boolean();
 }
 
+static auto attribute_enabled(
+    const sourcemeta::registry::Configuration::Collection &collection,
+    const sourcemeta::core::JSON::String &property) -> bool {
+  return collection.extra.defines(property) &&
+         collection.extra.at(property).is_boolean() &&
+         collection.extra.at(property).to_boolean();
+}
+
+static auto print_progress(std::mutex &mutex, const std::size_t threads,
+                           const std::string_view title,
+                           const std::string_view prefix,
+                           const std::size_t current, const std::size_t total)
+    -> void {
+  const auto percentage{current * 100 / total};
+  std::lock_guard<std::mutex> lock{mutex};
+  std::cerr << "(" << std::setfill(' ') << std::setw(3)
+            << static_cast<int>(percentage) << "%) " << title << ": " << prefix
+            << " [" << std::this_thread::get_id() << "/" << threads << "]\n";
+}
+
+template <typename Handler, typename Adapter>
+static auto
+DISPATCH(const std::filesystem::path &destination,
+         const sourcemeta::core::BuildDependencies<typename Adapter::node_type>
+             &dependencies,
+         const typename Handler::Context &context, std::mutex &mutex,
+         const std::string_view title, const std::string_view prefix,
+         const std::string_view suffix, Adapter &adapter,
+         sourcemeta::registry::Output &output) -> void {
+  if (!sourcemeta::core::build<typename Handler::Context>(
+          adapter, Handler::handler, destination, dependencies, context)) {
+    std::lock_guard<std::mutex> lock{mutex};
+    std::cerr << "(skip) " << title << ": " << prefix << " [" << suffix
+              << "]\n";
+  }
+
+  // We need to mark files regardless of whether they were generated or not
+  output.track(destination);
+  output.track(destination.string() + ".deps");
+}
+
 static auto index_main(const std::string_view &program,
                        const sourcemeta::core::Options &app) -> int {
-  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
+  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::version();
 #if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
   std::cout << " Enterprise ";
 #elif defined(SOURCEMETA_REGISTRY_PRO)
@@ -58,17 +98,17 @@ static auto index_main(const std::string_view &program,
     return EXIT_FAILURE;
   }
 
-  // Prepare the output directory
+  /////////////////////////////////////////////////////////////////////////////
+  // (1) Prepare the output directory
+  /////////////////////////////////////////////////////////////////////////////
+
   sourcemeta::registry::Output output{app.positional().at(1)};
   std::cerr << "Writing output to: " << output.path().string() << "\n";
 
-  // --------------------------------------------
-  // (1) Process the configuration file
-  // --------------------------------------------
+  /////////////////////////////////////////////////////////////////////////////
+  // (2) Process the configuration file
+  /////////////////////////////////////////////////////////////////////////////
 
-  // Read and validate the configuration file
-  sourcemeta::registry::Resolver resolver;
-  sourcemeta::registry::Validator validator{resolver};
   const auto configuration_path{
       std::filesystem::canonical(app.positional().at(0))};
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
@@ -76,13 +116,18 @@ static auto index_main(const std::string_view &program,
       configuration_path, SOURCEMETA_REGISTRY_COLLECTIONS)};
   auto configuration{
       sourcemeta::registry::Configuration::parse(raw_configuration)};
+
+  /////////////////////////////////////////////////////////////////////////////
+  // (3) Support overriding the target URL from the CLI
+  /////////////////////////////////////////////////////////////////////////////
+
   if (app.contains("url")) {
     std::cerr << "Overriding the URL in the configuration file with: "
               << app.at("url").at(0) << "\n";
     sourcemeta::core::URI url{std::string{app.at("url").at(0)}};
-    if (url.is_absolute() &&
+    if (url.is_absolute() && url.scheme().has_value() &&
         (url.scheme().value() == "https" || url.scheme().value() == "http")) {
-      // TODO: Unit test this
+      // TODO: Write a test that covers URL overriding
       configuration.url =
           sourcemeta::core::URI::canonicalize(std::string{app.at("url").at(0)});
     } else {
@@ -91,46 +136,56 @@ static auto index_main(const std::string_view &program,
     }
   }
 
-  // We want to keep this file uncompressed and without a leading header to that
-  // the server can quickly read on start
-  // TODO: Get rid of this file
-  const auto configuration_summary_path{output.path() / "configuration.json"};
-  auto summary{sourcemeta::core::JSON::make_object()};
-  // TODO: Add an MD5 checksum of the original config file, otherwise
-  // we won't know if we need to re-create many files that only depend
-  // on the collection settings, etc
-  summary.assign("version",
-                 sourcemeta::core::JSON{sourcemeta::registry::PROJECT_VERSION});
-  // We use this configuration file to track whether we should invalidate
-  // the cache if running on a different version. Therefore, we need to be
-  // careful to not update it unless its really necessary
-  if (std::filesystem::exists(configuration_summary_path)) {
-    const auto summary_contents{
-        sourcemeta::core::read_json(configuration_summary_path)};
-    if (summary_contents != summary) {
-      output.write_json(configuration_summary_path, summary);
-    } else {
-      output.track(configuration_summary_path);
-    }
-  } else {
-    output.write_json(configuration_summary_path, summary);
-  }
+  /////////////////////////////////////////////////////////////////////////////
+  // (4) Store a mark of the Registry version for target dependencies
+  /////////////////////////////////////////////////////////////////////////////
 
-  for (const auto &element : configuration.entries) {
-    if (!std::holds_alternative<
-            sourcemeta::registry::Configuration::Collection>(element.second)) {
+  // We do this so that targets can be re-built if the Registry version changes
+  const auto mark_version_path{output.path() / "version.json"};
+  // Note we only write back if the content changed in order to not accidentally
+  // bump up the file modified time
+  output.write_json_if_different(
+      mark_version_path,
+      sourcemeta::core::JSON{sourcemeta::registry::version()});
+
+  /////////////////////////////////////////////////////////////////////////////
+  // (5) Store the full configuration file for target dependencies
+  /////////////////////////////////////////////////////////////////////////////
+
+  // For targets that depend on the contents of the configuration or on anything
+  // potentially derived from the configuration, such as the resolver
+  const auto mark_configuration_path{output.path() / "configuration.json"};
+  // Note we only write back if the content changed in order to not accidentally
+  // bump up the file modified time
+  output.write_json_if_different(mark_configuration_path, raw_configuration);
+
+  /////////////////////////////////////////////////////////////////////////////
+  // (6) First pass to locate all of the schemas we will be indexing
+  // NOTE: No files are generated. We only want to know what's out there
+  /////////////////////////////////////////////////////////////////////////////
+
+  sourcemeta::registry::Resolver resolver;
+  // This step is very fast, so going parallel about it seems overkill, even
+  // though in theory we could
+  for (const auto &pair : configuration.entries) {
+    const auto *collection{
+        std::get_if<sourcemeta::registry::Configuration::Collection>(
+            &pair.second)};
+    if (!collection) {
       continue;
     }
 
-    const auto &collection{
-        std::get<sourcemeta::registry::Configuration::Collection>(
-            element.second)};
     for (const auto &entry : std::filesystem::recursive_directory_iterator{
-             collection.absolute_path}) {
+             collection->absolute_path}) {
+      if (!entry.is_regular_file()) {
+        continue;
+      }
+
       const auto extension{entry.path().extension()};
-      const auto is_schema_file{extension == ".yaml" || extension == ".yml" ||
-                                extension == ".json"};
-      if (!entry.is_regular_file() || !is_schema_file) {
+      // TODO: Allow the configuration file to override this
+      const auto looks_like_schema_file{
+          extension == ".yaml" || extension == ".yml" || extension == ".json"};
+      if (!looks_like_schema_file) {
         continue;
       }
 
@@ -158,216 +213,139 @@ static auto index_main(const std::string_view &program,
       }
 #endif
 
-      // TODO: Print the before URI => after URI on `--verbose`
-      resolver.add(configuration.url, element.first, collection, entry.path());
+      const auto mapping{resolver.add(configuration.url, pair.first,
+                                      *collection, entry.path())};
+      // Useful for debugging
+      if (app.contains("verbose")) {
+        std::cerr << mapping.first.get() << " => " << mapping.second.get()
+                  << "\n";
+      }
     }
   };
+
+  /////////////////////////////////////////////////////////////////////////////
+  // (7) Do a first analysis pass on the schemas and materialise them for
+  // further analysis. We do this so that we don't end up rebasing the same
+  // schemas over and over again depending on the order of analysis later on
+  /////////////////////////////////////////////////////////////////////////////
+
+  const auto schemas_path{output.path() / "schemas"};
+  sourcemeta::core::BuildAdapterFilesystem adapter;
+  // Mainly to not screw up the logs
+  std::mutex mutex;
+  // TODO: Let the user override this from the command line
+  const auto concurrency{std::thread::hardware_concurrency()};
+  sourcemeta::core::parallel_for_each(
+      resolver.begin(), resolver.end(),
+      [&output, &schemas_path, &resolver, &mutex, &adapter,
+       &mark_configuration_path, &mark_version_path](
+          const auto &schema, const auto threads, const auto cursor) {
+        print_progress(mutex, threads, "Ingesting", schema.first, cursor,
+                       resolver.size());
+        const auto destination{schemas_path / schema.second.relative_path /
+                               SENTINEL / "schema.metapack"};
+        DISPATCH<sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA>(
+            destination,
+            {schema.second.path,
+             // This target depends on the configuration file given things like
+             // resolve maps and base URIs
+             mark_configuration_path, mark_version_path},
+            {schema.first, resolver}, mutex, "Ingesting", schema.first,
+            "materialise", adapter, output);
+
+        // Mark the materialised schema in the resolver
+        resolver.cache_path(schema.first, destination);
+      },
+      concurrency);
+
+  /////////////////////////////////////////////////////////////////////////////
+  // (8) Generate all the artifacts that purely depend on the schemas
+  /////////////////////////////////////////////////////////////////////////////
 
   // Give it a generous thread stack size, otherwise we might overflow
   // the small-by-default thread stack with Blaze
   constexpr auto THREAD_STACK_SIZE{8 * 1024 * 1024};
 
-  sourcemeta::core::BuildAdapterFilesystem adapter;
-
-  std::mutex mutex;
-
   sourcemeta::core::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [&output, &resolver, &validator, &mutex, &adapter,
-       &configuration_summary_path](const auto &schema, const auto threads,
-                                    const auto cursor) {
-        {
-          const auto percentage{cursor * 100 / resolver.size()};
-          std::lock_guard<std::mutex> lock(mutex);
-          std::cerr << "(" << std::setfill(' ') << std::setw(3)
-                    << static_cast<int>(percentage) << "%) "
-                    << "Ingesting: " << schema.first << " ["
-                    << std::this_thread::get_id() << "/" << threads << "]\n";
-        }
-
-        const auto base_path{output.path() / std::filesystem::path{"schemas"} /
-                             schema.second.relative_path / SENTINEL};
-        const auto destination{base_path / "schema.metapack"};
-        assert(schema.second.path.is_absolute());
-
-        if (!sourcemeta::core::build<std::tuple<
-                std::string_view,
-                std::reference_wrapper<sourcemeta::registry::Validator>,
-                std::reference_wrapper<sourcemeta::registry::Resolver>>>(
-                adapter, sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA,
-                destination, {schema.second.path, configuration_summary_path},
-                {schema.first, validator, resolver})) {
-          std::lock_guard<std::mutex> lock(mutex);
-          std::cerr << "(skip) "
-                    << "Ingesting: " << schema.first << " ["
-                    << std::this_thread::get_id() << "/" << threads << "]\n";
-        }
-
-        output.track(destination);
-        output.track(base_path / "schema.metapack.deps");
-
-        resolver.cache_path(schema.first, destination);
-      },
-      std::thread::hardware_concurrency(), THREAD_STACK_SIZE);
-
-  sourcemeta::core::parallel_for_each(
-      resolver.begin(), resolver.end(),
-      [&output, &resolver, &mutex, &adapter, &configuration_summary_path](
+      [&output, &schemas_path, &resolver, &mutex, &adapter,
+       &mark_configuration_path, &mark_version_path](
           const auto &schema, const auto threads, const auto cursor) {
-        {
-          const auto percentage{cursor * 100 / resolver.size()};
-          std::lock_guard<std::mutex> lock(mutex);
-          std::cerr << "(" << std::setfill(' ') << std::setw(3)
-                    << static_cast<int>(percentage) << "%) "
-                    << "Analysing: " << schema.first << " ["
-                    << std::this_thread::get_id() << "/" << threads << "]\n";
+        print_progress(mutex, threads, "Analysing", schema.first, cursor,
+                       resolver.size());
+        const auto base_path{schemas_path / schema.second.relative_path /
+                             SENTINEL};
+
+        if (attribute_enabled(schema.second.collection.get(),
+                              "x-sourcemeta-registry:protected")) {
+          DISPATCH<sourcemeta::registry::GENERATE_MARKER>(
+              base_path / "protected.metapack",
+              {// Because this flag is set in the config file
+               mark_configuration_path, mark_version_path},
+              resolver, mutex, "Analysing", schema.first, "protected", adapter,
+              output);
         }
 
-        const auto base_path{output.path() / std::filesystem::path{"schemas"} /
-                             schema.second.relative_path / SENTINEL};
+        DISPATCH<sourcemeta::registry::GENERATE_POINTER_POSITIONS>(
+            base_path / "positions.metapack",
+            {base_path / "schema.metapack", mark_version_path}, resolver, mutex,
+            "Analysing", schema.first, "positions", adapter, output);
 
-        if (schema.second.collection.get().extra.defines(
-                "x-sourcemeta-registry:protected") &&
-            schema.second.collection.get()
-                .extra.at("x-sourcemeta-registry:protected")
-                .to_boolean()) {
-          if (!sourcemeta::core::build<sourcemeta::core::JSON>(
-                  adapter, sourcemeta::registry::GENERATE_MARKER,
-                  base_path / "protected.metapack",
-                  {configuration_summary_path}, sourcemeta::core::JSON{true})) {
-            std::lock_guard<std::mutex> lock(mutex);
-            std::cerr << "(skip) Analysing: " << schema.first
-                      << " [protected]\n";
-          }
+        DISPATCH<sourcemeta::registry::GENERATE_FRAME_LOCATIONS>(
+            base_path / "locations.metapack",
+            {base_path / "schema.metapack", mark_version_path}, resolver, mutex,
+            "Analysing", schema.first, "locations", adapter, output);
 
-          output.track(base_path / "protected.metapack");
-          output.track(base_path / "protected.metapack.deps");
-        }
+        DISPATCH<sourcemeta::registry::GENERATE_DEPENDENCIES>(
+            base_path / "dependencies.metapack",
+            {base_path / "schema.metapack", mark_version_path}, resolver, mutex,
+            "Analysing", schema.first, "dependencies", adapter, output);
 
-        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
-                adapter, sourcemeta::registry::GENERATE_POINTER_POSITIONS,
-                base_path / "positions.metapack",
-                {base_path / "schema.metapack", configuration_summary_path},
-                resolver)) {
-          std::lock_guard<std::mutex> lock(mutex);
-          std::cerr << "(skip) Analysing: " << schema.first << " [positions]\n";
-        }
+        DISPATCH<sourcemeta::registry::GENERATE_HEALTH>(
+            base_path / "health.metapack",
+            {base_path / "schema.metapack", base_path / "dependencies.metapack",
+             mark_version_path},
+            resolver, mutex, "Analysing", schema.first, "health", adapter,
+            output);
 
-        output.track(base_path / "positions.metapack");
-        output.track(base_path / "positions.metapack.deps");
+        DISPATCH<sourcemeta::registry::GENERATE_BUNDLE>(
+            base_path / "bundle.metapack",
+            {base_path / "schema.metapack", base_path / "dependencies.metapack",
+             mark_version_path},
+            resolver, mutex, "Analysing", schema.first, "bundle", adapter,
+            output);
 
-        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
-                adapter, sourcemeta::registry::GENERATE_FRAME_LOCATIONS,
-                base_path / "locations.metapack",
-                {base_path / "schema.metapack", configuration_summary_path},
-                resolver)) {
-          std::lock_guard<std::mutex> lock(mutex);
-          std::cerr << "(skip) Analysing: " << schema.first << " [locations]\n";
-        }
+        DISPATCH<sourcemeta::registry::GENERATE_EDITOR>(
+            base_path / "editor.metapack",
+            {base_path / "bundle.metapack", mark_version_path}, resolver, mutex,
+            "Analysing", schema.first, "editor", adapter, output);
 
-        output.track(base_path / "locations.metapack");
-        output.track(base_path / "locations.metapack.deps");
-
-        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
-                adapter, sourcemeta::registry::GENERATE_DEPENDENCIES,
-                base_path / "dependencies.metapack",
-                {base_path / "schema.metapack", configuration_summary_path},
-                resolver)) {
-          std::lock_guard<std::mutex> lock(mutex);
-          std::cerr << "(skip) Analysing: " << schema.first
-                    << " [dependencies]\n";
-        }
-
-        output.track(base_path / "dependencies.metapack");
-        output.track(base_path / "dependencies.metapack.deps");
-
-        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
-                adapter, sourcemeta::registry::GENERATE_HEALTH,
-                base_path / "health.metapack",
-                {base_path / "schema.metapack",
-                 base_path / "dependencies.metapack",
-                 configuration_summary_path},
-                resolver)) {
-          std::lock_guard<std::mutex> lock(mutex);
-          std::cerr << "(skip) Analysing: " << schema.first << " [health]\n";
-        }
-
-        output.track(base_path / "health.metapack");
-        output.track(base_path / "health.metapack.deps");
-
-        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
-                adapter, sourcemeta::registry::GENERATE_BUNDLE,
-                base_path / "bundle.metapack",
-                {base_path / "schema.metapack",
-                 base_path / "dependencies.metapack",
-                 configuration_summary_path},
-                resolver)) {
-          std::lock_guard<std::mutex> lock(mutex);
-          std::cerr << "(skip) Analysing: " << schema.first << " [bundle]\n";
-        }
-
-        output.track(base_path / "bundle.metapack");
-        output.track(base_path / "bundle.metapack.deps");
-
-        if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
-                adapter, sourcemeta::registry::GENERATE_UNIDENTIFIED,
-                base_path / "unidentified.metapack",
-                {base_path / "bundle.metapack", configuration_summary_path},
-                resolver)) {
-          std::lock_guard<std::mutex> lock(mutex);
-          std::cerr << "(skip) Analysing: " << schema.first
-                    << " [unidentified]\n";
-        }
-
-        output.track(base_path / "unidentified.metapack");
-        output.track(base_path / "unidentified.metapack.deps");
-
-        if (attribute(schema.second.collection.get(),
-                      "x-sourcemeta-registry:evaluate")) {
-          if (!sourcemeta::core::build<sourcemeta::registry::Resolver>(
-                  adapter,
-                  sourcemeta::registry::GENERATE_BLAZE_TEMPLATE_EXHAUSTIVE,
-                  base_path / "blaze-exhaustive.metapack",
-                  {base_path / "bundle.metapack", configuration_summary_path},
-                  resolver)) {
-            std::lock_guard<std::mutex> lock(mutex);
-            std::cerr << "(skip) Analysing: " << schema.first
-                      << " [blaze-exhaustive]\n";
-          }
-
-          output.track(base_path / "blaze-exhaustive.metapack");
-          output.track(base_path / "blaze-exhaustive.metapack.deps");
+        if (attribute_not_disabled(schema.second.collection.get(),
+                                   "x-sourcemeta-registry:evaluate")) {
+          // TODO: Compile fast templates too
+          DISPATCH<sourcemeta::registry::GENERATE_BLAZE_TEMPLATE>(
+              base_path / "blaze-exhaustive.metapack",
+              {base_path / "bundle.metapack", mark_version_path},
+              sourcemeta::blaze::Mode::Exhaustive, mutex, "Analysing",
+              schema.first, "blaze-exhaustive", adapter, output);
         }
       },
-      std::thread::hardware_concurrency(), THREAD_STACK_SIZE);
+      concurrency, THREAD_STACK_SIZE);
 
-  std::cerr << "Generating registry explorer\n";
+  /////////////////////////////////////////////////////////////////////////////
+  // (9) Do a pass over the current output to determine directory layout
+  /////////////////////////////////////////////////////////////////////////////
 
-  for (const auto &schema : resolver) {
-    auto schema_nav_path{std::filesystem::path{"explorer"} /
-                         schema.second.relative_path};
-    schema_nav_path /= SENTINEL;
-    schema_nav_path /= "schema.metapack";
-    output.write_metapack_json(
-        schema_nav_path, sourcemeta::registry::Encoding::GZIP,
-        sourcemeta::registry::GENERATE_NAV_SCHEMA(
-            configuration.url, resolver,
-            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
-                "schema.metapack",
-            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
-                "health.metapack",
-            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
-                "protected.metapack",
-            schema.second.collection.get(), schema.second.relative_path));
-  }
+  // This is a pretty fast step that will be useful for us to properly declare
+  // dependencies for HTML and navigational targets
 
-  const auto base{output.path() / "schemas"};
-  const auto navigation_base{output.path() / "explorer"};
-
-  std::vector<std::filesystem::path> schema_directories;
-  if (std::filesystem::exists(base)) {
+  std::cerr << "Planning schema directory layout\n";
+  // TODO: We could make this a vector of pairs where the values are the
+  // directory entries to a full list of dependencies for navigation targets
+  std::vector<std::filesystem::path> directories;
+  if (std::filesystem::exists(schemas_path)) {
     for (const auto &entry :
-         std::filesystem::recursive_directory_iterator{base}) {
+         std::filesystem::recursive_directory_iterator{schemas_path}) {
       if (entry.is_directory() && entry.path().filename() != SENTINEL &&
           !output.is_untracked_file(entry.path())) {
         const auto children{
@@ -379,39 +357,72 @@ static auto index_main(const std::string_view &program,
           continue;
         }
 
-        schema_directories.push_back(entry.path());
+        assert(entry.path().is_absolute());
+        directories.push_back(entry.path());
       }
     }
+
+    // Re-order the directories so that the most nested ones come first, as we
+    // often need to process directories in that order
+    std::ranges::sort(directories, [](const std::filesystem::path &left,
+                                      const std::filesystem::path &right) {
+      const auto left_depth{std::distance(left.begin(), left.end())};
+      const auto right_depth{std::distance(right.begin(), right.end())};
+      if (left_depth == right_depth) {
+        return left < right;
+      } else {
+        return left_depth > right_depth;
+      }
+    });
   }
 
-  // Handle deep directories first
-  std::ranges::sort(schema_directories, [](const std::filesystem::path &left,
-                                           const std::filesystem::path &right) {
-    const auto left_depth{std::distance(left.begin(), left.end())};
-    const auto right_depth{std::distance(right.begin(), right.end())};
-    if (left_depth == right_depth) {
-      return left < right;
-    } else {
-      return left_depth > right_depth;
-    }
-  });
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
 
-  for (const auto &entry : schema_directories) {
+  std::cerr << "Generating registry explorer\n";
+
+  const auto explorer_path{output.path() / "explorer"};
+
+  for (const auto &schema : resolver) {
+    auto schema_nav_path{std::filesystem::path{"explorer"} /
+                         schema.second.relative_path};
+    schema_nav_path /= SENTINEL;
+    schema_nav_path /= "schema.metapack";
+    output.write_metapack_json(
+        schema_nav_path, sourcemeta::registry::Encoding::GZIP,
+        // TODO: Call this metadata.metapack and put in the schema directory?
+        sourcemeta::registry::GENERATE_NAV_SCHEMA(
+            configuration.url, resolver,
+            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
+                "schema.metapack",
+            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
+                "health.metapack",
+            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
+                "protected.metapack",
+            schema.second.collection.get(), schema.second.relative_path));
+  }
+
+  for (const auto &entry : directories) {
     const auto relative_path{std::filesystem::path{"explorer"} /
-                             std::filesystem::relative(entry, base) / SENTINEL /
-                             "directory.metapack"};
+                             std::filesystem::relative(entry, schemas_path) /
+                             SENTINEL / "directory.metapack"};
     output.write_metapack_json(
         relative_path, sourcemeta::registry::Encoding::GZIP,
         sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-            configuration, navigation_base, base, entry, output));
+            configuration, explorer_path, schemas_path, entry, output));
   }
 
   output.write_metapack_json(
       std::filesystem::path{"explorer"} / SENTINEL / "directory.metapack",
       sourcemeta::registry::Encoding::GZIP,
       sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-          configuration, navigation_base, base, base, output));
+          configuration, explorer_path, schemas_path, schemas_path, output));
 
+  // TODO: Could we collect this vector while creating metadata entries?
   std::vector<std::filesystem::path> navs;
   navs.reserve(resolver.size());
   for (const auto &schema : resolver) {
@@ -495,6 +506,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     sourcemeta::core::Options app;
     // TODO: Support a --help flag
     app.option("url", {"u"});
+    app.flag("verbose", {"v"});
     app.parse(argc, argv);
     const std::string_view program{argv[0]};
     if (!sourcemeta::registry::license_permitted()) {
@@ -531,7 +543,9 @@ auto main(int argc, char *argv[]) noexcept -> int {
   } catch (const sourcemeta::registry::ConfigurationValidationError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
     return EXIT_FAILURE;
-  } catch (const sourcemeta::registry::ValidatorError &error) {
+  } catch (
+      const sourcemeta::registry::GENERATE_MATERIALISED_SCHEMA::MetaschemaError
+          &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();
     return EXIT_FAILURE;
   } catch (const sourcemeta::registry::ResolverOutsideBaseError &error) {

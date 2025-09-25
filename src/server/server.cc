@@ -7,7 +7,6 @@
 
 #include "uwebsockets.h"
 
-#include "configure.h"
 #include "evaluate.h"
 #include "search.h"
 #include "status.h"
@@ -396,7 +395,7 @@ static auto on_schema(const std::filesystem::path &base,
   const auto bundle{!request->getQuery("bundle").empty()};
   auto absolute_path{base / "schemas" / lowercase_path / SENTINEL};
   if (is_vscode) {
-    absolute_path /= "unidentified.metapack";
+    absolute_path /= "editor.metapack";
   } else if (bundle || is_deno) {
     absolute_path /= "bundle.metapack";
   } else {
@@ -677,7 +676,7 @@ auto terminate(int signal) -> void {
 auto main(int argc, char *argv[]) noexcept -> int {
   const auto timestamp_start{std::chrono::steady_clock::now()};
 
-  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::PROJECT_VERSION;
+  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::version();
 #if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
   std::cout << " Enterprise ";
 #elif defined(SOURCEMETA_REGISTRY_PRO)

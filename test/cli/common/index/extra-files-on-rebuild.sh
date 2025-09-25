@@ -46,7 +46,7 @@ not_exists() {
 
 exists "$TMP/output/explorer/example/schemas/old/%/schema.metapack"
 exists "$TMP/output/schemas/example/schemas/old/%/bundle.metapack"
-exists "$TMP/output/schemas/example/schemas/old/%/unidentified.metapack"
+exists "$TMP/output/schemas/example/schemas/old/%/editor.metapack"
 exists "$TMP/output/schemas/example/schemas/old/%/blaze-exhaustive.metapack"
 exists "$TMP/output/schemas/example/schemas/old/%/schema.metapack"
 
@@ -61,12 +61,12 @@ EOF
 
 exists "$TMP/output/explorer/example/schemas/new/%/schema.metapack"
 exists "$TMP/output/schemas/example/schemas/new/%/bundle.metapack"
-exists "$TMP/output/schemas/example/schemas/new/%/unidentified.metapack"
+exists "$TMP/output/schemas/example/schemas/new/%/editor.metapack"
 exists "$TMP/output/schemas/example/schemas/new/%/blaze-exhaustive.metapack"
 exists "$TMP/output/schemas/example/schemas/new/%/schema.metapack"
 
 not_exists "$TMP/output/explorer/example/schemas/old/%/schema.metapack"
 not_exists "$TMP/output/schemas/example/schemas/old/%/bundle.metapack"
-not_exists "$TMP/output/schemas/example/schemas/old/%/unidentified.metapack"
+not_exists "$TMP/output/schemas/example/schemas/old/%/editor.metapack"
 not_exists "$TMP/output/schemas/example/schemas/old/%/blaze-exhaustive.metapack"
 not_exists "$TMP/output/schemas/example/schemas/old/%/schema.metapack"

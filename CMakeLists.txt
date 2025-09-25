@@ -42,10 +42,6 @@ else()
   add_compile_definitions(SOURCEMETA_REGISTRY_STARTER)
 endif()
 
-if(REGISTRY_INDEX OR REGISTRY_SERVER)
-  add_subdirectory(src/shared)
-endif()
-
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   set(REGISTRY_VERSION "${PROJECT_VERSION}")
 else()
@@ -69,6 +65,10 @@ else()
   set(REGISTRY_VERSION "${PROJECT_VERSION}+${PROJECT_GIT_SHA}")
 endif()
 message(STATUS "Registry version: ${REGISTRY_VERSION}")
+
+if(REGISTRY_INDEX OR REGISTRY_SERVER)
+  add_subdirectory(src/shared)
+endif()
 
 if(REGISTRY_INDEX)
   add_subdirectory(contrib/file2metapack)

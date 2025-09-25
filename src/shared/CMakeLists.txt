@@ -1,6 +1,6 @@
 sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME shared
-  PRIVATE_HEADERS license.h metapack.h encoding.h
-  SOURCES license.cc metapack.cc)
+  PRIVATE_HEADERS license.h metapack.h encoding.h version.h
+  SOURCES license.cc metapack.cc version.cc configure.h.in)
 
 target_link_libraries(sourcemeta_registry_shared PUBLIC sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::io)
@@ -8,14 +8,6 @@ target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::gzip)
 
-# TODO: De-duplicate this with a common macro
-if(REGISTRY_EDITION STREQUAL "enterprise")
-  target_compile_definitions(sourcemeta_registry_shared
-    PRIVATE SOURCEMETA_REGISTRY_ENTERPRISE)
-elseif(REGISTRY_EDITION STREQUAL "pro")
-  target_compile_definitions(sourcemeta_registry_shared
-    PRIVATE SOURCEMETA_REGISTRY_PRO)
-else()
-  target_compile_definitions(sourcemeta_registry_shared
-    PRIVATE SOURCEMETA_REGISTRY_STARTER)
-endif()
+configure_file(configure.h.in configure.h @ONLY)
+target_include_directories(sourcemeta_registry_shared
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
