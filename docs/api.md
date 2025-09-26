@@ -10,8 +10,8 @@ ensuring fast response times and efficient resource utilization across all
 endpoints.
 
 - **Cross-origin resource sharing (CORS)**: Full CORS support is implemented
-  throughout the API, including proper handling of preflight OPTIONS requests,
-  making it seamlessly compatible with browser-based applications and
+  throughout the API, including proper handling of preflight `OPTIONS`
+  requests, making it seamlessly compatible with browser-based applications and
   cross-origin requests
 - **HTTP conventions**: Every `GET` request has a corresponding `HEAD` method.
   For brevity, we don't specify this every time
