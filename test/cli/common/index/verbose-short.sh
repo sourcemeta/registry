@@ -43,7 +43,7 @@ remove_threads_information() {
   fi
 }
 
-"$1" "$TMP/registry.json" "$TMP/output" -v 2> "$TMP/output.txt"
+"$1" "$TMP/registry.json" "$TMP/output" -v --concurrency 1 2> "$TMP/output.txt"
 remove_threads_information "$TMP/output.txt"
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
@@ -57,6 +57,9 @@ https://example.com/foo => https://sourcemeta.com/example/schemas/foo
 ( 33%) Producing: example/schemas
 ( 66%) Producing: example
 (100%) Producing: .
-Generating registry web interface
+( 25%) Rendering: example/schemas
+( 50%) Rendering: example
+( 75%) Rendering: .
+(100%) Rendering: example/schemas/foo
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"

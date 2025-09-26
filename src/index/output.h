@@ -9,8 +9,7 @@
 #include <cassert>       // assert
 #include <filesystem>    // std::filesystem
 #include <iostream>      // std::cerr
-#include <shared_mutex>  // std::shared_mutex
-#include <string_view>   // std::string_view
+#include <shared_mutex>  // std::shared_mutex, std::shared_lock
 #include <unordered_map> // std::unordered_map
 
 namespace sourcemeta::registry {
@@ -43,18 +42,6 @@ public:
 
   auto path() const -> const std::filesystem::path & { return this->path_; }
 
-  // TODO: Get rid of this method
-  auto write_json(const std::filesystem::path &path,
-                  const sourcemeta::core::JSON &document)
-      -> const std::filesystem::path & {
-    const auto absolute_path{this->resolve(path)};
-    std::filesystem::create_directories(absolute_path.parent_path());
-    std::ofstream stream{absolute_path};
-    assert(!stream.fail());
-    sourcemeta::core::stringify(document, stream);
-    return this->track(absolute_path);
-  }
-
   auto write_json_if_different(const std::filesystem::path &path,
                                const sourcemeta::core::JSON &document) -> void {
     if (std::filesystem::exists(path)) {
@@ -67,18 +54,6 @@ public:
     } else {
       this->write_json(path, document);
     }
-  }
-
-  // TODO: Get rid of this method
-  auto write_metapack_html(const std::filesystem::path &path,
-                           const sourcemeta::registry::Encoding encoding,
-                           const std::string_view contents)
-      -> const std::filesystem::path & {
-    const auto absolute_path{this->resolve(path)};
-    std::filesystem::create_directories(absolute_path.parent_path());
-    sourcemeta::registry::write_text(absolute_path, contents, "text/html",
-                                     encoding, sourcemeta::core::JSON{nullptr});
-    return this->track(absolute_path);
   }
 
   auto track(const std::filesystem::path &path)
@@ -107,16 +82,15 @@ public:
   }
 
 private:
-  auto resolve(const std::filesystem::path &relative_path) const
-      -> std::filesystem::path {
-    if (relative_path.is_absolute()) {
-      return relative_path;
-    }
-
-    assert(relative_path.is_relative());
-    // TODO: We need to have a "safe" path concat function that does not allow
-    // the path to escape the parent. Make it part of Core
-    return this->path_ / relative_path;
+  auto write_json(const std::filesystem::path &path,
+                  const sourcemeta::core::JSON &document)
+      -> const std::filesystem::path & {
+    assert(path.is_absolute());
+    std::filesystem::create_directories(path.parent_path());
+    std::ofstream stream{path};
+    assert(!stream.fail());
+    sourcemeta::core::stringify(document, stream);
+    return this->track(path);
   }
 
   const std::filesystem::path path_;

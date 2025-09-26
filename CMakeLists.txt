@@ -81,8 +81,6 @@ if(REGISTRY_INDEX)
   add_dependencies(sourcemeta_registry_index
     sourcemeta_registry_collections)
   add_subdirectory(src/web)
-  add_dependencies(sourcemeta_registry_index
-    sourcemeta_registry_web)
 endif()
 
 if(REGISTRY_SERVER)

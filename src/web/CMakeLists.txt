@@ -1,3 +1,9 @@
+sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME web)
+
+target_link_libraries(sourcemeta_registry_web INTERFACE sourcemeta::core::json)
+target_link_libraries(sourcemeta_registry_web INTERFACE sourcemeta::registry::configuration)
+target_link_libraries(sourcemeta_registry_web INTERFACE sourcemeta::registry::shared)
+
 sourcemeta_esbuild_bundle(
   ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/main.js"
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
@@ -43,7 +49,6 @@ install(FILES ${REGISTRY_STATIC_METAPACK}
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/static"
   COMPONENT sourcemeta_registry)
 
-add_custom_target(sourcemeta_registry_web DEPENDS
-  ${REGISTRY_STATIC_METAPACK}
+target_sources(sourcemeta_registry_web PRIVATE ${REGISTRY_STATIC_METAPACK}
   "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
   "${CMAKE_CURRENT_BINARY_DIR}/style.min.css")
