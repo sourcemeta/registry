@@ -14,7 +14,9 @@
 #include "generators.h"
 #include "output.h"
 
+#include <algorithm>   // std::sort
 #include <cassert>     // assert
+#include <chrono>      // std::chrono
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>   // std::exception
 #include <filesystem>  // std::filesystem
@@ -520,6 +522,44 @@ static auto index_main(const std::string_view &program,
   // TODO: Print the size of the output directory here
 
   output.remove_unknown_files();
+
+  // TODO: Add a test for this
+  if (app.contains("profile")) {
+    std::cerr << "Profiling...\n";
+    std::vector<std::pair<std::filesystem::path, std::chrono::milliseconds>>
+        durations;
+    for (const auto &entry :
+         std::filesystem::recursive_directory_iterator{output.path()}) {
+      if (entry.is_regular_file() && entry.path().extension() == ".metapack") {
+        try {
+          const auto file{sourcemeta::registry::read_stream_raw(entry.path())};
+          assert(file.has_value());
+          durations.emplace_back(entry.path(), file.value().duration);
+        } catch (...) {
+          std::cerr << "Could not profile file: " << entry.path() << "\n";
+          throw;
+        }
+      }
+    }
+
+    std::sort(durations.begin(), durations.end(),
+              [](const auto &left, const auto &right) {
+                return left.second > right.second;
+              });
+
+    constexpr std::size_t PROFILE_ENTRIES_MAXIMUM{25};
+    for (std::size_t index = 0;
+         index < std::min(durations.size(),
+                          static_cast<std::size_t>(PROFILE_ENTRIES_MAXIMUM));
+         index++) {
+      std::cout << durations[index].second.count() << "ms "
+                << std::filesystem::relative(durations[index].first,
+                                             output.path())
+                       .string()
+                << "\n";
+    }
+  }
+
   return EXIT_SUCCESS;
 }
 
@@ -530,6 +570,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     app.option("url", {"u"});
     app.option("concurrency", {"c"});
     app.flag("verbose", {"v"});
+    app.flag("profile", {"p"});
     app.parse(argc, argv);
     const std::string_view program{argv[0]};
     if (!sourcemeta::registry::license_permitted()) {

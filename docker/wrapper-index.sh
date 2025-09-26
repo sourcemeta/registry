@@ -13,9 +13,12 @@ then
   exit 1
 fi
 
-case "$(realpath "$1")" in
+CONFIGURATION="$1"
+shift
+
+case "$(realpath "$CONFIGURATION")" in
   "$SOURCEMETA_REGISTRY_WORKDIR"*)
-    /usr/bin/sourcemeta-registry-index "$1" "$SOURCEMETA_REGISTRY_OUTPUT"
+    /usr/bin/sourcemeta-registry-index "$CONFIGURATION" "$SOURCEMETA_REGISTRY_OUTPUT" "$@"
     # Automatically cleanup the source directories
     echo "Deleting $SOURCEMETA_REGISTRY_WORKDIR to keep the image small" 1>&2
     rm -rf "$SOURCEMETA_REGISTRY_WORKDIR"

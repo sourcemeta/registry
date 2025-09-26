@@ -570,6 +570,7 @@ struct GENERATE_WEB_DIRECTORY {
               &dependencies,
           const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
           const Context &configuration) -> void {
+    const auto timestamp_start{std::chrono::steady_clock::now()};
     const auto meta{sourcemeta::registry::read_json(dependencies.front())};
     std::ostringstream html;
     sourcemeta::registry::html::SafeOutput output_html{html};
@@ -585,11 +586,14 @@ struct GENERATE_WEB_DIRECTORY {
     sourcemeta::registry::html::partials::html_file_manager(html, meta);
     sourcemeta::registry::html::partials::html_end(
         output_html, sourcemeta::registry::version());
+    const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
-    sourcemeta::registry::write_text(destination, html.str(), "text/html",
-                                     sourcemeta::registry::Encoding::GZIP,
-                                     sourcemeta::core::JSON{nullptr});
+    sourcemeta::registry::write_text(
+        destination, html.str(), "text/html",
+        sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr},
+        std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
+                                                              timestamp_start));
   }
 };
 
@@ -600,6 +604,7 @@ struct GENERATE_WEB_NOT_FOUND {
           const sourcemeta::core::BuildDependencies<std::filesystem::path> &,
           const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
           const Context &configuration) -> void {
+    const auto timestamp_start{std::chrono::steady_clock::now()};
     std::ostringstream stream;
     assert(!stream.fail());
     sourcemeta::registry::html::SafeOutput output_html{stream};
@@ -621,11 +626,14 @@ struct GENERATE_WEB_NOT_FOUND {
         .close("div");
     sourcemeta::registry::html::partials::html_end(
         output_html, sourcemeta::registry::version());
+    const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
-    sourcemeta::registry::write_text(destination, stream.str(), "text/html",
-                                     sourcemeta::registry::Encoding::GZIP,
-                                     sourcemeta::core::JSON{nullptr});
+    sourcemeta::registry::write_text(
+        destination, stream.str(), "text/html",
+        sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr},
+        std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
+                                                              timestamp_start));
   }
 };
 
@@ -637,6 +645,7 @@ struct GENERATE_WEB_INDEX {
               &dependencies,
           const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
           const Context &configuration) -> void {
+    const auto timestamp_start{std::chrono::steady_clock::now()};
     const auto meta{sourcemeta::registry::read_json(dependencies.front())};
     std::ostringstream html;
     sourcemeta::registry::html::SafeOutput output_html{html};
@@ -660,11 +669,14 @@ struct GENERATE_WEB_INDEX {
     sourcemeta::registry::html::partials::html_file_manager(html, meta);
     sourcemeta::registry::html::partials::html_end(
         output_html, sourcemeta::registry::version());
+    const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
-    sourcemeta::registry::write_text(destination, html.str(), "text/html",
-                                     sourcemeta::registry::Encoding::GZIP,
-                                     sourcemeta::core::JSON{nullptr});
+    sourcemeta::registry::write_text(
+        destination, html.str(), "text/html",
+        sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr},
+        std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
+                                                              timestamp_start));
   }
 };
 
@@ -676,6 +688,7 @@ struct GENERATE_WEB_SCHEMA {
               &dependencies,
           const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
           const Context &configuration) -> void {
+    const auto timestamp_start{std::chrono::steady_clock::now()};
     const auto meta{sourcemeta::registry::read_json(dependencies.front())};
 
     std::ostringstream html;
@@ -1057,11 +1070,14 @@ struct GENERATE_WEB_SCHEMA {
 
     sourcemeta::registry::html::partials::html_end(
         output_html, sourcemeta::registry::version());
+    const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
-    sourcemeta::registry::write_text(destination, html.str(), "text/html",
-                                     sourcemeta::registry::Encoding::GZIP,
-                                     sourcemeta::core::JSON{nullptr});
+    sourcemeta::registry::write_text(
+        destination, html.str(), "text/html",
+        sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr},
+        std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
+                                                              timestamp_start));
   }
 };
 

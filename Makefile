@@ -75,7 +75,7 @@ sandbox: compile
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-index \
 		$(SANDBOX)/registry-$(SANDBOX_CONFIGURATION).json \
-		$(OUTPUT)/sandbox --url $(SANDBOX_URL)
+		$(OUTPUT)/sandbox --url $(SANDBOX_URL) --profile
 	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox \
 		$(SANDBOX)/manifest-$(SANDBOX_CONFIGURATION).txt
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \

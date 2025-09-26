@@ -22,7 +22,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
         output, app.positional().at(0), std::string{app.positional().at(1)},
         app.contains("gzip") ? sourcemeta::registry::Encoding::GZIP
                              : sourcemeta::registry::Encoding::Identity,
-        sourcemeta::core::JSON{nullptr});
+        sourcemeta::core::JSON{nullptr}, std::chrono::milliseconds::zero());
     return EXIT_SUCCESS;
   } catch (const std::exception &error) {
     std::cerr << "unexpected error: " << error.what() << "\n";
