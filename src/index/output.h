@@ -43,6 +43,7 @@ public:
 
   auto path() const -> const std::filesystem::path & { return this->path_; }
 
+  // TODO: Get rid of this method
   auto write_json(const std::filesystem::path &path,
                   const sourcemeta::core::JSON &document)
       -> const std::filesystem::path & {
@@ -68,30 +69,7 @@ public:
     }
   }
 
-  auto write_metapack_json(const std::filesystem::path &path,
-                           const sourcemeta::registry::Encoding encoding,
-                           const sourcemeta::core::JSON &document)
-      -> const std::filesystem::path & {
-    const auto absolute_path{this->resolve(path)};
-    std::filesystem::create_directories(absolute_path.parent_path());
-    sourcemeta::registry::write_pretty_json(absolute_path, document,
-                                            "application/json", encoding,
-                                            sourcemeta::core::JSON{nullptr});
-    return this->track(absolute_path);
-  }
-
-  auto write_metapack_jsonl(const std::filesystem::path &path,
-                            const sourcemeta::registry::Encoding encoding,
-                            const std::vector<sourcemeta::core::JSON> &entries)
-      -> const std::filesystem::path & {
-    const auto absolute_path{this->resolve(path)};
-    std::filesystem::create_directories(absolute_path.parent_path());
-    sourcemeta::registry::write_jsonl(absolute_path, entries,
-                                      "application/jsonl", encoding,
-                                      sourcemeta::core::JSON{nullptr});
-    return this->track(absolute_path);
-  }
-
+  // TODO: Get rid of this method
   auto write_metapack_html(const std::filesystem::path &path,
                            const sourcemeta::registry::Encoding encoding,
                            const std::string_view contents)

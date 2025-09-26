@@ -267,25 +267,16 @@ static auto index_main(const std::string_view &program,
   // the small-by-default thread stack with Blaze
   constexpr auto THREAD_STACK_SIZE{8 * 1024 * 1024};
 
+  const auto explorer_path{output.path() / "explorer"};
   sourcemeta::core::parallel_for_each(
       resolver.begin(), resolver.end(),
-      [&output, &schemas_path, &resolver, &mutex, &adapter,
+      [&output, &schemas_path, &explorer_path, &resolver, &mutex, &adapter,
        &mark_configuration_path, &mark_version_path](
           const auto &schema, const auto threads, const auto cursor) {
         print_progress(mutex, threads, "Analysing", schema.first, cursor,
                        resolver.size());
         const auto base_path{schemas_path / schema.second.relative_path /
                              SENTINEL};
-
-        if (attribute_enabled(schema.second.collection.get(),
-                              "x-sourcemeta-registry:protected")) {
-          DISPATCH<sourcemeta::registry::GENERATE_MARKER>(
-              base_path / "protected.metapack",
-              {// Because this flag is set in the config file
-               mark_configuration_path, mark_version_path},
-              resolver, mutex, "Analysing", schema.first, "protected", adapter,
-              output);
-        }
 
         DISPATCH<sourcemeta::registry::GENERATE_POINTER_POSITIONS>(
             base_path / "positions.metapack",
@@ -330,26 +321,60 @@ static auto index_main(const std::string_view &program,
               sourcemeta::blaze::Mode::Exhaustive, mutex, "Analysing",
               schema.first, "blaze-exhaustive", adapter, output);
         }
+
+        if (attribute_enabled(schema.second.collection.get(),
+                              "x-sourcemeta-registry:protected")) {
+          DISPATCH<sourcemeta::registry::GENERATE_MARKER>(
+              base_path / "protected.metapack",
+              {// Because this flag is set in the config file
+               mark_configuration_path, mark_version_path},
+              resolver, mutex, "Analysing", schema.first, "protected", adapter,
+              output);
+
+          DISPATCH<sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_METADATA>(
+              explorer_path / schema.second.relative_path / SENTINEL /
+                  "schema.metapack",
+              {base_path / "schema.metapack", base_path / "health.metapack",
+               // As this target reads the alert from the configuration file
+               mark_configuration_path, mark_version_path,
+               base_path / "protected.metapack"},
+              {resolver, schema.second.collection.get(),
+               schema.second.relative_path},
+              mutex, "Analysing", schema.first, "metadata", adapter, output);
+        } else {
+          DISPATCH<sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_METADATA>(
+              explorer_path / schema.second.relative_path / SENTINEL /
+                  "schema.metapack",
+              {base_path / "schema.metapack", base_path / "health.metapack",
+               // As this target reads the alert from the configuration file
+               mark_configuration_path, mark_version_path},
+              {resolver, schema.second.collection.get(),
+               schema.second.relative_path},
+              mutex, "Analysing", schema.first, "metadata", adapter, output);
+        }
       },
       concurrency, THREAD_STACK_SIZE);
 
   /////////////////////////////////////////////////////////////////////////////
-  // (9) Do a pass over the current output to determine directory layout
+  // (9) Scan the generated files so far to prepare for more complex targets
   /////////////////////////////////////////////////////////////////////////////
 
   // This is a pretty fast step that will be useful for us to properly declare
   // dependencies for HTML and navigational targets
 
-  std::cerr << "Generating registry explorer\n";
-
-  // TODO: We could make this a vector of pairs where the values are the
-  // directory entries to a full list of dependencies for navigation targets
+  print_progress(mutex, concurrency, "Reviewing", schemas_path.string(), 1, 1);
   std::vector<std::filesystem::path> directories;
+  // The top-level is itself a directory
+  directories.emplace_back(schemas_path);
+  std::vector<std::filesystem::path> summaries;
   if (std::filesystem::exists(schemas_path)) {
     for (const auto &entry :
          std::filesystem::recursive_directory_iterator{schemas_path}) {
-      if (entry.is_directory() && entry.path().filename() != SENTINEL &&
-          !output.is_untracked_file(entry.path())) {
+      if (output.is_untracked_file(entry.path())) {
+        continue;
+      }
+
+      if (entry.is_directory() && entry.path().filename() != SENTINEL) {
         const auto children{
             std::distance(std::filesystem::directory_iterator(entry.path()),
                           std::filesystem::directory_iterator{})};
@@ -360,7 +385,12 @@ static auto index_main(const std::string_view &program,
         }
 
         assert(entry.path().is_absolute());
-        directories.push_back(entry.path());
+        directories.emplace_back(entry.path());
+      } else if (entry.is_regular_file() &&
+                 entry.path().filename() == "schema.metapack" &&
+                 entry.path().parent_path().filename() == SENTINEL) {
+        summaries.emplace_back(explorer_path / std::filesystem::relative(
+                                                   entry.path(), schemas_path));
       }
     }
 
@@ -379,58 +409,39 @@ static auto index_main(const std::string_view &program,
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////
+  // (10) Generate the JSON-based explorer
   /////////////////////////////////////////////////////////////////////////////
 
-  const auto explorer_path{output.path() / "explorer"};
-  std::vector<std::filesystem::path> navs;
-  navs.reserve(resolver.size());
-  for (const auto &schema : resolver) {
-    auto schema_nav_path{std::filesystem::path{"explorer"} /
-                         schema.second.relative_path};
-    schema_nav_path /= SENTINEL;
-    schema_nav_path /= "schema.metapack";
+  print_progress(mutex, concurrency, "Producing", explorer_path.string(), 0,
+                 100);
+  DISPATCH<sourcemeta::registry::GENERATE_EXPLORER_SEARCH_INDEX>(
+      explorer_path / SENTINEL / "search.metapack", summaries, nullptr, mutex,
+      "Producing", explorer_path.string(), "search", adapter, output);
 
-    output.write_metapack_json(
-        schema_nav_path, sourcemeta::registry::Encoding::GZIP,
-        sourcemeta::registry::GENERATE_NAV_SCHEMA(
-            configuration.url, resolver,
-            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
-                "schema.metapack",
-            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
-                "health.metapack",
-            output.path() / "schemas" / schema.second.relative_path / SENTINEL /
-                "protected.metapack",
-            schema.second.collection.get(), schema.second.relative_path));
-
-    navs.push_back(output.path() / schema_nav_path);
+  // Directory generation depends on the configuration for metadata
+  summaries.emplace_back(mark_configuration_path);
+  // Note that we can't parallelise this loop, as we need to do it bottom-up
+  for (std::size_t cursor = 0; cursor < directories.size(); cursor++) {
+    const auto &entry{directories[cursor]};
+    const auto relative_path{std::filesystem::relative(entry, schemas_path)};
+    print_progress(mutex, 1, "Producing", relative_path.string(), cursor + 1,
+                   directories.size());
+    const auto destination{std::filesystem::weakly_canonical(
+        explorer_path / relative_path / SENTINEL / "directory.metapack")};
+    DISPATCH<sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_LIST>(
+        destination,
+        // If any of the entry summary files changes, by definition we need to
+        // re-compute. This is a good enough dependency we can use without
+        // having to manually scan the entire directory structure once more
+        summaries,
+        {.directory = entry,
+         .configuration = configuration,
+         .output = output,
+         .explorer_path = explorer_path,
+         .schemas_path = schemas_path},
+        mutex, "Producing", relative_path.string(), "directory", adapter,
+        output);
   }
-
-  const auto search_index{sourcemeta::registry::GENERATE_SEARCH_INDEX(navs)};
-  output.write_metapack_jsonl(
-      std::filesystem::path{"explorer"} / SENTINEL / "search.metapack",
-      // We don't want to compress this one so we can
-      // quickly skim through it while streaming it
-      sourcemeta::registry::Encoding::Identity, search_index);
-
-  for (const auto &entry : directories) {
-    const auto relative_path{std::filesystem::path{"explorer"} /
-                             std::filesystem::relative(entry, schemas_path) /
-                             SENTINEL / "directory.metapack"};
-    output.write_metapack_json(
-        relative_path, sourcemeta::registry::Encoding::GZIP,
-        sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-            configuration, explorer_path, schemas_path, entry, output));
-  }
-
-  output.write_metapack_json(
-      std::filesystem::path{"explorer"} / SENTINEL / "directory.metapack",
-      sourcemeta::registry::Encoding::GZIP,
-      sourcemeta::registry::GENERATE_NAV_DIRECTORY(
-          configuration, explorer_path, schemas_path, schemas_path, output));
 
   /////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////

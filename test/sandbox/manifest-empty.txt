@@ -4,5 +4,7 @@
 ./explorer/%/404.metapack
 ./explorer/%/directory-html.metapack
 ./explorer/%/directory.metapack
+./explorer/%/directory.metapack.deps
 ./explorer/%/search.metapack
+./explorer/%/search.metapack.deps
 ./version.json

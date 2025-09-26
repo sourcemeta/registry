@@ -51,7 +51,11 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
-Generating registry explorer
+(100%) Reviewing: $(realpath "$TMP")/output/schemas
+(  0%) Producing: $(realpath "$TMP")/output/explorer
+( 33%) Producing: example/schemas
+( 66%) Producing: example
+(100%) Producing: .
 Generating registry web interface
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
@@ -74,7 +78,16 @@ Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [bundle]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [editor]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [blaze-exhaustive]
-Generating registry explorer
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [metadata]
+(100%) Reviewing: $(realpath "$TMP")/output/schemas
+(  0%) Producing: $(realpath "$TMP")/output/explorer
+(skip) Producing: $(realpath "$TMP")/output/explorer [search]
+( 33%) Producing: example/schemas
+(skip) Producing: example/schemas [directory]
+( 66%) Producing: example
+(skip) Producing: example [directory]
+(100%) Producing: .
+(skip) Producing: . [directory]
 Generating registry web interface
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
@@ -95,7 +108,11 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
-Generating registry explorer
+(100%) Reviewing: $(realpath "$TMP")/output/schemas
+(  0%) Producing: $(realpath "$TMP")/output/explorer
+( 33%) Producing: example/schemas
+( 66%) Producing: example
+(100%) Producing: .
 Generating registry web interface
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
@@ -110,7 +127,11 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo
 (100%) Analysing: https://sourcemeta.com/example/schemas/foo
-Generating registry explorer
+(100%) Reviewing: $(realpath "$TMP")/output/schemas
+(  0%) Producing: $(realpath "$TMP")/output/explorer
+( 33%) Producing: example/schemas
+( 66%) Producing: example
+(100%) Producing: .
 Generating registry web interface
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
