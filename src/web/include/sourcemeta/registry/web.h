@@ -858,6 +858,22 @@ struct GENERATE_WEB_SCHEMA {
         .open("button", {{"class", "nav-link"},
                          {"type", "button"},
                          {"role", "tab"},
+                         {"data-sourcemeta-ui-tab-target", "examples"}})
+        .open("span")
+        .text("Examples")
+        .close("span")
+        .open("span",
+              {{"class",
+                "ms-2 badge rounded-pill text-bg-secondary align-text-top"}})
+        .text(std::to_string(meta.at("examples").size()))
+        .close("span")
+        .close("a");
+    output_html.close("li");
+    output_html.open("li", {{"class", "nav-item"}});
+    output_html
+        .open("button", {{"class", "nav-link"},
+                         {"type", "button"},
+                         {"role", "tab"},
                          {"data-sourcemeta-ui-tab-target", "dependencies"}})
         .open("span")
         .text("Dependencies")
@@ -886,6 +902,27 @@ struct GENERATE_WEB_SCHEMA {
         .close("a");
     output_html.close("li");
     output_html.close("ul");
+
+    output_html.open("div", {{"data-sourcemeta-ui-tab-id", "examples"},
+                             {"class", "d-none"}});
+
+    if (meta.at("examples").empty()) {
+      output_html.open("p").text("This schema declares 0 examples.").close("p");
+    } else {
+      output_html.open("div", {{"class", "list-group"}});
+      for (const auto &example : meta.at("examples").as_array()) {
+        std::ostringstream pretty;
+        sourcemeta::core::prettify(example, pretty);
+        output_html.open("pre", {{"class", "bg-light p-2 border"}})
+            .open("code", {{"class", "d-block text-primary"}})
+            .text(pretty.str())
+            .close("code")
+            .close("pre");
+      }
+
+      output_html.close("div");
+    }
+    output_html.close("div");
 
     output_html.open("div", {{"data-sourcemeta-ui-tab-id", "dependencies"},
                              {"class", "d-none"}});

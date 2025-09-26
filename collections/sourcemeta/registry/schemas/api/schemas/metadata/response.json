@@ -1,8 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$ref": "#base",
-  "required": [ "breadcrumb" ],
+  "required": [ "breadcrumb", "examples" ],
   "properties": {
+    "examples": {
+      "type": "array",
+      "maxItems": 10
+    },
     "breadcrumb": {
       "type": "array",
       "items": {

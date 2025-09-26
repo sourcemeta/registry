@@ -6,5 +6,8 @@
     "foo": {
       "type": "string"
     }
-  }
+  },
+  "examples": [
+    "draft4 does not define `examples`!"
+  ]
 }

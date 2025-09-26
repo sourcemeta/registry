@@ -209,6 +209,7 @@ GET /self/api/schemas/metadata/{path}
     | `/alert` | String / Null | No | The human readable alert message for the schema collection, if any |
     | `/title` | String | No | The title of the schema, if any |
     | `/description` | String | No | The description of the schema, if any |
+    | `/examples` | Array | Yes | Up to 10 of the schema examples, if any |
     | `/breadcrumb` | Array | Yes | The breadcrumb of the schema |
     | `/breadcrumb/*/name` | String | Yes | The breadcrumb entry URL path |
     | `/breadcrumb/*/path` | String | Yes | The relative URL of the breadcrumb location |
