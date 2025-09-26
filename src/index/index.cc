@@ -3,6 +3,7 @@
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/options.h>
 #include <sourcemeta/core/parallel.h>
+#include <sourcemeta/core/uri.h>
 
 #include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/resolver.h>
@@ -13,7 +14,6 @@
 #include "generators.h"
 #include "output.h"
 
-// TODO: Revise these includes
 #include <cassert>     // assert
 #include <cstdlib>     // EXIT_FAILURE, EXIT_SUCCESS
 #include <exception>   // std::exception

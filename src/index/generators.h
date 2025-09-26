@@ -21,7 +21,6 @@
 
 namespace sourcemeta::registry {
 
-// TODO: Use this struct pattern for the other generators
 struct GENERATE_MATERIALISED_SCHEMA {
   using Context =
       std::pair<std::string_view,
