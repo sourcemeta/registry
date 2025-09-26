@@ -7,11 +7,11 @@
 #include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/resolver.h>
 #include <sourcemeta/registry/shared.h>
+#include <sourcemeta/registry/web.h>
 
 #include "explorer.h"
 #include "generators.h"
 #include "output.h"
-#include "web.h"
 
 // TODO: Revise these includes
 #include <cassert>     // assert
@@ -20,10 +20,8 @@
 #include <filesystem>  // std::filesystem
 #include <iomanip>     // std::setw, std::setfill
 #include <iostream>    // std::cerr, std::cout
-#include <span>        // std::span
 #include <string>      // std::string
 #include <string_view> // std::string_view
-#include <utility>     // std::move
 #include <vector>      // std::vector
 
 // We rely on this special prefix to avoid file system collisions. The reason it
@@ -234,8 +232,9 @@ static auto index_main(const std::string_view &program,
   sourcemeta::core::BuildAdapterFilesystem adapter;
   // Mainly to not screw up the logs
   std::mutex mutex;
-  // TODO: Let the user override this from the command line
-  const auto concurrency{std::thread::hardware_concurrency()};
+  const auto concurrency{app.contains("concurrency")
+                             ? std::stoull(app.at("concurrency").front().data())
+                             : std::thread::hardware_concurrency()};
   sourcemeta::core::parallel_for_each(
       resolver.begin(), resolver.end(),
       [&output, &schemas_path, &resolver, &mutex, &adapter,
@@ -420,6 +419,7 @@ static auto index_main(const std::string_view &program,
 
   // Directory generation depends on the configuration for metadata
   summaries.emplace_back(mark_configuration_path);
+  summaries.emplace_back(mark_version_path);
   // Note that we can't parallelise this loop, as we need to do it bottom-up
   for (std::size_t cursor = 0; cursor < directories.size(); cursor++) {
     const auto &entry{directories[cursor]};
@@ -443,67 +443,78 @@ static auto index_main(const std::string_view &program,
         output);
   }
 
+  // Restore the summaries list as it was before
+  summaries.pop_back();
+  summaries.pop_back();
+
   /////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////
+  // (11) Generate the HTML web interface
   /////////////////////////////////////////////////////////////////////////////
 
   if (configuration.html.has_value()) {
-    std::cerr << "Generating registry web interface\n";
+    sourcemeta::core::parallel_for_each(
+        directories.begin(), directories.end(),
+        [&configuration, &output, &schemas_path, &explorer_path, &directories,
+         &summaries, &mutex, &adapter, &mark_configuration_path,
+         &mark_version_path](const auto &entry, const auto threads,
+                             const auto cursor) {
+          const auto relative_path{
+              std::filesystem::relative(entry, schemas_path)};
+          print_progress(mutex, threads, "Rendering", relative_path.string(),
+                         cursor, directories.size() + summaries.size());
 
-    const auto explorer_base{output.path() / "explorer"};
+          if (relative_path == ".") {
+            DISPATCH<sourcemeta::registry::GENERATE_WEB_INDEX>(
+                explorer_path / SENTINEL / "directory-html.metapack",
+                {explorer_path / SENTINEL / "directory.metapack",
+                 // We rely on the configuration for site metadata
+                 mark_configuration_path, mark_version_path},
+                configuration, mutex, "Rendering", relative_path.string(),
+                "index", adapter, output);
+            DISPATCH<sourcemeta::registry::GENERATE_WEB_NOT_FOUND>(
+                explorer_path / SENTINEL / "404.metapack",
+                {// We rely on the configuration for site metadata
+                 mark_configuration_path, mark_version_path},
+                configuration, mutex, "Rendering", relative_path.string(),
+                "not-found", adapter, output);
+          } else {
+            DISPATCH<sourcemeta::registry::GENERATE_WEB_DIRECTORY>(
+                explorer_path / relative_path / SENTINEL /
+                    "directory-html.metapack",
+                {explorer_path / relative_path / SENTINEL /
+                     "directory.metapack",
+                 // We rely on the configuration for site metadata
+                 mark_configuration_path, mark_version_path},
+                configuration, mutex, "Rendering", relative_path.string(),
+                "directory", adapter, output);
+          }
+        },
+        concurrency);
 
-    for (const auto &entry :
-         std::filesystem::recursive_directory_iterator{explorer_base}) {
-      if (entry.path().parent_path() == explorer_base / SENTINEL) {
-        continue;
-      } else if (entry.path().filename() == "directory.metapack") {
-        const auto relative_destination{
-            std::filesystem::relative(entry.path().parent_path(),
-                                      output.path()) /
-            "directory-html.metapack"};
-        output.write_metapack_html(
-            relative_destination, sourcemeta::registry::Encoding::GZIP,
-            sourcemeta::registry::GENERATE_EXPLORER_DIRECTORY_PAGE(
-                configuration, entry.path()));
-      } else if (entry.path().filename() == "schema.metapack") {
-        const auto relative_destination{
-            std::filesystem::relative(entry.path().parent_path(),
-                                      output.path()) /
-            "schema-html.metapack"};
-
-        const auto schema_base_path{
-            output.path() / "schemas" /
-            (std::filesystem::relative(entry.path().parent_path(),
-                                       output.path() / "explorer")
-                 .parent_path()
-                 .string())};
-
-        const auto dependencies_path{schema_base_path / SENTINEL /
-                                     "dependencies.metapack"};
-        const auto health_path{schema_base_path / SENTINEL / "health.metapack"};
-
-        output.write_metapack_html(
-            relative_destination, sourcemeta::registry::Encoding::GZIP,
-            sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_PAGE(
-                configuration, entry.path(), dependencies_path, health_path));
-      }
-    }
-
-    output.write_metapack_html(
-        std::filesystem::path{"explorer"} / SENTINEL /
-            "directory-html.metapack",
-        sourcemeta::registry::Encoding::GZIP,
-        sourcemeta::registry::GENERATE_EXPLORER_INDEX(
-            configuration, output.path() / std::filesystem::path{"explorer"} /
-                               SENTINEL / "directory.metapack"));
-
-    output.write_metapack_html(
-        std::filesystem::path{"explorer"} / SENTINEL / "404.metapack",
-        sourcemeta::registry::Encoding::GZIP,
-        sourcemeta::registry::GENERATE_EXPLORER_404(configuration));
+    sourcemeta::core::parallel_for_each(
+        summaries.begin(), summaries.end(),
+        [&configuration, &output, &schemas_path, &explorer_path, &directories,
+         &summaries, &mutex, &adapter, &mark_configuration_path,
+         &mark_version_path](const auto &entry, const auto threads,
+                             const auto cursor) {
+          const auto relative_path{
+              std::filesystem::relative(entry, explorer_path)
+                  .parent_path()
+                  .parent_path()};
+          print_progress(mutex, threads, "Rendering", relative_path.string(),
+                         cursor + directories.size(),
+                         summaries.size() + directories.size());
+          const auto schema_path{schemas_path / relative_path / SENTINEL};
+          DISPATCH<sourcemeta::registry::GENERATE_WEB_SCHEMA>(
+              entry.parent_path() / "schema-html.metapack",
+              {entry, schema_path / "dependencies.metapack",
+               schema_path / "health.metapack",
+               // We rely on the configuration for site metadata
+               mark_configuration_path, mark_version_path},
+              configuration, mutex, "Rendering", relative_path.string(),
+              "schema", adapter, output);
+        },
+        concurrency);
   }
 
   // TODO: Print the size of the output directory here
@@ -517,6 +528,7 @@ auto main(int argc, char *argv[]) noexcept -> int {
     sourcemeta::core::Options app;
     // TODO: Support a --help flag
     app.option("url", {"u"});
+    app.option("concurrency", {"c"});
     app.flag("verbose", {"v"});
     app.parse(argc, argv);
     const std::string_view program{argv[0]};

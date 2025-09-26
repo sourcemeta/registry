@@ -43,7 +43,7 @@ remove_threads_information() {
   fi
 }
 
-"$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt"
+"$1" "$TMP/registry.json" "$TMP/output" --concurrency 1 2> "$TMP/output.txt"
 remove_threads_information "$TMP/output.txt"
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
@@ -56,13 +56,16 @@ Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 ( 33%) Producing: example/schemas
 ( 66%) Producing: example
 (100%) Producing: .
-Generating registry web interface
+( 25%) Rendering: example/schemas
+( 50%) Rendering: example
+( 75%) Rendering: .
+(100%) Rendering: example/schemas/foo
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
 
 # Run it once more
 
-"$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt"
+"$1" "$TMP/registry.json" "$TMP/output" --concurrency 1 2> "$TMP/output.txt"
 remove_threads_information "$TMP/output.txt"
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
@@ -88,7 +91,15 @@ Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (skip) Producing: example [directory]
 (100%) Producing: .
 (skip) Producing: . [directory]
-Generating registry web interface
+( 25%) Rendering: example/schemas
+(skip) Rendering: example/schemas [directory]
+( 50%) Rendering: example
+(skip) Rendering: example [directory]
+( 75%) Rendering: .
+(skip) Rendering: . [index]
+(skip) Rendering: . [not-found]
+(100%) Rendering: example/schemas/foo
+(skip) Rendering: example/schemas/foo [schema]
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
 
@@ -100,7 +111,7 @@ cat << 'EOF' > "$TMP/schemas/foo.json"
   "type": "string"
 }
 EOF
-"$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt"
+"$1" "$TMP/registry.json" "$TMP/output" --concurrency 1 2> "$TMP/output.txt"
 remove_threads_information "$TMP/output.txt"
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
@@ -113,13 +124,17 @@ Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 ( 33%) Producing: example/schemas
 ( 66%) Producing: example
 (100%) Producing: .
-Generating registry web interface
+( 25%) Rendering: example/schemas
+( 50%) Rendering: example
+( 75%) Rendering: .
+(skip) Rendering: . [not-found]
+(100%) Rendering: example/schemas/foo
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"
 
 # Update the configuration summary
 touch "$TMP/output/configuration.json"
-"$1" "$TMP/registry.json" "$TMP/output" 2> "$TMP/output.txt"
+"$1" "$TMP/registry.json" "$TMP/output" --concurrency 1 2> "$TMP/output.txt"
 remove_threads_information "$TMP/output.txt"
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
@@ -132,6 +147,9 @@ Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 ( 33%) Producing: example/schemas
 ( 66%) Producing: example
 (100%) Producing: .
-Generating registry web interface
+( 25%) Rendering: example/schemas
+( 50%) Rendering: example
+( 75%) Rendering: .
+(100%) Rendering: example/schemas/foo
 EOF
 diff "$TMP/output.txt" "$TMP/expected.txt"

@@ -130,8 +130,6 @@ struct GENERATE_EXPLORER_SCHEMA_METADATA {
     result.assign("health", health.at("score"));
     result.assign("protected", sourcemeta::core::JSON{dependencies.size() > 4});
 
-    // TODO: This means we need this target to depend on the config file or the
-    // relevant include!
     const auto &collection{std::get<1>(context).get()};
     if (collection.extra.defines("x-sourcemeta-registry:alert")) {
       assert(collection.extra.at("x-sourcemeta-registry:alert").is_string());
@@ -173,6 +171,10 @@ struct GENERATE_EXPLORER_SEARCH_INDEX {
 
     for (const auto &metadata_path : dependencies) {
       auto metadata_json{sourcemeta::registry::read_json(metadata_path)};
+      if (!sourcemeta::core::is_schema(metadata_json)) {
+        continue;
+      }
+
       auto entry{sourcemeta::core::JSON::make_array()};
       entry.push_back(
           sourcemeta::core::JSON{metadata_json.at("path").to_string()});

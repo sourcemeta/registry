@@ -1,27 +1,17 @@
-#ifndef SOURCEMETA_REGISTRY_INDEX_WEB_H_
-#define SOURCEMETA_REGISTRY_INDEX_WEB_H_
-
-// TODO: Move this entire file into src/web
+#ifndef SOURCEMETA_REGISTRY_WEB_H_
+#define SOURCEMETA_REGISTRY_WEB_H_
 
 #include <sourcemeta/registry/configuration.h>
 #include <sourcemeta/registry/shared.h>
 
-#include "output.h"
-
-#include <algorithm>        // std::sort
 #include <cassert>          // assert
-#include <chrono>           // std::chrono::system_clock::time_point
-#include <cmath>            // std::lround
 #include <filesystem>       // std::filesystem
 #include <fstream>          // std::ifstream
 #include <initializer_list> // std::initializer_list
-#include <numeric>          // std::accumulate
 #include <optional>         // std::optional
-#include <regex>            // std::regex, std::regex_search, std::smatch
 #include <sstream>          // std::ostringstream
-#include <string>           // std::string, std::stoul
+#include <string>           // std::string
 #include <string_view>      // std::string_view
-#include <tuple>            // std::tuple, std::make_tuple
 #include <utility>          // std::move, std::pair
 #include <vector>           // std::vector
 
@@ -572,437 +562,471 @@ auto html_file_manager(T &html, const sourcemeta::core::JSON &meta) -> void {
 
 namespace sourcemeta::registry {
 
-// TODO: HTML generators should not depend on the config file, as
-// all the necessary information should be present in the nav file
-auto GENERATE_EXPLORER_404(
-    const sourcemeta::registry::Configuration &configuration) -> std::string {
-  std::ostringstream stream;
-  assert(!stream.fail());
-  sourcemeta::registry::html::SafeOutput output_html{stream};
+struct GENERATE_WEB_DIRECTORY {
+  using Context = sourcemeta::registry::Configuration;
+  static auto
+  handler(const std::filesystem::path &destination,
+          const sourcemeta::core::BuildDependencies<std::filesystem::path>
+              &dependencies,
+          const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
+          const Context &configuration) -> void {
+    const auto meta{sourcemeta::registry::read_json(dependencies.front())};
+    std::ostringstream html;
+    sourcemeta::registry::html::SafeOutput output_html{html};
+    const auto head{configuration.html->head.value_or("")};
+    sourcemeta::registry::html::partials::html_start(
+        output_html, meta.at("url").to_string(), head, configuration,
+        meta.defines("title") ? meta.at("title").to_string()
+                              : meta.at("path").to_string(),
+        meta.defines("description")
+            ? meta.at("description").to_string()
+            : ("Schemas located at " + meta.at("path").to_string()),
+        meta.at("path").to_string());
+    sourcemeta::registry::html::partials::html_file_manager(html, meta);
+    sourcemeta::registry::html::partials::html_end(
+        output_html, sourcemeta::registry::version());
 
-  const auto head{configuration.html->head.value_or("")};
-
-  sourcemeta::registry::html::partials::html_start(
-      output_html, configuration.url, head, configuration, "Not Found",
-      "What you are looking for is not here", std::nullopt);
-  output_html.open("div", {{"class", "container-fluid p-4"}})
-      .open("h2", {{"class", "fw-bold"}})
-      .text("Oops! What you are looking for is not here")
-      .close("h2")
-      .open("p", {{"class", "lead"}})
-      .text("Are you sure the link you got is correct?")
-      .close("p")
-      .open("a", {{"href", "/"}})
-      .text("Get back to the home page")
-      .close("a")
-      .close("div")
-      .close("div");
-  sourcemeta::registry::html::partials::html_end(
-      output_html, sourcemeta::registry::version());
-  return stream.str();
-}
-
-// TODO: HTML generators should not depend on the config file, as
-// all the necessary information should be present in the nav file
-auto GENERATE_EXPLORER_INDEX(
-    const sourcemeta::registry::Configuration &configuration,
-    const std::filesystem::path &navigation_path) -> std::string {
-  const auto meta{sourcemeta::registry::read_json(navigation_path)};
-  std::ostringstream html;
-  sourcemeta::registry::html::SafeOutput output_html{html};
-
-  const auto head{configuration.html->head.value_or("")};
-
-  sourcemeta::registry::html::partials::html_start(
-      output_html, meta.at("url").to_string(), head, configuration,
-      configuration.html->name + " Schemas", configuration.html->description,
-      "");
-
-  if (configuration.html->hero.has_value()) {
-    output_html.open("div", {{"class", "container-fluid px-4"}})
-        .open("div", {{"class",
-                       "bg-light border border-light-subtle mt-4 px-3 py-3"}});
-    output_html.unsafe(configuration.html->hero.value());
-    output_html.close("div").close("div");
+    std::filesystem::create_directories(destination.parent_path());
+    sourcemeta::registry::write_text(destination, html.str(), "text/html",
+                                     sourcemeta::registry::Encoding::GZIP,
+                                     sourcemeta::core::JSON{nullptr});
   }
+};
 
-  sourcemeta::registry::html::partials::html_file_manager(html, meta);
-  sourcemeta::registry::html::partials::html_end(
-      output_html, sourcemeta::registry::version());
-  return html.str();
-}
-
-// TODO: HTML generators should not depend on the config file, as
-// all the necessary information should be present in the nav file
-auto GENERATE_EXPLORER_DIRECTORY_PAGE(
-    const sourcemeta::registry::Configuration &configuration,
-    const std::filesystem::path &navigation_path) -> std::string {
-  const auto meta{sourcemeta::registry::read_json(navigation_path)};
-  std::ostringstream html;
-
-  sourcemeta::registry::html::SafeOutput output_html{html};
-  const auto head{configuration.html->head.value_or("")};
-  sourcemeta::registry::html::partials::html_start(
-      output_html, meta.at("url").to_string(), head, configuration,
-      meta.defines("title") ? meta.at("title").to_string()
-                            : meta.at("path").to_string(),
-      meta.defines("description")
-          ? meta.at("description").to_string()
-          : ("Schemas located at " + meta.at("path").to_string()),
-      meta.at("path").to_string());
-  sourcemeta::registry::html::partials::html_file_manager(html, meta);
-  sourcemeta::registry::html::partials::html_end(
-      output_html, sourcemeta::registry::version());
-  return html.str();
-}
-
-auto GENERATE_EXPLORER_SCHEMA_PAGE(
-    const sourcemeta::registry::Configuration &configuration,
-    const std::filesystem::path &navigation_path,
-    const std::filesystem::path &dependencies_path,
-    const std::filesystem::path &health_path) -> std::string {
-  const auto meta{sourcemeta::registry::read_json(navigation_path)};
-
-  std::ostringstream html;
-
-  const auto &title{meta.defines("title") ? meta.at("title").to_string()
-                                          : meta.at("path").to_string()};
-
-  sourcemeta::registry::html::SafeOutput output_html{html};
-  const auto head{configuration.html->head.value_or("")};
-  sourcemeta::registry::html::partials::html_start(
-      output_html, meta.at("identifier").to_string(), head, configuration,
-      title,
-      meta.defines("description")
-          ? meta.at("description").to_string()
-          : ("Schemas located at " + meta.at("path").to_string()),
-      meta.at("path").to_string());
-
-  sourcemeta::registry::html::partials::breadcrumb(html, meta);
-
-  output_html.open("div", {{"class", "container-fluid p-4"}});
-  output_html.open("div");
-
-  output_html.open("div");
-
-  if (meta.defines("title")) {
-    output_html.open("h2", {{"class", "fw-bold h4"}});
-    output_html.text(title);
-    output_html.close("h2");
-  }
-
-  if (meta.defines("description")) {
-    output_html.open("p", {{"class", "text-secondary"}})
-        .text(meta.at("description").to_string())
-        .close("p");
-  }
-
-  if (meta.at("protected").to_boolean()) {
-    output_html
-        .open("a", {{"href", meta.at("path").to_string() + ".json"},
-                    {"class", "btn btn-primary me-2 disabled"},
-                    {"aria-disabled", "true"},
-                    {"role", "button"}})
-        .text("Get JSON Schema")
-        .close("a");
-    output_html
-        .open("a", {{"href", meta.at("path").to_string() + ".json?bundle=1"},
-                    {"class", "btn btn-secondary disabled"},
-                    {"aria-disabled", "true"},
-                    {"role", "button"}})
-        .text("Bundle")
-        .close("a");
-  } else {
-    output_html
-        .open("a", {{"href", meta.at("path").to_string() + ".json"},
-                    {"class", "btn btn-primary me-2"},
-                    {"role", "button"}})
-        .text("Get JSON Schema")
-        .close("a");
-    output_html
-        .open("a", {{"href", meta.at("path").to_string() + ".json?bundle=1"},
-                    {"class", "btn btn-secondary"},
-                    {"role", "button"}})
-        .text("Bundle")
-        .close("a");
-  }
-
-  output_html.close("div");
-
-  output_html.open("table", {{"class", "table table-bordered my-4"}});
-
-  output_html.open("tr");
-  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
-      .text("Identifier")
-      .close("th");
-
-  if (meta.at("protected").to_boolean()) {
-    output_html.open("td")
-        .open("code")
-        .text(meta.at("identifier").to_string())
-        .close("code")
-        .close("td");
-  } else {
-    output_html.open("td")
-        .open("code")
-        .open("a", {{"href", meta.at("identifier").to_string()}})
-        .text(meta.at("identifier").to_string())
+struct GENERATE_WEB_NOT_FOUND {
+  using Context = sourcemeta::registry::Configuration;
+  static auto
+  handler(const std::filesystem::path &destination,
+          const sourcemeta::core::BuildDependencies<std::filesystem::path> &,
+          const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
+          const Context &configuration) -> void {
+    std::ostringstream stream;
+    assert(!stream.fail());
+    sourcemeta::registry::html::SafeOutput output_html{stream};
+    const auto head{configuration.html->head.value_or("")};
+    sourcemeta::registry::html::partials::html_start(
+        output_html, configuration.url, head, configuration, "Not Found",
+        "What you are looking for is not here", std::nullopt);
+    output_html.open("div", {{"class", "container-fluid p-4"}})
+        .open("h2", {{"class", "fw-bold"}})
+        .text("Oops! What you are looking for is not here")
+        .close("h2")
+        .open("p", {{"class", "lead"}})
+        .text("Are you sure the link you got is correct?")
+        .close("p")
+        .open("a", {{"href", "/"}})
+        .text("Get back to the home page")
         .close("a")
-        .close("code")
-        .close("td");
+        .close("div")
+        .close("div");
+    sourcemeta::registry::html::partials::html_end(
+        output_html, sourcemeta::registry::version());
+
+    std::filesystem::create_directories(destination.parent_path());
+    sourcemeta::registry::write_text(destination, stream.str(), "text/html",
+                                     sourcemeta::registry::Encoding::GZIP,
+                                     sourcemeta::core::JSON{nullptr});
   }
+};
 
-  output_html.close("tr");
+struct GENERATE_WEB_INDEX {
+  using Context = sourcemeta::registry::Configuration;
+  static auto
+  handler(const std::filesystem::path &destination,
+          const sourcemeta::core::BuildDependencies<std::filesystem::path>
+              &dependencies,
+          const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
+          const Context &configuration) -> void {
+    const auto meta{sourcemeta::registry::read_json(dependencies.front())};
+    std::ostringstream html;
+    sourcemeta::registry::html::SafeOutput output_html{html};
 
-  output_html.open("tr");
-  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
-      .text("Base Dialect")
-      .close("th");
-  output_html.open("td");
-  sourcemeta::registry::html::partials::dialect_badge(
-      html, meta.at("baseDialect").to_string());
-  output_html.close("td");
-  output_html.close("tr");
+    const auto head{configuration.html->head.value_or("")};
 
-  output_html.open("tr");
-  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
-      .text("Dialect")
-      .close("th");
-  output_html.open("td")
-      .open("code")
-      .text(meta.at("dialect").to_string())
-      .close("code")
-      .close("td");
-  output_html.close("tr");
+    sourcemeta::registry::html::partials::html_start(
+        output_html, meta.at("url").to_string(), head, configuration,
+        configuration.html->name + " Schemas", configuration.html->description,
+        "");
 
-  output_html.open("tr");
-  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
-      .text("Health")
-      .close("th");
-  output_html.open("td", {{"class", "align-middle"}});
-  output_html.open("div", {{"style", "max-width: 300px"}});
-  html::partials::schema_health_progress_bar(html,
-                                             meta.at("health").to_integer());
-  output_html.close("div");
-  output_html.close("td");
-  output_html.close("tr");
+    if (configuration.html->hero.has_value()) {
+      output_html.open("div", {{"class", "container-fluid px-4"}})
+          .open("div",
+                {{"class",
+                  "bg-light border border-light-subtle mt-4 px-3 py-3"}});
+      output_html.unsafe(configuration.html->hero.value());
+      output_html.close("div").close("div");
+    }
 
-  output_html.open("tr");
-  output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
-      .text("Size")
-      .close("th");
-  output_html.open("td")
-      .text(std::to_string(meta.at("bytes").as_real() / (1024 * 1024)) + " MB")
-      .close("td");
-  output_html.close("tr");
+    sourcemeta::registry::html::partials::html_file_manager(html, meta);
+    sourcemeta::registry::html::partials::html_end(
+        output_html, sourcemeta::registry::version());
 
-  output_html.close("table");
-  output_html.close("div");
+    std::filesystem::create_directories(destination.parent_path());
+    sourcemeta::registry::write_text(destination, html.str(), "text/html",
+                                     sourcemeta::registry::Encoding::GZIP,
+                                     sourcemeta::core::JSON{nullptr});
+  }
+};
 
-  if (meta.at("protected").to_boolean()) {
-    output_html.open("div",
-                     {{"class", "alert alert-warning"}, {"role", "alert"}});
-    if (meta.at("alert").is_string()) {
-      output_html.text(meta.at("alert").to_string());
+struct GENERATE_WEB_SCHEMA {
+  using Context = sourcemeta::registry::Configuration;
+  static auto
+  handler(const std::filesystem::path &destination,
+          const sourcemeta::core::BuildDependencies<std::filesystem::path>
+              &dependencies,
+          const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
+          const Context &configuration) -> void {
+    const auto meta{sourcemeta::registry::read_json(dependencies.front())};
+
+    std::ostringstream html;
+
+    const auto &title{meta.defines("title") ? meta.at("title").to_string()
+                                            : meta.at("path").to_string()};
+
+    sourcemeta::registry::html::SafeOutput output_html{html};
+    const auto head{configuration.html->head.value_or("")};
+    sourcemeta::registry::html::partials::html_start(
+        output_html, meta.at("identifier").to_string(), head, configuration,
+        title,
+        meta.defines("description")
+            ? meta.at("description").to_string()
+            : ("Schemas located at " + meta.at("path").to_string()),
+        meta.at("path").to_string());
+
+    sourcemeta::registry::html::partials::breadcrumb(html, meta);
+
+    output_html.open("div", {{"class", "container-fluid p-4"}});
+    output_html.open("div");
+
+    output_html.open("div");
+
+    if (meta.defines("title")) {
+      output_html.open("h2", {{"class", "fw-bold h4"}});
+      output_html.text(title);
+      output_html.close("h2");
+    }
+
+    if (meta.defines("description")) {
+      output_html.open("p", {{"class", "text-secondary"}})
+          .text(meta.at("description").to_string())
+          .close("p");
+    }
+
+    if (meta.at("protected").to_boolean()) {
+      output_html
+          .open("a", {{"href", meta.at("path").to_string() + ".json"},
+                      {"class", "btn btn-primary me-2 disabled"},
+                      {"aria-disabled", "true"},
+                      {"role", "button"}})
+          .text("Get JSON Schema")
+          .close("a");
+      output_html
+          .open("a", {{"href", meta.at("path").to_string() + ".json?bundle=1"},
+                      {"class", "btn btn-secondary disabled"},
+                      {"aria-disabled", "true"},
+                      {"role", "button"}})
+          .text("Bundle")
+          .close("a");
     } else {
-      output_html.text("This schema is marked as protected. It is listed, but "
-                       "it cannot be directly accessed");
+      output_html
+          .open("a", {{"href", meta.at("path").to_string() + ".json"},
+                      {"class", "btn btn-primary me-2"},
+                      {"role", "button"}})
+          .text("Get JSON Schema")
+          .close("a");
+      output_html
+          .open("a", {{"href", meta.at("path").to_string() + ".json?bundle=1"},
+                      {"class", "btn btn-secondary"},
+                      {"role", "button"}})
+          .text("Bundle")
+          .close("a");
     }
 
     output_html.close("div");
-  } else {
-    if (meta.at("alert").is_string()) {
-      output_html.open(
-          "div", {{"class", "alert alert-warning mb-3"}, {"role", "alert"}});
-      output_html.text(meta.at("alert").to_string());
+
+    output_html.open("table", {{"class", "table table-bordered my-4"}});
+
+    output_html.open("tr");
+    output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+        .text("Identifier")
+        .close("th");
+
+    if (meta.at("protected").to_boolean()) {
+      output_html.open("td")
+          .open("code")
+          .text(meta.at("identifier").to_string())
+          .close("code")
+          .close("td");
+    } else {
+      output_html.open("td")
+          .open("code")
+          .open("a", {{"href", meta.at("identifier").to_string()}})
+          .text(meta.at("identifier").to_string())
+          .close("a")
+          .close("code")
+          .close("td");
+    }
+
+    output_html.close("tr");
+
+    output_html.open("tr");
+    output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+        .text("Base Dialect")
+        .close("th");
+    output_html.open("td");
+    sourcemeta::registry::html::partials::dialect_badge(
+        html, meta.at("baseDialect").to_string());
+    output_html.close("td");
+    output_html.close("tr");
+
+    output_html.open("tr");
+    output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+        .text("Dialect")
+        .close("th");
+    output_html.open("td")
+        .open("code")
+        .text(meta.at("dialect").to_string())
+        .close("code")
+        .close("td");
+    output_html.close("tr");
+
+    output_html.open("tr");
+    output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+        .text("Health")
+        .close("th");
+    output_html.open("td", {{"class", "align-middle"}});
+    output_html.open("div", {{"style", "max-width: 300px"}});
+    html::partials::schema_health_progress_bar(html,
+                                               meta.at("health").to_integer());
+    output_html.close("div");
+    output_html.close("td");
+    output_html.close("tr");
+
+    output_html.open("tr");
+    output_html.open("th", {{"scope", "row"}, {"class", "text-nowrap"}})
+        .text("Size")
+        .close("th");
+    output_html.open("td")
+        .text(std::to_string(meta.at("bytes").as_real() / (1024 * 1024)) +
+              " MB")
+        .close("td");
+    output_html.close("tr");
+
+    output_html.close("table");
+    output_html.close("div");
+
+    if (meta.at("protected").to_boolean()) {
+      output_html.open("div",
+                       {{"class", "alert alert-warning"}, {"role", "alert"}});
+      if (meta.at("alert").is_string()) {
+        output_html.text(meta.at("alert").to_string());
+      } else {
+        output_html.text(
+            "This schema is marked as protected. It is listed, but "
+            "it cannot be directly accessed");
+      }
+
+      output_html.close("div");
+    } else {
+      if (meta.at("alert").is_string()) {
+        output_html.open(
+            "div", {{"class", "alert alert-warning mb-3"}, {"role", "alert"}});
+        output_html.text(meta.at("alert").to_string());
+        output_html.close("div");
+      }
+
+      output_html.open("div", {{"class", "border overflow-auto"},
+                               {"style", "max-height: 400px;"},
+                               {"data-sourcemeta-ui-editor",
+                                meta.at("path").to_string() + ".json"},
+                               {"data-sourcemeta-ui-editor-mode", "readonly"},
+                               {"data-sourcemeta-ui-editor-language", "json"}});
+      output_html.text("Loading schema...");
       output_html.close("div");
     }
 
-    output_html.open("div", {{"class", "border overflow-auto"},
-                             {"style", "max-height: 400px;"},
-                             {"data-sourcemeta-ui-editor",
-                              meta.at("path").to_string() + ".json"},
-                             {"data-sourcemeta-ui-editor-mode", "readonly"},
-                             {"data-sourcemeta-ui-editor-language", "json"}});
-    output_html.text("Loading schema...");
-    output_html.close("div");
-  }
+    const auto dependencies_json{
+        sourcemeta::registry::read_json(dependencies.at(1))};
 
-  const auto dependencies_json{
-      sourcemeta::registry::read_json(dependencies_path)};
+    const auto health{sourcemeta::registry::read_json(dependencies.at(2))};
+    assert(health.is_object());
+    assert(health.defines("errors"));
 
-  const auto health{sourcemeta::registry::read_json(health_path)};
-  assert(health.is_object());
-  assert(health.defines("errors"));
+    output_html.open("ul", {{"class", "nav nav-tabs mt-4 mb-3"}});
+    output_html.open("li", {{"class", "nav-item"}});
+    output_html
+        .open("button", {{"class", "nav-link"},
+                         {"type", "button"},
+                         {"role", "tab"},
+                         {"data-sourcemeta-ui-tab-target", "dependencies"}})
+        .open("span")
+        .text("Dependencies")
+        .close("span")
+        .open("span",
+              {{"class",
+                "ms-2 badge rounded-pill text-bg-secondary align-text-top"}})
+        .text(std::to_string(dependencies_json.size()))
+        .close("span")
+        .close("a");
+    output_html.close("li");
+    output_html.open("li", {{"class", "nav-item"}});
+    output_html
+        .open("button", {{"class", "nav-link"},
+                         {"type", "button"},
+                         {"role", "tab"},
+                         {"data-sourcemeta-ui-tab-target", "health"}})
+        .open("span")
+        .text("Health")
+        .close("span")
+        .open("span",
+              {{"class",
+                "ms-2 badge rounded-pill text-bg-secondary align-text-top"}})
+        .text(std::to_string(health.at("errors").size()))
+        .close("span")
+        .close("a");
+    output_html.close("li");
+    output_html.close("ul");
 
-  output_html.open("ul", {{"class", "nav nav-tabs mt-4 mb-3"}});
-  output_html.open("li", {{"class", "nav-item"}});
-  output_html
-      .open("button", {{"class", "nav-link"},
-                       {"type", "button"},
-                       {"role", "tab"},
-                       {"data-sourcemeta-ui-tab-target", "dependencies"}})
-      .open("span")
-      .text("Dependencies")
-      .close("span")
-      .open("span",
-            {{"class",
-              "ms-2 badge rounded-pill text-bg-secondary align-text-top"}})
-      .text(std::to_string(dependencies_json.size()))
-      .close("span")
-      .close("a");
-  output_html.close("li");
-  output_html.open("li", {{"class", "nav-item"}});
-  output_html
-      .open("button", {{"class", "nav-link"},
-                       {"type", "button"},
-                       {"role", "tab"},
-                       {"data-sourcemeta-ui-tab-target", "health"}})
-      .open("span")
-      .text("Health")
-      .close("span")
-      .open("span",
-            {{"class",
-              "ms-2 badge rounded-pill text-bg-secondary align-text-top"}})
-      .text(std::to_string(health.at("errors").size()))
-      .close("span")
-      .close("a");
-  output_html.close("li");
-  output_html.close("ul");
-
-  output_html.open("div", {{"data-sourcemeta-ui-tab-id", "dependencies"},
-                           {"class", "d-none"}});
-  std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> direct;
-  std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> indirect;
-  for (const auto &dependency : dependencies_json.as_array()) {
-    if (dependency.at("from") == meta.at("identifier")) {
-      direct.emplace_back(dependency);
-    } else {
-      indirect.emplace_back(dependency);
-    }
-  }
-  std::ostringstream dependency_summary;
-  dependency_summary << "This schema has " << direct.size() << " direct "
-                     << (direct.size() == 1 ? "dependency" : "dependencies")
-                     << " and " << indirect.size() << " indirect "
-                     << (indirect.size() == 1 ? "dependency" : "dependencies")
-                     << ".";
-  output_html.open("p").text(dependency_summary.str()).close("p");
-  if (direct.size() + indirect.size() > 0) {
-    output_html.open("table", {{"class", "table table-bordered"}});
-    output_html.open("thead");
-    output_html.open("tr");
-    output_html.open("th", {{"scope", "col"}}).text("Origin").close("th");
-    output_html.open("th", {{"scope", "col"}}).text("Dependency").close("th");
-    output_html.close("tr");
-    output_html.close("thead");
-    output_html.open("tbody");
+    output_html.open("div", {{"data-sourcemeta-ui-tab-id", "dependencies"},
+                             {"class", "d-none"}});
+    std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> direct;
+    std::vector<std::reference_wrapper<const sourcemeta::core::JSON>> indirect;
     for (const auto &dependency : dependencies_json.as_array()) {
-      output_html.open("tr");
-
       if (dependency.at("from") == meta.at("identifier")) {
-        std::ostringstream dependency_attribute;
-        sourcemeta::core::stringify(dependency.at("at"), dependency_attribute);
-        output_html.open("td")
-            .open("a", {{"href", "#"},
-                        {"data-sourcemeta-ui-editor-highlight",
-                         meta.at("path").to_string()},
-                        {"data-sourcemeta-ui-editor-highlight-pointers",
-                         dependency_attribute.str()}})
-            .open("code")
-            .text(dependency.at("at").to_string())
-            .close("code")
-            .close("a")
-            .close("td");
+        direct.emplace_back(dependency);
       } else {
-        output_html.open("td")
-            .open("span", {{"class", "badge text-bg-dark"}})
-            .text("Indirect")
-            .close("span")
-            .close("td");
+        indirect.emplace_back(dependency);
       }
-
-      if (dependency.at("to").to_string().starts_with(configuration.url)) {
-        std::filesystem::path dependency_schema_url{
-            dependency.at("to").to_string().substr(configuration.url.size())};
-        output_html.open("td")
-            .open("code")
-            .open("a", {{"href", dependency_schema_url.string()}})
-            .text(dependency_schema_url.string())
-            .close("a")
-            .close("code")
-            .close("td");
-      } else {
-        output_html.open("td")
-            .open("code")
-            .text(dependency.at("to").to_string())
-            .close("code")
-            .close("td");
-      }
-
+    }
+    std::ostringstream dependency_summary;
+    dependency_summary << "This schema has " << direct.size() << " direct "
+                       << (direct.size() == 1 ? "dependency" : "dependencies")
+                       << " and " << indirect.size() << " indirect "
+                       << (indirect.size() == 1 ? "dependency" : "dependencies")
+                       << ".";
+    output_html.open("p").text(dependency_summary.str()).close("p");
+    if (direct.size() + indirect.size() > 0) {
+      output_html.open("table", {{"class", "table table-bordered"}});
+      output_html.open("thead");
+      output_html.open("tr");
+      output_html.open("th", {{"scope", "col"}}).text("Origin").close("th");
+      output_html.open("th", {{"scope", "col"}}).text("Dependency").close("th");
       output_html.close("tr");
-    }
+      output_html.close("thead");
+      output_html.open("tbody");
+      for (const auto &dependency : dependencies_json.as_array()) {
+        output_html.open("tr");
 
-    output_html.close("tbody");
-    output_html.close("table");
-  }
-  output_html.close("div");
+        if (dependency.at("from") == meta.at("identifier")) {
+          std::ostringstream dependency_attribute;
+          sourcemeta::core::stringify(dependency.at("at"),
+                                      dependency_attribute);
+          output_html.open("td")
+              .open("a", {{"href", "#"},
+                          {"data-sourcemeta-ui-editor-highlight",
+                           meta.at("path").to_string()},
+                          {"data-sourcemeta-ui-editor-highlight-pointers",
+                           dependency_attribute.str()}})
+              .open("code")
+              .text(dependency.at("at").to_string())
+              .close("code")
+              .close("a")
+              .close("td");
+        } else {
+          output_html.open("td")
+              .open("span", {{"class", "badge text-bg-dark"}})
+              .text("Indirect")
+              .close("span")
+              .close("td");
+        }
 
-  output_html.open(
-      "div", {{"data-sourcemeta-ui-tab-id", "health"}, {"class", "d-none"}});
+        if (dependency.at("to").to_string().starts_with(configuration.url)) {
+          std::filesystem::path dependency_schema_url{
+              dependency.at("to").to_string().substr(configuration.url.size())};
+          output_html.open("td")
+              .open("code")
+              .open("a", {{"href", dependency_schema_url.string()}})
+              .text(dependency_schema_url.string())
+              .close("a")
+              .close("code")
+              .close("td");
+        } else {
+          output_html.open("td")
+              .open("code")
+              .text(dependency.at("to").to_string())
+              .close("code")
+              .close("td");
+        }
 
-  const auto errors_count{health.at("errors").size()};
-  if (errors_count == 1) {
-    output_html.open("p")
-        .text("This schema has " + std::to_string(errors_count) +
-              " quality error.")
-        .close("p");
-  } else {
-    output_html.open("p")
-        .text("This schema has " + std::to_string(errors_count) +
-              " quality errors.")
-        .close("p");
-  }
-  if (errors_count > 0) {
-    output_html.open("div", {{"class", "list-group"}});
-
-    for (const auto &error : health.at("errors").as_array()) {
-      assert(error.at("pointers").size() >= 1);
-      std::ostringstream pointers;
-      sourcemeta::core::stringify(error.at("pointers"), pointers);
-      output_html.open(
-          "a",
-          {{"href", "#"},
-           {"data-sourcemeta-ui-editor-highlight", meta.at("path").to_string()},
-           {"data-sourcemeta-ui-editor-highlight-pointers", pointers.str()},
-           {"class", "list-group-item list-group-item-action py-3"}});
-      output_html.open("code", {{"class", "d-block text-primary"}})
-          .text(error.at("pointers").front().to_string())
-          .close("code");
-      output_html.open("small", {{"class", "d-block text-body-secondary"}})
-          .text(error.at("name").to_string())
-          .close("small");
-      output_html.open("p", {{"class", "mb-0 mt-2"}})
-          .text(error.at("message").to_string())
-          .close("p");
-      if (error.at("description").is_string()) {
-        output_html.open("small", {{"class", "mt-2"}})
-            .text(error.at("description").to_string())
-            .close("small");
+        output_html.close("tr");
       }
-      output_html.close("a");
+
+      output_html.close("tbody");
+      output_html.close("table");
     }
+    output_html.close("div");
+
+    output_html.open(
+        "div", {{"data-sourcemeta-ui-tab-id", "health"}, {"class", "d-none"}});
+
+    const auto errors_count{health.at("errors").size()};
+    if (errors_count == 1) {
+      output_html.open("p")
+          .text("This schema has " + std::to_string(errors_count) +
+                " quality error.")
+          .close("p");
+    } else {
+      output_html.open("p")
+          .text("This schema has " + std::to_string(errors_count) +
+                " quality errors.")
+          .close("p");
+    }
+    if (errors_count > 0) {
+      output_html.open("div", {{"class", "list-group"}});
+
+      for (const auto &error : health.at("errors").as_array()) {
+        assert(error.at("pointers").size() >= 1);
+        std::ostringstream pointers;
+        sourcemeta::core::stringify(error.at("pointers"), pointers);
+        output_html.open(
+            "a",
+            {{"href", "#"},
+             {"data-sourcemeta-ui-editor-highlight",
+              meta.at("path").to_string()},
+             {"data-sourcemeta-ui-editor-highlight-pointers", pointers.str()},
+             {"class", "list-group-item list-group-item-action py-3"}});
+        output_html.open("code", {{"class", "d-block text-primary"}})
+            .text(error.at("pointers").front().to_string())
+            .close("code");
+        output_html.open("small", {{"class", "d-block text-body-secondary"}})
+            .text(error.at("name").to_string())
+            .close("small");
+        output_html.open("p", {{"class", "mb-0 mt-2"}})
+            .text(error.at("message").to_string())
+            .close("p");
+        if (error.at("description").is_string()) {
+          output_html.open("small", {{"class", "mt-2"}})
+              .text(error.at("description").to_string())
+              .close("small");
+        }
+        output_html.close("a");
+      }
+
+      output_html.close("div");
+    }
+    output_html.close("div");
 
     output_html.close("div");
+
+    sourcemeta::registry::html::partials::html_end(
+        output_html, sourcemeta::registry::version());
+
+    std::filesystem::create_directories(destination.parent_path());
+    sourcemeta::registry::write_text(destination, html.str(), "text/html",
+                                     sourcemeta::registry::Encoding::GZIP,
+                                     sourcemeta::core::JSON{nullptr});
   }
-  output_html.close("div");
-
-  output_html.close("div");
-
-  sourcemeta::registry::html::partials::html_end(
-      output_html, sourcemeta::registry::version());
-  return html.str();
-}
+};
 
 } // namespace sourcemeta::registry
 

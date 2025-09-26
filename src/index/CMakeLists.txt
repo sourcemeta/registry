@@ -10,6 +10,7 @@ target_compile_definitions(sourcemeta_registry_index
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::resolver)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::shared)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::configuration)
+target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::registry::web)
 
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::build)
 target_link_libraries(sourcemeta_registry_index PRIVATE sourcemeta::core::uri)
