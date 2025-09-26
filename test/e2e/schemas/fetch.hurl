@@ -11,6 +11,20 @@ HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/test/schemas/string",
+  "examples": [
+    "example_01",
+    "example_02",
+    "example_03",
+    "example_04",
+    5,
+    "example_06",
+    "example_07",
+    "example_08",
+    "example_09",
+    "example_10",
+    "example_11",
+    "example_12"
+  ],
   "type": "string"
 }
 
@@ -28,6 +42,20 @@ HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/test/schemas/string",
+  "examples": [
+    "example_01",
+    "example_02",
+    "example_03",
+    "example_04",
+    5,
+    "example_06",
+    "example_07",
+    "example_08",
+    "example_09",
+    "example_10",
+    "example_11",
+    "example_12"
+  ],
   "type": "string"
 }
 
@@ -44,6 +72,7 @@ HTTP 200
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "{{base}}/test/schemas/draft4-top-level-ref",
+  "examples": [ "draft4 does not define `examples`!" ],
   "allOf": [
     {
       "$ref": "#/definitions/foo"
@@ -86,6 +115,20 @@ HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/test/schemas/string",
+  "examples": [
+    "example_01",
+    "example_02",
+    "example_03",
+    "example_04",
+    5,
+    "example_06",
+    "example_07",
+    "example_08",
+    "example_09",
+    "example_10",
+    "example_11",
+    "example_12"
+  ],
   "type": "string"
 }
 

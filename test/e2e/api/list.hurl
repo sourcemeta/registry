@@ -15,7 +15,7 @@ jsonpath "$.entries[0].name" == "test"
 jsonpath "$.entries[0].title" == "Test"
 jsonpath "$.entries[0].description" == "A directory full of testing schemas"
 jsonpath "$.entries[0].type" == "directory"
-jsonpath "$.entries[0].health" == 100
+jsonpath "$.entries[0].health" == 99
 jsonpath "$.entries[0].path" == "/test"
 jsonpath "$.entries[1].name" == "sourcemeta"
 jsonpath "$.entries[1].title" == "Sourcemeta"
@@ -66,7 +66,7 @@ jsonpath "$.entries[0].health" == 100
 jsonpath "$.entries[0].path" == "/test/v2.0"
 jsonpath "$.entries[1].name" == "schemas"
 jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.entries[1].health" == 100
+jsonpath "$.entries[1].health" == 93
 jsonpath "$.entries[1].path" == "/test/schemas"
 jsonpath "$.entries[2].name" == "same"
 jsonpath "$.entries[2].type" == "directory"

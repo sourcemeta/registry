@@ -124,6 +124,31 @@ struct GENERATE_EXPLORER_SCHEMA_METADATA {
         result.assign("description",
                       sourcemeta::core::JSON{description->trim()});
       }
+
+      auto examples_array{sourcemeta::core::JSON::make_array()};
+      const auto *examples{schema.data.try_at("examples")};
+      if (examples && examples->is_array() && !examples->empty()) {
+        const auto vocabularies{sourcemeta::core::vocabularies(
+            [&callback, &context](const auto identifier) {
+              return std::get<0>(context).get()(identifier, callback);
+            },
+            base_dialect.value(), dialect.value())};
+        const auto walker_result{
+            sourcemeta::core::schema_official_walker("examples", vocabularies)};
+        if (walker_result.type ==
+                sourcemeta::core::SchemaKeywordType::Annotation ||
+            walker_result.type ==
+                sourcemeta::core::SchemaKeywordType::Comment) {
+          constexpr std::size_t EXAMPLES_MAXIMUM{10};
+          for (std::size_t cursor = 0;
+               cursor < std::min(EXAMPLES_MAXIMUM, examples->size());
+               cursor++) {
+            examples_array.push_back(examples->at(cursor));
+          }
+        }
+      }
+
+      result.assign("examples", std::move(examples_array));
     }
 
     const auto health{sourcemeta::registry::read_json(dependencies.at(1))};
@@ -201,8 +226,8 @@ struct GENERATE_EXPLORER_SEARCH_INDEX {
                 }
 
                 // Otherwise revert to lexicographic comparisons
-                // TODO: Ideally we sort based on schema health too, given lint
-                // results
+                // TODO: Ideally we sort based on schema health too, given
+                // lint results
                 if (left_score > 0) {
                   return left.at(0).to_string() < right.at(0).to_string();
                 }
@@ -286,8 +311,9 @@ struct GENERATE_EXPLORER_DIRECTORY_LIST {
           auto nav{sourcemeta::registry::read_json(schema_nav_path)};
           entry_json.merge(nav.as_object());
           assert(!entry_json.defines("entries"));
-          // No need to show breadcrumbs of children
+          // No need to show these on children
           entry_json.erase("breadcrumb");
+          entry_json.erase("examples");
           entry_json.assign("type", sourcemeta::core::JSON{"schema"});
 
           assert(entry_json.defines("path"));
@@ -309,8 +335,8 @@ struct GENERATE_EXPLORER_DIRECTORY_LIST {
             const auto &left_name{left.at("name")};
             const auto &right_name{right.at("name")};
 
-            // If the schema/directories represent SemVer versions, attempt to
-            // parse them as such and provide better sorting
+            // If the schema/directories represent SemVer versions,
+            // attempt to parse them as such and provide better sorting
             const auto left_version{try_parse_version(left_name.to_string())};
             const auto right_version{try_parse_version(right_name.to_string())};
             if (left_version.has_value() && right_version.has_value()) {

@@ -1,5 +1,19 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://example.com/schemas/string.json",
-  "type": "string"
+  "type": "string",
+  "examples": [
+    "example_01",
+    "example_02",
+    "example_03",
+    "example_04",
+    5,
+    "example_06",
+    "example_07",
+    "example_08",
+    "example_09",
+    "example_10",
+    "example_11",
+    "example_12"
+  ]
 }
