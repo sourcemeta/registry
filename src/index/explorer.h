@@ -91,6 +91,7 @@ struct GENERATE_EXPLORER_SCHEMA_METADATA {
           const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
               &callback,
           const Context &context) -> void {
+    const auto timestamp_start{std::chrono::steady_clock::now()};
     const auto schema{
         sourcemeta::registry::read_json_with_metadata(dependencies.front())};
     auto id{sourcemeta::core::identify(
@@ -175,11 +176,14 @@ struct GENERATE_EXPLORER_SCHEMA_METADATA {
       breadcrumb_entry.assign("path", sourcemeta::core::JSON{current_path});
       result.at("breadcrumb").push_back(std::move(breadcrumb_entry));
     }
+    const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
     sourcemeta::registry::write_pretty_json(
         destination, result, "application/json",
-        sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr});
+        sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr},
+        std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
+                                                              timestamp_start));
   }
 };
 
@@ -191,6 +195,7 @@ struct GENERATE_EXPLORER_SEARCH_INDEX {
               &dependencies,
           const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
           const Context &) -> void {
+    const auto timestamp_start{std::chrono::steady_clock::now()};
     std::vector<sourcemeta::core::JSON> result;
     result.reserve(dependencies.size());
 
@@ -235,13 +240,17 @@ struct GENERATE_EXPLORER_SEARCH_INDEX {
                 return false;
               });
 
+    const auto timestamp_end{std::chrono::steady_clock::now()};
+
     std::filesystem::create_directories(destination.parent_path());
     sourcemeta::registry::write_jsonl(
         destination, result, "application/jsonl",
         // We don't want to compress this one so we can
         // quickly skim through it while streaming it
         sourcemeta::registry::Encoding::Identity,
-        sourcemeta::core::JSON{nullptr});
+        sourcemeta::core::JSON{nullptr},
+        std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
+                                                              timestamp_start));
   }
 };
 
@@ -260,6 +269,7 @@ struct GENERATE_EXPLORER_DIRECTORY_LIST {
           const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
               &callback,
           const Context &context) -> void {
+    const auto timestamp_start{std::chrono::steady_clock::now()};
     assert(
         context.directory.string().starts_with(context.schemas_path.string()));
     auto entries{sourcemeta::core::JSON::make_array()};
@@ -387,11 +397,14 @@ struct GENERATE_EXPLORER_DIRECTORY_LIST {
       breadcrumb_entry.assign("path", sourcemeta::core::JSON{current_path});
       meta.at("breadcrumb").push_back(std::move(breadcrumb_entry));
     }
+    const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
     sourcemeta::registry::write_pretty_json(
         destination, meta, "application/json",
-        sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr});
+        sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr},
+        std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
+                                                              timestamp_start));
   }
 };
 

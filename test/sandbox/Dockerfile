@@ -10,7 +10,7 @@ COPY schemas schemas
 # Just for the sake of the sandbox
 ENV SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 
-RUN sourcemeta registry-${SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION}.json
+RUN sourcemeta registry-${SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION}.json --profile
 
 # Check that by the end of the indexing, the workdir directory is empty
 RUN test -d "$SOURCEMETA_REGISTRY_WORKDIR" -a \

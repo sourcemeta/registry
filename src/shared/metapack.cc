@@ -21,6 +21,7 @@ auto write_stream(const std::filesystem::path &path,
                   const sourcemeta::core::JSON::String &mime,
                   const sourcemeta::registry::Encoding encoding,
                   const sourcemeta::core::JSON &extension,
+                  const std::chrono::milliseconds duration,
                   const std::function<void(std::ostream &)> &callback) -> void {
   // TODO: Ideally we wouldn't write the file all at once first
   std::stringstream buffer;
@@ -37,6 +38,7 @@ auto write_stream(const std::filesystem::path &path,
                       std::chrono::system_clock::now())});
   metadata.assign("mime", sourcemeta::core::JSON{mime});
   metadata.assign("bytes", sourcemeta::core::JSON{buffer.tellp()});
+  metadata.assign("duration", sourcemeta::core::JSON{duration.count()});
 
   switch (encoding) {
     case sourcemeta::registry::Encoding::Identity:
@@ -85,6 +87,7 @@ auto read_stream_raw(const std::filesystem::path &path)
   assert(metadata.defines("lastModified"));
   assert(metadata.defines("mime"));
   assert(metadata.defines("bytes"));
+  assert(metadata.defines("duration"));
   assert(metadata.defines("encoding"));
   assert(metadata.at("version").is_integer());
   assert(metadata.at("version").is_positive());
@@ -93,6 +96,8 @@ auto read_stream_raw(const std::filesystem::path &path)
   assert(metadata.at("mime").is_string());
   assert(metadata.at("bytes").is_integer());
   assert(metadata.at("bytes").is_positive());
+  assert(metadata.at("duration").is_integer());
+  assert(metadata.at("duration").is_positive());
   assert(metadata.at("encoding").is_string());
 
   Encoding encoding{Encoding::Identity};
@@ -111,6 +116,8 @@ auto read_stream_raw(const std::filesystem::path &path)
           sourcemeta::core::from_gmt(metadata.at("lastModified").to_string()),
       .mime = metadata.at("mime").to_string(),
       .bytes = static_cast<std::size_t>(metadata.at("bytes").to_integer()),
+      .duration = static_cast<std::chrono::milliseconds>(
+          metadata.at("duration").to_integer()),
       .encoding = encoding,
       .extension = std::move(metadata).at_or("extension",
                                              sourcemeta::core::JSON{nullptr})};
@@ -141,6 +148,7 @@ auto read_json_with_metadata(
               .last_modified = file.value().last_modified,
               .mime = std::move(file.value().mime),
               .bytes = file.value().bytes,
+              .duration = file.value().duration,
               .encoding = file.value().encoding,
               .extension = file.value().extension};
 }
@@ -149,8 +157,9 @@ auto write_json(const std::filesystem::path &destination,
                 const sourcemeta::core::JSON &document,
                 const sourcemeta::core::JSON::String &mime,
                 const Encoding encoding,
-                const sourcemeta::core::JSON &extension) -> void {
-  write_stream(destination, mime, encoding, extension,
+                const sourcemeta::core::JSON &extension,
+                const std::chrono::milliseconds duration) -> void {
+  write_stream(destination, mime, encoding, extension, duration,
                [&document](auto &stream) {
                  sourcemeta::core::stringify(document, stream);
                });
@@ -161,9 +170,10 @@ auto write_pretty_json(const std::filesystem::path &destination,
                        const sourcemeta::core::JSON::String &mime,
                        const Encoding encoding,
                        const sourcemeta::core::JSON &extension,
+                       const std::chrono::milliseconds duration,
                        const sourcemeta::core::JSON::KeyComparison &compare)
     -> void {
-  write_stream(destination, mime, encoding, extension,
+  write_stream(destination, mime, encoding, extension, duration,
                [&document, &compare](auto &stream) {
                  sourcemeta::core::prettify(document, stream, compare);
                });
@@ -173,8 +183,9 @@ auto write_text(const std::filesystem::path &destination,
                 const std::string_view contents,
                 const sourcemeta::core::JSON::String &mime,
                 const Encoding encoding,
-                const sourcemeta::core::JSON &extension) -> void {
-  write_stream(destination, mime, encoding, extension,
+                const sourcemeta::core::JSON &extension,
+                const std::chrono::milliseconds duration) -> void {
+  write_stream(destination, mime, encoding, extension, duration,
                [&contents](auto &stream) {
                  stream << contents;
                  stream << "\n";
@@ -185,9 +196,10 @@ auto write_file(const std::filesystem::path &destination,
                 const std::filesystem::path &source,
                 const sourcemeta::core::JSON::String &mime,
                 const Encoding encoding,
-                const sourcemeta::core::JSON &extension) -> void {
+                const sourcemeta::core::JSON &extension,
+                const std::chrono::milliseconds duration) -> void {
   auto stream{sourcemeta::core::read_file(source)};
-  write_stream(destination, mime, encoding, extension,
+  write_stream(destination, mime, encoding, extension, duration,
                [&stream](auto &target) { target << stream.rdbuf(); });
 }
 
@@ -195,8 +207,9 @@ auto write_jsonl(const std::filesystem::path &destination,
                  const std::vector<sourcemeta::core::JSON> &entries,
                  const sourcemeta::core::JSON::String &mime,
                  const Encoding encoding,
-                 const sourcemeta::core::JSON &extension) -> void {
-  write_stream(destination, mime, encoding, extension,
+                 const sourcemeta::core::JSON &extension,
+                 const std::chrono::milliseconds duration) -> void {
+  write_stream(destination, mime, encoding, extension, duration,
                [&entries](auto &stream) {
                  for (const auto &entry : entries) {
                    sourcemeta::core::stringify(entry, stream);
