@@ -36,6 +36,21 @@ static auto try_parse_version(const sourcemeta::core::JSON::String &name)
   }
 }
 
+static auto make_breadcrumb(const std::filesystem::path &relative_path)
+    -> sourcemeta::core::JSON {
+  auto result{sourcemeta::core::JSON::make_array()};
+  std::filesystem::path current_path{"/"};
+  for (const auto &part : relative_path) {
+    current_path = current_path / part;
+    auto entry{sourcemeta::core::JSON::make_object()};
+    entry.assign("name", sourcemeta::core::JSON{part});
+    entry.assign("path", sourcemeta::core::JSON{current_path});
+    result.push_back(std::move(entry));
+  }
+
+  return result;
+}
+
 static auto
 inflate_metadata(const sourcemeta::registry::Configuration &configuration,
                  const std::filesystem::path &path,
@@ -165,17 +180,8 @@ struct GENERATE_EXPLORER_SCHEMA_METADATA {
       result.assign("alert", sourcemeta::core::JSON{nullptr});
     }
 
-    // Precompute the breadcrumb
-    result.assign("breadcrumb", sourcemeta::core::JSON::make_array());
-    std::filesystem::path current_path{"/"};
-    auto copy = std::get<2>(context);
-    for (const auto &part : copy) {
-      current_path = current_path / part;
-      auto breadcrumb_entry{sourcemeta::core::JSON::make_object()};
-      breadcrumb_entry.assign("name", sourcemeta::core::JSON{part});
-      breadcrumb_entry.assign("path", sourcemeta::core::JSON{current_path});
-      result.at("breadcrumb").push_back(std::move(breadcrumb_entry));
-    }
+    result.assign("breadcrumb", make_breadcrumb(std::get<2>(context)));
+
     const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
@@ -286,17 +292,16 @@ struct GENERATE_EXPLORER_DIRECTORY_LIST {
         if (entry.is_directory() && entry.path().filename() != "%" &&
             !std::filesystem::exists(entry.path() / "%" / "schema.metapack") &&
             !context.output.is_untracked_file(entry.path())) {
-          const auto directory_nav_path{context.explorer_path /
-                                        entry_relative_path / "%" /
-                                        "directory.metapack"};
-          callback(directory_nav_path);
-          auto directory_nav_json{
-              sourcemeta::registry::read_json(directory_nav_path)};
-          assert(directory_nav_json.is_object());
-          assert(directory_nav_json.defines("health"));
-          assert(directory_nav_json.at("health").is_integer());
-          scores.emplace_back(directory_nav_json.at("health").to_integer());
-          entry_json.assign("health", directory_nav_json.at("health"));
+          const auto directory_path{context.explorer_path /
+                                    entry_relative_path / "%" /
+                                    "directory.metapack"};
+          callback(directory_path);
+          auto directory_json{sourcemeta::registry::read_json(directory_path)};
+          assert(directory_json.is_object());
+          assert(directory_json.defines("health"));
+          assert(directory_json.at("health").is_integer());
+          scores.emplace_back(directory_json.at("health").to_integer());
+          entry_json.assign("health", directory_json.at("health"));
 
           entry_json.assign("name",
                             sourcemeta::core::JSON{entry.path().filename()});
@@ -387,16 +392,7 @@ struct GENERATE_EXPLORER_DIRECTORY_LIST {
                                                 "/" + relative_path.string()});
     }
 
-    // Precompute the breadcrumb
-    meta.assign("breadcrumb", sourcemeta::core::JSON::make_array());
-    std::filesystem::path current_path{"/"};
-    for (const auto &part : relative_path) {
-      current_path = current_path / part;
-      auto breadcrumb_entry{sourcemeta::core::JSON::make_object()};
-      breadcrumb_entry.assign("name", sourcemeta::core::JSON{part});
-      breadcrumb_entry.assign("path", sourcemeta::core::JSON{current_path});
-      meta.at("breadcrumb").push_back(std::move(breadcrumb_entry));
-    }
+    meta.assign("breadcrumb", make_breadcrumb(relative_path));
     const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
