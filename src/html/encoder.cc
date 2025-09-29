@@ -56,6 +56,16 @@ auto HTML::render(const Node &child_element) const -> std::string {
   return "";
 }
 
+auto HTML::push_back(const Node &child) -> HTML & {
+  child_elements.push_back(child);
+  return *this;
+}
+
+auto HTML::push_back(Node &&child) -> HTML & {
+  child_elements.push_back(std::move(child));
+  return *this;
+}
+
 auto operator<<(std::ostream &output_stream, const HTML &html_element)
     -> std::ostream & {
   return output_stream << html_element.render();
