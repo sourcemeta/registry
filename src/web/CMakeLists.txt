@@ -12,13 +12,13 @@ target_link_libraries(sourcemeta_registry_web PRIVATE sourcemeta::registry::shar
 target_link_libraries(sourcemeta_registry_web PRIVATE sourcemeta::registry::html)
 
 sourcemeta_esbuild_bundle(
-  ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/main.js"
+  ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/scripts/main.js"
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/main.min.js"
   DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/main.js"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search.js"
-    "${CMAKE_CURRENT_SOURCE_DIR}/tabs.js"
-    "${CMAKE_CURRENT_SOURCE_DIR}/editor.js")
+    "${CMAKE_CURRENT_SOURCE_DIR}/scripts/main.js"
+    "${CMAKE_CURRENT_SOURCE_DIR}/scripts/search.js"
+    "${CMAKE_CURRENT_SOURCE_DIR}/scripts/tabs.js"
+    "${CMAKE_CURRENT_SOURCE_DIR}/scripts/editor.js")
 
 # Generate CSS
 include(BootstrapFiles)
