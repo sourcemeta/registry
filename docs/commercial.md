@@ -28,9 +28,9 @@ organizations getting started with JSON Schema.
 
 ## Pro and Enterprise Editions
 
-For deployments requiring ingestion of schemas beyond the free tier limit, a
-commercial license from Sourcemeta is required. This licensing model enables us
-to:
+For deployments requiring ingestion of schemas beyond the free tier limit and
+access to premium [built-in schema collections](library.md), a commercial
+license from Sourcemeta is required. This licensing model enables us to:
 
 - Maintain and enhance the Registry's advanced capabilities
 - Provide enterprise-grade support and reliability

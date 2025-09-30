@@ -68,9 +68,9 @@ option.
 Available Collections
 ---------------------
 
-These collections [^1] are available in every edition of the Sourcemeta
-Registry (including the free one).  Simply add the corresponding identifier to
-your [configuration file](configuration.md) using the `extends` keyword.
+These collections are available in every edition of the Sourcemeta Registry
+(including the free one) [^1].  Simply add the corresponding identifier to your
+[configuration file](configuration.md) using the `extends` keyword.
 
 <!-- TODO: Generate this table from code using the CSV import plugin: -->
 <!-- https://squidfunk.github.io/mkdocs-material/reference/data-tables/#import-table-from-file -->
@@ -86,7 +86,6 @@ your [configuration file](configuration.md) using the `extends` keyword.
 | `@modelcontextprotocol/2025-06-18` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2025-06-18) |
 | `@modelcontextprotocol/2025-03-26` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2025-03-26) |
 | `@modelcontextprotocol/2024-11-05` | [Model Context Protocol (MCP)](https://modelcontextprotocol.io) | An open protocol that standardizes how applications provide context to large language models (LLMs) | [Link](https://schemas.sourcemeta.com/modelcontextprotocol/2024-11-05) |
-| `@sourcemeta/registry` | [Sourcemeta Registry](https://registry.sourcemeta.com) | Schemas that define the Sourcemeta Registry itself | [Link](https://schemas.sourcemeta.com/sourcemeta/registry) |
 | `@a2a/v0.3.0` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.3.0) |
 | `@a2a/v0.2.6` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.6) |
 | `@a2a/v0.2.5` | [Agent2Agent (A2A) Protocol](https://a2a-protocol.org) | An open standard designed to enable seamless communication and collaboration between AI agents | [Link](https://schemas.sourcemeta.com/a2a/v0.2.5) |
@@ -104,6 +103,14 @@ your [configuration file](configuration.md) using the `extends` keyword.
 [^1]: The built-in collections we offer are redistributed directly from their
   upstream sources *without modification*. As such, any issues, errors, or
   requests for changes should be directed to the original project maintainers.
+
+### Commercial Collections
+
+These premium collections are available only to holders of a [commercial license](commercial.md).
+
+| Identifier | Source | Description | Preview |
+|------------|------|-------------|---------|
+| `@sourcemeta/registry` | [Sourcemeta Registry](https://registry.sourcemeta.com) | Schemas that define the Sourcemeta Registry itself | [Link](https://schemas.sourcemeta.com/sourcemeta/registry) |
 
 Requesting New Collections
 --------------------------

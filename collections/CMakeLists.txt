@@ -1,6 +1,12 @@
 set(REGISTRY_COLLECTION_SOURCES)
-include("./sourcemeta/std/v0.0.1/registry.cmake")
-include("./sourcemeta/registry/registry.cmake")
+
+# The Sourcemeta standard library is a premium feature,
+# and it is only available to commercial license holders
+if(REGISTRY_EDITION STREQUAL "enterprise" OR REGISTRY_EDITION STREQUAL "pro")
+  include("./sourcemeta/std/v0.0.1/registry.cmake")
+  include("./sourcemeta/registry/registry.cmake")
+endif()
+
 include("./geojson/v1.0.0/registry.cmake")
 include("./geojson/v1.0.1/registry.cmake")
 include("./geojson/v1.0.2/registry.cmake")
