@@ -5,6 +5,7 @@
 
 namespace sourcemeta::registry {
 
+auto stamp() noexcept -> std::string_view;
 auto version() noexcept -> std::string_view;
 
 } // namespace sourcemeta::registry

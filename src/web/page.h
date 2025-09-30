@@ -93,31 +93,34 @@ inline auto make_head(const Configuration &configuration,
                       const std::string &canonical,
                       const std::string &page_title,
                       const std::string &description) -> HTML {
-  return head(
-      meta({{"charset", "utf-8"}}),
-      meta({{"name", "referrer"}, {"content", "no-referrer"}}),
-      meta({{"name", "viewport"},
-            {"content", "width=device-width, initial-scale=1.0"}}),
-      meta({{"http-equiv", "x-ua-compatible"}, {"content", "ie=edge"}}),
-      title(page_title),
-      meta({{"name", "description"}, {"content", description}}),
-      link({{"rel", "canonical"}, {"href", canonical}}),
-      link({{"rel", "stylesheet"}, {"href", "/self/static/style.min.css"}}),
-      link({{"rel", "icon"},
-            {"href", "/self/static/favicon.ico"},
-            {"sizes", "any"}}),
-      link({{"rel", "icon"},
-            {"href", "/self/static/icon.svg"},
-            {"type", "image/svg+xml"}}),
-      link({{"rel", "shortcut icon"},
-            {"href", "/self/static/apple-touch-icon.png"},
-            {"type", "image/png"}}),
-      link({{"rel", "apple-touch-icon"},
-            {"href", "/self/static/apple-touch-icon.png"},
-            {"sizes", "180x180"}}),
-      link(
-          {{"rel", "manifest"}, {"href", "/self/static/manifest.webmanifest"}}),
-      raw(configuration.html->head.value_or("")));
+  return head(meta({{"charset", "utf-8"}}),
+              meta({{"name", "referrer"}, {"content", "no-referrer"}}),
+              meta({{"name", "viewport"},
+                    {"content", "width=device-width, initial-scale=1.0"}}),
+              meta({{"http-equiv", "x-ua-compatible"}, {"content", "ie=edge"}}),
+              title(page_title),
+              meta({{"name", "description"}, {"content", description}}),
+              link({{"rel", "canonical"}, {"href", canonical}}),
+              link({{"rel", "stylesheet"},
+                    {"href",
+                     // For cache busting, to force browsers to refresh styles
+                     // on any update
+                     "/self/static/style.min.css?v=" + std::string{stamp()}}}),
+              link({{"rel", "icon"},
+                    {"href", "/self/static/favicon.ico"},
+                    {"sizes", "any"}}),
+              link({{"rel", "icon"},
+                    {"href", "/self/static/icon.svg"},
+                    {"type", "image/svg+xml"}}),
+              link({{"rel", "shortcut icon"},
+                    {"href", "/self/static/apple-touch-icon.png"},
+                    {"type", "image/png"}}),
+              link({{"rel", "apple-touch-icon"},
+                    {"href", "/self/static/apple-touch-icon.png"},
+                    {"sizes", "180x180"}}),
+              link({{"rel", "manifest"},
+                    {"href", "/self/static/manifest.webmanifest"}}),
+              raw(configuration.html->head.value_or("")));
 }
 
 template <typename... Children>
@@ -130,7 +133,11 @@ inline auto make_page(const Configuration &configuration,
   (nodes.push_back(std::forward<Children>(children)), ...);
   nodes.push_back(make_footer());
   nodes.push_back(script(
-      {{"async", ""}, {"defer", ""}, {"src", "/self/static/main.min.js"}}));
+      {{"async", ""},
+       {"defer", ""},
+       {"src",
+        // For cache busting, to force browsers to refresh styles on any update
+        "/self/static/main.min.js?v=" + std::string{stamp()}}}));
   return html({{"class", "h-100"}, {"lang", "en"}},
               make_head(configuration, canonical, title, description),
               body({{"class", "h-100 d-flex flex-column"}}, nodes));

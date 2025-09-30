@@ -7,6 +7,8 @@ HTTP 200
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "Sourcemeta Schemas"
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
 # This is a Safari Accept header
@@ -16,6 +18,8 @@ HTTP 200
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "A sample schema folder"
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/test/doc
@@ -24,6 +28,8 @@ HTTP 200
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "A sample schema folder"
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
 # Without an explicit HTML accept, we don't serve any UI
@@ -50,6 +56,8 @@ HTTP 200
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "Non-blank string"
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/test/doc/string-1.html
@@ -58,6 +66,8 @@ HTTP 404
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "Not Found"
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/test/v2.0
@@ -66,6 +76,8 @@ HTTP 200
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "/test/v2.0"
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/xxxxxxx
@@ -74,6 +86,8 @@ HTTP 404
 Content-Type: text/html
 [Asserts]
 xpath "string(/html/head/title)" == "Not Found"
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/test/v2.0?locations=1
@@ -118,6 +132,8 @@ Accept: text/html
 HTTP 200
 Content-Type: text/html
 [Asserts]
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/test/foobar/sourcemeta:registry/not-found
@@ -125,6 +141,8 @@ Accept: text/html
 HTTP 404
 Content-Type: text/html
 [Asserts]
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
 GET {{base}}/test/no-serve/schema
@@ -132,4 +150,26 @@ Accept: text/html
 HTTP 200
 Content-Type: text/html
 [Asserts]
+xpath "count(//script[not(contains(@src, '?v='))])" == 0
+xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
+
+# Test that the v= query parameter is consistent across different pages to
+# ensure the cache stamp is generated once at build/startup time, not per request
+GET {{base}}
+Accept: text/html
+HTTP 200
+Content-Type: text/html
+[Captures]
+page1_script_v: xpath "substring-after(//script/@src, '?v=')"
+page1_style_v: xpath "substring-after(//link[@rel='stylesheet']/@href, '?v=')"
+GET {{base}}/test/doc
+Accept: text/html
+HTTP 200
+Content-Type: text/html
+[Captures]
+page2_script_v: xpath "substring-after(//script/@src, '?v=')"
+page2_style_v: xpath "substring-after(//link[@rel='stylesheet']/@href, '?v=')"
+[Asserts]
+variable "page1_script_v" == "{{page2_script_v}}"
+variable "page1_style_v" == "{{page2_style_v}}"
