@@ -4,6 +4,7 @@ sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME shared
 
 target_link_libraries(sourcemeta_registry_shared PUBLIC sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::io)
+target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::uuid)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::time)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::gzip)
