@@ -70,14 +70,17 @@ else
 		test/e2e/schemas/*.hurl
 endif
 
-.PHONY: sandbox
-sandbox: compile
+.PHONY: sandbox-index
+sandbox-index: compile
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-index \
 		$(SANDBOX)/registry-$(SANDBOX_CONFIGURATION).json \
 		$(OUTPUT)/sandbox --url $(SANDBOX_URL) --profile
 	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox \
 		$(SANDBOX)/manifest-$(SANDBOX_CONFIGURATION).txt
+
+.PHONY: sandbox
+sandbox: sandbox-index
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-server \
 		$(OUTPUT)/sandbox $(SANDBOX_PORT)

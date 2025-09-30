@@ -1,8 +1,15 @@
-sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME web)
+sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME web
+  SOURCES helpers.h page.h
+    pages/index.cc
+    pages/directory.cc
+    pages/schema.cc
+    pages/not_found.cc)
 
-target_link_libraries(sourcemeta_registry_web INTERFACE sourcemeta::core::json)
-target_link_libraries(sourcemeta_registry_web INTERFACE sourcemeta::registry::configuration)
-target_link_libraries(sourcemeta_registry_web INTERFACE sourcemeta::registry::shared)
+target_link_libraries(sourcemeta_registry_web PUBLIC sourcemeta::core::build)
+target_link_libraries(sourcemeta_registry_web PRIVATE sourcemeta::core::json)
+target_link_libraries(sourcemeta_registry_web PUBLIC sourcemeta::registry::configuration)
+target_link_libraries(sourcemeta_registry_web PRIVATE sourcemeta::registry::shared)
+target_link_libraries(sourcemeta_registry_web PRIVATE sourcemeta::registry::html)
 
 sourcemeta_esbuild_bundle(
   ENTRYPOINT "${CMAKE_CURRENT_SOURCE_DIR}/main.js"

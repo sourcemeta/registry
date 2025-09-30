@@ -77,6 +77,9 @@ public:
 
   auto render() const -> std::string;
 
+  auto push_back(const Node &child) -> HTML &;
+  auto push_back(Node &&child) -> HTML &;
+
   // Stream operator declaration
   friend auto operator<<(std::ostream &output_stream, const HTML &html_element)
       -> std::ostream &;

@@ -89,10 +89,6 @@ TEST(HTML, raw_html_with_entities) {
             "<div>&lt;already&gt; &amp; &quot;escaped&quot;</div>");
 }
 
-// =============================================================================
-// Edge Cases and HTML Quirks
-// =============================================================================
-
 TEST(HTML, empty_elements) {
   using namespace sourcemeta::registry::html;
 
@@ -309,4 +305,135 @@ TEST(HTML, zero_length_strings) {
 
   EXPECT_EQ(p("").render(), "<p></p>");
   EXPECT_EQ(span({{"class", ""}}, "").render(), "<span class=\"\"></span>");
+}
+
+TEST(HTML, push_back_string) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div();
+  element.push_back(std::string("Hello World"));
+
+  EXPECT_EQ(element.render(), "<div>Hello World</div>");
+}
+
+TEST(HTML, push_back_string_chaining) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div()
+                     .push_back(std::string("First"))
+                     .push_back(std::string(" "))
+                     .push_back(std::string("Second"));
+
+  EXPECT_EQ(element.render(), "<div>First Second</div>");
+}
+
+TEST(HTML, push_back_html_element) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div();
+  element.push_back(span("Nested span"));
+
+  EXPECT_EQ(element.render(), "<div><span>Nested span</span></div>");
+}
+
+TEST(HTML, push_back_html_element_chaining) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div()
+                     .push_back(h1("Title"))
+                     .push_back(p("Paragraph"))
+                     .push_back(span("Footer"));
+
+  EXPECT_EQ(element.render(),
+            "<div><h1>Title</h1><p>Paragraph</p><span>Footer</span></div>");
+}
+
+TEST(HTML, push_back_raw_html) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div();
+  element.push_back(raw("<strong>Bold text</strong>"));
+
+  EXPECT_EQ(element.render(), "<div><strong>Bold text</strong></div>");
+}
+
+TEST(HTML, push_back_raw_html_chaining) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div()
+                     .push_back(raw("<em>Italic</em>"))
+                     .push_back(std::string(" and "))
+                     .push_back(raw("<strong>Bold</strong>"));
+
+  EXPECT_EQ(element.render(),
+            "<div><em>Italic</em> and <strong>Bold</strong></div>");
+}
+
+TEST(HTML, push_back_mixed_content) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div();
+  element.push_back(std::string("Text: "))
+      .push_back(span("Nested"))
+      .push_back(std::string(" & "))
+      .push_back(raw("<em>Raw HTML</em>"));
+
+  EXPECT_EQ(element.render(),
+            "<div>Text: <span>Nested</span> &amp; <em>Raw HTML</em></div>");
+}
+
+TEST(HTML, push_back_with_attributes) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div({{"class", "container"}, {"id", "main"}});
+  element.push_back(std::string("Content")).push_back(p("Paragraph"));
+
+  EXPECT_EQ(
+      element.render(),
+      "<div class=\"container\" id=\"main\">Content<p>Paragraph</p></div>");
+}
+
+TEST(HTML, push_back_to_existing_children) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div("Initial content");
+  element.push_back(std::string(" ")).push_back(span("Added span"));
+
+  EXPECT_EQ(element.render(),
+            "<div>Initial content <span>Added span</span></div>");
+}
+
+TEST(HTML, push_back_complex_nesting) {
+  using namespace sourcemeta::registry::html;
+
+  auto list = ul();
+  list.push_back(li("Item 1"))
+      .push_back(li().push_back(std::string("Item 2 with "))
+                     .push_back(strong("emphasis")))
+      .push_back(li().push_back(raw("<em>Item 3</em>")));
+
+  EXPECT_EQ(list.render(),
+            "<ul><li>Item 1</li><li>Item 2 with <strong>emphasis</strong></li>"
+            "<li><em>Item 3</em></li></ul>");
+}
+
+TEST(HTML, push_back_escaped_content) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div();
+  element.push_back(std::string("Safe: <script>alert('xss')</script>"));
+
+  EXPECT_EQ(
+      element.render(),
+      "<div>Safe: &lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;</div>");
+}
+
+TEST(HTML, push_back_return_reference) {
+  using namespace sourcemeta::registry::html;
+
+  auto element = div();
+  auto &ref = element.push_back(std::string("test"));
+
+  // Verify that push_back returns a reference to the same object
+  EXPECT_EQ(&ref, &element);
 }
