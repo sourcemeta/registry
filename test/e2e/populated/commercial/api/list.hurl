@@ -136,6 +136,7 @@ jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].protected" == false
 jsonpath "$.entries[0].alert" == null
+jsonpath "$.entries[0].provenance" == null
 jsonpath "$.entries[0].path" == "/test/v2.0/schema"
 jsonpath "$.entries[0].health" == 100
 
@@ -194,6 +195,7 @@ jsonpath "$.entries[0].name" == "v1.2.3"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].protected" == false
 jsonpath "$.entries[0].alert" == null
+jsonpath "$.entries[0].provenance" == null
 jsonpath "$.entries[0].path" == "/test/schemas/versions/v1.2.3"
 jsonpath "$.entries[0].health" == 100
 
@@ -231,6 +233,7 @@ jsonpath "$.entries[0].name" == "without"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].protected" == false
 jsonpath "$.entries[0].alert" == null
+jsonpath "$.entries[0].provenance" == null
 jsonpath "$.entries[0].path" == "/test/extension/without"
 jsonpath "$.entries[0].health" == 100
 jsonpath "$.entries[1].bytes" == 132
@@ -241,6 +244,7 @@ jsonpath "$.entries[1].name" == "with"
 jsonpath "$.entries[1].type" == "schema"
 jsonpath "$.entries[1].protected" == false
 jsonpath "$.entries[1].alert" == null
+jsonpath "$.entries[1].provenance" == null
 jsonpath "$.entries[1].path" == "/test/extension/with"
 jsonpath "$.entries[1].health" == 100
 jsonpath "$.entries[2].bytes" == 172
@@ -251,6 +255,7 @@ jsonpath "$.entries[2].name" == "to-without"
 jsonpath "$.entries[2].type" == "schema"
 jsonpath "$.entries[2].protected" == false
 jsonpath "$.entries[2].alert" == null
+jsonpath "$.entries[2].provenance" == null
 jsonpath "$.entries[2].path" == "/test/extension/to-without"
 jsonpath "$.entries[2].health" == 100
 
@@ -289,6 +294,7 @@ jsonpath "$.entries[0].dialect" == "https://json-schema.org/draft/2020-12/schema
 jsonpath "$.entries[0].health" == 100
 jsonpath "$.entries[0].protected" == true
 jsonpath "$.entries[0].alert" == "This collection is private"
+jsonpath "$.entries[0].provenance" == null
 jsonpath "$.entries[0].type" == "schema"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response

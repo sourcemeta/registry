@@ -7,8 +7,7 @@
   "items": {
     "anyOf": [
       {
-        "type": "string",
-        "pattern": "^@[a-z0-9/.]+$"
+        "$ref": "./rpath.json"
       },
       {
         "$ref": "../../../std/v0.0.1/schemas/path-posix.json"

@@ -36,7 +36,7 @@
         "baseDialect",
         "dialect",
         "protected",
-        "alert",
+        "provenance",
         "health"
       ],
       "properties": {
@@ -69,6 +69,9 @@
         },
         "protected": {
           "type": "boolean"
+        },
+        "provenance": {
+          "type": [ "string", "null" ]
         }
       }
     }

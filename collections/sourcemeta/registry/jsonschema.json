@@ -1,4 +1,5 @@
 {
+  "x-sourcemeta-registry:provenance": "@@COLLECTION_NAMESPACE@",
   "title": "Sourcemeta Registry",
   "description": "The schemas that define the current version of the Registry itself",
   "email": "hello@sourcemeta.com",
