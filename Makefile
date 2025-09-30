@@ -59,25 +59,26 @@ test:
 	$(CTEST) --test-dir $(OUTPUT) --build-config $(PRESET) --output-on-failure --parallel
 
 .PHONY: test-e2e
-test-e2e:
-ifeq ($(SANDBOX_CONFIGURATION),empty)
-	$(HURL) --test --variable base=$(SANDBOX_URL) \
-		test/e2e/$(SANDBOX_CONFIGURATION)/*.hurl
+HURL_TESTS += test/e2e/$(SANDBOX_CONFIGURATION)/common/*.hurl
+ifneq ($(SANDBOX_CONFIGURATION),empty)
+HURL_TESTS += test/e2e/populated/common/schemas/*.hurl
+ifeq ($(EDITION),starter)
+HURL_TESTS += test/e2e/populated/starter/api/*.hurl
 else
-	$(HURL) --test --variable base=$(SANDBOX_URL) \
-		test/e2e/$(SANDBOX_CONFIGURATION)/*.hurl \
-		test/e2e/api/*.hurl \
-		test/e2e/schemas/*.hurl
+HURL_TESTS += test/e2e/populated/commercial/api/*.hurl
 endif
+endif
+test-e2e:
+	$(HURL) --test --variable base=$(SANDBOX_URL) $(HURL_TESTS)
 
 .PHONY: sandbox-index
 sandbox-index: compile
 	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
 		$(PREFIX)/bin/sourcemeta-registry-index \
-		$(SANDBOX)/registry-$(SANDBOX_CONFIGURATION).json \
+		$(SANDBOX)/registry-$(SANDBOX_CONFIGURATION)-$(EDITION).json \
 		$(OUTPUT)/sandbox --url $(SANDBOX_URL) --profile
 	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox \
-		$(SANDBOX)/manifest-$(SANDBOX_CONFIGURATION).txt
+		$(SANDBOX)/manifest-$(SANDBOX_CONFIGURATION)-$(EDITION).txt
 
 .PHONY: sandbox
 sandbox: sandbox-index

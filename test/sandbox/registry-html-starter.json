@@ -9,8 +9,7 @@
     }
   },
   "extends": [
-    "@geojson/v1.0.5",
-    "@sourcemeta/registry"
+    "@geojson/v1.0.5"
   ],
   "contents": {
     "test": {
