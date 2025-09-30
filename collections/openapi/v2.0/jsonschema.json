@@ -1,4 +1,5 @@
 {
+  "x-sourcemeta-registry:provenance": "@@COLLECTION_NAMESPACE@",
   "path": "./schemas",
   "baseUri": "http://swagger.io/v2"
 }

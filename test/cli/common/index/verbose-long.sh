@@ -48,6 +48,23 @@ remove_threads_information "$TMP/output.txt"
 cat << EOF > "$TMP/expected.txt"
 Writing output to: $(realpath "$TMP")/output
 Using configuration: $(realpath "$TMP")/registry.json
+{
+  "url": "https://sourcemeta.com/",
+  "contents": {
+    "example": {
+      "contents": {
+        "schemas": {
+          "baseUri": "https://example.com/",
+          "path": "$(realpath "$TMP")/schemas"
+        }
+      }
+    }
+  },
+  "html": {
+    "name": "Sourcemeta",
+    "description": "The next-generation JSON Schema Registry"
+  }
+}
 Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 https://example.com/foo => https://sourcemeta.com/example/schemas/foo
 (100%) Ingesting: https://sourcemeta.com/example/schemas/foo

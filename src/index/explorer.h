@@ -172,12 +172,22 @@ struct GENERATE_EXPLORER_SCHEMA_METADATA {
     result.assign("protected", sourcemeta::core::JSON{dependencies.size() > 4});
 
     const auto &collection{std::get<1>(context).get()};
+
     if (collection.extra.defines("x-sourcemeta-registry:alert")) {
       assert(collection.extra.at("x-sourcemeta-registry:alert").is_string());
       result.assign("alert",
                     collection.extra.at("x-sourcemeta-registry:alert"));
     } else {
       result.assign("alert", sourcemeta::core::JSON{nullptr});
+    }
+
+    if (collection.extra.defines("x-sourcemeta-registry:provenance")) {
+      assert(
+          collection.extra.at("x-sourcemeta-registry:provenance").is_string());
+      result.assign("provenance",
+                    collection.extra.at("x-sourcemeta-registry:provenance"));
+    } else {
+      result.assign("provenance", sourcemeta::core::JSON{nullptr});
     }
 
     result.assign("breadcrumb", make_breadcrumb(std::get<2>(context)));

@@ -20,6 +20,9 @@
     "x-sourcemeta-registry:protected": {
       "type": "boolean"
     },
+    "x-sourcemeta-registry:provenance": {
+      "$ref": "./rpath.json"
+    },
     "baseUri": {
       "$ref": "../../../std/v0.0.1/schemas/uri-reference.json"
     },

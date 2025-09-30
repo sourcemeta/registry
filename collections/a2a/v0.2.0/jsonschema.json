@@ -1,3 +1,4 @@
 {
+  "x-sourcemeta-registry:provenance": "@@COLLECTION_NAMESPACE@",
   "path": "./schemas"
 }

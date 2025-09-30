@@ -115,6 +115,12 @@ static auto index_main(const std::string_view &program,
   std::cerr << "Using configuration: " << configuration_path.string() << "\n";
   const auto raw_configuration{sourcemeta::registry::Configuration::read(
       configuration_path, SOURCEMETA_REGISTRY_COLLECTIONS)};
+
+  if (app.contains("verbose")) {
+    sourcemeta::core::prettify(raw_configuration, std::cerr);
+    std::cerr << "\n";
+  }
+
   auto configuration{
       sourcemeta::registry::Configuration::parse(raw_configuration)};
 

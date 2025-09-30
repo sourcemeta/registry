@@ -72,6 +72,7 @@ navigation and discovery purposes.
     | `/entries/*/identifier` | String | No | For `schema` entries, the absolute URI of the entry |
     | `/entries/*/protected` | Boolean | No | For `schema` entries, whether the schema is listed but not accessible |
     | `/entries/*/alert` | String / Null | No | For `schema` entries, the human readable alert message for the schema collection |
+    | `/entries/*/provenance` | String / Null | No | For `schema` entries, the origin of the schema collection, if any |
 
 === "404"
 

@@ -26,5 +26,6 @@ jsonpath "$.entries[0].name" == "v1.2.3"
 jsonpath "$.entries[0].type" == "schema"
 jsonpath "$.entries[0].protected" == false
 jsonpath "$.entries[0].alert" == null
+jsonpath "$.entries[0].provenance" == null
 jsonpath "$.entries[0].path" == "/test/schemas/versions/v1.2.3"
 jsonpath "$.entries[0].health" == 100
