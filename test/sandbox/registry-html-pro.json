@@ -1,0 +1,6 @@
+{
+  "extends": [
+    "./registry-html-starter.json",
+    "@sourcemeta/registry"
+  ]
+}

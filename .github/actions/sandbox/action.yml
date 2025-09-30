@@ -15,6 +15,7 @@ inputs:
     options:
       - html
       - headless
+      - empty
   port:
     description: Port
     required: true
