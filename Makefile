@@ -6,6 +6,7 @@ DOCKER ?= docker
 SHELLCHECK ?= shellcheck
 MKDOCS ?= mkdocs
 NPM ?= npm
+NPX ?= npx
 
 # Options
 INDEX ?= ON
@@ -70,6 +71,12 @@ endif
 endif
 test-e2e:
 	$(HURL) --test --variable base=$(SANDBOX_URL) $(HURL_TESTS)
+
+.PHONY: test-ui
+test-ui: node_modules
+	$(NPX) playwright install --with-deps
+	env PLAYWRIGHT_BASE_URL=$(SANDBOX_URL) \
+		$(NPX) playwright test --config test/ui/playwright.config.js
 
 .PHONY: sandbox-index
 sandbox-index: compile
