@@ -140,7 +140,8 @@ auto GENERATE_WEB_SCHEMA::handler(
     }
 
     container_children.emplace_back(
-        div({{"class", "border overflow-auto"},
+        div({{"id", "schema"},
+             {"class", "border overflow-auto"},
              {"style", "max-height: 400px;"},
              {"data-sourcemeta-ui-editor", meta.at("path").to_string()},
              {"data-sourcemeta-ui-editor-mode", "readonly"},
