@@ -522,6 +522,28 @@ static auto on_request(const std::filesystem::path &base,
                  "method-not-allowed",
                  "This HTTP method is invalid for this URL");
     }
+  } else if (request->getUrl().starts_with("/self/api/schemas/stats/")) {
+    if (request->getMethod() == "get" || request->getMethod() == "head") {
+      auto absolute_path{base / "schemas"};
+      absolute_path /= request->getUrl().substr(24);
+      absolute_path /= SENTINEL;
+      absolute_path /= "stats.metapack";
+
+      if (std::filesystem::exists(absolute_path.parent_path() /
+                                  "protected.metapack")) {
+        json_error(request->getMethod(), request->getUrl(), response, encoding,
+                   sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
+                   "This schema is protected");
+      } else {
+        serve_static_file(request, response, encoding, absolute_path,
+                          sourcemeta::registry::STATUS_OK, true);
+      }
+    } else {
+      json_error(request->getMethod(), request->getUrl(), response, encoding,
+                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
+                 "method-not-allowed",
+                 "This HTTP method is invalid for this URL");
+    }
   } else if (request->getUrl().starts_with("/self/api/schemas/metadata/")) {
     if (request->getMethod() == "get" || request->getMethod() == "head") {
       auto absolute_path{base / "explorer"};
