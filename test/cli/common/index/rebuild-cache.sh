@@ -77,6 +77,7 @@ Detecting: $(realpath "$TMP")/schemas/foo.json (#1)
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [positions]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [locations]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [dependencies]
+(skip) Analysing: https://sourcemeta.com/example/schemas/foo [stats]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [health]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [bundle]
 (skip) Analysing: https://sourcemeta.com/example/schemas/foo [editor]

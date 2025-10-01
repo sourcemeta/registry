@@ -352,6 +352,47 @@ struct GENERATE_BLAZE_TEMPLATE {
   }
 };
 
+struct GENERATE_STATS {
+  using Context = sourcemeta::registry::Resolver;
+  static auto
+  handler(const std::filesystem::path &destination,
+          const sourcemeta::core::BuildDependencies<std::filesystem::path>
+              &dependencies,
+          const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
+              &callback,
+          const Context &resolver) -> void {
+    const auto timestamp_start{std::chrono::steady_clock::now()};
+    const auto schema{sourcemeta::registry::read_json(dependencies.front())};
+    std::map<sourcemeta::core::JSON::String,
+             std::map<sourcemeta::core::JSON::String, std::uint64_t>>
+        result;
+    for (const auto &entry : sourcemeta::core::SchemaIterator{
+             schema, sourcemeta::core::schema_official_walker,
+             [&callback, &resolver](const auto identifier) {
+               return resolver(identifier, callback);
+             }}) {
+      if (!entry.subschema.get().is_object()) {
+        continue;
+      }
+
+      for (const auto &property : entry.subschema.get().as_object()) {
+        const auto walker_result{sourcemeta::core::schema_official_walker(
+            property.first, entry.vocabularies)};
+        const auto vocabulary{walker_result.vocabulary.value_or("unknown")};
+        result[vocabulary][property.first] += 1;
+      }
+    }
+
+    const auto timestamp_end{std::chrono::steady_clock::now()};
+    std::filesystem::create_directories(destination.parent_path());
+    sourcemeta::registry::write_pretty_json(
+        destination, sourcemeta::core::to_json(result), "application/json",
+        sourcemeta::registry::Encoding::GZIP, sourcemeta::core::JSON{nullptr},
+        std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
+                                                              timestamp_start));
+  }
+};
+
 } // namespace sourcemeta::registry
 
 #endif

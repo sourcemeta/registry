@@ -325,6 +325,29 @@ GET /self/api/schemas/locations/{path}
 
     The [configuration file](configuration.md) marks the schema collection as listed but not served.
 
+### Stats
+
+*This endpoint retrieves keyword statistics, by vocabulary, about every URI
+associated with the JSON Schema located at the specified `{path}` parameter.*
+
+```
+GET /self/api/schemas/stats/{path}
+```
+
+=== "200"
+
+    | Property | Type | Required | Description |
+    |----------|------|----------|-------------|
+    | `/<vocabulary>/<keyword>` | Integer | Yes | The number of occurrences keywords of a specific keyword name from a specific vocabulary (or `unknown` otherwise) |
+
+=== "404"
+
+    The schema does not exist.
+
+=== "405"
+
+    The [configuration file](configuration.md) marks the schema collection as listed but not served.
+
 ### Positions
 
 *This endpoint retrieves line and column position information for every token

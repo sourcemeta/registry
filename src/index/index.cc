@@ -300,6 +300,11 @@ static auto index_main(const std::string_view &program,
             {base_path / "schema.metapack", mark_version_path}, resolver, mutex,
             "Analysing", schema.first, "dependencies", adapter, output);
 
+        DISPATCH<sourcemeta::registry::GENERATE_STATS>(
+            base_path / "stats.metapack",
+            {base_path / "schema.metapack", mark_version_path}, resolver, mutex,
+            "Analysing", schema.first, "stats", adapter, output);
+
         DISPATCH<sourcemeta::registry::GENERATE_HEALTH>(
             base_path / "health.metapack",
             {base_path / "schema.metapack", base_path / "dependencies.metapack",

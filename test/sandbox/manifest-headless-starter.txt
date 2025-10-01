@@ -296,6 +296,8 @@
 ./schemas/geojson/v1.0.5/boundingbox/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/boundingbox/%/schema.metapack
 ./schemas/geojson/v1.0.5/boundingbox/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/boundingbox/%/stats.metapack
+./schemas/geojson/v1.0.5/boundingbox/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/feature
 ./schemas/geojson/v1.0.5/feature/%
 ./schemas/geojson/v1.0.5/feature/%/blaze-exhaustive.metapack
@@ -314,6 +316,8 @@
 ./schemas/geojson/v1.0.5/feature/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/feature/%/schema.metapack
 ./schemas/geojson/v1.0.5/feature/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/feature/%/stats.metapack
+./schemas/geojson/v1.0.5/feature/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/featurecollection
 ./schemas/geojson/v1.0.5/featurecollection/%
 ./schemas/geojson/v1.0.5/featurecollection/%/blaze-exhaustive.metapack
@@ -332,6 +336,8 @@
 ./schemas/geojson/v1.0.5/featurecollection/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/featurecollection/%/schema.metapack
 ./schemas/geojson/v1.0.5/featurecollection/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/featurecollection/%/stats.metapack
+./schemas/geojson/v1.0.5/featurecollection/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/geojson
 ./schemas/geojson/v1.0.5/geojson/%
 ./schemas/geojson/v1.0.5/geojson/%/blaze-exhaustive.metapack
@@ -350,6 +356,8 @@
 ./schemas/geojson/v1.0.5/geojson/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/geojson/%/schema.metapack
 ./schemas/geojson/v1.0.5/geojson/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/geojson/%/stats.metapack
+./schemas/geojson/v1.0.5/geojson/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/geometry
 ./schemas/geojson/v1.0.5/geometry/%
 ./schemas/geojson/v1.0.5/geometry/%/blaze-exhaustive.metapack
@@ -368,6 +376,8 @@
 ./schemas/geojson/v1.0.5/geometry/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/geometry/%/schema.metapack
 ./schemas/geojson/v1.0.5/geometry/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/geometry/%/stats.metapack
+./schemas/geojson/v1.0.5/geometry/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/geometrycollection
 ./schemas/geojson/v1.0.5/geometrycollection/%
 ./schemas/geojson/v1.0.5/geometrycollection/%/blaze-exhaustive.metapack
@@ -386,6 +396,8 @@
 ./schemas/geojson/v1.0.5/geometrycollection/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/geometrycollection/%/schema.metapack
 ./schemas/geojson/v1.0.5/geometrycollection/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/geometrycollection/%/stats.metapack
+./schemas/geojson/v1.0.5/geometrycollection/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/linearringcoordinates
 ./schemas/geojson/v1.0.5/linearringcoordinates/%
 ./schemas/geojson/v1.0.5/linearringcoordinates/%/blaze-exhaustive.metapack
@@ -404,6 +416,8 @@
 ./schemas/geojson/v1.0.5/linearringcoordinates/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/linearringcoordinates/%/schema.metapack
 ./schemas/geojson/v1.0.5/linearringcoordinates/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/linearringcoordinates/%/stats.metapack
+./schemas/geojson/v1.0.5/linearringcoordinates/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/linestring
 ./schemas/geojson/v1.0.5/linestring/%
 ./schemas/geojson/v1.0.5/linestring/%/blaze-exhaustive.metapack
@@ -422,6 +436,8 @@
 ./schemas/geojson/v1.0.5/linestring/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/linestring/%/schema.metapack
 ./schemas/geojson/v1.0.5/linestring/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/linestring/%/stats.metapack
+./schemas/geojson/v1.0.5/linestring/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/linestringcoordinates
 ./schemas/geojson/v1.0.5/linestringcoordinates/%
 ./schemas/geojson/v1.0.5/linestringcoordinates/%/blaze-exhaustive.metapack
@@ -440,6 +456,8 @@
 ./schemas/geojson/v1.0.5/linestringcoordinates/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/linestringcoordinates/%/schema.metapack
 ./schemas/geojson/v1.0.5/linestringcoordinates/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/linestringcoordinates/%/stats.metapack
+./schemas/geojson/v1.0.5/linestringcoordinates/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/multilinestring
 ./schemas/geojson/v1.0.5/multilinestring/%
 ./schemas/geojson/v1.0.5/multilinestring/%/blaze-exhaustive.metapack
@@ -458,6 +476,8 @@
 ./schemas/geojson/v1.0.5/multilinestring/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/multilinestring/%/schema.metapack
 ./schemas/geojson/v1.0.5/multilinestring/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/multilinestring/%/stats.metapack
+./schemas/geojson/v1.0.5/multilinestring/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/multipoint
 ./schemas/geojson/v1.0.5/multipoint/%
 ./schemas/geojson/v1.0.5/multipoint/%/blaze-exhaustive.metapack
@@ -476,6 +496,8 @@
 ./schemas/geojson/v1.0.5/multipoint/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/multipoint/%/schema.metapack
 ./schemas/geojson/v1.0.5/multipoint/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/multipoint/%/stats.metapack
+./schemas/geojson/v1.0.5/multipoint/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/multipolygon
 ./schemas/geojson/v1.0.5/multipolygon/%
 ./schemas/geojson/v1.0.5/multipolygon/%/blaze-exhaustive.metapack
@@ -494,6 +516,8 @@
 ./schemas/geojson/v1.0.5/multipolygon/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/multipolygon/%/schema.metapack
 ./schemas/geojson/v1.0.5/multipolygon/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/multipolygon/%/stats.metapack
+./schemas/geojson/v1.0.5/multipolygon/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/point
 ./schemas/geojson/v1.0.5/point/%
 ./schemas/geojson/v1.0.5/point/%/blaze-exhaustive.metapack
@@ -512,6 +536,8 @@
 ./schemas/geojson/v1.0.5/point/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/point/%/schema.metapack
 ./schemas/geojson/v1.0.5/point/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/point/%/stats.metapack
+./schemas/geojson/v1.0.5/point/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/pointcoordinates
 ./schemas/geojson/v1.0.5/pointcoordinates/%
 ./schemas/geojson/v1.0.5/pointcoordinates/%/blaze-exhaustive.metapack
@@ -530,6 +556,8 @@
 ./schemas/geojson/v1.0.5/pointcoordinates/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/pointcoordinates/%/schema.metapack
 ./schemas/geojson/v1.0.5/pointcoordinates/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/pointcoordinates/%/stats.metapack
+./schemas/geojson/v1.0.5/pointcoordinates/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/polygon
 ./schemas/geojson/v1.0.5/polygon/%
 ./schemas/geojson/v1.0.5/polygon/%/blaze-exhaustive.metapack
@@ -548,6 +576,8 @@
 ./schemas/geojson/v1.0.5/polygon/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/polygon/%/schema.metapack
 ./schemas/geojson/v1.0.5/polygon/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/polygon/%/stats.metapack
+./schemas/geojson/v1.0.5/polygon/%/stats.metapack.deps
 ./schemas/geojson/v1.0.5/polygoncoordinates
 ./schemas/geojson/v1.0.5/polygoncoordinates/%
 ./schemas/geojson/v1.0.5/polygoncoordinates/%/blaze-exhaustive.metapack
@@ -566,6 +596,8 @@
 ./schemas/geojson/v1.0.5/polygoncoordinates/%/positions.metapack.deps
 ./schemas/geojson/v1.0.5/polygoncoordinates/%/schema.metapack
 ./schemas/geojson/v1.0.5/polygoncoordinates/%/schema.metapack.deps
+./schemas/geojson/v1.0.5/polygoncoordinates/%/stats.metapack
+./schemas/geojson/v1.0.5/polygoncoordinates/%/stats.metapack.deps
 ./schemas/test
 ./schemas/test/bundling
 ./schemas/test/bundling/double
@@ -586,6 +618,8 @@
 ./schemas/test/bundling/double/%/positions.metapack.deps
 ./schemas/test/bundling/double/%/schema.metapack
 ./schemas/test/bundling/double/%/schema.metapack.deps
+./schemas/test/bundling/double/%/stats.metapack
+./schemas/test/bundling/double/%/stats.metapack.deps
 ./schemas/test/bundling/single
 ./schemas/test/bundling/single/%
 ./schemas/test/bundling/single/%/blaze-exhaustive.metapack
@@ -604,6 +638,8 @@
 ./schemas/test/bundling/single/%/positions.metapack.deps
 ./schemas/test/bundling/single/%/schema.metapack
 ./schemas/test/bundling/single/%/schema.metapack.deps
+./schemas/test/bundling/single/%/stats.metapack
+./schemas/test/bundling/single/%/stats.metapack.deps
 ./schemas/test/camelcase
 ./schemas/test/camelcase/test
 ./schemas/test/camelcase/test/no-id
@@ -625,6 +661,8 @@
 ./schemas/test/camelcase/test/no-id-absolute-ref/%/positions.metapack.deps
 ./schemas/test/camelcase/test/no-id-absolute-ref/%/schema.metapack
 ./schemas/test/camelcase/test/no-id-absolute-ref/%/schema.metapack.deps
+./schemas/test/camelcase/test/no-id-absolute-ref/%/stats.metapack
+./schemas/test/camelcase/test/no-id-absolute-ref/%/stats.metapack.deps
 ./schemas/test/camelcase/test/no-id/%
 ./schemas/test/camelcase/test/no-id/%/blaze-exhaustive.metapack
 ./schemas/test/camelcase/test/no-id/%/blaze-exhaustive.metapack.deps
@@ -642,6 +680,8 @@
 ./schemas/test/camelcase/test/no-id/%/positions.metapack.deps
 ./schemas/test/camelcase/test/no-id/%/schema.metapack
 ./schemas/test/camelcase/test/no-id/%/schema.metapack.deps
+./schemas/test/camelcase/test/no-id/%/stats.metapack
+./schemas/test/camelcase/test/no-id/%/stats.metapack.deps
 ./schemas/test/doc
 ./schemas/test/doc/.period
 ./schemas/test/doc/.period/%
@@ -661,6 +701,8 @@
 ./schemas/test/doc/.period/%/positions.metapack.deps
 ./schemas/test/doc/.period/%/schema.metapack
 ./schemas/test/doc/.period/%/schema.metapack.deps
+./schemas/test/doc/.period/%/stats.metapack
+./schemas/test/doc/.period/%/stats.metapack.deps
 ./schemas/test/doc/string-1
 ./schemas/test/doc/string-1/%
 ./schemas/test/doc/string-1/%/blaze-exhaustive.metapack
@@ -679,6 +721,8 @@
 ./schemas/test/doc/string-1/%/positions.metapack.deps
 ./schemas/test/doc/string-1/%/schema.metapack
 ./schemas/test/doc/string-1/%/schema.metapack.deps
+./schemas/test/doc/string-1/%/stats.metapack
+./schemas/test/doc/string-1/%/stats.metapack.deps
 ./schemas/test/extension
 ./schemas/test/extension/to-without
 ./schemas/test/extension/to-without/%
@@ -698,6 +742,8 @@
 ./schemas/test/extension/to-without/%/positions.metapack.deps
 ./schemas/test/extension/to-without/%/schema.metapack
 ./schemas/test/extension/to-without/%/schema.metapack.deps
+./schemas/test/extension/to-without/%/stats.metapack
+./schemas/test/extension/to-without/%/stats.metapack.deps
 ./schemas/test/extension/with
 ./schemas/test/extension/with/%
 ./schemas/test/extension/with/%/blaze-exhaustive.metapack
@@ -716,6 +762,8 @@
 ./schemas/test/extension/with/%/positions.metapack.deps
 ./schemas/test/extension/with/%/schema.metapack
 ./schemas/test/extension/with/%/schema.metapack.deps
+./schemas/test/extension/with/%/stats.metapack
+./schemas/test/extension/with/%/stats.metapack.deps
 ./schemas/test/extension/without
 ./schemas/test/extension/without/%
 ./schemas/test/extension/without/%/blaze-exhaustive.metapack
@@ -734,6 +782,8 @@
 ./schemas/test/extension/without/%/positions.metapack.deps
 ./schemas/test/extension/without/%/schema.metapack
 ./schemas/test/extension/without/%/schema.metapack.deps
+./schemas/test/extension/without/%/stats.metapack
+./schemas/test/extension/without/%/stats.metapack.deps
 ./schemas/test/hyper
 ./schemas/test/hyper/2020-12
 ./schemas/test/hyper/2020-12/%
@@ -753,6 +803,8 @@
 ./schemas/test/hyper/2020-12/%/positions.metapack.deps
 ./schemas/test/hyper/2020-12/%/schema.metapack
 ./schemas/test/hyper/2020-12/%/schema.metapack.deps
+./schemas/test/hyper/2020-12/%/stats.metapack
+./schemas/test/hyper/2020-12/%/stats.metapack.deps
 ./schemas/test/no-blaze
 ./schemas/test/no-blaze/string
 ./schemas/test/no-blaze/string/%
@@ -770,6 +822,8 @@
 ./schemas/test/no-blaze/string/%/positions.metapack.deps
 ./schemas/test/no-blaze/string/%/schema.metapack
 ./schemas/test/no-blaze/string/%/schema.metapack.deps
+./schemas/test/no-blaze/string/%/stats.metapack
+./schemas/test/no-blaze/string/%/stats.metapack.deps
 ./schemas/test/no-serve
 ./schemas/test/no-serve/schema
 ./schemas/test/no-serve/schema/%
@@ -791,6 +845,8 @@
 ./schemas/test/no-serve/schema/%/protected.metapack.deps
 ./schemas/test/no-serve/schema/%/schema.metapack
 ./schemas/test/no-serve/schema/%/schema.metapack.deps
+./schemas/test/no-serve/schema/%/stats.metapack
+./schemas/test/no-serve/schema/%/stats.metapack.deps
 ./schemas/test/same
 ./schemas/test/same/schema
 ./schemas/test/same/schema/%
@@ -810,6 +866,8 @@
 ./schemas/test/same/schema/%/positions.metapack.deps
 ./schemas/test/same/schema/%/schema.metapack
 ./schemas/test/same/schema/%/schema.metapack.deps
+./schemas/test/same/schema/%/stats.metapack
+./schemas/test/same/schema/%/stats.metapack.deps
 ./schemas/test/schemas
 ./schemas/test/schemas/%25
 ./schemas/test/schemas/%25/test
@@ -830,6 +888,8 @@
 ./schemas/test/schemas/%25/test/%/positions.metapack.deps
 ./schemas/test/schemas/%25/test/%/schema.metapack
 ./schemas/test/schemas/%25/test/%/schema.metapack.deps
+./schemas/test/schemas/%25/test/%/stats.metapack
+./schemas/test/schemas/%25/test/%/stats.metapack.deps
 ./schemas/test/schemas/absolute-refs
 ./schemas/test/schemas/absolute-refs/%
 ./schemas/test/schemas/absolute-refs/%/blaze-exhaustive.metapack
@@ -848,6 +908,8 @@
 ./schemas/test/schemas/absolute-refs/%/positions.metapack.deps
 ./schemas/test/schemas/absolute-refs/%/schema.metapack
 ./schemas/test/schemas/absolute-refs/%/schema.metapack.deps
+./schemas/test/schemas/absolute-refs/%/stats.metapack
+./schemas/test/schemas/absolute-refs/%/stats.metapack.deps
 ./schemas/test/schemas/annotation
 ./schemas/test/schemas/annotation/%
 ./schemas/test/schemas/annotation/%/blaze-exhaustive.metapack
@@ -866,6 +928,8 @@
 ./schemas/test/schemas/annotation/%/positions.metapack.deps
 ./schemas/test/schemas/annotation/%/schema.metapack
 ./schemas/test/schemas/annotation/%/schema.metapack.deps
+./schemas/test/schemas/annotation/%/stats.metapack
+./schemas/test/schemas/annotation/%/stats.metapack.deps
 ./schemas/test/schemas/camelcase
 ./schemas/test/schemas/camelcase/%
 ./schemas/test/schemas/camelcase/%/blaze-exhaustive.metapack
@@ -884,6 +948,8 @@
 ./schemas/test/schemas/camelcase/%/positions.metapack.deps
 ./schemas/test/schemas/camelcase/%/schema.metapack
 ./schemas/test/schemas/camelcase/%/schema.metapack.deps
+./schemas/test/schemas/camelcase/%/stats.metapack
+./schemas/test/schemas/camelcase/%/stats.metapack.deps
 ./schemas/test/schemas/draft4-top-level-ref
 ./schemas/test/schemas/draft4-top-level-ref/%
 ./schemas/test/schemas/draft4-top-level-ref/%/blaze-exhaustive.metapack
@@ -902,6 +968,8 @@
 ./schemas/test/schemas/draft4-top-level-ref/%/positions.metapack.deps
 ./schemas/test/schemas/draft4-top-level-ref/%/schema.metapack
 ./schemas/test/schemas/draft4-top-level-ref/%/schema.metapack.deps
+./schemas/test/schemas/draft4-top-level-ref/%/stats.metapack
+./schemas/test/schemas/draft4-top-level-ref/%/stats.metapack.deps
 ./schemas/test/schemas/html
 ./schemas/test/schemas/html/%
 ./schemas/test/schemas/html/%/blaze-exhaustive.metapack
@@ -920,6 +988,8 @@
 ./schemas/test/schemas/html/%/positions.metapack.deps
 ./schemas/test/schemas/html/%/schema.metapack
 ./schemas/test/schemas/html/%/schema.metapack.deps
+./schemas/test/schemas/html/%/stats.metapack
+./schemas/test/schemas/html/%/stats.metapack.deps
 ./schemas/test/schemas/id-same-as-base
 ./schemas/test/schemas/id-same-as-base/%
 ./schemas/test/schemas/id-same-as-base/%/blaze-exhaustive.metapack
@@ -938,6 +1008,8 @@
 ./schemas/test/schemas/id-same-as-base/%/positions.metapack.deps
 ./schemas/test/schemas/id-same-as-base/%/schema.metapack
 ./schemas/test/schemas/id-same-as-base/%/schema.metapack.deps
+./schemas/test/schemas/id-same-as-base/%/stats.metapack
+./schemas/test/schemas/id-same-as-base/%/stats.metapack.deps
 ./schemas/test/schemas/index.html
 ./schemas/test/schemas/index.html/%
 ./schemas/test/schemas/index.html/%/blaze-exhaustive.metapack
@@ -956,6 +1028,8 @@
 ./schemas/test/schemas/index.html/%/positions.metapack.deps
 ./schemas/test/schemas/index.html/%/schema.metapack
 ./schemas/test/schemas/index.html/%/schema.metapack.deps
+./schemas/test/schemas/index.html/%/stats.metapack
+./schemas/test/schemas/index.html/%/stats.metapack.deps
 ./schemas/test/schemas/meta-ref
 ./schemas/test/schemas/meta-ref/%
 ./schemas/test/schemas/meta-ref/%/blaze-exhaustive.metapack
@@ -974,6 +1048,8 @@
 ./schemas/test/schemas/meta-ref/%/positions.metapack.deps
 ./schemas/test/schemas/meta-ref/%/schema.metapack
 ./schemas/test/schemas/meta-ref/%/schema.metapack.deps
+./schemas/test/schemas/meta-ref/%/stats.metapack
+./schemas/test/schemas/meta-ref/%/stats.metapack.deps
 ./schemas/test/schemas/no-id
 ./schemas/test/schemas/no-id-draft7-ref
 ./schemas/test/schemas/no-id-draft7-ref/%
@@ -993,6 +1069,8 @@
 ./schemas/test/schemas/no-id-draft7-ref/%/positions.metapack.deps
 ./schemas/test/schemas/no-id-draft7-ref/%/schema.metapack
 ./schemas/test/schemas/no-id-draft7-ref/%/schema.metapack.deps
+./schemas/test/schemas/no-id-draft7-ref/%/stats.metapack
+./schemas/test/schemas/no-id-draft7-ref/%/stats.metapack.deps
 ./schemas/test/schemas/no-id/%
 ./schemas/test/schemas/no-id/%/blaze-exhaustive.metapack
 ./schemas/test/schemas/no-id/%/blaze-exhaustive.metapack.deps
@@ -1010,6 +1088,8 @@
 ./schemas/test/schemas/no-id/%/positions.metapack.deps
 ./schemas/test/schemas/no-id/%/schema.metapack
 ./schemas/test/schemas/no-id/%/schema.metapack.deps
+./schemas/test/schemas/no-id/%/stats.metapack
+./schemas/test/schemas/no-id/%/stats.metapack.deps
 ./schemas/test/schemas/no-schema
 ./schemas/test/schemas/no-schema-nor-id
 ./schemas/test/schemas/no-schema-nor-id/%
@@ -1029,6 +1109,8 @@
 ./schemas/test/schemas/no-schema-nor-id/%/positions.metapack.deps
 ./schemas/test/schemas/no-schema-nor-id/%/schema.metapack
 ./schemas/test/schemas/no-schema-nor-id/%/schema.metapack.deps
+./schemas/test/schemas/no-schema-nor-id/%/stats.metapack
+./schemas/test/schemas/no-schema-nor-id/%/stats.metapack.deps
 ./schemas/test/schemas/no-schema/%
 ./schemas/test/schemas/no-schema/%/blaze-exhaustive.metapack
 ./schemas/test/schemas/no-schema/%/blaze-exhaustive.metapack.deps
@@ -1046,6 +1128,8 @@
 ./schemas/test/schemas/no-schema/%/positions.metapack.deps
 ./schemas/test/schemas/no-schema/%/schema.metapack
 ./schemas/test/schemas/no-schema/%/schema.metapack.deps
+./schemas/test/schemas/no-schema/%/stats.metapack
+./schemas/test/schemas/no-schema/%/stats.metapack.deps
 ./schemas/test/schemas/no-serve-ref
 ./schemas/test/schemas/no-serve-ref/%
 ./schemas/test/schemas/no-serve-ref/%/blaze-exhaustive.metapack
@@ -1064,6 +1148,8 @@
 ./schemas/test/schemas/no-serve-ref/%/positions.metapack.deps
 ./schemas/test/schemas/no-serve-ref/%/schema.metapack
 ./schemas/test/schemas/no-serve-ref/%/schema.metapack.deps
+./schemas/test/schemas/no-serve-ref/%/stats.metapack
+./schemas/test/schemas/no-serve-ref/%/stats.metapack.deps
 ./schemas/test/schemas/string
 ./schemas/test/schemas/string/%
 ./schemas/test/schemas/string/%/blaze-exhaustive.metapack
@@ -1082,6 +1168,8 @@
 ./schemas/test/schemas/string/%/positions.metapack.deps
 ./schemas/test/schemas/string/%/schema.metapack
 ./schemas/test/schemas/string/%/schema.metapack.deps
+./schemas/test/schemas/string/%/stats.metapack
+./schemas/test/schemas/string/%/stats.metapack.deps
 ./schemas/test/schemas/string/overlap
 ./schemas/test/schemas/string/overlap/%
 ./schemas/test/schemas/string/overlap/%/blaze-exhaustive.metapack
@@ -1100,6 +1188,8 @@
 ./schemas/test/schemas/string/overlap/%/positions.metapack.deps
 ./schemas/test/schemas/string/overlap/%/schema.metapack
 ./schemas/test/schemas/string/overlap/%/schema.metapack.deps
+./schemas/test/schemas/string/overlap/%/stats.metapack
+./schemas/test/schemas/string/overlap/%/stats.metapack.deps
 ./schemas/test/schemas/versions
 ./schemas/test/schemas/versions/v1.2.3
 ./schemas/test/schemas/versions/v1.2.3/%
@@ -1119,6 +1209,8 @@
 ./schemas/test/schemas/versions/v1.2.3/%/positions.metapack.deps
 ./schemas/test/schemas/versions/v1.2.3/%/schema.metapack
 ./schemas/test/schemas/versions/v1.2.3/%/schema.metapack.deps
+./schemas/test/schemas/versions/v1.2.3/%/stats.metapack
+./schemas/test/schemas/versions/v1.2.3/%/stats.metapack.deps
 ./schemas/test/schemas/with-rebase
 ./schemas/test/schemas/with-rebase-same-host
 ./schemas/test/schemas/with-rebase-same-host/%
@@ -1138,6 +1230,8 @@
 ./schemas/test/schemas/with-rebase-same-host/%/positions.metapack.deps
 ./schemas/test/schemas/with-rebase-same-host/%/schema.metapack
 ./schemas/test/schemas/with-rebase-same-host/%/schema.metapack.deps
+./schemas/test/schemas/with-rebase-same-host/%/stats.metapack
+./schemas/test/schemas/with-rebase-same-host/%/stats.metapack.deps
 ./schemas/test/schemas/with-rebase/%
 ./schemas/test/schemas/with-rebase/%/blaze-exhaustive.metapack
 ./schemas/test/schemas/with-rebase/%/blaze-exhaustive.metapack.deps
@@ -1155,6 +1249,8 @@
 ./schemas/test/schemas/with-rebase/%/positions.metapack.deps
 ./schemas/test/schemas/with-rebase/%/schema.metapack
 ./schemas/test/schemas/with-rebase/%/schema.metapack.deps
+./schemas/test/schemas/with-rebase/%/stats.metapack
+./schemas/test/schemas/with-rebase/%/stats.metapack.deps
 ./schemas/test/schemas/yaml
 ./schemas/test/schemas/yaml/%
 ./schemas/test/schemas/yaml/%/blaze-exhaustive.metapack
@@ -1173,6 +1269,8 @@
 ./schemas/test/schemas/yaml/%/positions.metapack.deps
 ./schemas/test/schemas/yaml/%/schema.metapack
 ./schemas/test/schemas/yaml/%/schema.metapack.deps
+./schemas/test/schemas/yaml/%/stats.metapack
+./schemas/test/schemas/yaml/%/stats.metapack.deps
 ./schemas/test/schemas/yml
 ./schemas/test/schemas/yml/%
 ./schemas/test/schemas/yml/%/blaze-exhaustive.metapack
@@ -1191,6 +1289,8 @@
 ./schemas/test/schemas/yml/%/positions.metapack.deps
 ./schemas/test/schemas/yml/%/schema.metapack
 ./schemas/test/schemas/yml/%/schema.metapack.deps
+./schemas/test/schemas/yml/%/stats.metapack
+./schemas/test/schemas/yml/%/stats.metapack.deps
 ./schemas/test/v2.0
 ./schemas/test/v2.0/schema
 ./schemas/test/v2.0/schema/%
@@ -1210,4 +1310,6 @@
 ./schemas/test/v2.0/schema/%/positions.metapack.deps
 ./schemas/test/v2.0/schema/%/schema.metapack
 ./schemas/test/v2.0/schema/%/schema.metapack.deps
+./schemas/test/v2.0/schema/%/stats.metapack
+./schemas/test/v2.0/schema/%/stats.metapack.deps
 ./version.json
