@@ -37,13 +37,20 @@ runs:
         SOURCEMETA_REGISTRY_SANDBOX_EDITION: ${{ inputs.edition }}
         SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
         SOURCEMETA_REGISTRY_SANDBOX_PORT: ${{ inputs.port }}
-    - name: Test Sandbox (${{ inputs.configuration }})
+    - name: Test Sandbox - E2E (${{ inputs.configuration }})
       run: make test-e2e PRESET=Release EDITION=${{ inputs.edition }}
       shell: bash
       env:
         SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
         SANDBOX_PORT: ${{ inputs.port }}
         HURL: 'docker run --rm --network=host --volume \$(PWD):/workspace --workdir /workspace ghcr.io/orange-opensource/hurl:7.0.0'
+    - name: Test Sandbox - UI (${{ inputs.configuration }})
+      run: make test-ui PRESET=Release EDITION=${{ inputs.edition }}
+      if: inputs.configuration == 'html'
+      shell: bash
+      env:
+        SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
+        SANDBOX_PORT: ${{ inputs.port }}
     - name: Down Sandbox (${{ inputs.configuration }})
       run: docker compose --file test/sandbox/compose.yaml down
       shell: bash
