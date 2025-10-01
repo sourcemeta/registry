@@ -214,6 +214,9 @@ inline auto make_file_manager(const sourcemeta::core::JSON &directory) -> HTML {
         td(small(entry.defines("description")
                      ? entry.at("description").to_string()
                      : "-")),
+        td(small(entry.defines("dependencies")
+                     ? std::to_string(entry.at("dependencies").to_integer())
+                     : "-")),
         td({{"class", "align-middle"}},
            make_schema_health_progress_bar(entry.at("health").to_integer()))));
   }
@@ -225,6 +228,7 @@ inline auto make_file_manager(const sourcemeta::core::JSON &directory) -> HTML {
                 th({{"scope", "col"}, {"style", "width: 50px"}}),
                 th({{"scope", "col"}}, "Name"), th({{"scope", "col"}}, "Title"),
                 th({{"scope", "col"}}, "Description"),
+                th({{"scope", "col"}}, "Dependencies"),
                 th({{"scope", "col"}, {"style", "width: 150px"}}, "Health"))),
             std::move(tbody_content)));
 }

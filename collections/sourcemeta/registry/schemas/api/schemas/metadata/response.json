@@ -46,6 +46,10 @@
         "description": {
           "type": "string"
         },
+        "dependencies": {
+          "type": "integer",
+          "minimum": 0
+        },
         "alert": {
           "type": [ "string", "null" ]
         },

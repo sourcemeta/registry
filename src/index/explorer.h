@@ -169,7 +169,13 @@ struct GENERATE_EXPLORER_SCHEMA_METADATA {
 
     const auto health{sourcemeta::registry::read_json(dependencies.at(1))};
     result.assign("health", health.at("score"));
-    result.assign("protected", sourcemeta::core::JSON{dependencies.size() > 4});
+
+    const auto schema_dependencies{
+        sourcemeta::registry::read_json(dependencies.at(2))};
+    result.assign("dependencies",
+                  sourcemeta::core::to_json(schema_dependencies.size()));
+
+    result.assign("protected", sourcemeta::core::JSON{dependencies.size() > 5});
 
     const auto &collection{std::get<1>(context).get()};
 

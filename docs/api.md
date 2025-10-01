@@ -66,6 +66,7 @@ navigation and discovery purposes.
     | `/entries/*/email` | String | No | For `directory` entries, the e-mail address associated with the entry |
     | `/entries/*/github` | String | No | For `directory` entries, the GitHub organisation or repository associated with the entry |
     | `/entries/*/website` | String | No | For `directory` entries, the website URL associated with the entry |
+    | `/entries/*/dependencies` | Integer | Yes | For `schema` entries, the number of direct and indirect dependencies of the schema |
     | `/entries/*/bytes` | Integer | No | For `schema` entries, the bytes that the entry occupies |
     | `/entries/*/baseDialect` | String | No | For `schema` entries, the base dialect URI of the entry |
     | `/entries/*/dialect` | String | No | For `schema` entries, the dialect URI of the entry |
@@ -205,6 +206,7 @@ GET /self/api/schemas/metadata/{path}
     | `/dialect` | String | Yes | The dialect URI of the schema |
     | `/baseDialect` | String | Yes | The base dialect URI of the schema |
     | `/health` | Integer | Yes | The health score of the schema |
+    | `/dependencies` | Integer | Yes | The number of direct and indirect dependencies of the schema |
     | `/bytes` | Integer | Yes | The bytes that the schema occupies |
     | `/protected` | Boolean | Yes | Whether the schema is listed but not accessible |
     | `/alert` | String / Null | No | The human readable alert message for the schema collection, if any |
