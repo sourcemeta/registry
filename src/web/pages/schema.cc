@@ -139,13 +139,13 @@ auto GENERATE_WEB_SCHEMA::handler(
               meta.at("alert").to_string()));
     }
 
-    container_children.emplace_back(div(
-        {{"class", "border overflow-auto"},
-         {"style", "max-height: 400px;"},
-         {"data-sourcemeta-ui-editor", meta.at("path").to_string() + ".json"},
-         {"data-sourcemeta-ui-editor-mode", "readonly"},
-         {"data-sourcemeta-ui-editor-language", "json"}},
-        "Loading schema..."));
+    container_children.emplace_back(
+        div({{"class", "border overflow-auto"},
+             {"style", "max-height: 400px;"},
+             {"data-sourcemeta-ui-editor", meta.at("path").to_string()},
+             {"data-sourcemeta-ui-editor-mode", "readonly"},
+             {"data-sourcemeta-ui-editor-language", "json"}},
+            "Loading schema..."));
   }
 
   const auto dependencies_json{read_json(dependencies.at(1))};

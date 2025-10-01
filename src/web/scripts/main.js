@@ -6,7 +6,7 @@ import { Editor } from "./editor.js";
 const EDITORS = {};
 document.querySelectorAll('[data-sourcemeta-ui-editor]').forEach(async (element) => {
   const url = element.getAttribute('data-sourcemeta-ui-editor');
-  const response = await window.fetch(url);
+  const response = await window.fetch(`${url}.json`);
   if (response.ok) {
     element.innerHTML = "";
     EDITORS[url] = new Editor(element, await response.text(), {
@@ -17,6 +17,10 @@ document.querySelectorAll('[data-sourcemeta-ui-editor]').forEach(async (element)
     throw new Error(response.statusText);
   }
 });
+
+function toArray(input) {
+  return Array.isArray(input) ? input : [ input ];
+}
 
 document.querySelectorAll('[data-sourcemeta-ui-editor-highlight]').forEach((element) => {
   element.addEventListener("click", async (event) => {
@@ -31,7 +35,7 @@ document.querySelectorAll('[data-sourcemeta-ui-editor-highlight]').forEach((elem
 
       const positions_json = await positions.json();
       EDITORS[url].unhighlight();
-      for (const [index, pointer] of pointers.entries()) {
+      for (const [index, pointer] of toArray(pointers).entries()) {
         const range = positions_json[pointer];
         EDITORS[url].highlight(range, "#fb9c9c");
         if (index === 0) {
