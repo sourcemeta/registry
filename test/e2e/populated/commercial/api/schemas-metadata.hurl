@@ -11,6 +11,7 @@ header "Last-Modified" exists
 jsonpath "$.bytes" == 130
 jsonpath "$.baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.health" == 100
+jsonpath "$.dependencies" == 0
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.identifier" == "{{base}}/test/v2.0/schema"
 jsonpath "$.path" == "/test/v2.0/schema"
@@ -47,6 +48,7 @@ header "Last-Modified" exists
 jsonpath "$.bytes" == 357
 jsonpath "$.baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.health" == 0
+jsonpath "$.dependencies" == 0
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.identifier" == "{{base}}/test/schemas/string"
 jsonpath "$.path" == "/test/schemas/string"
@@ -93,6 +95,7 @@ header "Last-Modified" exists
 jsonpath "$.bytes" == 311
 jsonpath "$.baseDialect" == "http://json-schema.org/draft-04/schema#"
 jsonpath "$.health" == 67
+jsonpath "$.dependencies" == 0
 jsonpath "$.dialect" == "http://json-schema.org/draft-04/schema#"
 jsonpath "$.identifier" == "{{base}}/test/schemas/draft4-top-level-ref"
 jsonpath "$.path" == "/test/schemas/draft4-top-level-ref"
@@ -129,6 +132,7 @@ header "Last-Modified" exists
 jsonpath "$.bytes" == 187
 jsonpath "$.baseDialect" == "https://json-schema.org/draft/2020-12/schema"
 jsonpath "$.health" == 100
+jsonpath "$.dependencies" == 0
 jsonpath "$.dialect" == "https://json-schema.org/draft/2020-12/schema"
 jsonpath "$.identifier" == "{{base}}/test/no-serve/schema"
 jsonpath "$.path" == "/test/no-serve/schema"
@@ -215,6 +219,7 @@ header "Last-Modified" exists
 jsonpath "$.bytes" == 532
 jsonpath "$.baseDialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.health" == 84
+jsonpath "$.dependencies" == 0
 jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.identifier" == "{{base}}/geojson/v1.0.5/point"
 jsonpath "$.path" == "/geojson/v1.0.5/point"
@@ -250,6 +255,43 @@ jsonpath "$.title" == "sourcemeta:registry/not-found"
 jsonpath "$.detail" == "There is nothing at this URL"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
+```
+{{last_response}}
+```
+HTTP 200
+[Asserts]
+jsonpath "$.valid" == true
+
+GET {{base}}/self/api/schemas/metadata/test/bundling/double
+Accept: application/json
+HTTP 200
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+[Captures]
+last_response: body
+[Asserts]
+header "ETag" exists
+header "Last-Modified" exists
+jsonpath "$.bytes" == 269
+jsonpath "$.baseDialect" == "http://json-schema.org/draft-07/schema#"
+jsonpath "$.health" == 100
+jsonpath "$.dependencies" == 3
+jsonpath "$.dialect" == "http://json-schema.org/draft-07/schema#"
+jsonpath "$.identifier" == "{{base}}/test/bundling/double"
+jsonpath "$.path" == "/test/bundling/double"
+jsonpath "$.protected" == false
+jsonpath "$.alert" == null
+jsonpath "$.provenance" == null
+jsonpath "$.examples" count == 0
+jsonpath "$.breadcrumb" count == 3
+jsonpath "$.breadcrumb[0].name" == "test"
+jsonpath "$.breadcrumb[0].path" == "/test"
+jsonpath "$.breadcrumb[1].name" == "bundling"
+jsonpath "$.breadcrumb[1].path" == "/test/bundling"
+jsonpath "$.breadcrumb[2].name" == "double"
+jsonpath "$.breadcrumb[2].path" == "/test/bundling/double"
+
+POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/metadata/response
 ```
 {{last_response}}
 ```

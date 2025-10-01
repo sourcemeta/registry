@@ -347,6 +347,7 @@ static auto index_main(const std::string_view &program,
               explorer_path / schema.second.relative_path / SENTINEL /
                   "schema.metapack",
               {base_path / "schema.metapack", base_path / "health.metapack",
+               base_path / "dependencies.metapack",
                // As this target reads the alert from the configuration file
                mark_configuration_path, mark_version_path,
                base_path / "protected.metapack"},
@@ -358,6 +359,7 @@ static auto index_main(const std::string_view &program,
               explorer_path / schema.second.relative_path / SENTINEL /
                   "schema.metapack",
               {base_path / "schema.metapack", base_path / "health.metapack",
+               base_path / "dependencies.metapack",
                // As this target reads the alert from the configuration file
                mark_configuration_path, mark_version_path},
               {resolver, schema.second.collection.get(),
