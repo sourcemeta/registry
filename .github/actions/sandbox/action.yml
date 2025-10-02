@@ -30,6 +30,8 @@ runs:
         SOURCEMETA_REGISTRY_SANDBOX_EDITION: ${{ inputs.edition }}
         SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
         SOURCEMETA_REGISTRY_SANDBOX_PORT: ${{ inputs.port }}
+
+    # Registry tests
     - name: Up Sandbox (${{ inputs.configuration }})
       run: docker compose --file test/sandbox/compose.yaml up --detach --wait
       shell: bash
@@ -51,6 +53,15 @@ runs:
       env:
         SANDBOX_CONFIGURATION: ${{ inputs.configuration }}
         SANDBOX_PORT: ${{ inputs.port }}
+
+    # Clients
+    - name: Client - Node.js (${{ inputs.configuration }})
+      run: make -C clients/nodejs EDITION=${{ inputs.edition }}
+      if: inputs.configuration != 'empty'
+      shell: bash
+      env:
+        SANDBOX_PORT: ${{ inputs.port }}
+
     - name: Down Sandbox (${{ inputs.configuration }})
       run: docker compose --file test/sandbox/compose.yaml down
       shell: bash

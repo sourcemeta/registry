@@ -1,0 +1,27 @@
+{
+  "name": "@sourcemeta/registry",
+  "version": "0.0.1",
+  "description": "Node.js client for Sourcemeta Registry JSON Schema caching",
+  "author": "Sourcemeta <hello@sourcemeta.com>",
+  "license": "AGPL-3.0",
+  "main": "index.cjs",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.cjs"
+    }
+  },
+  "scripts": {
+    "postinstall": "node postinstall.cjs",
+    "prepare": "node postinstall.cjs"
+  },
+  "bin": {
+    "sourcemeta-registry-sync": "install.cjs"
+  },
+  "files": [
+    "index.cjs",
+    "index.mjs",
+    "install.cjs",
+    "postinstall.cjs"
+  ]
+}
