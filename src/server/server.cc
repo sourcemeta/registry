@@ -95,9 +95,14 @@ static auto send_response(const char *const code, const std::string_view method,
     }
   }
 
+  // The current port we are listening from
+  const auto port{static_cast<std::uint32_t>(
+      us_socket_local_port(true, reinterpret_cast<struct us_socket_t *>(
+                                     reinterpret_cast<void *>(response))))};
+
   std::ostringstream line;
   assert(code);
-  line << code << ' ' << method << ' ' << url;
+  line << port << ' ' << code << ' ' << method << ' ' << url << ' ';
   log(std::move(line).str());
 }
 
