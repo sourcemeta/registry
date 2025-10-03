@@ -91,7 +91,7 @@ if(REGISTRY_SERVER)
 endif()
 
 sourcemeta_target_clang_format(SOURCES src/*.h src/*.cc test/*.cc contrib/*.cc)
-sourcemeta_target_shellcheck(SOURCES test/*.sh docker/*.sh)
+sourcemeta_target_shellcheck(SOURCES test/*.sh docker/*.sh clients/nodejs/test/*.sh)
 
 set(SOURCEMETA_SCHEMAS "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas")
 add_custom_target(jsonschema_fmt_test
