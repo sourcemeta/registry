@@ -139,7 +139,7 @@ auto Configuration::read(const std::filesystem::path &configuration_path,
                                       sourcemeta::core::JSON{"Sourcemeta"});
     data.at("html").assign_if_missing(
         "description",
-        sourcemeta::core::JSON{"The next-generation JSON Schema Registry"});
+        sourcemeta::core::JSON{"The next-generation JSON Schema platform"});
   }
 
   dereference(collections_path, configuration_path, data, {});

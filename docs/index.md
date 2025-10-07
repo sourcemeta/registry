@@ -4,13 +4,14 @@ hide:
   - navigation
 ---
 
-# Welcome to the Sourcemeta JSON Schema Registry
+# Welcome to the Sourcemeta One
 
-A high-performance, self-hosted [JSON Schema](https://json-schema.org) registry
-that transforms your **existing Git repositories of schemas** into searchable,
-discoverable schema catalogs with enterprise-grade governance capabilities.
+A high-performance, self-hosted [JSON Schema](https://json-schema.org)
+micro-service that transforms your **existing Git repositories of schemas**
+into the source of truth of your organisation: searchable, discoverable schema
+catalogs with enterprise-grade governance capabilities.
 
-<img alt="A screenshot of the Registry" loading="lazy" src="https://www.sourcemeta.com/screenshot.webp" id="screenshot">
+<img alt="A screenshot of Sourcemeta One" loading="lazy" src="https://www.sourcemeta.com/screenshot.webp" id="screenshot">
 
 !!! info "About Us"
 
@@ -28,14 +29,14 @@ discoverable schema catalogs with enterprise-grade governance capabilities.
     **[LearnJSONSchema.com](https://www.learnjsonschema.com)** (the most
     popular JSON Schema reference documentation site).
 
-Check out a live public example instance of the Sourcemeta Registry at
+Check out a live public example instance of Sourcemeta One at
 [schemas.sourcemeta.com](https://schemas.sourcemeta.com).
 
 ## Use Cases
 
 **Schema Catalog**: Most organisations have JSON Schemas scattered across Git
 repositories with broken frontends, duct-tape integrations, or no
-discoverability at all. The Sourcemeta Registry sits on top of your existing
+discoverability at all. Sourcemeta One sits on top of your existing
 repositories and transforms them into a unified, searchable catalog where teams
 can discover, browse, consume, and understand your data contracts.
 
@@ -44,12 +45,12 @@ centralizing schema management, easily consuming external JSON Schema data
 models, tracking schema quality, and ensuring consistency across teams and
 services.
 
-**Tooling Infrastructure**: API and schema tooling companies can embed the
-Registry as a foundational component in their own products. For example,
+**Tooling Infrastructure**: API and schema tooling companies can embed
+Sourcemeta One as a foundational component in their own products. For example,
 OpenAPI editors and developer platforms can leverage Sourcemeta's advanced
-schema technology through the Registry's [HTTP API](api.md) to power their
-schema-related features (such as offering built-in schema collections to their
-end users) without building complex JSON Schema infrastructure from scratch.
+schema technology through the [HTTP API](api.md) to power their schema-related
+features (such as offering built-in schema collections to their end users)
+without building complex JSON Schema infrastructure from scratch.
 
 ## Key Features
 
@@ -97,13 +98,13 @@ as databases. Perfect for highly-regulated industries, compliance requirements,
 and airgapped environments where every dependency creates security and
 operational risk.
 
-**Source-available**: The Registry is source-available (though not open-source)
-on [GitHub](https://github.com/sourcemeta/registry), providing complete code
-transparency for security audits, compliance reviews, internal assessments, and
-modification. Enterprises can examine every line of code, eliminating black-box
-concerns and ensuring no vendor lock-in. If Sourcemeta would ever cease
-operations, you retain full access to continue running and maintaining your
-Registry instances.
+**Source-available**: Sourcemeta One is source-available (though not
+open-source) on [GitHub](https://github.com/sourcemeta/one), providing complete
+code transparency for security audits, compliance reviews, internal
+assessments, and modification. Enterprises can examine every line of code,
+eliminating black-box concerns and ensuring no vendor lock-in. If Sourcemeta
+would ever cease operations, you retain full access to continue running and
+maintaining your instances.
 
 **Expert commercial support & training**: [Commercial
 Licenses](./commercial.md) give you access to world-class JSON Schema expertise
@@ -115,8 +116,8 @@ discuss further!
 ## Roadmap
 
 As an early-stage bootstrapped startup, we're rapidly implementing new
-capabilities, but the current Registry represents just the beginning of our
-vision. Your feedback is crucial in helping us build the schema management
+capabilities, but the current Sourcemeta One represents just the beginning of
+our vision. Your feedback is crucial in helping us build the schema management
 solution the industry needs.
 
 - **Automatic schema upgrades and downgrades**: Seamlessly serve your schemas
@@ -135,7 +136,7 @@ solution the industry needs.
   business teams and non-technical stakeholders can easily understand
 - **Specification Support**: Native ingestion of OpenAPI, AsyncAPI, SDF, W3C
   Web of Things, and other specifications that embed JSON Schema, with the full
-  benefits of the Registry
+  benefits of Sourcemeta One
 - **Gateway Functionality**: Structured Output LLM negotiation, API
   specification testing proxy, data ingestion endpoints, and other advanced
   validation gateway capabilities (such as dynamically testing strictness of
