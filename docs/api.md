@@ -21,17 +21,17 @@ endpoints.
 - **Schema Documentation**: While we don't provide an OpenAPI specification due
   to its current limitations with multi-fragment path support ([see OpenAPI
   Issue #2653](https://github.com/OAI/OpenAPI-Specification/issues/2653)) which
-  make describing this API impossible, the Registry itself is comprehensively
+  make describing this API impossible, Sourcemeta One itself is comprehensively
   defined using JSON Schemas.  For complete API schema definitions, mount the
-  built-in [`@sourcemeta/registry`](library.md) schema collection to your
-  Registry instance
+  built-in [`@sourcemeta/one`](library.md) schema collection to your
+  instance
 
 ## General
 
 ### List
 
-*This endpoint lists the contents of a directory within the Registry at the
-specified `{path}` parameter*.
+*This endpoint lists the contents of a directory at the specified `{path}`
+parameter*.
 
 ```
 GET /self/api/list/{path?}
@@ -39,7 +39,7 @@ GET /self/api/list/{path?}
 
 If no path is provided, the endpoint returns the contents of the root
 directory. The response includes all schemas and subdirectories available at
-the requested path, providing a hierarchical view of the registry structure for
+the requested path, providing a hierarchical view of the instance structure for
 navigation and discovery purposes.
 
 === "200"

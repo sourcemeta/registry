@@ -5,25 +5,24 @@ hide:
 
 # Integrations
 
-We aim for the Sourcemeta Registry to seamlessly integrate with as many
-applications and ecosystems as possible. Its [HTTP API](api.md) provides a
-robust foundation for custom integrations, and we are always eager to hear more
-about use cases that demand a more direct integration. If you have any ideas,
-please reach out on [GitHub
-Discussions](https://github.com/sourcemeta/registry/discussions)!
+We aim for Sourcemeta One to seamlessly integrate with as many applications and
+ecosystems as possible. Its [HTTP API](api.md) provides a robust foundation for
+custom integrations, and we are always eager to hear more about use cases that
+demand a more direct integration. If you have any ideas, please reach out on
+[GitHub Discussions](https://github.com/sourcemeta/one/discussions)!
 
 ## Languages
 
 ### Deno
 
-The Sourcemeta Registry supports [Deno HTTPS
+Sourcemeta One supports [Deno HTTPS
 imports](https://docs.deno.com/runtime/fundamentals/modules/#https-imports),
 allowing you to directly import schema definitions (along with their
 dependencies, if any) into your programs.
 
 !!! success "Zero-Config Dependency Resolution"
 
-    Forget about manually managing schema dependencies! The Registry
+    Forget about manually managing schema dependencies! Sourcemeta One
     intelligently detects Deno `import` requests and automatically serves
     [bundled
     schemas](https://json-schema.org/blog/posts/bundling-json-schema-compound-documents)
@@ -31,11 +30,11 @@ dependencies, if any) into your programs.
     dependency management now happens seamlessly behind the scenes.
 
 To pull a JSON Schema into a Deno program, using a JSON `import` pointing to
-the schema URL. In this case, replace `registry.example.com` with your Registry
+the schema URL. In this case, replace `schemas.example.com` with your desired
 URL and `my/schema.json` with the path to the schema you want to import.
 
 ```javascript title="main.js"
-import schema from "https://registry.example.com/my/schema.json" with { type: "json" };
+import schema from "https://schemas.example.com/my/schema.json" with { type: "json" };
 console.log(schema);
 ```
 
@@ -48,7 +47,7 @@ deno run --allow-import main.js
 ```
 
 Deno will download and cache the schema on the first run. To force Deno to
-query the Registry again, use the
+query Sourcemeta One again, use the
 [`--reload`](https://docs.deno.com/runtime/fundamentals/modules/#reloading-modules)
 option:
 
@@ -60,7 +59,7 @@ deno run --allow-import --reload main.js
 
 ### OpenAPI
 
-OpenAPI specifications may directly reference schemas from the Registry using
+OpenAPI specifications may directly reference schemas from Sourcemeta One using
 the `$ref` keyword. For example:
 
 ```yaml title="openapi.yaml" hl_lines="12 19"
@@ -75,14 +74,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "https://registry.example.com/schemas/user.json"
+              $ref: "https://schemas.example.com/schemas/user.json"
       responses:
         '201':
           description: User created
           content:
             application/json:
               schema:
-                $ref: "https://registry.example.com/schemas/user.json"
+                $ref: "https://schemas.example.com/schemas/user.json"
 ```
 
 On distribution, you should bundle the OpenAPI specification to automatically
@@ -106,14 +105,14 @@ redocly bundle path/to/openapi.yaml
 
 ### Visual Studio Code
 
-The Sourcemeta Registry offers improved Visual Studio Code schema
-auto-completion support. It does this by automatically serving the editor with
-transformed schemas (without loss of semantics) that aim to workaround its
-[significant compliance
+Sourcemeta One offers improved Visual Studio Code schema auto-completion
+support. It does this by automatically serving the editor with transformed
+schemas (without loss of semantics) that aim to workaround its [significant
+compliance
 issues](https://bowtie.report/#/implementations/ts-vscode-json-languageservice)
 that prevent many schemas from working correctly.
 
-The key limitations that the Registry aims to workaround include:
+The key limitations that we aim to workaround include:
 
 - Missing support for `$id` (and its older `id` counter-part). This affects
   auto-completion of bundled or complex schemas. See
