@@ -128,6 +128,13 @@
         }
       }
     },
+    "disable_default_response_definitions": {
+      "$id": "#documentation/openapi/disable_default_response_definitions",
+      "title": "Disable default response definitions",
+      "description": "By default, KrakenD adds a `500` and a `200` response definition to each endpoint. Set this property to `true` if you want to avoid this behavior.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+      "default": false,
+      "type": "boolean"
+    },
     "example": {
       "$id": "#documentation/openapi/example",
       "title": "Example",
