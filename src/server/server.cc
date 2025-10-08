@@ -1,8 +1,8 @@
-#include <sourcemeta/core/gzip.h>
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/time.h>
 #include <sourcemeta/core/uuid.h>
 
+#include <sourcemeta/registry/gzip.h>
 #include <sourcemeta/registry/shared.h>
 
 #include "uwebsockets.h"
@@ -61,7 +61,7 @@ static auto send_response(const char *const code, const std::string_view method,
   if (expected_encoding == ServerContentEncoding::GZIP) {
     response->writeHeader("Content-Encoding", "gzip");
     if (current_encoding == ServerContentEncoding::Identity) {
-      auto effective_message{sourcemeta::core::gzip(message)};
+      auto effective_message{sourcemeta::registry::gzip(message)};
       if (method == "head") {
         response->endWithoutBody(effective_message.size());
         response->end();
@@ -78,7 +78,7 @@ static auto send_response(const char *const code, const std::string_view method,
     }
   } else if (expected_encoding == ServerContentEncoding::Identity) {
     if (current_encoding == ServerContentEncoding::GZIP) {
-      auto effective_message{sourcemeta::core::gunzip(message)};
+      auto effective_message{sourcemeta::registry::gunzip(message)};
       if (method == "head") {
         response->endWithoutBody(effective_message.size());
         response->end();

@@ -7,7 +7,7 @@ target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::io)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::uuid)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::md5)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::time)
-target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::gzip)
+target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::registry::gzip)
 
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(sourcemeta_registry_shared

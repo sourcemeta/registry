@@ -1,6 +1,6 @@
+#include <sourcemeta/registry/gzip.h>
 #include <sourcemeta/registry/shared_metapack.h>
 
-#include <sourcemeta/core/gzip.h>
 #include <sourcemeta/core/io.h>
 #include <sourcemeta/core/md5.h>
 #include <sourcemeta/core/time.h>
@@ -60,7 +60,7 @@ auto write_stream(const std::filesystem::path &path,
   assert(!output.fail());
   sourcemeta::core::stringify(metadata, output);
   if (encoding == sourcemeta::registry::Encoding::GZIP) {
-    sourcemeta::core::gzip(buffer, output);
+    sourcemeta::registry::gzip(buffer, output);
   } else {
     output << buffer.str();
   }
@@ -137,7 +137,7 @@ auto read_json_with_metadata(
   assert(file.has_value());
   std::ostringstream buffer;
   if (file.value().encoding == Encoding::GZIP) {
-    sourcemeta::core::gunzip(file.value().data, buffer);
+    sourcemeta::registry::gunzip(file.value().data, buffer);
   } else {
     buffer << file.value().data.rdbuf();
   }
