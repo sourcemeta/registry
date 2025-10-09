@@ -24,6 +24,7 @@ endif()
 
 find_package(Core REQUIRED)
 find_package(Blaze REQUIRED)
+find_package(Hydra REQUIRED)
 find_package(JSONBinPack REQUIRED)
 find_package(JSONSchema REQUIRED)
 
@@ -68,6 +69,7 @@ message(STATUS "Registry version: ${REGISTRY_VERSION}")
 
 if(REGISTRY_INDEX OR REGISTRY_SERVER)
   add_subdirectory(src/shared)
+  add_subdirectory(src/gzip)
 endif()
 
 if(REGISTRY_INDEX)
@@ -109,6 +111,10 @@ if(REGISTRY_TESTS)
   add_test(NAME registry.schemas COMMAND
     "$<TARGET_FILE:jsonschema_cli>" test --extension .test.json
     "${PROJECT_SOURCE_DIR}/collections/sourcemeta")
+
+  if(REGISTRY_INDEX OR REGISTRY_SERVER)
+    add_subdirectory(test/unit/gzip)
+  endif()
 
   if(REGISTRY_INDEX)
     add_subdirectory(test/unit/configuration)

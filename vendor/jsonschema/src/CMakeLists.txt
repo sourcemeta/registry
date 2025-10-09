@@ -1,8 +1,6 @@
-add_subdirectory(http)
-
 add_executable(jsonschema_cli
   main.cc configure.h.in command.h
-  utils.h utils.cc error.h
+  utils.h error.h
   command_fmt.cc
   command_inspect.cc
   command_bundle.cc
@@ -26,13 +24,14 @@ target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::yaml)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::alterschema)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::editorschema)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::options)
+target_link_libraries(jsonschema_cli PRIVATE sourcemeta::core::schemaconfig)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::jsonbinpack::compiler)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::jsonbinpack::runtime)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::blaze::compiler)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::blaze::evaluator)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::blaze::linter)
 target_link_libraries(jsonschema_cli PRIVATE sourcemeta::blaze::output)
-target_link_libraries(jsonschema_cli PRIVATE sourcemeta::jsonschema::http)
+target_link_libraries(jsonschema_cli PRIVATE CPR::cpr)
 
 configure_file(configure.h.in configure.h @ONLY)
 target_include_directories(jsonschema_cli PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

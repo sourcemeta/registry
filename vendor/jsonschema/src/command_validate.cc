@@ -99,12 +99,12 @@ auto run_loop(sourcemeta::blaze::Evaluator &evaluator,
     result = evaluator.validate(schema_template, instance);
     const auto end{std::chrono::high_resolution_clock::now()};
 
-    const auto delay =
+    const auto raw_delay =
         static_cast<double>(
             std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
                 .count()) /
-            1000.0 -
-        empty;
+        1000.0;
+    const auto delay = std::max(0.0, raw_delay - empty);
     sum += delay;
     sum2 += delay * delay;
   }
@@ -145,9 +145,11 @@ auto sourcemeta::jsonschema::cli::validate(
   }
 
   const auto &schema_path{options.positional().at(0)};
-  const auto dialect{default_dialect(options)};
-  const auto custom_resolver{
-      resolver(options, options.contains("http"), dialect)};
+  const auto configuration_path{find_configuration(schema_path)};
+  const auto &configuration{read_configuration(options, configuration_path)};
+  const auto dialect{default_dialect(options, configuration)};
+  const auto &custom_resolver{
+      resolver(options, options.contains("http"), dialect, configuration)};
 
   const auto schema{sourcemeta::core::read_yaml_or_json(schema_path)};
 
