@@ -26,6 +26,7 @@
         "root",
         "base",
         "pointer",
+        "position",
         "relativePointer",
         "dialect",
         "baseDialect"
@@ -55,6 +56,9 @@
         },
         "pointer": {
           "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+        },
+        "position": {
+          "$ref": "../position.json"
         },
         "relativePointer": {
           "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"

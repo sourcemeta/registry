@@ -150,14 +150,16 @@ struct GENERATE_FRAME_LOCATIONS {
               &callback,
           const Context &resolver) -> void {
     const auto timestamp_start{std::chrono::steady_clock::now()};
-    const auto contents{sourcemeta::registry::read_json(dependencies.front())};
+    sourcemeta::core::PointerPositionTracker tracker;
+    const auto contents{sourcemeta::registry::read_json(dependencies.front(),
+                                                        std::ref(tracker))};
     sourcemeta::core::SchemaFrame frame{
         sourcemeta::core::SchemaFrame::Mode::Locations};
     frame.analyse(contents, sourcemeta::core::schema_official_walker,
                   [&callback, &resolver](const auto identifier) {
                     return resolver(identifier, callback);
                   });
-    const auto result{frame.to_json().at("locations")};
+    const auto result{frame.to_json(tracker).at("locations")};
     const auto timestamp_end{std::chrono::steady_clock::now()};
     std::filesystem::create_directories(destination.parent_path());
     sourcemeta::registry::write_pretty_json(

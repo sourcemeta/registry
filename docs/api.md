@@ -308,6 +308,11 @@ GET /self/api/schemas/locations/{path}
     | `/static/*/relativePointer` | String | Yes | The relative JSON Pointer from its nearest base URI |
     | `/static/*/root` | String | Yes | The root URI of the schema |
     | `/static/*/type` | String | Yes | The type of location |
+    | `/static/*/position` | Array | Yes | The entry location positions |
+    | `/static/*/position/0` | Integer | Yes | Starting line number |
+    | `/static/*/position/1` | Integer | Yes | Starting column number |
+    | `/static/*/position/2` | Integer | Yes | Ending line number |
+    | `/static/*/position/3` | Integer | Yes | Ending column number |
     | `/dynamic` | Object | Yes | Dynamic URI locations within the schema |
     | `/dynamic/*` | Object | Yes | Metadata for a specific URI location |
     | `/dynamic/*/base` | String | Yes | The base URI of the location |
@@ -318,6 +323,11 @@ GET /self/api/schemas/locations/{path}
     | `/dynamic/*/relativePointer` | String | Yes | The relative JSON Pointer from its nearest base URI |
     | `/dynamic/*/root` | String | Yes | The root URI of the schema |
     | `/dynamic/*/type` | String | Yes | The type of location |
+    | `/dynamic/*/position` | Array | Yes | The entry location positions |
+    | `/dynamic/*/position/0` | Integer | Yes | Starting line number |
+    | `/dynamic/*/position/1` | Integer | Yes | Starting column number |
+    | `/dynamic/*/position/2` | Integer | Yes | Ending line number |
+    | `/dynamic/*/position/3` | Integer | Yes | Ending column number |
 
 === "404"
 
