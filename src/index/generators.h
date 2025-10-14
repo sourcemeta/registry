@@ -64,7 +64,15 @@ struct GENERATE_MATERIALISED_SCHEMA {
   public:
     MetaschemaError(const sourcemeta::blaze::SimpleOutput &output) {
       std::ostringstream stream;
-      output.stacktrace(stream);
+      for (const auto &entry : output) {
+        stream << entry.message << "\n";
+        stream << "  at instance location \"";
+        sourcemeta::core::stringify(entry.instance_location, stream);
+        stream << "\"\n";
+        stream << "  at evaluate path \"";
+        sourcemeta::core::stringify(entry.evaluate_path, stream);
+        stream << "\"\n";
+      }
       this->stacktrace_ = stream.str();
     }
 

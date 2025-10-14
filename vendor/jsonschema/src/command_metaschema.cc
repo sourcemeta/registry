@@ -1,5 +1,6 @@
 #include <sourcemeta/core/io.h>
 #include <sourcemeta/core/json.h>
+#include <sourcemeta/core/jsonpointer.h>
 #include <sourcemeta/core/jsonschema.h>
 
 #include <sourcemeta/blaze/compiler.h>
@@ -74,14 +75,14 @@ auto sourcemeta::jsonschema::cli::metaschema(
             sourcemeta::core::empty_weak_pointer, frame};
         result = evaluator.validate(cache.at(dialect.value()), entry.second,
                                     std::ref(output));
-        print(output, std::cout);
+        print(output, entry.positions, std::cout);
       } else if (json_output) {
         // Otherwise its impossible to correlate the output
         // when validating i.e. a directory of schemas
         std::cerr << entry.first.string() << "\n";
         const auto output{sourcemeta::blaze::standard(
             evaluator, cache.at(dialect.value()), entry.second,
-            sourcemeta::blaze::StandardOutput::Basic)};
+            sourcemeta::blaze::StandardOutput::Basic, entry.positions)};
         assert(output.is_object());
         assert(output.defines("valid"));
         assert(output.at("valid").is_boolean());
@@ -103,7 +104,7 @@ auto sourcemeta::jsonschema::cli::metaschema(
           std::cerr << "fail: "
                     << sourcemeta::core::weakly_canonical(entry.first).string()
                     << "\n";
-          print(output, std::cerr);
+          print(output, entry.positions, std::cerr);
           result = false;
         }
       }
