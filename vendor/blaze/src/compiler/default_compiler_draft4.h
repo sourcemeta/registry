@@ -29,18 +29,6 @@ static auto parse_regex(const std::string &pattern,
   return result.value();
 }
 
-static auto collect_jump_labels(const sourcemeta::blaze::Instructions &steps,
-                                std::set<std::size_t> &output) -> void {
-  for (const auto &variant : steps) {
-    if (variant.type == sourcemeta::blaze::InstructionIndex::ControlJump) {
-      output.emplace(
-          std::get<sourcemeta::blaze::ValueUnsignedInteger>(variant.value));
-    } else {
-      collect_jump_labels(variant.children, output);
-    }
-  }
-}
-
 static auto
 relative_schema_location_size(const sourcemeta::blaze::Instruction &step)
     -> std::size_t {
@@ -202,7 +190,10 @@ auto compiler_draft4_core_ref(const Context &context,
   const auto &entry{static_frame_entry(context, schema_context)};
   const auto type{sourcemeta::core::SchemaReferenceType::Static};
   if (!context.frame.references().contains({type, entry.pointer})) {
-    assert(schema_context.schema.at(dynamic_context.keyword).is_string());
+    if (!schema_context.schema.at(dynamic_context.keyword).is_string()) {
+      return {};
+    }
+
     throw sourcemeta::core::SchemaReferenceError(
         schema_context.schema.at(dynamic_context.keyword).to_string(),
         entry.pointer, "The schema location is inside of an unknown keyword");
@@ -214,8 +205,7 @@ auto compiler_draft4_core_ref(const Context &context,
                        reference.fragment.value_or(""))};
 
   // The label is already registered, so just jump to it
-  if (schema_context.labels.contains(label) ||
-      context.precompiled_static_schemas.contains(reference.destination)) {
+  if (context.labels.contains(label) || schema_context.labels.contains(label)) {
     return {make(sourcemeta::blaze::InstructionIndex::ControlJump, context,
                  schema_context, dynamic_context, ValueUnsignedInteger{label})};
   }
@@ -223,7 +213,6 @@ auto compiler_draft4_core_ref(const Context &context,
   auto new_schema_context{schema_context};
   new_schema_context.references.insert(reference.destination);
 
-  // TODO: Replace this logic with `.frame()` `destination_of` information
   std::size_t direct_children_references{0};
   if (context.frame.locations().contains({type, reference.destination})) {
     for (const auto &reference_entry : context.frame.references()) {
@@ -236,15 +225,7 @@ auto compiler_draft4_core_ref(const Context &context,
     }
   }
 
-  // If the reference is not a recursive one, we can avoid the extra
-  // overhead of marking the location for future jumps, and pretty much
-  // just expand the reference destination in place.
-  // TODO: Elevate the calculation required to detect recursive references
-  // to Core's `.frame()`
-  // See: https://github.com/sourcemeta/core/issues/1394
   const bool is_recursive{
-      // This means the reference is directly recursive, by jumping to
-      // a parent of the reference itself.
       (context.frame.locations().contains({type, reference.destination}) &&
        entry.pointer.starts_with(context.frame.locations()
                                      .at({type, reference.destination})
@@ -252,11 +233,7 @@ auto compiler_draft4_core_ref(const Context &context,
       schema_context.references.contains(reference.destination)};
 
   if (!is_recursive && direct_children_references <= 5) {
-    if (context.mode == Mode::FastValidation &&
-        // Expanding references inline when dynamic scoping is required
-        // may not work, as we might omit the instruction that introduces
-        // one of the necessary schema resources to the evaluator
-        !context.uses_dynamic_scopes) {
+    if (context.mode == Mode::FastValidation && !context.uses_dynamic_scopes) {
       return compile(context, new_schema_context, dynamic_context,
                      sourcemeta::core::empty_pointer,
                      sourcemeta::core::empty_pointer, reference.destination);
@@ -271,31 +248,27 @@ auto compiler_draft4_core_ref(const Context &context,
     }
   }
 
-  new_schema_context.labels.insert(label);
-  Instructions children{compile(
-      context, new_schema_context, relative_dynamic_context(dynamic_context),
-      sourcemeta::core::empty_pointer, sourcemeta::core::empty_pointer,
-      reference.destination)};
-
-  // If we ended up not using the label after all, then we can ignore the
-  // wrapper, at the expense of compiling the reference instructions once more
-  std::set<std::size_t> used_labels;
-  collect_jump_labels(children, used_labels);
-  if (!used_labels.contains(label)) {
-    return compile(context, schema_context, dynamic_context,
-                   sourcemeta::core::empty_pointer,
-                   sourcemeta::core::empty_pointer, reference.destination);
+  if (is_recursive) {
+    new_schema_context.labels.insert(label);
+    Instructions children{compile(
+        context, new_schema_context, relative_dynamic_context(dynamic_context),
+        sourcemeta::core::empty_pointer, sourcemeta::core::empty_pointer,
+        reference.destination)};
+    return {make(sourcemeta::blaze::InstructionIndex::ControlLabel, context,
+                 schema_context, dynamic_context, ValueUnsignedInteger{label},
+                 std::move(children))};
   }
 
-  // The idea to handle recursion is to expand the reference once, and when
-  // doing so, create a "checkpoint" that we can jump back to in a subsequent
-  // recursive reference. While unrolling the reference once may initially
-  // feel weird, we do it so we can handle references purely in this keyword
-  // handler, without having to add logic to every single keyword to check
-  // whether something points to them and add the "checkpoint" themselves.
-  return {make(sourcemeta::blaze::InstructionIndex::ControlLabel, context,
-               schema_context, dynamic_context, ValueUnsignedInteger{label},
-               std::move(children))};
+  // Mark this destination for precompilation (non-recursive, many refs)
+  context.labels.insert(label);
+  if (std::find(context.precompile_destinations.cbegin(),
+                context.precompile_destinations.cend(),
+                reference.destination) ==
+      context.precompile_destinations.cend()) {
+    context.precompile_destinations.push_back(reference.destination);
+  }
+  return {make(sourcemeta::blaze::InstructionIndex::ControlJump, context,
+               schema_context, dynamic_context, ValueUnsignedInteger{label})};
 }
 
 auto compiler_draft4_validation_type(const Context &context,
@@ -541,7 +514,9 @@ auto compiler_draft4_validation_required(const Context &context,
                                          const DynamicContext &dynamic_context,
                                          const Instructions &current)
     -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_array());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_array()) {
+    return {};
+  }
 
   if (schema_context.schema.defines("type") &&
       schema_context.schema.at("type").is_string() &&
@@ -663,7 +638,10 @@ auto compiler_draft4_applicator_allof(const Context &context,
                                       const SchemaContext &schema_context,
                                       const DynamicContext &dynamic_context,
                                       const Instructions &) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_array());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_array()) {
+    return {};
+  }
+
   assert(!schema_context.schema.at(dynamic_context.keyword).empty());
 
   Instructions children;
@@ -704,7 +682,10 @@ auto compiler_draft4_applicator_anyof(const Context &context,
                                       const SchemaContext &schema_context,
                                       const DynamicContext &dynamic_context,
                                       const Instructions &) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_array());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_array()) {
+    return {};
+  }
+
   assert(!schema_context.schema.at(dynamic_context.keyword).empty());
 
   Instructions disjunctors;
@@ -772,7 +753,10 @@ auto compiler_draft4_applicator_oneof(const Context &context,
                                       const SchemaContext &schema_context,
                                       const DynamicContext &dynamic_context,
                                       const Instructions &) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_array());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_array()) {
+    return {};
+  }
+
   assert(!schema_context.schema.at(dynamic_context.keyword).empty());
 
   Instructions disjunctors;
@@ -894,7 +878,10 @@ auto compiler_draft4_applicator_properties_with_options(
     return {};
   }
 
-  assert(schema_context.schema.at(dynamic_context.keyword).is_object());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_object()) {
+    return {};
+  }
+
   if (schema_context.schema.at(dynamic_context.keyword).empty()) {
     return {};
   }
@@ -1184,7 +1171,10 @@ auto compiler_draft4_applicator_patternproperties_with_options(
     const Context &context, const SchemaContext &schema_context,
     const DynamicContext &dynamic_context, const bool annotate,
     const bool track_evaluation) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_object());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_object()) {
+    return {};
+  }
+
   if (schema_context.schema.at(dynamic_context.keyword).empty()) {
     return {};
   }
@@ -1437,7 +1427,9 @@ auto compiler_draft4_validation_pattern(const Context &context,
                                         const SchemaContext &schema_context,
                                         const DynamicContext &dynamic_context,
                                         const Instructions &) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_string());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_string()) {
+    return {};
+  }
 
   if (schema_context.schema.defines("type") &&
       schema_context.schema.at("type").is_string() &&
@@ -1551,7 +1543,10 @@ auto compiler_draft4_applicator_items_array(
     return {};
   }
 
-  assert(schema_context.schema.at(dynamic_context.keyword).is_array());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_array()) {
+    return {};
+  }
+
   const auto items_size{
       schema_context.schema.at(dynamic_context.keyword).size()};
   if (items_size == 0) {
@@ -1856,7 +1851,10 @@ auto compiler_draft4_applicator_dependencies(
     return {};
   }
 
-  assert(schema_context.schema.at(dynamic_context.keyword).is_object());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_object()) {
+    return {};
+  }
+
   Instructions children;
   ValueStringMap dependencies;
 
@@ -1897,7 +1895,9 @@ auto compiler_draft4_validation_enum(const Context &context,
                                      const SchemaContext &schema_context,
                                      const DynamicContext &dynamic_context,
                                      const Instructions &) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_array());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_array()) {
+    return {};
+  }
 
   if (schema_context.schema.at(dynamic_context.keyword).size() == 1) {
     return {
@@ -1962,8 +1962,11 @@ auto compiler_draft4_validation_maxlength(const Context &context,
                                           const DynamicContext &dynamic_context,
                                           const Instructions &)
     -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
-         schema_context.schema.at(dynamic_context.keyword).is_integer_real());
+  if (!(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
+        schema_context.schema.at(dynamic_context.keyword).is_integer_real())) {
+    return {};
+  }
+
   assert(schema_context.schema.at(dynamic_context.keyword).is_positive());
 
   if (schema_context.schema.defines("type") &&
@@ -1994,8 +1997,11 @@ auto compiler_draft4_validation_minlength(const Context &context,
                                           const DynamicContext &dynamic_context,
                                           const Instructions &)
     -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
-         schema_context.schema.at(dynamic_context.keyword).is_integer_real());
+  if (!(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
+        schema_context.schema.at(dynamic_context.keyword).is_integer_real())) {
+    return {};
+  }
+
   assert(schema_context.schema.at(dynamic_context.keyword).is_positive());
 
   if (schema_context.schema.defines("type") &&
@@ -2027,8 +2033,11 @@ auto compiler_draft4_validation_maxitems(const Context &context,
                                          const SchemaContext &schema_context,
                                          const DynamicContext &dynamic_context,
                                          const Instructions &) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
-         schema_context.schema.at(dynamic_context.keyword).is_integer_real());
+  if (!(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
+        schema_context.schema.at(dynamic_context.keyword).is_integer_real())) {
+    return {};
+  }
+
   assert(schema_context.schema.at(dynamic_context.keyword).is_positive());
 
   if (schema_context.schema.defines("type") &&
@@ -2058,8 +2067,11 @@ auto compiler_draft4_validation_minitems(const Context &context,
                                          const SchemaContext &schema_context,
                                          const DynamicContext &dynamic_context,
                                          const Instructions &) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
-         schema_context.schema.at(dynamic_context.keyword).is_integer_real());
+  if (!(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
+        schema_context.schema.at(dynamic_context.keyword).is_integer_real())) {
+    return {};
+  }
+
   assert(schema_context.schema.at(dynamic_context.keyword).is_positive());
 
   if (schema_context.schema.defines("type") &&
@@ -2091,8 +2103,11 @@ auto compiler_draft4_validation_maxproperties(
     const Context &context, const SchemaContext &schema_context,
     const DynamicContext &dynamic_context, const Instructions &)
     -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
-         schema_context.schema.at(dynamic_context.keyword).is_integer_real());
+  if (!(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
+        schema_context.schema.at(dynamic_context.keyword).is_integer_real())) {
+    return {};
+  }
+
   assert(schema_context.schema.at(dynamic_context.keyword).is_positive());
 
   if (schema_context.schema.defines("type") &&
@@ -2122,8 +2137,11 @@ auto compiler_draft4_validation_minproperties(
     const Context &context, const SchemaContext &schema_context,
     const DynamicContext &dynamic_context, const Instructions &)
     -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
-         schema_context.schema.at(dynamic_context.keyword).is_integer_real());
+  if (!(schema_context.schema.at(dynamic_context.keyword).is_integer() ||
+        schema_context.schema.at(dynamic_context.keyword).is_integer_real())) {
+    return {};
+  }
+
   assert(schema_context.schema.at(dynamic_context.keyword).is_positive());
 
   if (schema_context.schema.defines("type") &&
@@ -2155,7 +2173,9 @@ auto compiler_draft4_validation_maximum(const Context &context,
                                         const SchemaContext &schema_context,
                                         const DynamicContext &dynamic_context,
                                         const Instructions &) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_number());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_number()) {
+    return {};
+  }
 
   if (schema_context.schema.defines("type") &&
       schema_context.schema.at("type").is_string() &&
@@ -2187,7 +2207,9 @@ auto compiler_draft4_validation_minimum(const Context &context,
                                         const SchemaContext &schema_context,
                                         const DynamicContext &dynamic_context,
                                         const Instructions &) -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_number());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_number()) {
+    return {};
+  }
 
   if (schema_context.schema.defines("type") &&
       schema_context.schema.at("type").is_string() &&
@@ -2219,7 +2241,10 @@ auto compiler_draft4_validation_multipleof(
     const Context &context, const SchemaContext &schema_context,
     const DynamicContext &dynamic_context, const Instructions &)
     -> Instructions {
-  assert(schema_context.schema.at(dynamic_context.keyword).is_number());
+  if (!schema_context.schema.at(dynamic_context.keyword).is_number()) {
+    return {};
+  }
+
   assert(schema_context.schema.at(dynamic_context.keyword).is_positive());
 
   if (schema_context.schema.defines("type") &&
