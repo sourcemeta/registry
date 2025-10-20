@@ -7,6 +7,7 @@ hydra https://github.com/sourcemeta/hydra 0cbdacff9432c85f33f9a689b087bb3a37d2a7
 jsonschema https://github.com/sourcemeta/jsonschema 846f7b88a2385bc44ccbd40ece266da725e515f2
 bootstrap https://github.com/twbs/bootstrap v5.3.3
 bootstrap-icons https://github.com/twbs/icons v1.11.3
+collections/sourcemeta/std/v0.0.1 https://github.com/sourcemeta/std 61131501ff8a15441f66f9f2ecb107b9ea30ff9d
 collections/geojson/v1.0.5 https://github.com/geojson/schema v1.0.5
 collections/geojson/v1.0.4 https://github.com/geojson/schema v1.0.4
 collections/geojson/v1.0.3 https://github.com/geojson/schema v1.0.3

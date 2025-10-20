@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 5322 Email Address (Addr-Spec)",
+  "description": "A specific Internet identifier that represents an e-mail box to which messages are delivered",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc5322#section-3.4.1",
+  "examples": [
+    "simple@example.com",
+    "\"very.unusual.@.unusual.com\"@example.com",
+    "user@[IPv6:2001:db8::1]",
+    "(comment)john.smith@(comment)example.com(comment)",
+    "jo(comment)hn@example.com",
+    "user@[abc.def]"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "string",
+  "anyOf": [
+    {
+      "$comment": "Unquoted (dot-atom) local-part with dot-atom domain — both allow inline single-level comments",
+      "pattern": "^(?:(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*)(?:[A-Za-z0-9!#$%&'*+\\/=?^_`{|}~-]+(?:(?:[ \\t]*\\((?:[^()\\\\]|\\\\.)*\\)[ \\t]*[A-Za-z0-9!#$%&'*+\\/=?^_`{|}~-]+)|(?:\\.[A-Za-z0-9!#$%&'*+\\/=?^_`{|}~-]+))*)(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*@(?:(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?))(?:((?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*\\.(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)))*(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*$"
+    },
+    {
+      "$comment": "Quoted local-part (with escapes) + dot-atom domain. Comments allowed around the quoted string and around domain labels",
+      "pattern": "^(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*(?:\"(?:[^\"\\\\\\r]|\\\\.)*\")(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*@(?:(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?))(?:((?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*\\.(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)))*(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*$"
+    },
+    {
+      "$comment": "Unquoted local-part + domain-literal (arbitrary dtext / quoted-pairs inside brackets). Comments allowed around tokens",
+      "pattern": "^(?:(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*)(?:[A-Za-z0-9!#$%&'*+\\/=?^_`{|}~-]+(?:(?:[ \\t]*\\((?:[^()\\\\]|\\\\.)*\\)[ \\t]*[A-Za-z0-9!#$%&'*+\\/=?^_`{|}~-]+)|(?:\\.[A-Za-z0-9!#$%&'*+\\/=?^_`{|}~-]+))*)(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*@(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*\\[(?:[^\\[\\]\\\\\\r]|\\\\.)*\\](?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*$"
+    },
+    {
+      "$comment": "Quoted local-part + domain-literal. Comments allowed around quoted local and around the literal",
+      "pattern": "^(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*(?:\"(?:[^\"\\\\\\r]|\\\\.)*\")(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*@(?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*\\[(?:[^\\[\\]\\\\\\r]|\\\\.)*\\](?:[ \\t]|\\((?:[^()\\\\]|\\\\.)*\\))*$"
+    }
+  ],
+  "not": {
+    "anyOf": [
+      {
+        "$comment": "Disallow bare IPv4 address in domain (must be bracketed)",
+        "pattern": "@([0-9]{1,3}\\.){3}[0-9]{1,3}(?:$|\\s)"
+      },
+      {
+        "$comment": "Disallow IPv6 literal without brackets",
+        "pattern": "@IPv6:"
+      },
+      {
+        "$comment": "Disallow numeric-only final label (numeric TLDs like example.123)",
+        "pattern": "@[^@\\s]*\\.\\d+(?:$|\\s)"
+      },
+      {
+        "$comment": "Reject addresses that start with a single-quote delimiter",
+        "pattern": "^'"
+      }
+    ]
+  },
+  "format": "email",
+  "minLength": 1
+}

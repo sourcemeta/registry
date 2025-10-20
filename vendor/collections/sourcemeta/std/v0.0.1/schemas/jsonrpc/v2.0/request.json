@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON-RPC 2.0 Request Object",
+  "description": "An object that represents a call to a method on the server",
+  "$comment": "https://www.jsonrpc.org/specification#request_object",
+  "examples": [
+    {
+      "id": 1,
+      "jsonrpc": "2.0",
+      "method": "subtract",
+      "params": [ 42, 23 ]
+    },
+    {
+      "id": 3,
+      "jsonrpc": "2.0",
+      "method": "subtract",
+      "params": {
+        "minuend": 42,
+        "subtrahend": 23
+      }
+    },
+    {
+      "id": "req-001",
+      "jsonrpc": "2.0",
+      "method": "update",
+      "params": [ 1, 2, 3, 4, 5 ]
+    }
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "object",
+  "required": [ "jsonrpc", "method", "id" ],
+  "properties": {
+    "id": {
+      "description": "The request identifier",
+      "$ref": "./identifier.json"
+    },
+    "jsonrpc": {
+      "description": "The protocol version",
+      "const": "2.0"
+    },
+    "method": {
+      "description": "The method name",
+      "$ref": "./method.json"
+    },
+    "params": {
+      "description": "The method parameters",
+      "$ref": "./parameters.json"
+    }
+  }
+}

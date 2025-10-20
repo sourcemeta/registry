@@ -19,14 +19,14 @@
             "type": "string"
           },
           "path": {
-            "$ref": "../../../../std/v0.0.1/schemas/uri-relative.json"
+            "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
           }
         },
         "additionalProperties": false
       }
     },
     "email": {
-      "$ref": "../../../../std/v0.0.1/schemas/email-address.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/email/address.json"
     },
     "entries": {
       "type": "array",
@@ -46,22 +46,22 @@
                 "const": "directory"
               },
               "email": {
-                "$ref": "../../../../std/v0.0.1/schemas/email-address.json"
+                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/email/address.json"
               },
               "github": {
                 "type": "string"
               },
               "health": {
-                "$ref": "../../../../std/v0.0.1/schemas/percentage.json"
+                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/iso/units/percentage.json"
               },
               "name": {
                 "type": "string"
               },
               "path": {
-                "$ref": "../../../../std/v0.0.1/schemas/uri-relative.json"
+                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
               },
               "website": {
-                "$ref": "../../../../std/v0.0.1/schemas/url.json"
+                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
               }
             },
             "additionalProperties": false
@@ -86,16 +86,16 @@
       "type": "string"
     },
     "health": {
-      "$ref": "../../../../std/v0.0.1/schemas/percentage.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/iso/units/percentage.json"
     },
     "path": {
-      "$ref": "../../../../std/v0.0.1/schemas/uri-relative.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
     },
     "url": {
-      "$ref": "../../../../std/v0.0.1/schemas/url.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
     },
     "website": {
-      "$ref": "../../../../std/v0.0.1/schemas/url.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
     }
   },
   "additionalProperties": false

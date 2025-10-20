@@ -17,7 +17,7 @@
             "type": "string"
           },
           "path": {
-            "$ref": "../../../../../std/v0.0.1/schemas/uri-relative.json"
+            "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
           }
         },
         "additionalProperties": false
@@ -54,22 +54,22 @@
           "type": [ "string", "null" ]
         },
         "baseDialect": {
-          "$ref": "../../../../../std/v0.0.1/schemas/uri.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri.json"
         },
         "bytes": {
-          "$ref": "../../../../../std/v0.0.1/schemas/bytes.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/iso/it/byte.json"
         },
         "dialect": {
-          "$ref": "../../../../../std/v0.0.1/schemas/uri.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri.json"
         },
         "health": {
-          "$ref": "../../../../../std/v0.0.1/schemas/percentage.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/iso/units/percentage.json"
         },
         "identifier": {
-          "$ref": "../../../../../std/v0.0.1/schemas/url.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
         },
         "path": {
-          "$ref": "../../../../../std/v0.0.1/schemas/uri-relative.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
         },
         "protected": {
           "type": "boolean"

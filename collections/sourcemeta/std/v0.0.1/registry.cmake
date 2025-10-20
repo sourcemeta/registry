@@ -1,6 +1,7 @@
 set(COLLECTION_NAMESPACE "sourcemeta/std/v0.0.1")
+set(STD_PATH "${PROJECT_SOURCE_DIR}/vendor/collections/${COLLECTION_NAMESPACE}")
 
-install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/schemas"
+install(DIRECTORY "${STD_PATH}/schemas"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/sourcemeta/registry/collections/${COLLECTION_NAMESPACE}"
   COMPONENT sourcemeta_registry)
 install(FILES "${CMAKE_CURRENT_LIST_DIR}/registry.json"

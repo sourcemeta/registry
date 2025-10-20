@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 9110 HTTP Informational Status Code",
+  "description": "An HTTP 1xx informational status code indicating an interim response",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-15.1",
+  "examples": [ 100, 101, 102 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "integer",
+  "maximum": 199,
+  "minimum": 100
+}

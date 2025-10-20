@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 4217 Numeric Currency, Fund, and Precious Metal Code",
+  "description": "A three-digit numeric code including currencies, funds, and precious metals (2025-05-12)",
+  "$comment": "https://www.iso.org/iso-4217-currency-codes.html",
+  "examples": [ 8, 12, 32, 36, 940, 959 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "anyOf": [
+    {
+      "$ref": "numeric-currency.json"
+    },
+    {
+      "$ref": "numeric-fund.json"
+    },
+    {
+      "$ref": "numeric-precious-metal.json"
+    }
+  ]
+}

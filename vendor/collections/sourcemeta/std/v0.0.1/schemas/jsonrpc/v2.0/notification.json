@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON-RPC 2.0 Notification",
+  "description": "A request object without an identifier that must not be responded to by the server",
+  "$comment": "https://www.jsonrpc.org/specification#notification",
+  "examples": [
+    {
+      "jsonrpc": "2.0",
+      "method": "update"
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "notify_hello",
+      "params": [ 7 ]
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "notify_sum",
+      "params": {
+        "a": 1,
+        "b": 2
+      }
+    }
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "object",
+  "required": [ "jsonrpc", "method" ],
+  "properties": {
+    "id": {
+      "description": "Must not be included",
+      "not": true
+    },
+    "jsonrpc": {
+      "description": "The protocol version",
+      "const": "2.0"
+    },
+    "method": {
+      "description": "The method name",
+      "$ref": "./method.json"
+    },
+    "params": {
+      "description": "The method parameters",
+      "$ref": "./parameters.json"
+    }
+  }
+}

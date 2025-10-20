@@ -36,13 +36,13 @@
           "enum": [ "resource", "anchor", "pointer", "subschema" ]
         },
         "base": {
-          "$ref": "../../../../../std/v0.0.1/schemas/url.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
         },
         "baseDialect": {
-          "$ref": "../../../../../std/v0.0.1/schemas/uri.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri.json"
         },
         "dialect": {
-          "$ref": "../../../../../std/v0.0.1/schemas/url.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
         },
         "parent": {
           "anyOf": [
@@ -50,21 +50,21 @@
               "type": "null"
             },
             {
-              "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+              "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
             }
           ]
         },
         "pointer": {
-          "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
         },
         "position": {
           "$ref": "../position.json"
         },
         "relativePointer": {
-          "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
         },
         "root": {
-          "$ref": "../../../../../std/v0.0.1/schemas/url.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
         }
       },
       "additionalProperties": false

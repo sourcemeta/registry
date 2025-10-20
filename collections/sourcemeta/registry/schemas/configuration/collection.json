@@ -23,31 +23,31 @@
       "$ref": "./rpath.json"
     },
     "baseUri": {
-      "$ref": "../../../std/v0.0.1/schemas/uri-reference.json"
+      "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-reference.json"
     },
     "defaultDialect": {
-      "$ref": "../../../std/v0.0.1/schemas/uri.json"
+      "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri.json"
     },
     "email": {
-      "$ref": "../../../std/v0.0.1/schemas/email-address.json"
+      "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/email/address.json"
     },
     "github": {
       "type": "string"
     },
     "path": {
-      "$ref": "../../../std/v0.0.1/schemas/path-posix.json"
+      "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ieee/posix/path.json"
     },
     "resolve": {
       "type": "object",
       "propertyNames": {
-        "$ref": "../../../std/v0.0.1/schemas/uri-reference.json"
+        "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-reference.json"
       },
       "additionalProperties": {
-        "$ref": "../../../std/v0.0.1/schemas/uri-reference.json"
+        "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-reference.json"
       }
     },
     "website": {
-      "$ref": "../../../std/v0.0.1/schemas/url.json"
+      "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
     }
   },
   "additionalProperties": false

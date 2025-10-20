@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IETF HTTP Standard Method",
+  "description": "An HTTP request method explicitly defined in IETF RFCs (case-sensitive)",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-9.3",
+  "examples": [ "GET", "POST", "PUT", "PATCH" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "anyOf": [
+    {
+      "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-9.3",
+      "enum": [
+        "GET",
+        "HEAD",
+        "POST",
+        "PUT",
+        "DELETE",
+        "CONNECT",
+        "OPTIONS",
+        "TRACE"
+      ]
+    },
+    {
+      "$comment": "https://www.rfc-editor.org/rfc/rfc5789",
+      "const": "PATCH"
+    },
+    {
+      "$comment": "https://www.rfc-editor.org/rfc/rfc4918",
+      "enum": [
+        "PROPFIND",
+        "PROPPATCH",
+        "MKCOL",
+        "COPY",
+        "MOVE",
+        "LOCK",
+        "UNLOCK"
+      ]
+    }
+  ]
+}

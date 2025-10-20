@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON-RPC 2.0 Error Object",
+  "description": "An object that describes an error that occurred during the request",
+  "$comment": "https://www.jsonrpc.org/specification#error_object",
+  "examples": [
+    {
+      "code": -32600,
+      "message": "Invalid Request"
+    },
+    {
+      "code": -32601,
+      "message": "Method not found"
+    },
+    {
+      "code": -32000,
+      "data": {
+        "details": "Database connection failed"
+      },
+      "message": "Server error"
+    }
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "object",
+  "required": [ "code", "message" ],
+  "properties": {
+    "code": {
+      "description": "The error type",
+      "$ref": "./code.json"
+    },
+    "data": {
+      "description": "Additional error information"
+    },
+    "message": {
+      "description": "The error description",
+      "type": "string"
+    }
+  }
+}

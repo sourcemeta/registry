@@ -24,10 +24,10 @@
           },
           "annotation": true,
           "evaluatePath": {
-            "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+            "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
           },
           "instanceLocation": {
-            "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+            "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
           },
           "instancePositions": {
             "type": "array",
@@ -39,7 +39,7 @@
             }
           },
           "keywordLocation": {
-            "$ref": "../../../../../std/v0.0.1/schemas/url.json"
+            "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
           },
           "message": {
             "type": [ "string", "null" ]
@@ -53,7 +53,7 @@
                 "type": "null"
               },
               {
-                "$ref": "../../../../../std/v0.0.1/schemas/uri.json"
+                "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri.json"
               }
             ]
           }

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 3986 Uniform Resource Identifier (URI) reference",
+  "description": "A Uniform Resource Identifier (URI) reference",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc3986#section-4.1",
+  "examples": [
+    "https://example.com/path/to/resource?query=value#section",
+    "http://user:pass@192.168.1.1:8080/api/v1",
+    "../parent/file.html",
+    "//cdn.example.com/assets/style.css",
+    "/absolute/path/to/resource?query=value#section"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "anyOf": [
+    {
+      "$ref": "./uri.json"
+    },
+    {
+      "$ref": "./uri-relative.json"
+    }
+  ],
+  "format": "uri-reference"
+}

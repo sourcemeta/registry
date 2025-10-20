@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 80000-1:2022 Percentage",
+  "description": "A numeric percentage value between 0 and 100",
+  "$comment": "https://www.iso.org/standard/76921.html",
+  "examples": [ 0, 50, 100 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "number",
+  "maximum": 100,
+  "minimum": 0
+}

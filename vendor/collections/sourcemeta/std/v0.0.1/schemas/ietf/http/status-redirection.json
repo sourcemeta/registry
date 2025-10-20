@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 9110 HTTP Redirection Status Code",
+  "description": "An HTTP 3xx redirection status code indicating further action needs to be taken to complete the request",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-15.3",
+  "examples": [ 301, 302, 304 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "integer",
+  "maximum": 399,
+  "minimum": 300
+}

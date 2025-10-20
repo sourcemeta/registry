@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 9110 HTTP Status Code",
+  "description": "An HTTP status code indicating the result of an HTTP request",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-15",
+  "examples": [ 200, 404, 500 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "integer",
+  "maximum": 599,
+  "minimum": 100
+}
