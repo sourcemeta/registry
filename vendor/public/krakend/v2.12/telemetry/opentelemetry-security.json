@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/telemetry/opentelemetry-security.json",
+  "title": "OpenTelemetry Security",
+  "description": "Enables the security layer needed to use OpenTelemetry through the Internet, like pushing data to a SaaS provider.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry-security/",
+  "type": "object",
+  "required": [
+    "otlp"
+  ],
+  "properties": {
+    "otlp": {
+      "title": "OTLP exporters",
+      "description": "The list of OTLP exporters that require authentication. Set at least one object to push metrics and traces to an external collector using OTLP.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry-security/",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "required": [
+          "name",
+          "headers"
+        ],
+        "properties": {
+          "headers": {
+            "title": "Headers",
+            "description": "The custom headers you will send to authenticate requests. Each key is the header name you will add to all outgoing reports.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry-security/",
+            "type": "object",
+            "properties": {
+              ".*": {
+                "title": "Header value",
+                "description": "The value of the header, usually an API token.",
+                "type": "string"
+              }
+            }
+          },
+          "name": {
+            "title": "Name",
+            "description": "The **exact name** you used to define the exporter under `telemetry/opentelemetry`.\n\nSee: https://www.krakend.io/docs/telemetry/opentelemetry-security/",
+            "examples": [
+              "newrelic",
+              "remote_datadog"
+            ],
+            "type": "string"
+          }
+        },
+        "patternProperties": {
+          "^[@$_#]": {}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

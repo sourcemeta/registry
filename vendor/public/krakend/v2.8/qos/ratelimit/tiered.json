@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://www.krakend.io/schema/v2.8/qos/ratelimit/tiered.json",
   "title": "Tiered Rate Limit",
-  "description": "Enterprise Only. Apply ratelimit based on tier match.",
+  "description": "Enterprise only. Apply ratelimit based on tier match.",
   "type": "object",
   "required": [
     "tier_key",

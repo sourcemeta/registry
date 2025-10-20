@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/proxy.json",
+  "title": "Proxy option",
+  "type": "object",
+  "properties": {
+    "flatmap_filter": {
+      "$id": "#proxy/flatmap_filter",
+      "title": "Flatmap (Array manipulation)",
+      "description": "The list of operations to **execute sequentially** (top down). Every operation is defined with an object containing two properties:\n\nSee: https://www.krakend.io/docs/backends/flatmap/",
+      "$ref": "proxy/flatmap.json",
+      "type": "array"
+    },
+    "shadow": {
+      "$id": "#proxy/shadow",
+      "title": "Traffic shadowing or mirroring",
+      "description": "Mark this backend as a shadow backend. Sending copies of the traffic but ignore its responses.\n\nSee: https://www.krakend.io/docs/backends/shadow-backends/",
+      "default": true,
+      "type": "boolean"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

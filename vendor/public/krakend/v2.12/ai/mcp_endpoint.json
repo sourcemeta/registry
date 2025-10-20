@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/ai/mcp_endpoint.json",
+  "title": "MCP endpoint",
+  "description": "Enterprise only. Declares the current endpoint as an MCP server entry point. \n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mcp-server/",
+  "type": "object",
+  "required": [
+    "server_name"
+  ],
+  "properties": {
+    "server_name": {
+      "title": "Server name",
+      "description": "The MCP server you want to attach to this endpoint. When you add this namespace, the endpoint becomes the MCP server entry point URL. The name used must match the name in the `ai/mcp` configuration in the root level.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mcp-server/",
+      "examples": [
+        "stories-tracker"
+      ]
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

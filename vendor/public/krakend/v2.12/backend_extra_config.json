@@ -1,0 +1,233 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/backend_extra_config.json",
+  "title": "Extra configuration for backends",
+  "type": "object",
+  "properties": {
+    "ai/llm": {
+      "$ref": "ai/llm.json"
+    },
+    "auth/aws-sigv4": {
+      "$ref": "auth/aws-sigv4.json"
+    },
+    "auth/client-credentials": {
+      "$ref": "auth/client-credentials.json"
+    },
+    "auth/gcp": {
+      "$ref": "auth/gcp.json"
+    },
+    "auth/ntlm": {
+      "$ref": "auth/ntlm.json"
+    },
+    "backend/amqp/consumer": {
+      "$ref": "backend/amqp/consumer.json"
+    },
+    "backend/amqp/producer": {
+      "$ref": "backend/amqp/producer.json"
+    },
+    "backend/conditional": {
+      "$ref": "backend/conditional.json"
+    },
+    "backend/graphql": {
+      "$ref": "backend/graphql.json"
+    },
+    "backend/grpc": {
+      "$ref": "backend/grpc.json"
+    },
+    "backend/http": {
+      "oneOf": [
+        {
+          "required": [
+            "return_error_details"
+          ]
+        },
+        {
+          "required": [
+            "return_error_code"
+          ]
+        }
+      ],
+      "properties": {
+        "return_error_code": {
+          "title": "Return error code",
+          "description": "Returns the HTTP status code of the backend (when there is only one). The headers are not returned.\n\nSee: https://www.krakend.io/docs/backends/detailed-errors/",
+          "type": "boolean"
+        },
+        "return_error_details": {
+          "title": "Return error details",
+          "description": "Returns to the client details of a failing request.\n\nSee: https://www.krakend.io/docs/backends/detailed-errors/",
+          "type": "string"
+        }
+      }
+    },
+    "backend/http/client": {
+      "$ref": "backend/http_client.json"
+    },
+    "backend/lambda": {
+      "$ref": "backend/lambda.json"
+    },
+    "backend/pubsub/publisher": {
+      "$ref": "backend/pubsub/publisher.json"
+    },
+    "backend/pubsub/subscriber": {
+      "$ref": "backend/pubsub/subscriber.json"
+    },
+    "backend/soap": {
+      "$ref": "backend/soap.json"
+    },
+    "backend/static-filesystem": {
+      "$ref": "backend/static-filesystem.json"
+    },
+    "governance/quota": {
+      "$ref": "governance/quota.json"
+    },
+    "modifier/body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "modifier/jmespath": {
+      "$ref": "modifier/jmespath.json"
+    },
+    "modifier/lua-backend": {
+      "$ref": "modifier/lua.json"
+    },
+    "modifier/martian": {
+      "title": "Martian modifiers",
+      "description": "Transform requests and responses through a simple DSL definition in the configuration file.\n\nSee: https://www.krakend.io/docs/backends/martian/",
+      "$ref": "modifier/martian.json",
+      "type": "object"
+    },
+    "modifier/request-body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "modifier/response-body": {
+      "$ref": "modifier/response-body.json"
+    },
+    "modifier/response-body-generator": {
+      "$ref": "modifier/body-generator.json"
+    },
+    "plugin/http-client": {
+      "$ref": "plugin/http-client.json"
+    },
+    "plugin/middleware": {
+      "$ref": "plugin/middleware.json"
+    },
+    "plugin/req-resp-modifier": {
+      "$ref": "plugin/req-resp-modifier.json"
+    },
+    "proxy": {
+      "$ref": "proxy.json"
+    },
+    "qos/circuit-breaker": {
+      "$ref": "qos/circuit-breaker.json"
+    },
+    "qos/http-cache": {
+      "title": "Backend Cache",
+      "description": "Enable in-memory caching for backend responses for as long as its `Cache-Control` header permits. Only safe methods are cached (GET or HEAD). The final backend URL and the `Vary` headers are used to create the caching key.\n\nSee: https://www.krakend.io/docs/backends/caching/",
+      "type": "object",
+      "oneOf": [
+        {
+          "required": [
+            "max_size",
+            "max_items"
+          ]
+        },
+        {
+          "required": [
+            "shared"
+          ]
+        },
+        {
+          "maxProperties": 0
+        }
+      ],
+      "properties": {
+        "max_items": {
+          "title": "Max items",
+          "description": "To be released on open source on v2.10. The maximum number of items the LRU cache will store **for this cache bucket** before starting to do evictions. When `max_items` is declared, you must declare `max_size` as well.\n\nSee: https://www.krakend.io/docs/backends/caching/",
+          "examples": [],
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_size": {
+          "title": "Max size",
+          "description": "To be released on open source on v2.10. The maximum number of bytes you allow the LRU cache to store **for this cache bucket** before starting to do evictions. This is not the total cache you allow to the system, but the number of bytes you reserve to this backend (or its `shared` neighbours). will store before starting to do evictions. When `max_size` is declared, you must declare `max_items` as well.\n\nSee: https://www.krakend.io/docs/backends/caching/",
+          "examples": [
+            104857600,
+            1048576
+          ],
+          "type": "integer",
+          "minimum": 1024
+        },
+        "shared": {
+          "title": "Shared cache",
+          "description": "Allows different backend definitions with this flag set to true to reuse the store between them when the request is the same. Otherwise, each backend uses a private cache context that is not accessible by other endpoints. The cache definition is unique for every backend URL + `Vary` header combination.\n\nSee: https://www.krakend.io/docs/backends/caching/",
+          "type": "boolean"
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "qos/ratelimit/proxy": {
+      "$ref": "qos/ratelimit/proxy.json"
+    },
+    "security/policies": {
+      "$ref": "./security/policies.json",
+      "anyOf": [
+        {
+          "required": [
+            "req"
+          ]
+        },
+        {
+          "required": [
+            "resp"
+          ]
+        }
+      ],
+      "not": {
+        "required": [
+          "jwt"
+        ]
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "telemetry/logging": {
+      "title": "Backend Log",
+      "description": "Enterprise only. Add a specific Backend Log. Useful to see status codes, headers, and other information that come from your backends.\n\nSee: https://www.krakend.io/docs/enterprise/logging/",
+      "type": "object",
+      "properties": {
+        "backend": {
+          "$ref": "telemetry/backend_log.json"
+        }
+      },
+      "patternProperties": {
+        "^[@$_#]": {}
+      },
+      "additionalProperties": false
+    },
+    "telemetry/opentelemetry": {
+      "$ref": "telemetry/opentelemetry-backend.json"
+    },
+    "validation/cel": {
+      "$ref": "validation/cel.json"
+    },
+    "validation/response-json-schema": {
+      "$ref": "validation/response-json-schema.json"
+    },
+    "workflow": {
+      "title": "Workflow",
+      "description": "Enterprise only. A whole new endpoint that is executed within this backend context.",
+      "$ref": "workflow.json",
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

@@ -13,3 +13,5 @@ v2.10/krakend.json
 v2.10/_root.json
 v2.11/krakend.json
 v2.11/_root.json
+v2.12/krakend.json
+v2.12/_root.json

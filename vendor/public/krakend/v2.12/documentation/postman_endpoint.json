@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/documentation/postman_endpoint.json",
+  "title": "Generate documentation using Postman collections",
+  "description": "Enterprise only. Generates postman documentation automatically through `krakend postman export` command.\n\nSee: https://www.krakend.io/docs/enterprise/developer/postman/",
+  "type": "object",
+  "properties": {
+    "description": {
+      "$id": "#documentation/postman_endpoint/description",
+      "title": "Endpoint description",
+      "description": "An introductory, optionally verbose, explanation supporting Markdown syntax. If you'd like to load an **external markdown file**, you can use flexible configuration, for instance `\"description\": {{include \"postman/intro.md\" | toJson }}`\n\nSee: https://www.krakend.io/docs/enterprise/developer/postman/",
+      "examples": [
+        "Hi there, I am a [postman endpoint](https://www.krakend.io/docs/enterprise/developer/postman/)"
+      ],
+      "type": "string"
+    },
+    "folder": {
+      "$id": "#documentation/postman_endpoint/folder",
+      "title": "Folder",
+      "description": "The folder name where you want to put this endpoint. If you defined folders at the service level, use the same name to reuse their name and description",
+      "examples": [
+        "/Books"
+      ],
+      "type": "string"
+    },
+    "name": {
+      "$id": "#documentation/postman_endpoint/name",
+      "title": "Endpoint Name",
+      "description": "The name of the endpoint you are generating. If you don't set any name the last member path is used.\n\nSee: https://www.krakend.io/docs/enterprise/developer/postman/",
+      "examples": [
+        "List books",
+        "Create user"
+      ],
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}
