@@ -174,6 +174,7 @@ auto find_every_base(
   return result;
 }
 
+// TODO: Why do we have this function both here and on `walker.cc`?
 auto ref_overrides_adjacent_keywords(
     const sourcemeta::core::JSON::String &base_dialect) -> bool {
   // In older drafts, the presence of `$ref` would override any sibling
