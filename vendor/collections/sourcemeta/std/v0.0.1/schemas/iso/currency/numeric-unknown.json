@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 4217 Numeric Unknown Currency Code",
+  "description": "The numeric code for transactions where no currency is involved",
+  "$comment": "https://www.iso.org/iso-4217-currency-codes.html",
+  "examples": [ 999 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "const": 999
+}

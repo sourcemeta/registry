@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IEEE Std 1003.1-2017 POSIX File Path (Absolute)",
+  "description": "IEEE Std 1003.1-2017 POSIX absolute pathname",
+  "$comment": "https://pubs.opengroup.org/onlinepubs/9699919799/",
+  "examples": [
+    "/",
+    "/home/user/document.txt",
+    "/usr/local/bin/program",
+    "/etc/systemd/system/service.conf",
+    "/tmp/temp_file-123.tmp"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "string",
+  "not": {
+    "$comment": "Cannot contain null bytes",
+    "pattern": "\u0000"
+  },
+  "pattern": "^/"
+}

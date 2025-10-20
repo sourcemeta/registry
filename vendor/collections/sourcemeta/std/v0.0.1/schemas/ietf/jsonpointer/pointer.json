@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 6901 JSON Pointer",
+  "description": "A string syntax for identifying a specific value within a JSON document",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc6901",
+  "examples": [ "", "/foo", "/foo/0" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "string",
+  "not": {
+    "pattern": "~[^01]|~$"
+  },
+  "pattern": "^(/([^/~]|~[01])*)*$",
+  "format": "json-pointer"
+}

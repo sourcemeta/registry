@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON Schema Document",
+  "description": "A JSON document that is considered to be a potentially valid JSON Schema",
+  "$comment": "https://json-schema.org/draft/2020-12/json-schema-core#name-json-schema-documents",
+  "examples": [
+    true,
+    false,
+    {
+      "type": "string"
+    }
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": [ "object", "boolean" ]
+}

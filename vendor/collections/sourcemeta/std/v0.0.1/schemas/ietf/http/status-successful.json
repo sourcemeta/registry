@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 9110 HTTP Successful Status Code",
+  "description": "An HTTP 2xx successful status code indicating the request was successfully received, understood, and accepted",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-15.2",
+  "examples": [ 200, 201, 204 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "integer",
+  "maximum": 299,
+  "minimum": 200
+}

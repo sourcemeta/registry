@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 9110 HTTP ETag",
+  "description": "An HTTP entity tag used for cache validation, either strong or weak",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-8.8.3",
+  "examples": [ "\"abc123\"", "W/\"abc123\"", "\"\"" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "anyOf": [
+    {
+      "$ref": "./etag-strong.json"
+    },
+    {
+      "$ref": "./etag-weak.json"
+    }
+  ]
+}

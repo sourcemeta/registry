@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 4217 Alphabetic Fund Code",
+  "description": "A three-letter alphabetic fund code (2025-05-12)",
+  "$comment": "https://www.iso.org/iso-4217-currency-codes.html",
+  "examples": [ "BOV", "CHE", "CHW", "CLF" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "anyOf": [
+    {
+      "title": "Mvdol",
+      "x-country-name": "BOLIVIA (PLURINATIONAL STATE OF)",
+      "x-minor-unit": 2,
+      "const": "BOV"
+    },
+    {
+      "title": "WIR Euro",
+      "x-country-name": "SWITZERLAND",
+      "x-minor-unit": 2,
+      "const": "CHE"
+    },
+    {
+      "title": "WIR Franc",
+      "x-country-name": "SWITZERLAND",
+      "x-minor-unit": 2,
+      "const": "CHW"
+    },
+    {
+      "title": "Unidad de Fomento",
+      "x-country-name": "CHILE",
+      "x-minor-unit": 4,
+      "const": "CLF"
+    },
+    {
+      "title": "Unidad de Valor Real",
+      "x-country-name": "COLOMBIA",
+      "x-minor-unit": 2,
+      "const": "COU"
+    },
+    {
+      "title": "Mexican Unidad de Inversion (UDI)",
+      "x-country-name": "MEXICO",
+      "x-minor-unit": 2,
+      "const": "MXV"
+    },
+    {
+      "title": "US Dollar (Next day)",
+      "x-country-name": "UNITED STATES OF AMERICA (THE)",
+      "x-minor-unit": 2,
+      "const": "USN"
+    },
+    {
+      "title": "Uruguay Peso en Unidades Indexadas (UI)",
+      "x-country-name": "URUGUAY",
+      "x-minor-unit": 0,
+      "const": "UYI"
+    }
+  ]
+}

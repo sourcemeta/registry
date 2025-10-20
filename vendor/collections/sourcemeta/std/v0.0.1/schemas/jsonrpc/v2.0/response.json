@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON-RPC 2.0 Response Object",
+  "description": "An object that represents the result of a method invocation on the server",
+  "$comment": "https://www.jsonrpc.org/specification#response_object",
+  "examples": [
+    {
+      "id": 1,
+      "jsonrpc": "2.0",
+      "result": 19
+    },
+    {
+      "id": "req-002",
+      "jsonrpc": "2.0",
+      "result": [ 7, 8, 9 ]
+    },
+    {
+      "id": 3,
+      "error": {
+        "code": -32601,
+        "message": "Method not found"
+      },
+      "jsonrpc": "2.0"
+    }
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "object",
+  "anyOf": [
+    {
+      "required": [ "jsonrpc", "id", "error" ],
+      "properties": {
+        "id": {
+          "description": "The response identifier",
+          "$ref": "./identifier.json"
+        },
+        "error": {
+          "description": "The error object",
+          "$ref": "./error.json"
+        },
+        "jsonrpc": {
+          "description": "The protocol version",
+          "const": "2.0"
+        },
+        "result": {
+          "description": "Must not be included",
+          "not": true
+        }
+      }
+    },
+    {
+      "required": [ "jsonrpc", "id", "result" ],
+      "properties": {
+        "id": {
+          "description": "The response identifier",
+          "$ref": "./identifier.json"
+        },
+        "error": {
+          "description": "Must not be included",
+          "not": true
+        },
+        "jsonrpc": {
+          "description": "The protocol version",
+          "const": "2.0"
+        },
+        "result": {
+          "description": "The method result"
+        }
+      }
+    }
+  ]
+}

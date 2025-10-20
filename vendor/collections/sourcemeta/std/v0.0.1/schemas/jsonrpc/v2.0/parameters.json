@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON-RPC 2.0 Parameter Structures",
+  "description": "A structured value that holds the parameter values to be used during the invocation of the method",
+  "$comment": "https://www.jsonrpc.org/specification#parameter_structures",
+  "examples": [
+    [ 42, "foo" ],
+    {
+      "age": 30,
+      "name": "John"
+    },
+    []
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": [ "array", "object" ]
+}

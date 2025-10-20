@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 9110 HTTP Method",
+  "description": "An HTTP request method token",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-9",
+  "examples": [ "GET", "POST", "PUT", "PATCH" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "string",
+  "not": {
+    "pattern": "[\\x00-\\x1F\\x7F]"
+  },
+  "pattern": "^[!#$%&'*+\\-.0-9A-Z^_`a-z|~]+$"
+}

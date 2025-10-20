@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON-RPC 2.0 Predefined Error Code",
+  "description": "An error code from the predefined range reserved by the JSON-RPC 2.0 specification",
+  "$comment": "https://www.jsonrpc.org/specification#error_object",
+  "examples": [ -32700, -32600, -32601, -32602, -32603, -32000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "integer",
+  "anyOf": [
+    {
+      "title": "Parse error",
+      "description": "Invalid JSON was received by the server",
+      "const": -32700
+    },
+    {
+      "title": "Invalid request",
+      "description": "The JSON sent is not a valid Request object",
+      "const": -32600
+    },
+    {
+      "title": "Method not found",
+      "description": "The method does not exist / is not available",
+      "const": -32601
+    },
+    {
+      "title": "Invalid params",
+      "description": "Invalid method parameter(s)",
+      "const": -32602
+    },
+    {
+      "title": "Internal error",
+      "description": "Internal JSON-RPC error",
+      "const": -32603
+    },
+    {
+      "title": "Server error",
+      "description": "Implementation-defined server error",
+      "maximum": -32000,
+      "minimum": -32099
+    }
+  ]
+}

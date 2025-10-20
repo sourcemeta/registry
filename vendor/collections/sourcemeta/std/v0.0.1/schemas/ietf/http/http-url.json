@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HTTP URL",
+  "description": "A Uniform Resource Locator using the HTTP scheme",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-4.2.1",
+  "examples": [
+    "http://example.com",
+    "http://example.com/path",
+    "http://user:pass@example.com:8080/api"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "$ref": "../uri/url.json",
+  "pattern": "^[Hh][Tt][Tt][Pp]://"
+}

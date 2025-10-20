@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON-RPC 2.0 Batch Response",
+  "description": "An array of response objects returned by the server in response to a batch request",
+  "$comment": "https://www.jsonrpc.org/specification#batch",
+  "examples": [
+    [
+      {
+        "id": "1",
+        "jsonrpc": "2.0",
+        "result": 7
+      },
+      {
+        "id": "2",
+        "jsonrpc": "2.0",
+        "result": 19
+      },
+      {
+        "id": null,
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        },
+        "jsonrpc": "2.0"
+      }
+    ],
+    [
+      {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "status": "ok"
+        }
+      }
+    ],
+    [
+      {
+        "id": "req-1",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        },
+        "jsonrpc": "2.0"
+      }
+    ]
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "$ref": "./response.json"
+  }
+}

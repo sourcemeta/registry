@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 4217 Alphabetic Currency, Fund, and Precious Metal Code",
+  "description": "A three-letter alphabetic code including currencies, funds, and precious metals (2025-05-12)",
+  "$comment": "https://www.iso.org/iso-4217-currency-codes.html",
+  "examples": [ "AED", "AFN", "ALL", "AMD", "BOV", "CHE", "XAG" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "anyOf": [
+    {
+      "$ref": "alpha-currency.json"
+    },
+    {
+      "$ref": "alpha-fund.json"
+    },
+    {
+      "$ref": "alpha-precious-metal.json"
+    }
+  ]
+}

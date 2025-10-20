@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JSON-RPC 2.0 Internal Method Name",
+  "description": "A method name reserved for system extensions that begins with the prefix 'rpc.'",
+  "$comment": "https://www.jsonrpc.org/specification#request_object",
+  "examples": [ "rpc.discover", "rpc.introspect", "rpc.system.info" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "string",
+  "pattern": "^rpc\\."
+}

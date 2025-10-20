@@ -18,17 +18,17 @@
             ],
             "properties": {
               "absoluteKeywordLocation": {
-                "$ref": "../../../../../std/v0.0.1/schemas/url.json"
+                "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
               },
               "annotation": {
                 "type": "array",
                 "minItems": 1
               },
               "instanceLocation": {
-                "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+                "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
               },
               "keywordLocation": {
-                "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+                "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
               }
             },
             "additionalProperties": false
@@ -57,16 +57,16 @@
             ],
             "properties": {
               "absoluteKeywordLocation": {
-                "$ref": "../../../../../std/v0.0.1/schemas/url.json"
+                "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
               },
               "error": {
                 "type": "string"
               },
               "instanceLocation": {
-                "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+                "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
               },
               "keywordLocation": {
-                "$ref": "../../../../../std/v0.0.1/schemas/jsonpointer.json"
+                "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
               }
             },
             "additionalProperties": false

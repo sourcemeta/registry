@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 3986 Uniform Resource Locator (URL)",
+  "description": "A locatable absolute Uniform Resource Identifier (URI)",
+  "$comment": "https://www.rfc-editor.org/rfc/rfc3986#section-3",
+  "examples": [
+    "https://example.com/path/to/resource?query=value#section",
+    "http://user:pass@192.168.1.1:8080/api/v1",
+    "ftp://ftp.example.org/pub/files/document.pdf",
+    "http://[2001:db8::8a2e:370:7334]/ipv6/test",
+    "custom+scheme://host.example.com/resource"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "type": "string",
+  "anyOf": [
+    {
+      "$comment": "With authority (//...)",
+      "allOf": [
+        {
+          "$comment": "Valid authority structure - host can be empty",
+          "pattern": "^[^:]+://(?:[^@/]*@)?(?:\\[[^\\]]+\\]|[^:/]*)(?::[0-9]*)?(?:/.*)?$"
+        }
+      ],
+      "anyOf": [
+        {
+          "$comment": "Empty host",
+          "pattern": "^[^:]+://(?:[^@/]*@)?(?:/|$)"
+        },
+        {
+          "$comment": "IPv6 in brackets",
+          "pattern": "^[^:]+://(?:[^@]*@)?\\[[0-9A-Fa-f:.]+\\]"
+        },
+        {
+          "$comment": "Valid IPv4 - check each octet",
+          "not": {
+            "pattern": "^[^:]+://(?:[^@]*@)?(?:(?:25[6-9]|2[6-9][0-9]|[3-9][0-9]{2}|[1-9][0-9]{3,})[.]|[.](?:25[6-9]|2[6-9][0-9]|[3-9][0-9]{2}|[1-9][0-9]{3,})[.]|[.](?:25[6-9]|2[6-9][0-9]|[3-9][0-9]{2}|[1-9][0-9]{3,})[.]|[.](?:25[6-9]|2[6-9][0-9]|[3-9][0-9]{2}|[1-9][0-9]{3,})(?:[:/]|$))"
+          },
+          "pattern": "^[^:]+://(?:[^@]*@)?[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+(?:[:/]|$)"
+        },
+        {
+          "$comment": "Domain or reg-name (not IPv4)",
+          "not": {
+            "pattern": "^[^:]+://(?:[^@]*@)?[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+(?:[:/]|$)"
+          },
+          "pattern": "^[^:]+://(?:[^@]*@)?[A-Za-z0-9.-]+(?:[:/]|$)"
+        }
+      ],
+      "pattern": "^[A-Za-z][A-Za-z0-9+\\-.]*://"
+    },
+    {
+      "$comment": "Without authority (path-absolute/rootless/empty)",
+      "not": {
+        "pattern": "^[^:]+://"
+      },
+      "pattern": "^[A-Za-z][A-Za-z0-9+\\-.]*:(?:/[^?#]*)?(?:\\?[^#]*)?(?:#.*)?$"
+    }
+  ],
+  "not": {
+    "anyOf": [
+      {
+        "$comment": "Disallow spaces and control characters anywhere",
+        "pattern": "[\\x00-\\x20]"
+      },
+      {
+        "$comment": "Valid percent-encoding throughout",
+        "pattern": "%(?![0-9A-Fa-f]{2})"
+      }
+    ]
+  },
+  "pattern": "^[A-Za-z][A-Za-z0-9+\\-.]*:.*$",
+  "format": "uri"
+}
