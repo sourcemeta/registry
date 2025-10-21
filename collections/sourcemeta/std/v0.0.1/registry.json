@@ -11,8 +11,7 @@
           "title": "The JSON Schema Standard Library",
           "description": "A growing collection of hand-crafted high-quality schemas by Sourcemeta",
           "email": "hello@sourcemeta.com",
-          "github": "sourcemeta/registry",
-          "website": "https://registry.sourcemeta.com",
+          "github": "sourcemeta/std",
           "contents": {
             "v0.0.1": {
               "include": "./jsonschema.json"
