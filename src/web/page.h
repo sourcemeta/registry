@@ -52,15 +52,7 @@ inline auto make_navigation(const Configuration &configuration) -> HTML {
 
 inline auto make_footer() -> HTML {
   std::ostringstream information;
-  information << " v" << version();
-#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
-  information << " (Enterprise)";
-#elif defined(SOURCEMETA_REGISTRY_PRO)
-  information << " (Pro)";
-#else
-  information << " (Starter)";
-#endif
-  information << " © 2025 ";
+  information << " v" << version() << " © 2025 ";
 
   return div(
       {{"class", "container-fluid px-4 mb-2"}},

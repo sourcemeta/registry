@@ -83,15 +83,8 @@ DISPATCH(const std::filesystem::path &destination,
 
 static auto index_main(const std::string_view &program,
                        const sourcemeta::core::Options &app) -> int {
-  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::version();
-#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
-  std::cout << " Enterprise ";
-#elif defined(SOURCEMETA_REGISTRY_PRO)
-  std::cout << " Pro ";
-#else
-  std::cout << " Starter ";
-#endif
-  std::cout << "Edition\n";
+  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::version()
+            << "\n";
 
   if (app.positional().size() != 2) {
     std::cout << "Usage: " << std::filesystem::path{program}.filename().string()
@@ -198,27 +191,6 @@ static auto index_main(const std::string_view &program,
 
       std::cerr << "Detecting: " << entry.path().string() << " (#"
                 << resolver.size() + 1 << ")\n";
-
-      // See https://github.com/sourcemeta/registry/blob/main/LICENSE
-#if defined(SOURCEMETA_REGISTRY_PRO)
-      constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO{1000};
-      if (resolver.size() >= SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO) {
-        std::cerr << "error: The Pro edition is restricted to "
-                  << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_PRO << " schemas\n";
-        std::cerr << "Upgrade to the Enterprise edition to waive limits\n";
-        std::cerr << "Buy a new license at https://www.sourcemeta.com\n";
-        return EXIT_FAILURE;
-      }
-#elif defined(SOURCEMETA_REGISTRY_STARTER)
-      constexpr auto SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER{100};
-      if (resolver.size() >= SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER) {
-        std::cerr << "error: The Starter edition is restricted to "
-                  << SOURCEMETA_REGISTRY_SCHEMAS_LIMIT_STARTER << " schemas\n";
-        std::cerr << "Buy a Pro or Enterprise license at "
-                     "https://www.sourcemeta.com\n";
-        return EXIT_FAILURE;
-      }
-#endif
 
       const auto mapping{resolver.add(configuration.url, pair.first,
                                       *collection, entry.path())};
@@ -586,10 +558,6 @@ auto main(int argc, char *argv[]) noexcept -> int {
     app.flag("profile", {"p"});
     app.parse(argc, argv);
     const std::string_view program{argv[0]};
-    if (!sourcemeta::registry::license_permitted()) {
-      std::cerr << sourcemeta::registry::license_error();
-      return EXIT_FAILURE;
-    }
 
     return index_main(program, app);
   } catch (const sourcemeta::registry::ConfigurationReadError &error) {

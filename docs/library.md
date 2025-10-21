@@ -99,18 +99,11 @@ These collections are available in every edition of the Sourcemeta Registry
 | `@openapi/v3.1` | [OpenAPI](https://www.openapis.org) | The world's most widely used API description standard | [Link](https://schemas.sourcemeta.com/openapi/v3.1) |
 | `@openapi/v3.0` | [OpenAPI](https://www.openapis.org) | The world's most widely used API description standard | [Link](https://schemas.sourcemeta.com/openapi/v3.0) |
 | `@openapi/v2.0` | [OpenAPI](https://www.openapis.org) | The world's most widely used API description standard | [Link](https://schemas.sourcemeta.com/openapi/v2.0) |
+| `@sourcemeta/registry` | [Sourcemeta Registry](https://registry.sourcemeta.com) | Schemas that define the Sourcemeta Registry itself | [Link](https://schemas.sourcemeta.com/sourcemeta/registry) |
 
 [^1]: The built-in collections we offer are redistributed directly from their
   upstream sources *without modification*. As such, any issues, errors, or
   requests for changes should be directed to the original project maintainers.
-
-### Commercial Collections
-
-These premium collections are available only to holders of a [commercial license](commercial.md).
-
-| Identifier | Source | Description | Preview |
-|------------|------|-------------|---------|
-| `@sourcemeta/registry` | [Sourcemeta Registry](https://registry.sourcemeta.com) | Schemas that define the Sourcemeta Registry itself | [Link](https://schemas.sourcemeta.com/sourcemeta/registry) |
 
 Requesting New Collections
 --------------------------

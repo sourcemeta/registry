@@ -50,7 +50,7 @@ Meaningful contributions to the Registry or any of its Sourcemeta dependencies
 can be taken into consideration towards a discounted (or even free) [commercial
 license](https://registry.sourcemeta.com/commercial/).
 
-## Contact
+## :email: Contact
 
 If you have any questions or comments, don't hesitate in opening a ticket on
 [GitHub Discussions](https://github.com/sourcemeta/registry/discussions) or

@@ -5,7 +5,6 @@
 // between the indexer and the server
 
 #include <sourcemeta/registry/shared_encoding.h>
-#include <sourcemeta/registry/shared_license.h>
 #include <sourcemeta/registry/shared_metapack.h>
 #include <sourcemeta/registry/shared_version.h>
 

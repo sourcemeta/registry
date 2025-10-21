@@ -20,10 +20,6 @@ COPY CMakeLists.txt /source/CMakeLists.txt
 COPY test/cli /source/test/cli
 COPY test/unit /source/test/unit
 
-# Commercial editions require a paid license
-# See https://github.com/sourcemeta/registry/blob/main/LICENSE
-ARG SOURCEMETA_REGISTRY_EDITION=starter
-
 RUN cd /source && npm ci
 
 RUN	cmake -S /source -B ./build \
@@ -32,7 +28,6 @@ RUN	cmake -S /source -B ./build \
   -DREGISTRY_INDEX:BOOL=ON \
   -DREGISTRY_SERVER:BOOL=ON \
   -DREGISTRY_TESTS:BOOL=ON \
-  -DREGISTRY_EDITION:STRING=${SOURCEMETA_REGISTRY_EDITION} \
   -DBUILD_SHARED_LIBS:BOOL=OFF
 
 RUN cmake --build /build --config Release --parallel 2

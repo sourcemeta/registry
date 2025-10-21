@@ -20,32 +20,10 @@ jobs:
       fail-fast: false
       matrix:
         edition:
-
-          # x64
-          - name: starter
-            package: registry
+          - package: registry
             os: ubuntu-24.04
             arch: amd64
-          - name: pro
-            package: registry-pro
-            os: ubuntu-24.04
-            arch: amd64
-          - name: enterprise
-            package: registry-enterprise
-            os: ubuntu-24.04
-            arch: amd64
-
-          # arm64
-          - name: starter
-            package: registry
-            os: ubuntu-24.04-arm
-            arch: arm64
-          - name: pro
-            package: registry-pro
-            os: ubuntu-24.04-arm
-            arch: arm64
-          - name: enterprise
-            package: registry-enterprise
+          - package: registry
             os: ubuntu-24.04-arm
             arch: arm64
 
@@ -79,7 +57,6 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          build-args: "SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }}"
           platforms: linux/${{ matrix.edition.arch }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
@@ -109,8 +86,6 @@ jobs:
       matrix:
         edition:
           - package: registry
-          - package: registry-pro
-          - package: registry-enterprise
 
     steps:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -200,7 +175,7 @@ jobs:
         with:
           context: .
           file: public/Dockerfile
-          build-args: "SOURCEMETA_REGISTRY=ghcr.io/sourcemeta/registry-enterprise:main"
+          build-args: "SOURCEMETA_REGISTRY=ghcr.io/sourcemeta/registry:main"
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -224,7 +199,7 @@ jobs:
             set -o nounset
             kraft cloud service create --name schemas --domain ${{ env.SERVICE_DOMAIN }} 443:8000 || true
             kraft cloud deploy --memory 2048 --rollout remove --image schemas --service schemas \
-              --kraftfile public/Kraftfile --restart on-failure --replicas 8 --env SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 ./public
+              --kraftfile public/Kraftfile --restart on-failure --replicas 8 ./public
             kraft cloud service get schemas
             kraft cloud instance logs "$(kraft cloud service get schemas --output json | jq --raw-output '.[0].instances | split(" ") | .[0]')"
             curl --location --header "Accept: text/html" --retry 10 --retry-all-errors --fail https://${{ env.SERVICE_DOMAIN }}
