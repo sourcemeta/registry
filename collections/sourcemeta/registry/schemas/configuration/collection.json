@@ -16,9 +16,6 @@
     "x-sourcemeta-registry:evaluate": {
       "type": "boolean"
     },
-    "x-sourcemeta-registry:protected": {
-      "type": "boolean"
-    },
     "x-sourcemeta-registry:provenance": {
       "$ref": "./rpath.json"
     },

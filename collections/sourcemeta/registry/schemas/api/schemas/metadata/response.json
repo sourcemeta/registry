@@ -35,7 +35,6 @@
         "path",
         "baseDialect",
         "dialect",
-        "protected",
         "provenance",
         "health"
       ],
@@ -70,9 +69,6 @@
         },
         "path": {
           "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
-        },
-        "protected": {
-          "type": "boolean"
         },
         "provenance": {
           "type": [ "string", "null" ]

@@ -145,7 +145,6 @@ collections contain the actual schema definitions that power your registry.
 | `/includes`     | String  | No  | None | A `jsonschema.json` manifest definition to include in-place. See the [Includes](#includes) section for more information. **If this property is set, none of the other properties can be set (including `path`)** |
 | `/resolve`      | Object  | No  | None | A URI-to-URI map to hook into the schema reference resolution process. See the [Resolve](#resolve) section for more information |
 | `/x-sourcemeta-registry:evaluate`      | Boolean  | No  | `true` | When set to `false`, disable the evaluation API for this schema collection. This is useful if you will never make use of the [evaluation API](api.md) and want to speed up the generation of the Registry |
-| `/x-sourcemeta-registry:protected`      | Boolean  | No  | `false` | When set to `true`, list the schemas in the collection but don't serve them directly. This is useful to ingest a collection of schemas but not make them available to consumers other than the Registry itself. **Note that the schemas will be indirectly served through bundling if you have collections that reference protected schemas but are not marked as protected themselves** |
 | `/x-sourcemeta-registry:alert`      | String  | No  | N/A | When set, provide a human-readable alert on both the API and the HTML explorer for every schema in the collection. This is useful to provide any important message to consumers |
 
 ### Includes

@@ -85,6 +85,12 @@ sandbox: sandbox-index
 	$(PREFIX)/bin/sourcemeta-registry-server \
 		$(OUTPUT)/sandbox $(SANDBOX_PORT)
 
+.PHONY: sandbox-manifest-refresh
+sandbox-manifest-refresh: configure compile
+	$(CMAKE) -E rm -R -f build/sandbox && $(MAKE) sandbox-index SANDBOX_CONFIGURATION=empty || true
+	$(CMAKE) -E rm -R -f build/sandbox && $(MAKE) sandbox-index SANDBOX_CONFIGURATION=headless || true
+	$(CMAKE) -E rm -R -f build/sandbox && $(MAKE) sandbox-index SANDBOX_CONFIGURATION=html || true
+
 .PHONY: docker
 docker:
 	$(DOCKER) build --tag registry . --file Dockerfile --progress plain

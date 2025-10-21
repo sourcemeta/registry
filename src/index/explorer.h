@@ -175,8 +175,6 @@ struct GENERATE_EXPLORER_SCHEMA_METADATA {
     result.assign("dependencies",
                   sourcemeta::core::to_json(schema_dependencies.size()));
 
-    result.assign("protected", sourcemeta::core::JSON{dependencies.size() > 5});
-
     const auto &collection{std::get<1>(context).get()};
 
     if (collection.extra.defines("x-sourcemeta-registry:alert")) {

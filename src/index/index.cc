@@ -40,14 +40,6 @@ static auto attribute_not_disabled(
          collection.extra.at(property).to_boolean();
 }
 
-static auto attribute_enabled(
-    const sourcemeta::registry::Configuration::Collection &collection,
-    const sourcemeta::core::JSON::String &property) -> bool {
-  return collection.extra.defines(property) &&
-         collection.extra.at(property).is_boolean() &&
-         collection.extra.at(property).to_boolean();
-}
-
 static auto print_progress(std::mutex &mutex, const std::size_t threads,
                            const std::string_view title,
                            const std::string_view prefix,
@@ -306,38 +298,16 @@ static auto index_main(const std::string_view &program,
               schema.first, "blaze-exhaustive", adapter, output);
         }
 
-        if (attribute_enabled(schema.second.collection.get(),
-                              "x-sourcemeta-registry:protected")) {
-          DISPATCH<sourcemeta::registry::GENERATE_MARKER>(
-              base_path / "protected.metapack",
-              {// Because this flag is set in the config file
-               mark_configuration_path, mark_version_path},
-              resolver, mutex, "Analysing", schema.first, "protected", adapter,
-              output);
-
-          DISPATCH<sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_METADATA>(
-              explorer_path / schema.second.relative_path / SENTINEL /
-                  "schema.metapack",
-              {base_path / "schema.metapack", base_path / "health.metapack",
-               base_path / "dependencies.metapack",
-               // As this target reads the alert from the configuration file
-               mark_configuration_path, mark_version_path,
-               base_path / "protected.metapack"},
-              {resolver, schema.second.collection.get(),
-               schema.second.relative_path},
-              mutex, "Analysing", schema.first, "metadata", adapter, output);
-        } else {
-          DISPATCH<sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_METADATA>(
-              explorer_path / schema.second.relative_path / SENTINEL /
-                  "schema.metapack",
-              {base_path / "schema.metapack", base_path / "health.metapack",
-               base_path / "dependencies.metapack",
-               // As this target reads the alert from the configuration file
-               mark_configuration_path, mark_version_path},
-              {resolver, schema.second.collection.get(),
-               schema.second.relative_path},
-              mutex, "Analysing", schema.first, "metadata", adapter, output);
-        }
+        DISPATCH<sourcemeta::registry::GENERATE_EXPLORER_SCHEMA_METADATA>(
+            explorer_path / schema.second.relative_path / SENTINEL /
+                "schema.metapack",
+            {base_path / "schema.metapack", base_path / "health.metapack",
+             base_path / "dependencies.metapack",
+             // As this target reads the alert from the configuration file
+             mark_configuration_path, mark_version_path},
+            {resolver, schema.second.collection.get(),
+             schema.second.relative_path},
+            mutex, "Analysing", schema.first, "metadata", adapter, output);
       },
       concurrency, THREAD_STACK_SIZE);
 

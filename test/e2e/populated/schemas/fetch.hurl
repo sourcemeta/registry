@@ -59,14 +59,6 @@ HTTP 200
   "type": "string"
 }
 
-GET {{base}}/test/schemas/no-serve-ref.json
-HTTP 200
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "{{base}}/test/schemas/no-serve-ref",
-  "$ref": "/test/no-serve/schema"
-}
-
 GET {{base}}/test/schemas/draft4-top-level-ref.json
 HTTP 200
 {
@@ -335,12 +327,3 @@ jsonpath "$.detail" == "There is nothing at this URL"
 
 GET {{base}}/.json
 HTTP 404
-
-GET {{base}}/test/no-serve/schema.json
-HTTP 405
-Content-Type: application/problem+json
-Access-Control-Allow-Origin: *
-[Asserts]
-jsonpath "$.status" == 405
-jsonpath "$.title" == "sourcemeta:registry/protected"
-jsonpath "$.detail" == "This schema is protected"

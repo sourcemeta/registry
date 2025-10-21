@@ -77,12 +77,3 @@ HTTP 200
     }
   }
 }
-
-GET {{base}}/test/no-serve/schema.json
-User-Agent: Visual Studio Code (desktop)
-HTTP 405
-Content-Type: application/problem+json
-[Asserts]
-jsonpath "$.status" == 405
-jsonpath "$.title" == "sourcemeta:registry/protected"
-jsonpath "$.detail" == "This schema is protected"

@@ -59,7 +59,7 @@ jsonpath "$.breadcrumb[0].name" == "test"
 jsonpath "$.breadcrumb[0].path" == "/test"
 jsonpath "$.description" == "A directory full of testing schemas"
 jsonpath "$.title" == "Test"
-jsonpath "$.entries" count == 10
+jsonpath "$.entries" count == 9
 jsonpath "$.entries[0].name" == "v2.0"
 jsonpath "$.entries[0].type" == "directory"
 jsonpath "$.entries[0].health" == 100
@@ -72,36 +72,33 @@ jsonpath "$.entries[2].name" == "same"
 jsonpath "$.entries[2].type" == "directory"
 jsonpath "$.entries[2].health" == 100
 jsonpath "$.entries[2].path" == "/test/same"
-jsonpath "$.entries[3].name" == "no-serve"
+jsonpath "$.entries[3].name" == "no-blaze"
 jsonpath "$.entries[3].type" == "directory"
 jsonpath "$.entries[3].health" == 100
-jsonpath "$.entries[4].name" == "no-blaze"
+jsonpath "$.entries[3].path" == "/test/no-blaze"
+jsonpath "$.entries[4].name" == "hyper"
 jsonpath "$.entries[4].type" == "directory"
 jsonpath "$.entries[4].health" == 100
-jsonpath "$.entries[4].path" == "/test/no-blaze"
-jsonpath "$.entries[5].name" == "hyper"
+jsonpath "$.entries[4].path" == "/test/hyper"
+jsonpath "$.entries[5].name" == "extension"
 jsonpath "$.entries[5].type" == "directory"
 jsonpath "$.entries[5].health" == 100
-jsonpath "$.entries[5].path" == "/test/hyper"
-jsonpath "$.entries[6].name" == "extension"
+jsonpath "$.entries[5].path" == "/test/extension"
+jsonpath "$.entries[6].name" == "doc"
 jsonpath "$.entries[6].type" == "directory"
 jsonpath "$.entries[6].health" == 100
-jsonpath "$.entries[6].path" == "/test/extension"
-jsonpath "$.entries[7].name" == "doc"
+jsonpath "$.entries[6].path" == "/test/doc"
+jsonpath "$.entries[6].title" == "A sample schema folder"
+jsonpath "$.entries[6].description" == "For testing purposes"
+jsonpath "$.entries[6].github" == "sourcemeta/registry"
+jsonpath "$.entries[7].name" == "camelcase"
 jsonpath "$.entries[7].type" == "directory"
 jsonpath "$.entries[7].health" == 100
-jsonpath "$.entries[7].path" == "/test/doc"
-jsonpath "$.entries[7].title" == "A sample schema folder"
-jsonpath "$.entries[7].description" == "For testing purposes"
-jsonpath "$.entries[7].github" == "sourcemeta/registry"
-jsonpath "$.entries[8].name" == "camelcase"
+jsonpath "$.entries[7].path" == "/test/camelcase"
+jsonpath "$.entries[8].name" == "bundling"
 jsonpath "$.entries[8].type" == "directory"
 jsonpath "$.entries[8].health" == 100
-jsonpath "$.entries[8].path" == "/test/camelcase"
-jsonpath "$.entries[9].name" == "bundling"
-jsonpath "$.entries[9].type" == "directory"
-jsonpath "$.entries[9].health" == 100
-jsonpath "$.entries[9].path" == "/test/bundling"
+jsonpath "$.entries[8].path" == "/test/bundling"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response
 ```
@@ -134,7 +131,6 @@ jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].identifier" == "{{base}}/test/v2.0/schema"
 jsonpath "$.entries[0].name" == "schema"
 jsonpath "$.entries[0].type" == "schema"
-jsonpath "$.entries[0].protected" == false
 jsonpath "$.entries[0].alert" == null
 jsonpath "$.entries[0].provenance" == null
 jsonpath "$.entries[0].path" == "/test/v2.0/schema"
@@ -194,7 +190,6 @@ jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].identifier" == "{{base}}/test/schemas/versions/v1.2.3"
 jsonpath "$.entries[0].name" == "v1.2.3"
 jsonpath "$.entries[0].type" == "schema"
-jsonpath "$.entries[0].protected" == false
 jsonpath "$.entries[0].alert" == null
 jsonpath "$.entries[0].provenance" == null
 jsonpath "$.entries[0].path" == "/test/schemas/versions/v1.2.3"
@@ -233,7 +228,6 @@ jsonpath "$.entries[0].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[0].identifier" == "{{base}}/test/extension/without"
 jsonpath "$.entries[0].name" == "without"
 jsonpath "$.entries[0].type" == "schema"
-jsonpath "$.entries[0].protected" == false
 jsonpath "$.entries[0].alert" == null
 jsonpath "$.entries[0].provenance" == null
 jsonpath "$.entries[0].path" == "/test/extension/without"
@@ -245,7 +239,6 @@ jsonpath "$.entries[1].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[1].identifier" == "{{base}}/test/extension/with"
 jsonpath "$.entries[1].name" == "with"
 jsonpath "$.entries[1].type" == "schema"
-jsonpath "$.entries[1].protected" == false
 jsonpath "$.entries[1].alert" == null
 jsonpath "$.entries[1].provenance" == null
 jsonpath "$.entries[1].path" == "/test/extension/with"
@@ -257,51 +250,11 @@ jsonpath "$.entries[2].dialect" == "http://json-schema.org/draft-07/schema#"
 jsonpath "$.entries[2].identifier" == "{{base}}/test/extension/to-without"
 jsonpath "$.entries[2].name" == "to-without"
 jsonpath "$.entries[2].type" == "schema"
-jsonpath "$.entries[2].protected" == false
 jsonpath "$.entries[2].alert" == null
 jsonpath "$.entries[2].provenance" == null
 jsonpath "$.entries[2].path" == "/test/extension/to-without"
 jsonpath "$.entries[2].health" == 100
 jsonpath "$.entries[2].dependencies" == 1
-
-POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response
-```
-{{last_response}}
-```
-HTTP 200
-[Asserts]
-jsonpath "$.valid" == true
-
-GET {{base}}/self/api/list/test/no-serve
-HTTP 200
-Content-Type: application/json
-Access-Control-Allow-Origin: *
-[Captures]
-last_response: body
-[Asserts]
-header "ETag" exists
-header "Last-Modified" exists
-jsonpath "$.path" == "/test/no-serve"
-jsonpath "$.url" == "{{base}}/test/no-serve"
-jsonpath "$.health" == 100
-jsonpath "$.breadcrumb" count == 2
-jsonpath "$.breadcrumb[0].name" == "test"
-jsonpath "$.breadcrumb[0].path" == "/test"
-jsonpath "$.breadcrumb[1].name" == "no-serve"
-jsonpath "$.breadcrumb[1].path" == "/test/no-serve"
-jsonpath "$.entries" count == 1
-jsonpath "$.entries[0].name" == "schema"
-jsonpath "$.entries[0].bytes" == 187
-jsonpath "$.entries[0].identifier" == "{{base}}/test/no-serve/schema"
-jsonpath "$.entries[0].path" == "/test/no-serve/schema"
-jsonpath "$.entries[0].baseDialect" == "https://json-schema.org/draft/2020-12/schema"
-jsonpath "$.entries[0].dialect" == "https://json-schema.org/draft/2020-12/schema"
-jsonpath "$.entries[0].health" == 100
-jsonpath "$.entries[0].dependencies" == 0
-jsonpath "$.entries[0].protected" == true
-jsonpath "$.entries[0].alert" == "This collection is private"
-jsonpath "$.entries[0].provenance" == null
-jsonpath "$.entries[0].type" == "schema"
 
 POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/list/response
 ```
