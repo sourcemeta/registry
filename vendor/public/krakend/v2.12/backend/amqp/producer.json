@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/backend/amqp/producer.json",
+  "title": "AMQP Producer",
+  "description": "Send messages to a queue through the API Gateway.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+  "type": "object",
+  "required": [
+    "name",
+    "exchange",
+    "routing_key"
+  ],
+  "properties": {
+    "backoff_strategy": {
+      "title": "Backoff strategy",
+      "description": "When the connection to your event source gets interrupted for whatever reason, KrakenD keeps trying to reconnect until it succeeds or until it reaches the `max_retries`. The backoff strategy defines the delay in seconds in between consecutive failed retries. [Check the meaning of each strategy](https://www.krakend.io/docs/async/#backoff-strategies).\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": "fallback",
+      "enum": [
+        "linear",
+        "linear-jitter",
+        "exponential",
+        "exponential-jitter",
+        "fallback"
+      ]
+    },
+    "delete": {
+      "$id": "#backend/amqp/consumer/delete",
+      "title": "Delete",
+      "description": "When `true`, AMQP deletes the queue when there are no remaining connections. This option is **not recommended** in most of the scenarios. If for instance, the connectivity between KrakenD and AMQP is lost for whatever reason and it's the only client, AMQP will delete the queue no matter the number of messages there are inside, and when KrakenD gets the connection again the queue won't exist and future connections will recreate it again.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "durable": {
+      "$id": "#backend/amqp/consumer/durable",
+      "title": "Durable",
+      "description": "true is recommended, but depends on the use case. Durable queues will survive server restarts and remain when there are no remaining consumers or bindings.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "exchange": {
+      "$id": "#backend/amqp/consumer/exchange",
+      "title": "Exchange",
+      "description": "The exchange name (must have a topic type if already exists).\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "examples": [
+        "some-exchange"
+      ],
+      "type": "string"
+    },
+    "exclusive": {
+      "$id": "#backend/amqp/producer/exclusive",
+      "title": "Exclusive",
+      "description": "When `true`, AMQP will allow **a single KrakenD instance** to access the queue. This option is **not recommended** in environments where the gateway needs high availability and you have several instances running.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "exp_key": {
+      "$id": "#backend/amqp/consumer/exp_key",
+      "title": "Expiration key",
+      "description": "Take a parameter from a `{placeholder}` in the endpoint definition to use as the expiration key. The key must have the first letter uppercased. For instance, when an endpoint parameter is defined as `{id}`, you must write `Id`.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": "",
+      "type": "string"
+    },
+    "immediate": {
+      "$id": "#backend_extra_config/backend/amqp/producer/immediate",
+      "title": "Immediate",
+      "description": "A consumer must be connected to the queue when true.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "mandatory": {
+      "$id": "#backend_extra_config/backend/amqp/producer/mandatory",
+      "title": "Mandatory",
+      "description": "The exchange must have at least one queue bound when true.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": false,
+      "type": "boolean"
+    },
+    "max_retries": {
+      "title": "Max retries",
+      "description": "The maximum number of times you will allow KrakenD to retry reconnecting to a broken messaging system. During startup KrakenD will wait for a maximum of 3 retries before starting to use this policy. Use 0 for unlimited retries.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": 0,
+      "type": "integer"
+    },
+    "msg_id_key": {
+      "$id": "#backend/amqp/consumer/msg_id_key",
+      "title": "Expiration key",
+      "description": "Take a parameter from a `{placeholder}` in the endpoint definition to use as the message identifier. The key must have the first letter uppercased. For instance, when an endpoint parameter is defined as `{id}`, you must write `Id`.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": "",
+      "type": "string"
+    },
+    "name": {
+      "$id": "#backend/amqp/consumer/name",
+      "title": "Name",
+      "description": "Queue name.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "type": "string"
+    },
+    "no_local": {
+      "$id": "#backend/amqp/consumer/no_local",
+      "title": "No local",
+      "description": "The no_local flag is not supported by RabbitMQ.\n\nSee: https://www.krakend.io/docs/backends/amqp-consumer/",
+      "type": "boolean"
+    },
+    "no_wait": {
+      "$id": "#backend/amqp/consumer/no_wait",
+      "title": "No wait",
+      "description": "When true, do not wait for the server to confirm the request and immediately begin deliveries. If it is not possible to consume, a channel exception will be raised and the channel will be closed.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "type": "boolean"
+    },
+    "priority_key": {
+      "$id": "#backend/amqp/consumer/priority_key",
+      "title": "Expiration key",
+      "description": "Take a parameter from a `{placeholder}` in the endpoint definition to use as the reply key. The key must have the first letter uppercased. For instance, when an endpoint parameter is defined as `{id}`, you must write `Id`.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": "",
+      "type": "string"
+    },
+    "reply_to_key": {
+      "$id": "#backend/amqp/consumer/reply_to_key",
+      "title": "Expiration key",
+      "description": "Take a parameter from a `{placeholder}` in the endpoint definition to use as the reply key. The key must have the first letter uppercased. For instance, when an endpoint parameter is defined as `{id}`, you must write `Id`.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": "",
+      "type": "string"
+    },
+    "routing_key": {
+      "$id": "#backend/amqp/producer/routing_key",
+      "title": "Routing key",
+      "description": "The routing key you will use to send messages, case sensitive.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": "#",
+      "type": "string"
+    },
+    "static_routing_key": {
+      "$id": "#backend/amqp/producer/static_routing_key",
+      "title": "Static Routing key",
+      "description": "Defines whether the `routing_key` will have a static value or not, instead of taking the value from a parameter.\n\nSee: https://www.krakend.io/docs/backends/amqp-producer/",
+      "default": false,
+      "type": "boolean"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

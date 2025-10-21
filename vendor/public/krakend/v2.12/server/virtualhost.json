@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/server/virtualhost.json",
+  "title": "VirtualHost",
+  "description": "Enterprise only. The Virtual Host server allows you to run different configurations of KrakenD endpoints based on the host accessing the server.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/virtual-hosts/",
+  "type": "object",
+  "oneOf": [
+    {
+      "required": [
+        "hosts"
+      ]
+    },
+    {
+      "required": [
+        "aliased_hosts"
+      ]
+    }
+  ],
+  "properties": {
+    "aliased_hosts": {
+      "title": "Virtualhosts with alias",
+      "description": "A map of all recognized virtual hosts where the key is the alias and the value the host name, including the port if it's not 443 or 80. The values declared here must match the content of the `Host` header passed by the client. The alias must be an alphanumeric string.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/virtual-hosts/",
+      "examples": [
+        {
+          "user_api": "users.svc.example.com:9000"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "[a-z0-9_]+": {
+          "title": "Virtualhost",
+          "description": "The key of this map must compile with the regexp `a-z0-9_` and the host name is the string that matches the value sent by the user in the `Host` header.",
+          "type": "string"
+        }
+      }
+    },
+    "hosts": {
+      "title": "Virtualhosts",
+      "description": "All recognized virtual hosts by KrakenD must be listed here. The values declared here must match the content of the `Host` header when passed by the client.\n\nSee: https://www.krakend.io/docs/enterprise/service-settings/virtual-hosts/",
+      "examples": [
+        [
+          "api-a.example.com",
+          "api-b.example.com"
+        ]
+      ],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

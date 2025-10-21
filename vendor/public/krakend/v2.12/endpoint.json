@@ -1,0 +1,142 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/endpoint.json",
+  "title": "Endpoint Object",
+  "default": {
+    "backend": [
+      {
+        "url_pattern": "/url"
+      }
+    ],
+    "endpoint": "/foo"
+  },
+  "type": "object",
+  "required": [
+    "endpoint",
+    "backend"
+  ],
+  "properties": {
+    "backend": {
+      "title": "Backend",
+      "description": "An array with all the backend services you want to use in this endpoint. See [the backend object](https://www.krakend.io/docs/backends/) documentation to know all the available options, they are omitted here for brevity.\n\nSee: https://www.krakend.io/docs/backends/",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "backend.json",
+        "type": "object"
+      }
+    },
+    "cache_ttl": {
+      "$id": "#endpoint/cache_ttl",
+      "title": "Cache TTL",
+      "description": "Sets or overrides the cache headers to inform how long the client or CDN can cache the request to this endpoint. Setting this value to a zero-value will use the `cache_ttl` in the root of the configuration if any. This attribute **does not cache** content but tells others how to do it. For caching, see [Caching Backend Responses](https://www.krakend.io/docs/backends/caching/).",
+      "$ref": "timeunits.json#/$defs/timeunit"
+    },
+    "concurrent_calls": {
+      "$id": "#endpoint/concurrent_calls",
+      "title": "Concurrent calls",
+      "description": "The concurrent requests are an excellent technique to improve the response times and decrease error rates by requesting in parallel the same information multiple times. Yes, you make the same request to several backends instead of asking to just one. When the first backend returns the information, the remaining requests are canceled.\n\nSee: https://www.krakend.io/docs/endpoints/concurrent-requests/",
+      "default": 1,
+      "type": "integer",
+      "maximum": 5,
+      "minimum": 1
+    },
+    "endpoint": {
+      "$id": "#endpoint/endpoint",
+      "title": "Endpoint",
+      "description": "The path of the URL you want to expose. The path is **case-sensitive** and should start with a slash `/`. You can use `{placeholders}` to allow dynamic variables. For example: `/foo/{var}/baz`. You can also add an ending `/*` in the path to enable [wildcards](https://www.krakend.io/docs/enterprise/endpoints/wildcard/). Enterprise only.\nThe router will try to automatically redirect calls to endpoints with an incorrect case or incorrect trailing slash to its correct version offering a `301`. There are no guarantees that it will succeed and the request might even fail completely while trying (and log an ugly error with a trace). The **safest option** is to [disable automatic redirections](https://www.krakend.io/docs/service-settings/router-options/) by setting to true the flags `disable_redirect_fixed_path` and `disable_redirect_trailing_slash` in the `router` options.\n**Limitations**: URLs do not support colons `:` in their definition. All `{vars}` are meant to be isolated in the path and not to be used to build words, like in `/file.{ext}` [See `disable_rest` for that usage](https://www.krakend.io/docs/service-settings/http-server-settings/#disable_rest).\n\nSee: https://www.krakend.io/docs/endpoints/",
+      "examples": [
+        "/new-endpoint",
+        "/foo/{var}",
+        "/foo/{var1}/{var2}"
+      ],
+      "type": "string",
+      "pattern": "^\\/[^\\*\\?\\&\\%]*(\\/\\*)?$"
+    },
+    "extra_config": {
+      "title": "Extra configuration",
+      "description": "Besides the functionality ofered by the endpoint, you can load more functionalty into this endpoint by adding new entries under this extra configuration object. You will find across all documentation a lot of functionality that is designed to be placed here.",
+      "$ref": "endpoint_extra_config.json",
+      "type": "object"
+    },
+    "input_headers": {
+      "$id": "#endpoint/input_headers",
+      "title": "Allowed Headers In",
+      "description": "Defines the list of all headers allowed to reach the backend when passed.\nBy default, KrakenD won't pass any header from the client to the backend. This list is **case-insensitive**. You can declare headers in lowercase, uppercase, or mixed.\nAn entry `[\"Cookie\"]` forwards all cookies, and a single star element `[\"*\"]` as value forwards everything to the backend (**it's safer to avoid this option**), including cookies. See [headers forwarding](https://www.krakend.io/docs/endpoints/parameter-forwarding/#headers-forwarding)",
+      "default": [],
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$id": "#endpoint/input_headers/items",
+        "examples": [
+          "User-Agent",
+          "Accept",
+          "*"
+        ],
+        "type": "string"
+      }
+    },
+    "input_query_strings": {
+      "$id": "#endpoint/input_query_strings",
+      "title": "Allowed Query String parameters",
+      "description": "Defines the exact list of quey strings parameters that are allowed to reach the backend. This list is **case-sensitive**.\nBy default, KrakenD won't pass any query string to the backend.\nA single star element `[\"*\"]` as value forwards everything to the backend (**it's safer to avoid this option**)\n\nSee: https://www.krakend.io/docs/endpoints/parameter-forwarding/",
+      "default": [],
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$id": "#endpoint/input_query_strings/items",
+        "examples": [
+          "page",
+          "limit",
+          "*"
+        ],
+        "type": "string"
+      }
+    },
+    "method": {
+      "$id": "#endpoint/method",
+      "title": "Method",
+      "description": "The method supported by this endpoint. Create multiple endpoint entries if you need different methods.\n\nSee: https://www.krakend.io/docs/endpoints/",
+      "default": "GET",
+      "enum": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ]
+    },
+    "output_encoding": {
+      "$id": "#endpoint/output_encoding",
+      "title": "Output encoding",
+      "description": "The gateway can work with several content types, even allowing your clients to choose how to consume the content. See the [supported encodings](https://www.krakend.io/docs/endpoints/content-types/)",
+      "default": "json",
+      "enum": [
+        "json",
+        "json-collection",
+        "yaml",
+        "fast-json",
+        "xml",
+        "negotiate",
+        "string",
+        "no-op"
+      ]
+    },
+    "timeout": {
+      "$id": "#endpoint/timeout",
+      "title": "Timeout",
+      "description": "The duration you write in the timeout represents the **whole duration of the pipe**, so it counts the time all your backends take to respond and the processing of all the components involved in the endpoint (the request, fetching data, manipulation, etc.). Usually specified in seconds (`s`) or milliseconds (`ms`. e.g.: `2000ms` or `2s`). If you don't set any timeout, the timeout is taken from the entry in the service level, or to the system's default",
+      "examples": [
+        "2s",
+        "1500ms"
+      ],
+      "default": "2s",
+      "$ref": "timeunits.json#/$defs/timeunit",
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

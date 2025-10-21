@@ -97,7 +97,7 @@
         },
         "decompress_gzip": {
           "title": "Decompress Gzip",
-          "description": "Enterprise Only. Decompresses any Gzipped content before sending it to the backend when the `Content-Encoding` has `gzip` in the first position. You can also set this value globally at the [service level](https://www.krakend.io/docs/enterprise/service-settings/router-options/#max_payload).\n\nSee: https://www.krakend.io/docs/service-settings/router-options/",
+          "description": "Enterprise only. Decompresses any Gzipped content before sending it to the backend when the `Content-Encoding` has `gzip` in the first position. You can also set this value globally at the [service level](https://www.krakend.io/docs/enterprise/service-settings/router-options/#max_payload).\n\nSee: https://www.krakend.io/docs/service-settings/router-options/",
           "default": false,
           "type": "boolean"
         },
@@ -113,7 +113,7 @@
         },
         "max_payload": {
           "title": "Maximum Payload",
-          "description": "Enterprise Only. Limits the maximum number of bytes a user can send to the endpoint. `0` means no limit. You can also set this value globally at the [service level](https://www.krakend.io/docs/enterprise/service-settings/router-options/#max_payload).\n\nSee: https://www.krakend.io/docs/service-settings/router-options/",
+          "description": "Enterprise only. Limits the maximum number of bytes a user can send to the endpoint. `0` means no limit. You can also set this value globally at the [service level](https://www.krakend.io/docs/enterprise/service-settings/router-options/#max_payload).\n\nSee: https://www.krakend.io/docs/service-settings/router-options/",
           "default": 0,
           "type": "integer"
         },

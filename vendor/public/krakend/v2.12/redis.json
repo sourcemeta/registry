@@ -1,0 +1,363 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/redis.json",
+  "title": "Redis configuration",
+  "description": "Defines the Redis connection pools available to any functionality requiring Redis.\n\nSee: /docs/enterprise/throttling/global-rate-limit/",
+  "type": "object",
+  "properties": {
+    "clusters": {
+      "title": "Cluster definitions",
+      "description": "Defines all the clusters available to Redis functionality. The different components requiring Redis will access the pool based on its name",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "addresses"
+        ],
+        "properties": {
+          "addresses": {
+            "title": "Addresses",
+            "description": "The list of redis members that conform the cluster using the format `host:port`. All members must be WRITEABLE",
+            "examples": [
+              [
+                "192.168.1.45:6379",
+                "192.168.1.52:6379"
+              ]
+            ],
+            "type": "array",
+            "items": {
+              "title": "Redis member",
+              "description": "The address of a Redis member in the cluster",
+              "type": "string"
+            }
+          },
+          "client_name": {
+            "title": "Client name",
+            "description": "You can set how this connection shows in Redis when listing all the connections `CONN LIST`",
+            "examples": [
+              "krakend_pool"
+            ],
+            "type": "string"
+          },
+          "conn_max_idle_time": {
+            "title": "Connection Max Idle Time",
+            "description": "The maximum amount of time a connection may be idle. Should be less than server's timeout.Expired connections may be closed lazily before reuse. If <= 0, connections are not closed due to a connection's idle time.",
+            "default": "30m",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "conn_max_life_time": {
+            "title": "conn_max_life_time",
+            "description": "The maximum amount of time a connection may be reused. When the attribute is not declared, the connection does not expire",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "dial_timeout": {
+            "title": "Dial Timeout",
+            "description": "Dial timeout for establishing new connections",
+            "default": "5s",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "max_active_conns": {
+            "title": "Max active conns",
+            "description": "Maximum number of connections allocated by the pool at a given time. When zero, there is no limit on the number of connections in the pool.",
+            "default": 0,
+            "type": "integer"
+          },
+          "max_idle_conns": {
+            "title": "Max idle conns",
+            "description": "Maximum number of idle connections. The value `0` means connections not closed",
+            "default": 0,
+            "type": "integer"
+          },
+          "max_redirects": {
+            "title": "Max redirects",
+            "description": "The maximum number of redirects to follow when requesting a key that is in another instance",
+            "default": 3,
+            "type": "integer"
+          },
+          "max_retries": {
+            "title": "Max retries",
+            "description": "The number of times you want to retry a Redis command using a different connection from the pool, applying a random delay between `min_retry_backoff` and `max_retry_backoff`. Use `-1` to never retry (it might not be a good idea)",
+            "default": 3,
+            "type": "integer"
+          },
+          "max_retry_backoff": {
+            "title": "Max retry backoff",
+            "description": "Every retry is executed increasing randomly starting at the `min_retry_backoff` until the `max_retry_backoff` is reached. This is the longest possible time.",
+            "default": "512ms",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "min_idle_conns": {
+            "title": "min_idle_conns",
+            "description": "Minimum number of idle connections which is useful when establishing new connection is slow. `0` means connections are not closed.",
+            "default": 0,
+            "type": "integer"
+          },
+          "min_retry_backoff": {
+            "description": "Every retry is executed increasing randomly starting at the `min_retry_backoff` until the `max_retry_backoff` is reached. This is the shortest possible time.",
+            "default": "8ms",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "name": {
+            "title": "Connection name",
+            "description": "The connection pool name. This is an arbitrary name used to reference this connection in other parts of the configuration needing Redis.",
+            "examples": [
+              "shared_instance",
+              "Redis_for_ratelimit"
+            ],
+            "type": "string"
+          },
+          "opentelemetry": {
+            "title": "OpenTelemetry",
+            "description": "The OpenTelemetry configuration establishing how to report Redis connection activity",
+            "type": "object",
+            "properties": {
+              "disable_metrics": {
+                "title": "Disable metrics",
+                "description": "Disables any metrics of this Redis pool",
+                "default": false,
+                "type": "boolean"
+              },
+              "disable_traces": {
+                "title": "Disable traces",
+                "description": "Disables any traces of this Redis pool",
+                "default": false,
+                "type": "boolean"
+              },
+              "traces_static_attributes": {
+                "title": "Static attributes",
+                "description": "Static attributes you want to pass for traces.",
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "key": {
+                      "title": "Key",
+                      "description": "The key of the static attribute you want to send",
+                      "type": "string"
+                    },
+                    "value": {
+                      "title": "Value",
+                      "description": "The value of the static attribute you want to send",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "password": {
+            "title": "password",
+            "description": "Sets the password to connect to Redis.",
+            "type": "string"
+          },
+          "pool_size": {
+            "title": "Pool size",
+            "description": "The pool size defines the number of concurrent Redis commands that can be executed by this Redis pool. Take into account that this only saves the connection time to the server, but, Redis will still be a non-concurrent service. When `0` it maps to its default 10",
+            "default": 10,
+            "type": "integer"
+          },
+          "pool_timeout": {
+            "title": "Pool timeout",
+            "description": "Amount of time the client waits for a connection if all connections are busy.",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "tls": {
+            "title": "tls",
+            "description": "An object with any [client TLS configuration](https://www.krakend.io/docs/enterprise/service-settings/tls/#client-tls-settings) to this connection",
+            "$ref": "./client_tls.json",
+            "type": "object"
+          },
+          "user_name": {
+            "title": "Username",
+            "description": "The username to connect to Redis",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "connection_pools": {
+      "title": "Connection Pools",
+      "description": "Defines all the connetion pools available to Redis functionality. The different components requiring Redis will access the pool based on its name",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "address"
+        ],
+        "properties": {
+          "address": {
+            "title": "Address",
+            "description": "The Redis host where you want to connect using the format `host:port`.",
+            "examples": [
+              "shared.redis.example.com"
+            ],
+            "type": "string"
+          },
+          "client_name": {
+            "title": "Client name",
+            "description": "You can set how this connection shows in Redis when listing all the connections `CONN LIST`",
+            "examples": [
+              "krakend_pool"
+            ],
+            "type": "string"
+          },
+          "conn_max_idle_time": {
+            "title": "Connection Max Idle Time",
+            "description": "The maximum amount of time a connection may be idle. Should be less than server's timeout.Expired connections may be closed lazily before reuse. If <= 0, connections are not closed due to a connection's idle time.",
+            "default": "30m",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "conn_max_life_time": {
+            "title": "conn_max_life_time",
+            "description": "The maximum amount of time a connection may be reused. When the attribute is not declared, the connection does not expire",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "db": {
+            "title": "DB",
+            "description": "The database number to select after connecting",
+            "default": 0,
+            "type": "integer"
+          },
+          "dial_timeout": {
+            "title": "Dial Timeout",
+            "description": "Dial timeout for establishing new connections",
+            "default": "5s",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "max_active_conns": {
+            "title": "Max active conns",
+            "description": "Maximum number of connections allocated by the pool at a given time. When zero, there is no limit on the number of connections in the pool.",
+            "default": 0,
+            "type": "integer"
+          },
+          "max_idle_conns": {
+            "title": "Max idle conns",
+            "description": "Maximum number of idle connections. The value `0` means connections not closed",
+            "default": 0,
+            "type": "integer"
+          },
+          "max_retries": {
+            "title": "Max retries",
+            "description": "The number of times you want to retry a Redis command using a different connection from the pool, applying a random delay between `min_retry_backoff` and `max_retry_backoff`. Use `-1` to never retry (it might not be a good idea)",
+            "default": 3,
+            "type": "integer"
+          },
+          "max_retry_backoff": {
+            "title": "Max retry backoff",
+            "description": "Every retry is executed increasing randomly starting at the `min_retry_backoff` until the `max_retry_backoff` is reached. This is the longest possible time.",
+            "default": "512ms",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "min_idle_conns": {
+            "title": "min_idle_conns",
+            "description": "Minimum number of idle connections which is useful when establishing new connection is slow. `0` means connections are not closed.",
+            "default": 0,
+            "type": "integer"
+          },
+          "min_retry_backoff": {
+            "description": "Every retry is executed increasing randomly starting at the `min_retry_backoff` until the `max_retry_backoff` is reached. This is the shortest possible time.",
+            "default": "8ms",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "name": {
+            "title": "Connection name",
+            "description": "The connection pool name. This is an arbitrary name used to reference this connection in other parts of the configuration needing Redis.",
+            "examples": [
+              "shared_instance",
+              "Redis_for_ratelimit"
+            ],
+            "type": "string"
+          },
+          "opentelemetry": {
+            "title": "OpenTelemetry",
+            "description": "The OpenTelemetry configuration establishing how to report Redis connection activity",
+            "type": "object",
+            "properties": {
+              "disable_metrics": {
+                "title": "Disable metrics",
+                "description": "Disables any metrics of this Redis pool",
+                "default": false,
+                "type": "boolean"
+              },
+              "disable_traces": {
+                "title": "Disable traces",
+                "description": "Disables any traces of this Redis pool",
+                "default": false,
+                "type": "boolean"
+              },
+              "traces_static_attributes": {
+                "title": "Static attributes",
+                "description": "Static attributes you want to pass for traces.",
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "key": {
+                      "title": "Key",
+                      "description": "The key of the static attribute you want to send",
+                      "type": "string"
+                    },
+                    "value": {
+                      "title": "Value",
+                      "description": "The value of the static attribute you want to send",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "password": {
+            "title": "password",
+            "description": "Sets the password to connect to Redis.",
+            "type": "string"
+          },
+          "pool_size": {
+            "title": "Pool size",
+            "description": "The pool size defines the number of concurrent Redis commands that can be executed by this Redis pool. Take into account that this only saves the connection time to the server, but, Redis will still be a non-concurrent service. When `0` it maps to its default 10",
+            "default": 10,
+            "type": "integer"
+          },
+          "pool_timeout": {
+            "title": "Pool timeout",
+            "description": "Amount of time the client waits for a connection if all connections are busy.",
+            "$ref": "./timeunits.json#/$defs/timeunit",
+            "type": "string"
+          },
+          "tls": {
+            "title": "tls",
+            "description": "An object with any [client TLS configuration](https://www.krakend.io/docs/enterprise/service-settings/tls/#client-tls-settings) to this connection",
+            "$ref": "./client_tls.json",
+            "type": "object"
+          },
+          "user_name": {
+            "title": "Username",
+            "description": "The username to connect to Redis",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

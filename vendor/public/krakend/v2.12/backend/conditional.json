@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/backend/conditional.json",
+  "title": "Conditional Routing",
+  "description": "Evaluates a rule to determine if the backend is callable or not, and skip to the next one in case it's not.\n\nSee: https://www.krakend.io/docs/enterprise/backends/conditional/",
+  "type": "object",
+  "required": [
+    "strategy"
+  ],
+  "properties": {
+    "name": {
+      "title": "Header Name",
+      "description": "Only used with the `header` strategy. It is the name of the header you want to use for the evaluation in the [canonical format of the MIME header](https://www.krakend.io/docs/endpoints/parameter-forwarding/#case-sensitive-and-case-insensitive-parameters). **Make sure to declare the header** in the `input_headers` list of the endpoint.\n\nSee: https://www.krakend.io/docs/enterprise/backends/conditional/",
+      "examples": [
+        "X-Test"
+      ],
+      "type": "string"
+    },
+    "strategy": {
+      "title": "Strategy",
+      "description": "Choose `header` when you want to check the value of a specific header, `policy` when you want to write a more complex logical expression, or `fallback` when the backend will execute when all the rest of conditional backends have failed to evaluate to true. Only one fallback can be defined per endpoint.\n\nSee: https://www.krakend.io/docs/enterprise/backends/conditional/",
+      "enum": [
+        "header",
+        "policy",
+        "fallback"
+      ]
+    },
+    "value": {
+      "title": "Value",
+      "description": "The value according to the strategy. With the `header` strategy, this is the literal value contained in the header (case sensitive). With the `policy` strategy, the [Security Policy expression](https://www.krakend.io/docs/enterprise/security-policies/policy-language/). When using policies you can access to the variables `req` and `req_params` (a previous backend response might be in the latter), and to [advanced macros](https://www.krakend.io/docs/enterprise/security-policies/advanced-policy-macros/). Access to headers require you to add the corresponding `input_headers` in the endpoint.\n\nSee: https://www.krakend.io/docs/enterprise/backends/conditional/",
+      "examples": [
+        "TestA",
+        "hasHeader('X-Test') && req_params.Resp0_message == '0 items left'"
+      ],
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}

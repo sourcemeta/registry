@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://www.krakend.io/schema/v2.11/security/policies.json",
   "title": "Securiy Policies",
-  "description": "The policies engine allows you to write custom sets of policies that are validated during requests, responses, or token validation.\n\nSee: https://www.krakend.io/docs/enterprise/security-policies/",
+  "description": "Enterprise only. The policies engine allows you to write custom sets of policies that are validated during requests, responses, or token validation.\n\nSee: https://www.krakend.io/docs/enterprise/security-policies/",
   "type": "object",
   "anyOf": [
     {
