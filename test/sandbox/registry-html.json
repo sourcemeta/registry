@@ -64,11 +64,6 @@
           "baseUri": "https://other.com",
           "path": "./schemas/test/no-blaze",
           "x-sourcemeta-registry:evaluate": false
-        },
-        "no-serve": {
-          "path": "./schemas/test/no-serve",
-          "x-sourcemeta-registry:protected": true,
-          "x-sourcemeta-registry:alert": "This collection is private"
         }
       }
     }

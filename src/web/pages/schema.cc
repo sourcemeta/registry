@@ -49,31 +49,16 @@ auto GENERATE_WEB_SCHEMA::handler(
   }
 
   // Action buttons
-  if (meta.at("protected").to_boolean()) {
-    header_children.emplace_back(
-        a({{"href", meta.at("path").to_string() + ".json"},
-           {"class", "btn btn-primary me-2 disabled"},
-           {"aria-disabled", "true"},
-           {"role", "button"}},
-          "Get JSON Schema"));
-    header_children.emplace_back(
-        a({{"href", meta.at("path").to_string() + ".json?bundle=1"},
-           {"class", "btn btn-secondary disabled"},
-           {"aria-disabled", "true"},
-           {"role", "button"}},
-          "Bundle"));
-  } else {
-    header_children.emplace_back(
-        a({{"href", meta.at("path").to_string() + ".json"},
-           {"class", "btn btn-primary me-2"},
-           {"role", "button"}},
-          "Get JSON Schema"));
-    header_children.emplace_back(
-        a({{"href", meta.at("path").to_string() + ".json?bundle=1"},
-           {"class", "btn btn-secondary"},
-           {"role", "button"}},
-          "Bundle"));
-  }
+  header_children.emplace_back(
+      a({{"href", meta.at("path").to_string() + ".json"},
+         {"class", "btn btn-primary me-2"},
+         {"role", "button"}},
+        "Get JSON Schema"));
+  header_children.emplace_back(
+      a({{"href", meta.at("path").to_string() + ".json?bundle=1"},
+         {"class", "btn btn-secondary"},
+         {"role", "button"}},
+        "Bundle"));
 
   content_children.emplace_back(div(header_children));
 
@@ -81,16 +66,10 @@ auto GENERATE_WEB_SCHEMA::handler(
   std::vector<Node> table_rows;
 
   // Identifier row
-  if (meta.at("protected").to_boolean()) {
-    table_rows.emplace_back(
-        tr(th({{"scope", "row"}, {"class", "text-nowrap"}}, "Identifier"),
-           td(code(meta.at("identifier").to_string()))));
-  } else {
-    table_rows.emplace_back(
-        tr(th({{"scope", "row"}, {"class", "text-nowrap"}}, "Identifier"),
-           td(code(a({{"href", meta.at("identifier").to_string()}},
-                     meta.at("identifier").to_string())))));
-  }
+  table_rows.emplace_back(
+      tr(th({{"scope", "row"}, {"class", "text-nowrap"}}, "Identifier"),
+         td(code(a({{"href", meta.at("identifier").to_string()}},
+                   meta.at("identifier").to_string())))));
 
   // Base Dialect row
   std::ostringstream badge_stream;
@@ -124,31 +103,20 @@ auto GENERATE_WEB_SCHEMA::handler(
   container_children.emplace_back(div(content_children));
 
   // Alert section
-  if (meta.at("protected").to_boolean()) {
-    std::string alert_text =
-        meta.at("alert").is_string()
-            ? meta.at("alert").to_string()
-            : "This schema is marked as protected. It is listed, but it "
-              "cannot be directly accessed";
+  if (meta.at("alert").is_string()) {
     container_children.emplace_back(
-        div({{"class", "alert alert-warning"}, {"role", "alert"}},
-            raw(alert_text)));
-  } else {
-    if (meta.at("alert").is_string()) {
-      container_children.emplace_back(
-          div({{"class", "alert alert-warning mb-3"}, {"role", "alert"}},
-              meta.at("alert").to_string()));
-    }
-
-    container_children.emplace_back(
-        div({{"id", "schema"},
-             {"class", "border overflow-auto"},
-             {"style", "max-height: 400px;"},
-             {"data-sourcemeta-ui-editor", meta.at("path").to_string()},
-             {"data-sourcemeta-ui-editor-mode", "readonly"},
-             {"data-sourcemeta-ui-editor-language", "json"}},
-            "Loading schema..."));
+        div({{"class", "alert alert-warning mb-3"}, {"role", "alert"}},
+            meta.at("alert").to_string()));
   }
+
+  container_children.emplace_back(
+      div({{"id", "schema"},
+           {"class", "border overflow-auto"},
+           {"style", "max-height: 400px;"},
+           {"data-sourcemeta-ui-editor", meta.at("path").to_string()},
+           {"data-sourcemeta-ui-editor-mode", "readonly"},
+           {"data-sourcemeta-ui-editor-language", "json"}},
+          "Loading schema..."));
 
   const auto dependencies_json{read_json(dependencies.at(1))};
   const auto health{read_json(dependencies.at(2))};

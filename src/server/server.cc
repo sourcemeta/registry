@@ -321,11 +321,6 @@ static auto on_evaluate(const std::filesystem::path &base,
       }
 
       return;
-    } else if (std::filesystem::exists(template_path.parent_path() /
-                                       "protected.metapack")) {
-      json_error(request->getMethod(), request->getUrl(), response, encoding,
-                 sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
-                 "This schema is protected");
     }
 
     response->onAborted([]() {});
@@ -402,12 +397,7 @@ static auto on_schema(const std::filesystem::path &base,
     absolute_path /= "schema.metapack";
   }
 
-  if (std::filesystem::exists(absolute_path.parent_path() /
-                              "protected.metapack")) {
-    json_error(request->getMethod(), request->getUrl(), response, encoding,
-               sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
-               "This schema is protected");
-  } else if (is_deno) {
+  if (is_deno) {
     serve_static_file(request, response, encoding, absolute_path,
                       sourcemeta::registry::STATUS_OK, true,
                       // For HTTP imports, as Deno won't like the
@@ -484,16 +474,8 @@ static auto on_request(const std::filesystem::path &base,
       absolute_path /= request->getUrl().substr(28);
       absolute_path /= SENTINEL;
       absolute_path /= "locations.metapack";
-
-      if (std::filesystem::exists(absolute_path.parent_path() /
-                                  "protected.metapack")) {
-        json_error(request->getMethod(), request->getUrl(), response, encoding,
-                   sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
-                   "This schema is protected");
-      } else {
-        serve_static_file(request, response, encoding, absolute_path,
-                          sourcemeta::registry::STATUS_OK, true);
-      }
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true);
     } else {
       json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
@@ -506,16 +488,8 @@ static auto on_request(const std::filesystem::path &base,
       absolute_path /= request->getUrl().substr(28);
       absolute_path /= SENTINEL;
       absolute_path /= "positions.metapack";
-
-      if (std::filesystem::exists(absolute_path.parent_path() /
-                                  "protected.metapack")) {
-        json_error(request->getMethod(), request->getUrl(), response, encoding,
-                   sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
-                   "This schema is protected");
-      } else {
-        serve_static_file(request, response, encoding, absolute_path,
-                          sourcemeta::registry::STATUS_OK, true);
-      }
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true);
     } else {
       json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,
@@ -528,16 +502,8 @@ static auto on_request(const std::filesystem::path &base,
       absolute_path /= request->getUrl().substr(24);
       absolute_path /= SENTINEL;
       absolute_path /= "stats.metapack";
-
-      if (std::filesystem::exists(absolute_path.parent_path() /
-                                  "protected.metapack")) {
-        json_error(request->getMethod(), request->getUrl(), response, encoding,
-                   sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED, "protected",
-                   "This schema is protected");
-      } else {
-        serve_static_file(request, response, encoding, absolute_path,
-                          sourcemeta::registry::STATUS_OK, true);
-      }
+      serve_static_file(request, response, encoding, absolute_path,
+                        sourcemeta::registry::STATUS_OK, true);
     } else {
       json_error(request->getMethod(), request->getUrl(), response, encoding,
                  sourcemeta::registry::STATUS_METHOD_NOT_ALLOWED,

@@ -145,15 +145,6 @@ xpath "count(//script[not(contains(@src, '?v='))])" == 0
 xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
 header "Access-Control-Allow-Origin" not exists
 
-GET {{base}}/test/no-serve/schema
-Accept: text/html
-HTTP 200
-Content-Type: text/html
-[Asserts]
-xpath "count(//script[not(contains(@src, '?v='))])" == 0
-xpath "count(//link[@rel='stylesheet' and not(contains(@href, '?v='))])" == 0
-header "Access-Control-Allow-Origin" not exists
-
 # Test that the v= query parameter is consistent across different pages to
 # ensure the cache stamp is generated once at build/startup time, not per request
 GET {{base}}

@@ -88,23 +88,3 @@ POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
 HTTP 200
 [Asserts]
 jsonpath "$.valid" == true
-
-POST {{base}}/self/api/schemas/trace/test/no-serve/schema
-Content-Type: application/problem+json
-"Hello World"
-HTTP 405
-Access-Control-Allow-Origin: *
-[Captures]
-last_response: body
-[Asserts]
-jsonpath "$.status" == 405
-jsonpath "$.title" == "sourcemeta:registry/protected"
-jsonpath "$.detail" == "This schema is protected"
-
-POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/error
-```
-{{last_response}}
-```
-HTTP 200
-[Asserts]
-jsonpath "$.valid" == true

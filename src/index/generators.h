@@ -111,21 +111,6 @@ private:
   }
 };
 
-struct GENERATE_MARKER {
-  using Context = sourcemeta::registry::Resolver;
-  static auto
-  handler(const std::filesystem::path &destination,
-          const sourcemeta::core::BuildDependencies<std::filesystem::path> &,
-          const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
-          const Context &) -> void {
-    std::filesystem::create_directories(destination.parent_path());
-    sourcemeta::registry::write_pretty_json(
-        destination, sourcemeta::core::JSON{true}, "application/json",
-        sourcemeta::registry::Encoding::Identity,
-        sourcemeta::core::JSON{nullptr}, std::chrono::milliseconds::zero());
-  }
-};
-
 struct GENERATE_POINTER_POSITIONS {
   using Context = sourcemeta::registry::Resolver;
   static auto
