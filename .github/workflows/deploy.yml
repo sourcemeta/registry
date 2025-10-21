@@ -181,7 +181,7 @@ jobs:
       deployments: write
       contents: write
     env:
-      KRAFTCLOUD_METRO: fra0
+      KRAFTCLOUD_METRO: fra
       KRAFTKIT_NO_CHECK_UPDATES: true
       SERVICE_DOMAIN: schemas.sourcemeta.com
     steps:
@@ -213,7 +213,7 @@ jobs:
           environment: unikraft
 
       - id: deploy
-        uses: unikraft/kraftkit@v0.11.6
+        uses: unikraft/kraftkit@v0.12.3
         with:
           auths: |
             github.com:
