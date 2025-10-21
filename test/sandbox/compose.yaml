@@ -4,7 +4,6 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        SOURCEMETA_REGISTRY_SANDBOX_EDITION: ${SOURCEMETA_REGISTRY_SANDBOX_EDITION}
         SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION: ${SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION}
     environment:
       # Different from the default just to test this variable

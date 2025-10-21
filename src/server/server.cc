@@ -698,15 +698,8 @@ auto terminate(int signal) -> void {
 auto main(int argc, char *argv[]) noexcept -> int {
   const auto timestamp_start{std::chrono::steady_clock::now()};
 
-  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::version();
-#if defined(SOURCEMETA_REGISTRY_ENTERPRISE)
-  std::cout << " Enterprise ";
-#elif defined(SOURCEMETA_REGISTRY_PRO)
-  std::cout << " Pro ";
-#else
-  std::cout << " Starter ";
-#endif
-  std::cout << "Edition\n";
+  std::cout << "Sourcemeta Registry v" << sourcemeta::registry::version()
+            << "\n";
 
   // Mainly for Docker Compose
   std::signal(SIGINT, terminate);
@@ -720,12 +713,6 @@ auto main(int argc, char *argv[]) noexcept -> int {
     }
 
     const auto port{static_cast<std::uint32_t>(std::stoul(argv[2]))};
-
-    if (!sourcemeta::registry::license_permitted()) {
-      std::cerr << sourcemeta::registry::license_error();
-      return EXIT_FAILURE;
-    }
-
     const auto base{std::filesystem::canonical(argv[1])};
     const auto is_headless{!std::filesystem::exists(
         base / "explorer" / SENTINEL / "directory-html.metapack")};

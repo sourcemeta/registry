@@ -149,7 +149,6 @@ To run the Registry, create a `Dockerfile` that extends our base image and
 follows the build pattern shown below:
 
 ```docker title="Dockerfile"
-# (1) Select an edition and version from GitHub Packages
 # See https://github.com/orgs/sourcemeta/packages?repo_name=registry
 FROM ghcr.io/sourcemeta/registry:<version>
 
@@ -159,12 +158,6 @@ FROM ghcr.io/sourcemeta/registry:<version>
 # See https://registry.sourcemeta.com/configuration/
 COPY registry.json .
 COPY schemas schemas
-
-# [OPTIONAL] If you are running a commercial edition of the Registry,
-# you need to explicitly confirm that you own a commercial license
-# by setting this environment variable before running the Registry
-# build step. See https://registry.sourcemeta.com/commercial/
-ENV SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1
 
 # (3) Run the Registry build step on your input configuration file
 # The indexer will automatically remove the input schemas from the
@@ -184,7 +177,6 @@ The Registry can be configured using the following runtime environment variables
 | Name | Default | Description |
 |------|---------|-------------|
 | `SOURCEMETA_REGISTRY_PORT` | `8000` | The HTTP port on which the Registry will listen on |
-| `SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE` | N/A | When using a [commercial edition](commercial.md), set this variable to a non-empty value to confirm you own a commercial license. The simplest way of setting this variable is using an [`ENV`](https://docs.docker.com/reference/dockerfile/#env) statement in your `Dockerfile` as shown in the previous section |
 
 ## Using Docker Compose
 

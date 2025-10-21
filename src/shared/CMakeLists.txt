@@ -1,6 +1,6 @@
 sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME shared
-  PRIVATE_HEADERS license.h metapack.h encoding.h version.h
-  SOURCES license.cc metapack.cc version.cc configure.h.in)
+  PRIVATE_HEADERS metapack.h encoding.h version.h
+  SOURCES metapack.cc version.cc configure.h.in)
 
 target_link_libraries(sourcemeta_registry_shared PUBLIC sourcemeta::core::json)
 target_link_libraries(sourcemeta_registry_shared PRIVATE sourcemeta::core::io)

@@ -11,7 +11,6 @@ NPX ?= npx
 # Options
 INDEX ?= ON
 SERVER ?= ON
-EDITION ?= enterprise
 PRESET ?= Debug
 OUTPUT ?= ./build
 PREFIX ?= $(OUTPUT)/dist
@@ -35,7 +34,6 @@ configure: node_modules
 		-DREGISTRY_TESTS:BOOL=ON \
 		-DREGISTRY_INDEX:BOOL=$(INDEX) \
 		-DREGISTRY_SERVER:BOOL=$(SERVER) \
-		-DREGISTRY_EDITION:STRING=$(EDITION) \
 		-DREGISTRY_PREFIX:STRING=$(or $(realpath $(PREFIX)),$(abspath $(PREFIX))) \
 		-DBUILD_SHARED_LIBS:BOOL=OFF
 
@@ -60,14 +58,10 @@ test:
 	$(CTEST) --test-dir $(OUTPUT) --build-config $(PRESET) --output-on-failure --parallel
 
 .PHONY: test-e2e
-HURL_TESTS += test/e2e/$(SANDBOX_CONFIGURATION)/common/*.hurl
+HURL_TESTS += test/e2e/$(SANDBOX_CONFIGURATION)/*.hurl
 ifneq ($(SANDBOX_CONFIGURATION),empty)
-HURL_TESTS += test/e2e/populated/common/schemas/*.hurl
-ifeq ($(EDITION),starter)
-HURL_TESTS += test/e2e/populated/starter/api/*.hurl
-else
-HURL_TESTS += test/e2e/populated/commercial/api/*.hurl
-endif
+HURL_TESTS += test/e2e/populated/schemas/*.hurl
+HURL_TESTS += test/e2e/populated/api/*.hurl
 endif
 test-e2e:
 	$(HURL) --test --variable base=$(SANDBOX_URL) $(HURL_TESTS)
@@ -80,29 +74,23 @@ test-ui: node_modules
 
 .PHONY: sandbox-index
 sandbox-index: compile
-	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
-		$(PREFIX)/bin/sourcemeta-registry-index \
-		$(SANDBOX)/registry-$(SANDBOX_CONFIGURATION)-$(EDITION).json \
+	$(PREFIX)/bin/sourcemeta-registry-index \
+		$(SANDBOX)/registry-$(SANDBOX_CONFIGURATION).json \
 		$(OUTPUT)/sandbox --url $(SANDBOX_URL) --profile
 	./test/sandbox/manifest-check.sh $(OUTPUT)/sandbox \
-		$(SANDBOX)/manifest-$(SANDBOX_CONFIGURATION)-$(EDITION).txt
+		$(SANDBOX)/manifest-$(SANDBOX_CONFIGURATION).txt
 
 .PHONY: sandbox
 sandbox: sandbox-index
-	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
-		$(PREFIX)/bin/sourcemeta-registry-server \
+	$(PREFIX)/bin/sourcemeta-registry-server \
 		$(OUTPUT)/sandbox $(SANDBOX_PORT)
 
 .PHONY: docker
 docker:
-	$(DOCKER) build --tag registry-$(EDITION) . --file Dockerfile \
-		--build-arg SOURCEMETA_REGISTRY_EDITION=$(EDITION) \
-		--progress plain
-	SOURCEMETA_REGISTRY_SANDBOX_EDITION=$(EDITION) \
+	$(DOCKER) build --tag registry . --file Dockerfile --progress plain
 	SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION=$(SANDBOX_CONFIGURATION) \
 	SOURCEMETA_REGISTRY_SANDBOX_PORT=$(SANDBOX_PORT) \
 		$(DOCKER) compose --file test/sandbox/compose.yaml config
-	SOURCEMETA_REGISTRY_SANDBOX_EDITION=$(EDITION) \
 	SOURCEMETA_REGISTRY_SANDBOX_CONFIGURATION=$(SANDBOX_CONFIGURATION) \
 	SOURCEMETA_REGISTRY_SANDBOX_PORT=$(SANDBOX_PORT) \
 		$(DOCKER) compose --progress plain --file test/sandbox/compose.yaml up --build
@@ -113,10 +101,8 @@ docs: mkdocs.yml
 
 .PHONY: public
 public:
-	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
-		$(PREFIX)/bin/sourcemeta-registry-index $(PUBLIC)/registry.json $(OUTPUT)/public --verbose
-	SOURCEMETA_REGISTRY_I_HAVE_A_COMMERCIAL_LICENSE=1 \
-		$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/public 8000
+	$(PREFIX)/bin/sourcemeta-registry-index $(PUBLIC)/registry.json $(OUTPUT)/public --verbose
+	$(PREFIX)/bin/sourcemeta-registry-server $(OUTPUT)/public 8000
 
 .PHONY: clean
 clean:

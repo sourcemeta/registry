@@ -16,53 +16,33 @@ jobs:
       - run: codespell docs *.markdown docs/*.md
 
   test:
-    strategy:
-      fail-fast: false
-      matrix:
-        edition:
-          - name: enterprise
-          - name: pro
-          - name: starter
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Build Registry
-        run: >
-          docker build
-          --tag registry-${{ matrix.edition.name }} .
-          --file Dockerfile
-          --build-arg SOURCEMETA_REGISTRY_EDITION=${{ matrix.edition.name }}
-          --progress plain
+        run: docker build . --tag registry --file Dockerfile --progress plain
 
       - name: Sandbox (headless)
         uses: ./.github/actions/sandbox
         with:
-          edition: ${{ matrix.edition.name }}
           configuration: headless
           port: 8000
 
       - name: Sandbox (html)
         uses: ./.github/actions/sandbox
         with:
-          edition: ${{ matrix.edition.name }}
           configuration: html
           port: 8000
 
       - name: Sandbox (empty)
         uses: ./.github/actions/sandbox
         with:
-          edition: ${{ matrix.edition.name }}
           configuration: empty
           port: 8000
 
       # Public instance
-      - run: >
-          docker build .
-          --file public/Dockerfile
-          --progress plain
-          --build-arg SOURCEMETA_REGISTRY=registry-${{ matrix.edition.name }}
-        if: matrix.edition.name == 'enterprise'
+      - run: docker build .  --file public/Dockerfile --progress plain
 
   website:
     runs-on: ubuntu-latest

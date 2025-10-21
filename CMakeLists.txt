@@ -8,15 +8,6 @@ option(REGISTRY_SERVER "Build the Registry server" ON)
 option(REGISTRY_INDEX "Build the Registry index tool" ON)
 set(REGISTRY_PREFIX "/usr" CACHE STRING "Expected installation prefix")
 
-# Commercial editions require a paid license
-# See https://github.com/sourcemeta/registry/blob/main/LICENSE
-set(REGISTRY_EDITION "starter" CACHE STRING "The Registry edition")
-if(REGISTRY_EDITION)
-  message(STATUS "Sourcemeta Registry edition: ${REGISTRY_EDITION}")
-else()
-  message(FATAL_ERROR "You must set an edition using REGISTRY_EDITION")
-endif()
-
 cmake_path(IS_ABSOLUTE REGISTRY_PREFIX REGISTRY_PREFIX_IS_ABSOLUTE)
 if(NOT REGISTRY_PREFIX_IS_ABSOLUTE)
   message(FATAL_ERROR "REGISTRY_PREFIX must be an absolute path but it was: ${REGISTRY_PREFIX}")
@@ -33,15 +24,6 @@ include(GNUInstallDirs)
 # Always optimize the current architecture
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -mtune=native")
-
-# Set these globally to not repeat ourselves in every target
-if(REGISTRY_EDITION STREQUAL "enterprise")
-  add_compile_definitions(SOURCEMETA_REGISTRY_ENTERPRISE)
-elseif(REGISTRY_EDITION STREQUAL "pro")
-  add_compile_definitions(SOURCEMETA_REGISTRY_PRO)
-else()
-  add_compile_definitions(SOURCEMETA_REGISTRY_STARTER)
-endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   set(REGISTRY_VERSION "${PROJECT_VERSION}")

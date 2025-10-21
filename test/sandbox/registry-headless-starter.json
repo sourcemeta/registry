@@ -1,4 +1,0 @@
-{
-  "extends": [ "./registry-html-starter.json" ],
-  "html": false
-}
