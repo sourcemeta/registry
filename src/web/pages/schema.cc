@@ -106,7 +106,7 @@ auto GENERATE_WEB_SCHEMA::handler(
   if (meta.at("alert").is_string()) {
     container_children.emplace_back(
         div({{"class", "alert alert-warning mb-3"}, {"role", "alert"}},
-            meta.at("alert").to_string()));
+            raw(meta.at("alert").to_string())));
   }
 
   container_children.emplace_back(

@@ -43,7 +43,7 @@
         "std": {
           "contents": {
             "v0.0.1": {
-              "x-sourcemeta-registry:alert": "By using this schema, to agree to its <a href=\"https://github.com/sourcemeta/std/blob/main/LICENSE\">license</a>"
+              "x-sourcemeta-registry:alert": "By using this schema, you confirm you agree to its <a href=\"https://github.com/sourcemeta/std/blob/main/LICENSE\">license</a>"
             }
           }
         }
