@@ -225,6 +225,9 @@ auto GENERATE_WEB_SCHEMA::handler(
       if (dependency.at("to").to_string().starts_with(configuration.url)) {
         std::filesystem::path dependency_schema_url{
             dependency.at("to").to_string().substr(configuration.url.size())};
+        if (dependency_schema_url.extension() == ".json") {
+          dependency_schema_url.replace_extension("");
+        }
         row_cells.emplace_back(
             td(code(a({{"href", dependency_schema_url.string()}},
                       dependency_schema_url.string()))));
