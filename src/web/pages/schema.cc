@@ -131,7 +131,8 @@ auto GENERATE_WEB_SCHEMA::handler(
             : "This schema is marked as protected. It is listed, but it "
               "cannot be directly accessed";
     container_children.emplace_back(
-        div({{"class", "alert alert-warning"}, {"role", "alert"}}, alert_text));
+        div({{"class", "alert alert-warning"}, {"role", "alert"}},
+            raw(alert_text)));
   } else {
     if (meta.at("alert").is_string()) {
       container_children.emplace_back(
