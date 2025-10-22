@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Ordinal Date and UTC of Day (Basic Format)",
+  "description": "A representation of ordinal date combined with complete UTC of day in basic format [YYYY][DDD][\"T\"][hh][mm][ss][\"Z\"] where \"Z\" is the UTC designator (§5.4.2.2 a)",
+  "examples": [
+    "1985102T232050Z",
+    "2000001T000000Z",
+    "2023349T235959Z",
+    "1900060T120000Z",
+    "2100365T235960Z"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^[0-9]{4}(00[1-9]|0[1-9][0-9]|[12][0-9]{2}|3[0-5][0-9]|36[0-6])T([01][0-9]|2[0-3])[0-5][0-9]([0-5][0-9]|60)Z$"
+}

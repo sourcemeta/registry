@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Week Date and Local Time of Day with Time Shift and Reduced Precision (Basic Format)",
+  "description": "A representation of week date combined with reduced precision local time of day (hour and minute only) and time shift from UTC in basic format [YYYY][\"W\"][ww][D][\"T\"][hh][mm][±][hh][mm] where seconds are omitted (§5.4.3 c)",
+  "examples": [
+    "1985W155T1015+0400",
+    "2000W011T0000-0500",
+    "2023W507T2359+0000",
+    "1900W097T1200+0530",
+    "2100W527T1800-1200"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "not": {
+    "pattern": "-0000$"
+  },
+  "pattern": "^[0-9]{4}W(0[1-9]|[1-4][0-9]|5[0-3])[1-7]T([01][0-9]|2[0-3])[0-5][0-9][+-]([01][0-9]|2[0-3])[0-5][0-9]$"
+}

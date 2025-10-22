@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "JSON-RPC 2.0 Notification",
   "description": "A request object without an identifier that must not be responded to by the server",
-  "$comment": "https://www.jsonrpc.org/specification#notification",
   "examples": [
     {
       "jsonrpc": "2.0",
@@ -23,6 +22,7 @@
     }
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.jsonrpc.org/specification#notification" ],
   "type": "object",
   "required": [ "jsonrpc", "method" ],
   "properties": {

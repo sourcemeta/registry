@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 3986 Uniform Resource Identifier (URI)",
   "description": "A unique sequence of characters that identifies an abstract or physical resource",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc3986#section-3",
   "examples": [
     "urn:example:foo",
     "https://example.com/path/to/resource?query=value#section",
@@ -10,6 +9,7 @@
     "tel:+1-555-555-5555"
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc3986#section-3" ],
   "anyOf": [
     {
       "$ref": "./urn.json"

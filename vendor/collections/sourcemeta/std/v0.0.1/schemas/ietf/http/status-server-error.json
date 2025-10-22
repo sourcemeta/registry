@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 9110 HTTP Server Error Status Code",
   "description": "An HTTP 5xx server error status code indicating the server failed to fulfill a valid request",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-15.5",
   "examples": [ 500, 502, 503 ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc9110#section-15.5" ],
   "type": "integer",
   "maximum": 599,
   "minimum": 500

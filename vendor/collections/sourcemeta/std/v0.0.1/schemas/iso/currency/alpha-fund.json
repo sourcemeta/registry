@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ISO 4217 Alphabetic Fund Code",
   "description": "A three-letter alphabetic fund code (2025-05-12)",
-  "$comment": "https://www.iso.org/iso-4217-currency-codes.html",
   "examples": [ "BOV", "CHE", "CHW", "CLF" ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/iso-4217-currency-codes.html" ],
   "anyOf": [
     {
       "title": "Mvdol",

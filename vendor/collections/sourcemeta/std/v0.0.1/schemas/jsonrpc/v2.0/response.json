@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "JSON-RPC 2.0 Response Object",
   "description": "An object that represents the result of a method invocation on the server",
-  "$comment": "https://www.jsonrpc.org/specification#response_object",
   "examples": [
     {
       "id": 1,
@@ -24,6 +23,7 @@
     }
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.jsonrpc.org/specification#response_object" ],
   "type": "object",
   "anyOf": [
     {

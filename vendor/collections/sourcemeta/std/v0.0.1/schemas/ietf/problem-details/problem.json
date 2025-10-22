@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 7807 Problem Details for HTTP APIs",
   "description": "A machine-readable format for specifying errors in HTTP API responses",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc7807",
   "examples": [
     {
       "title": "You do not have enough credit.",
@@ -34,6 +33,7 @@
     }
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc7807" ],
   "type": "object",
   "properties": {
     "title": {

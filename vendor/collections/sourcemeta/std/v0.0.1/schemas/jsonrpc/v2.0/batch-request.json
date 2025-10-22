@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "JSON-RPC 2.0 Batch Request",
   "description": "An array of request objects sent to the server in a single batch",
-  "$comment": "https://www.jsonrpc.org/specification#batch",
   "examples": [
     [
       {
@@ -46,6 +45,7 @@
     ]
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.jsonrpc.org/specification#batch" ],
   "type": "array",
   "minItems": 1,
   "items": {

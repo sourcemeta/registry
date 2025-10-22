@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Ordinal Date Expanded (Extended Format)",
+  "description": "An expanded representation of an ordinal date in extended format [±][YYYYYY][\"-\"][DDD] with six digits for the year and DDD as calendar day of year (001-365/366) (§5.2.3.2 b)",
+  "examples": [
+    "+001985-102",
+    "-000001-001",
+    "+999999-366",
+    "+000000-001",
+    "-010000-365"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^[+-][0-9]{6}-(00[1-9]|0[1-9][0-9]|[12][0-9][0-9]|3[0-5][0-9]|36[0-6])$"
+}

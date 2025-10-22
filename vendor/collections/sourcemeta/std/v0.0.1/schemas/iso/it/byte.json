@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ISO/IEC 2382:2015 Byte (2121333)",
   "description": "A non-negative integer representing bytes in information technology",
-  "$comment": "https://www.iso.org/standard/63598.html",
   "examples": [ 0, 1024, 1048576 ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/63598.html" ],
   "type": "integer",
   "minimum": 0
 }

@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ISO 4217 Alphabetic Currency Code",
   "description": "A three-letter alphabetic currency code, excluding funds and precious metals (2025-05-12)",
-  "$comment": "https://www.iso.org/iso-4217-currency-codes.html",
   "examples": [ "AED", "AFN", "ALL", "AMD" ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/iso-4217-currency-codes.html" ],
   "anyOf": [
     {
       "title": "UAE Dirham",

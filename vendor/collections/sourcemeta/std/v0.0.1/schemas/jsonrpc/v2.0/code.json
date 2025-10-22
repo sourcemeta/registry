@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "JSON-RPC 2.0 Error Code",
   "description": "A number that indicates the error type that occurred",
-  "$comment": "https://www.jsonrpc.org/specification#error_object",
   "examples": [ -32700, -32600, -32601, -32000, 100, -1 ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.jsonrpc.org/specification#error_object" ],
   "anyOf": [
     {
       "$ref": "./code-predefined.json"

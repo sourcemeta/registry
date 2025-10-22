@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Calendar Date and Local Time of Day (Extended Format)",
+  "description": "A representation of calendar date combined with complete local time of day in extended format [YYYY][\"-\"][MM][\"-\"][DD][\"T\"][hh][\":\"[mm][\":\"[ss] where the time designator \"T\" separates date from time (§5.4.2.1 b)",
+  "$comment": "This schema validates day/month combinations (i.e rejects April 31) but does not validate leap years. February 29 is accepted for any year, and leap year validation must be performed by the consumer",
+  "examples": [
+    "1985-04-12T23:20:50",
+    "2000-01-01T00:00:00",
+    "2023-12-15T23:59:59",
+    "1900-03-01T12:00:00",
+    "2100-12-31T18:00:00"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^([0-9]{4}-(0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|[0-9]{4}-(0[469]|11)-(0[1-9]|[12][0-9]|30)|[0-9]{4}-02-(0[1-9]|1[0-9]|2[0-9]))T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)$"
+}

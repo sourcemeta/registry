@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "JSON-RPC 2.0 Request Object",
   "description": "An object that represents a call to a method on the server",
-  "$comment": "https://www.jsonrpc.org/specification#request_object",
   "examples": [
     {
       "id": 1,
@@ -27,6 +26,7 @@
     }
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.jsonrpc.org/specification#request_object" ],
   "type": "object",
   "required": [ "jsonrpc", "method", "id" ],
   "properties": {

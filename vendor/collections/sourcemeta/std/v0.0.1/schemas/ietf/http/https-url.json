@@ -2,13 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "HTTPS URL",
   "description": "A Uniform Resource Locator using the HTTPS scheme",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-4.2.2",
   "examples": [
     "https://example.com",
     "https://example.com/path",
     "https://user:pass@example.com:443/api"
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc9110#section-4.2.2" ],
   "$ref": "../uri/url.json",
   "pattern": "^[Hh][Tt][Tt][Pp][Ss]://"
 }

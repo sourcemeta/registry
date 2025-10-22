@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Local Time of Day with Decimal Hour (Basic Format)",
+  "description": "A representation of local time of day with decimal fraction of hour in basic format [\"T\"][hh][,][n] or [\"T\"][hh][.][n] where the time designator \"T\" may be omitted by mutual agreement and the decimal sign may be a comma or period (§5.3.1.4 e)",
+  "$comment": "The decimal fraction must have at least one digit. The standard allows both comma and period as decimal signs. Extended format is not applicable for hour-only representations",
+  "examples": [ "T23,3", "T23.3", "T00,0", "T12.5", "T15,75" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^T([01][0-9]|2[0-3])[.,][0-9]+$"
+}
