@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 3986 Uniform Resource Identifier (URI) relative reference",
   "description": "A relative Uniform Resource Identifier (URI) reference to be resolved with a base URI",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc3986#section-4.2",
   "examples": [
     "../parent/file.html",
     "//cdn.example.com/assets/style.css",
@@ -11,71 +10,71 @@
     "?search=term#results"
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc3986#section-4.2" ],
   "type": "string",
   "allOf": [
     {
-      "$comment": "Network path validations",
       "anyOf": [
         {
-          "$comment": "Not a network path",
+          "$comment": "Empty string",
+          "pattern": "^$"
+        },
+        {
+          "$comment": "Network-path reference",
+          "pattern": "^//.*$"
+        },
+        {
+          "$comment": "Absolute-path reference",
+          "pattern": "^/(?:[^?#]*)?(?:\\?[^#]*)?(?:#.*)?$"
+        },
+        {
+          "$comment": "Relative-path reference (not starting with scheme)",
           "not": {
-            "pattern": "^//"
-          }
-        },
-        {
-          "$comment": "Valid IPv4 or not IPv4-like",
-          "anyOf": [
-            {
-              "not": {
-                "pattern": "^//(?:[^@]*@)?[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z][A-Za-z0-9+\\-.]*://"
+              },
+              {
+                "pattern": "^[A-Za-z][A-Za-z0-9+\\-.]*:[^/:?#]*@"
+              },
+              {
+                "pattern": "^urn:[A-Za-z0-9][A-Za-z0-9-]*:"
               }
-            },
-            {
-              "pattern": "^//(?:[^@]*@)?(?:(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?:[:/?#].*)?$"
-            }
-          ],
-          "pattern": "^//(?:[^@/]*@)?[^:/?#]+(?::[0-9]+)?(?:[/?#].*)?$"
+            ]
+          },
+          "pattern": "^[^/?#][^?#]*(?:\\?[^#]*)?(?:#.*)?$"
         },
         {
-          "$comment": "Valid network path with IPv6",
-          "pattern": "^//(?:[^@/]*@)?\\[[0-9A-Fa-f:.]+\\](?::[0-9]+)?(?:[/?#].*)?$"
+          "$comment": "Query and/or fragment only",
+          "pattern": "^(?:\\?[^#]*)?(?:#.*)?$"
         }
       ]
     }
   ],
   "anyOf": [
     {
-      "$comment": "Empty string",
-      "pattern": "^$"
-    },
-    {
-      "$comment": "Network-path reference",
-      "pattern": "^//.*$"
-    },
-    {
-      "$comment": "Absolute-path reference",
-      "pattern": "^/(?:[^?#]*)?(?:\\?[^#]*)?(?:#.*)?$"
-    },
-    {
-      "$comment": "Relative-path reference (not starting with scheme)",
+      "$comment": "Not a network path",
       "not": {
-        "anyOf": [
-          {
-            "pattern": "^[A-Za-z][A-Za-z0-9+\\-.]*://"
-          },
-          {
-            "pattern": "^[A-Za-z][A-Za-z0-9+\\-.]*:[^/:?#]*@"
-          },
-          {
-            "pattern": "^urn:[A-Za-z0-9][A-Za-z0-9-]*:"
-          }
-        ]
-      },
-      "pattern": "^[^/?#][^?#]*(?:\\?[^#]*)?(?:#.*)?$"
+        "pattern": "^//"
+      }
     },
     {
-      "$comment": "Query and/or fragment only",
-      "pattern": "^(?:\\?[^#]*)?(?:#.*)?$"
+      "$comment": "Valid IPv4 or not IPv4-like",
+      "anyOf": [
+        {
+          "not": {
+            "pattern": "^//(?:[^@]*@)?[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"
+          }
+        },
+        {
+          "pattern": "^//(?:[^@]*@)?(?:(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(?:[:/?#].*)?$"
+        }
+      ],
+      "pattern": "^//(?:[^@/]*@)?[^:/?#]+(?::[0-9]+)?(?:[/?#].*)?$"
+    },
+    {
+      "$comment": "Valid network path with IPv6",
+      "pattern": "^//(?:[^@/]*@)?\\[[0-9A-Fa-f:.]+\\](?::[0-9]+)?(?:[/?#].*)?$"
     }
   ],
   "not": {

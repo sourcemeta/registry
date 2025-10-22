@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Duration (Weeks Format)",
+  "description": "A duration in complete representation with weeks format P[n]W (§5.5.2.2)",
+  "examples": [ "P10W", "P1W", "P52W", "P0W", "P1.5W" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^P[0-9]+(?:\\.[0-9]+)?W$"
+}

@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 9110 HTTP Client Error Status Code",
   "description": "An HTTP 4xx client error status code indicating the request contains bad syntax or cannot be fulfilled",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-15.4",
   "examples": [ 400, 404, 403 ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc9110#section-15.4" ],
   "type": "integer",
   "maximum": 499,
   "minimum": 400

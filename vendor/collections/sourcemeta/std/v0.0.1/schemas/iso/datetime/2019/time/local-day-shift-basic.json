@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Local Time of Day with Time Shift (Basic Format)",
+  "description": "A representation of local time of day with time shift from UTC in basic format [\"T\"][hh][mm][ss][±][hh][mm] or [\"T\"][hh][mm][ss][±][hh] or [\"T\"][hh][mm][ss]Z where the time designator \"T\" may be omitted by mutual agreement and the time shift may include hours only or be Z for UTC (§5.3.4.2 a)",
+  "examples": [
+    "T152746+0100",
+    "T152746-0530",
+    "T152746Z",
+    "152746+01",
+    "T000000+0000",
+    "235960-1200"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "not": {
+    "pattern": "-00(?:00)?$"
+  },
+  "pattern": "^T?([01][0-9]|2[0-3])[0-5][0-9]([0-5][0-9]|60)(?:Z|[+-](?:[01][0-9]|2[0-3])(?:[0-5][0-9])?)$"
+}

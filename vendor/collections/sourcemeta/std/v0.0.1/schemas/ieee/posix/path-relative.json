@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "IEEE Std 1003.1-2017 POSIX File Path (Relative)",
   "description": "IEEE Std 1003.1-2017 POSIX relative pathname",
-  "$comment": "https://pubs.opengroup.org/onlinepubs/9699919799/",
   "examples": [
     "",
     "file.txt",
@@ -11,6 +10,7 @@
     ".ssh/id_rsa"
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://pubs.opengroup.org/onlinepubs/9699919799/" ],
   "type": "string",
   "not": {
     "anyOf": [

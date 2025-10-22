@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Calendar Month Expanded (Extended Format)",
+  "description": "An expanded representation of a calendar month in extended format [±][YYYYYY][\"-\"][MM] with six digits for the year (§5.2.2.3 b)",
+  "examples": [
+    "+001985-04",
+    "-000001-01",
+    "+999999-12",
+    "+000000-01",
+    "-010000-12"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^[+-][0-9]{6}-(0[1-9]|1[0-2])$"
+}

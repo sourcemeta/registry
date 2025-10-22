@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Week Date Reduced Precision (Extended Format)",
+  "description": "A week date with reduced precision in extended format [YYYY][\"-\"][\"W\"][WW] where WW is the calendar week of year (01-53) (§5.2.4.2 b)",
+  "examples": [ "1985-W15", "2000-W01", "2023-W52", "0000-W01", "9999-W53" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^[0-9]{4}-W(0[1-9]|[1-4][0-9]|5[0-3])$"
+}

@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ISO 4217 Numeric Additional Currency Code",
   "description": "User-assigned numeric codes in the range 900-998",
-  "$comment": "https://www.iso.org/iso-4217-currency-codes.html",
   "examples": [ 900, 950, 998 ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/iso-4217-currency-codes.html" ],
   "type": "integer",
   "maximum": 998,
   "minimum": 900

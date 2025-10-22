@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 8141 Uniform Resource Name (URN)",
   "description": "A non-locatable Uniform Resource Identifier (URI) that uses the urn scheme",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc8141#section-2",
   "examples": [
     "urn:example:foo",
     "URN:example:foo/bar",
@@ -18,6 +17,7 @@
     "urn:example:foo/bar/"
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc8141#section-2" ],
   "type": "string",
   "not": {
     "$comment": "Disallow reserved NID value 'urn'",

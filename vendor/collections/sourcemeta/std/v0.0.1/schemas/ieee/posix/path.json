@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "IEEE Std 1003.1-2017 POSIX File Path)",
   "description": "IEEE Std 1003.1-2017 POSIX pathname",
-  "$comment": "https://pubs.opengroup.org/onlinepubs/9699919799/",
   "examples": [
     "/",
     "/home/user/document.txt",
@@ -12,6 +11,7 @@
     "../config/settings.conf"
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://pubs.opengroup.org/onlinepubs/9699919799/" ],
   "anyOf": [
     {
       "$ref": "./path-absolute.json"

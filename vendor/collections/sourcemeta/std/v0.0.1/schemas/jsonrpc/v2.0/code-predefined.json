@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "JSON-RPC 2.0 Predefined Error Code",
   "description": "An error code from the predefined range reserved by the JSON-RPC 2.0 specification",
-  "$comment": "https://www.jsonrpc.org/specification#error_object",
   "examples": [ -32700, -32600, -32601, -32602, -32603, -32000 ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.jsonrpc.org/specification#error_object" ],
   "type": "integer",
   "anyOf": [
     {

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Calendar Century Expanded",
+  "description": "An expanded representation of a calendar century [±][YYYY] with four digits (§5.2.2.3 e)",
+  "examples": [ "+0019", "-0000", "+9999", "+0000", "-0100" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^[+-][0-9]{4}$"
+}

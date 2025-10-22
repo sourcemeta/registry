@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "JSON-RPC 2.0 Error Object",
   "description": "An object that describes an error that occurred during the request",
-  "$comment": "https://www.jsonrpc.org/specification#error_object",
   "examples": [
     {
       "code": -32600,
@@ -21,6 +20,7 @@
     }
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.jsonrpc.org/specification#error_object" ],
   "type": "object",
   "required": [ "code", "message" ],
   "properties": {

@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 3986 IPv4 Address",
   "description": "An Internet Protocol version 4 address in dotted-decimal notation",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc3986#section-3.2.2",
   "examples": [
     "0.0.0.0",
     "127.0.0.1",
@@ -11,6 +10,7 @@
     "10.0.0.1"
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc3986#section-3.2.2" ],
   "type": "string",
   "pattern": "^([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
   "format": "ipv4"

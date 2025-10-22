@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Calendar Year Expanded",
+  "description": "An expanded representation of a calendar year [±][YYYYYY] with six digits for the year (§5.2.2.3 c)",
+  "examples": [ "+001985", "-000001", "+999999", "+000000", "-010000" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^[+-][0-9]{6}$"
+}

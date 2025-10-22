@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 5322 Email Address (Addr-Spec)",
   "description": "A specific Internet identifier that represents an e-mail box to which messages are delivered",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc5322#section-3.4.1",
   "examples": [
     "simple@example.com",
     "\"very.unusual.@.unusual.com\"@example.com",
@@ -12,6 +11,7 @@
     "user@[abc.def]"
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc5322#section-3.4.1" ],
   "type": "string",
   "anyOf": [
     {

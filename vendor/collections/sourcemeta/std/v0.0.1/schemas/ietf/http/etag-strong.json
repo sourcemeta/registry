@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 9110 HTTP Strong ETag",
   "description": "A strong HTTP entity tag used for cache validation",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc9110#section-8.8.3",
   "examples": [ "\"abc123\"", "\"686897696a7c876b7e\"", "\"\"" ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc9110#section-8.8.3" ],
   "type": "string",
   "pattern": "^\"[\\x21\\x23-\\x7E\\x80-\\xFF]*\"$"
 }

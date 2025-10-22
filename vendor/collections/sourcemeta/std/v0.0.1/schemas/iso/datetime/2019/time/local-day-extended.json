@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Local Time of Day (Extended Format)",
+  "description": "A complete representation of local time of day in extended format [hh][:][mm][:][ss] or [\"T\"][hh][:][mm][:][ss] where the time designator \"T\" may be omitted by mutual agreement (§5.3.1.2 b)",
+  "$comment": "This schema provides syntactic validation only. Semantic validation (i.e leap second validity in specific contexts) must be performed by the consumer",
+  "examples": [
+    "23:20:50",
+    "T23:20:50",
+    "00:00:00",
+    "T23:59:60",
+    "12:00:00",
+    "T01:01:01"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^T?([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)$"
+}

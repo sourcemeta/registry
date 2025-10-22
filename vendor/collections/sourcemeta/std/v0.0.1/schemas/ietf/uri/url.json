@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "RFC 3986 Uniform Resource Locator (URL)",
   "description": "A locatable absolute Uniform Resource Identifier (URI)",
-  "$comment": "https://www.rfc-editor.org/rfc/rfc3986#section-3",
   "examples": [
     "https://example.com/path/to/resource?query=value#section",
     "http://user:pass@192.168.1.1:8080/api/v1",
@@ -11,6 +10,7 @@
     "custom+scheme://host.example.com/resource"
   ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc3986#section-3" ],
   "type": "string",
   "anyOf": [
     {

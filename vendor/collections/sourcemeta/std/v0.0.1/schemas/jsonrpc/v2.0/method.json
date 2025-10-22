@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "JSON-RPC 2.0 Method Name",
   "description": "A string containing the name of the method to be invoked",
-  "$comment": "https://www.jsonrpc.org/specification#request_object",
   "examples": [ "subtract", "update", "notify_hello", "rpc.discover", "sum" ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.jsonrpc.org/specification#request_object" ],
   "anyOf": [
     {
       "$ref": "./method-internal.json"

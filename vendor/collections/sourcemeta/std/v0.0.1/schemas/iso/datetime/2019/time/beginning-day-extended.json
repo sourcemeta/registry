@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Beginning of the Day (Extended Format)",
+  "description": "A representation of the beginning of a calendar day in extended format 00:00:00 or [\"T\"]00:00:00 where the time designator \"T\" may be omitted by mutual agreement (§5.3.2)",
+  "examples": [ "00:00:00", "T00:00:00" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^T?00:00:00$"
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-1:2019 Calendar Decade Expanded",
+  "description": "An expanded representation of a calendar decade [±][YYYYY] with five digits (§5.2.2.3 d)",
+  "examples": [ "+00198", "-00000", "+99999", "+00000", "-01000" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70907.html" ],
+  "type": "string",
+  "pattern": "^[+-][0-9]{5}$"
+}

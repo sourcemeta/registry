@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ISO 4217 Alphabetic Test Currency Code",
   "description": "The alphabetic code specifically reserved for testing purposes",
-  "$comment": "https://www.iso.org/iso-4217-currency-codes.html",
   "examples": [ "XTS" ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/iso-4217-currency-codes.html" ],
   "const": "XTS"
 }
