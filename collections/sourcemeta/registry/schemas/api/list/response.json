@@ -19,14 +19,14 @@
             "type": "string"
           },
           "path": {
-            "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
+            "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/uri-relative.json"
           }
         },
         "additionalProperties": false
       }
     },
     "email": {
-      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/email/address.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/email/address.json"
     },
     "entries": {
       "type": "array",
@@ -46,22 +46,22 @@
                 "const": "directory"
               },
               "email": {
-                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/email/address.json"
+                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/email/address.json"
               },
               "github": {
                 "type": "string"
               },
               "health": {
-                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/iso/units/percentage.json"
+                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/iso/units/2022/percentage.json"
               },
               "name": {
                 "type": "string"
               },
               "path": {
-                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
+                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/uri-relative.json"
               },
               "website": {
-                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
+                "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/url.json"
               }
             },
             "additionalProperties": false
@@ -86,16 +86,16 @@
       "type": "string"
     },
     "health": {
-      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/iso/units/percentage.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/iso/units/2022/percentage.json"
     },
     "path": {
-      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/uri-relative.json"
     },
     "url": {
-      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/url.json"
     },
     "website": {
-      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
+      "$ref": "../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/url.json"
     }
   },
   "additionalProperties": false

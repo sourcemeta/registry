@@ -1,0 +1,3145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 639-2:2023 Bibliographic Language Code",
+  "description": "A three-letter bibliographic language code from ISO 639-2",
+  "$comment": "Set 2 bibliographic is a superset of Set 1 and a subset of Set 3. Bibliographic codes are based on English language names",
+  "examples": [ "aar", "abk", "ace", "ach" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/74575.html" ],
+  "anyOf": [
+    {
+      "title": "Afar",
+      "x-language-type": "living",
+      "x-name-french": "afar",
+      "x-scope": "individual",
+      "x-set-1": "aa",
+      "const": "aar"
+    },
+    {
+      "title": "Abkhazian",
+      "x-language-type": "living",
+      "x-name-french": "abkhaze",
+      "x-scope": "individual",
+      "x-set-1": "ab",
+      "const": "abk"
+    },
+    {
+      "title": "Achinese",
+      "x-language-type": "living",
+      "x-name-french": "aceh",
+      "x-scope": "individual",
+      "const": "ace"
+    },
+    {
+      "title": "Acoli",
+      "x-language-type": "living",
+      "x-name-french": "acoli",
+      "x-scope": "individual",
+      "const": "ach"
+    },
+    {
+      "title": "Adangme",
+      "x-language-type": "living",
+      "x-name-french": "adangme",
+      "x-scope": "individual",
+      "const": "ada"
+    },
+    {
+      "title": "Adyghe; Adygei",
+      "x-language-type": "living",
+      "x-name-french": "adyghé",
+      "x-scope": "individual",
+      "const": "ady"
+    },
+    {
+      "title": "Afrihili",
+      "x-language-type": "constructed",
+      "x-name-french": "afrihili",
+      "x-scope": "individual",
+      "const": "afh"
+    },
+    {
+      "title": "Afrikaans",
+      "x-language-type": "living",
+      "x-name-french": "afrikaans",
+      "x-scope": "individual",
+      "x-set-1": "af",
+      "const": "afr"
+    },
+    {
+      "title": "Ainu",
+      "x-language-type": "living",
+      "x-name-french": "aïnou",
+      "x-scope": "individual",
+      "const": "ain"
+    },
+    {
+      "title": "Akan",
+      "x-language-type": "living",
+      "x-name-french": "akan",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ak",
+      "const": "aka"
+    },
+    {
+      "title": "Akkadian",
+      "x-language-type": "historic",
+      "x-name-french": "akkadien",
+      "x-scope": "individual",
+      "const": "akk"
+    },
+    {
+      "title": "Albanian",
+      "x-language-type": "living",
+      "x-name-french": "albanais",
+      "x-scope": "macrolanguage",
+      "x-set-1": "sq",
+      "const": "alb"
+    },
+    {
+      "title": "Aleut",
+      "x-language-type": "living",
+      "x-name-french": "aléoute",
+      "x-scope": "individual",
+      "const": "ale"
+    },
+    {
+      "title": "Southern Altai",
+      "x-language-type": "living",
+      "x-name-french": "altai du Sud",
+      "x-scope": "individual",
+      "const": "alt"
+    },
+    {
+      "title": "Amharic",
+      "x-language-type": "living",
+      "x-name-french": "amharique",
+      "x-scope": "individual",
+      "x-set-1": "am",
+      "const": "amh"
+    },
+    {
+      "title": "English, Old (ca.450-1100)",
+      "x-language-type": "historic",
+      "x-name-french": "anglo-saxon (ca.450-1100)",
+      "x-scope": "individual",
+      "const": "ang"
+    },
+    {
+      "title": "Angika",
+      "x-language-type": "living",
+      "x-name-french": "angika",
+      "x-scope": "individual",
+      "const": "anp"
+    },
+    {
+      "title": "Arabic",
+      "x-language-type": "living",
+      "x-name-french": "arabe",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ar",
+      "const": "ara"
+    },
+    {
+      "title": "Official Aramaic (700-300 BCE); Imperial Aramaic (700-300 BCE)",
+      "x-language-type": "historic",
+      "x-name-french": "araméen d'empire (700-300 BCE)",
+      "x-scope": "individual",
+      "const": "arc"
+    },
+    {
+      "title": "Aragonese",
+      "x-language-type": "living",
+      "x-name-french": "aragonais",
+      "x-scope": "individual",
+      "x-set-1": "an",
+      "const": "arg"
+    },
+    {
+      "title": "Armenian",
+      "x-language-type": "living",
+      "x-name-french": "arménien",
+      "x-scope": "individual",
+      "x-set-1": "hy",
+      "const": "arm"
+    },
+    {
+      "title": "Mapudungun; Mapuche",
+      "x-language-type": "living",
+      "x-name-french": "mapudungun; mapuche; mapuce",
+      "x-scope": "individual",
+      "const": "arn"
+    },
+    {
+      "title": "Arapaho",
+      "x-language-type": "living",
+      "x-name-french": "arapaho",
+      "x-scope": "individual",
+      "const": "arp"
+    },
+    {
+      "title": "Arawak",
+      "x-language-type": "living",
+      "x-name-french": "arawak",
+      "x-scope": "individual",
+      "const": "arw"
+    },
+    {
+      "title": "Assamese",
+      "x-language-type": "living",
+      "x-name-french": "assamais",
+      "x-scope": "individual",
+      "x-set-1": "as",
+      "const": "asm"
+    },
+    {
+      "title": "Asturian; Bable; Leonese; Asturleonese",
+      "x-language-type": "living",
+      "x-name-french": "asturien; bable; léonais; asturoléonais",
+      "x-scope": "individual",
+      "const": "ast"
+    },
+    {
+      "title": "Avaric",
+      "x-language-type": "living",
+      "x-name-french": "avar",
+      "x-scope": "individual",
+      "x-set-1": "av",
+      "const": "ava"
+    },
+    {
+      "title": "Avestan",
+      "x-language-type": "historic",
+      "x-name-french": "avestique",
+      "x-scope": "individual",
+      "x-set-1": "ae",
+      "const": "ave"
+    },
+    {
+      "title": "Awadhi",
+      "x-language-type": "living",
+      "x-name-french": "awadhi",
+      "x-scope": "individual",
+      "const": "awa"
+    },
+    {
+      "title": "Aymara",
+      "x-language-type": "living",
+      "x-name-french": "aymara",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ay",
+      "const": "aym"
+    },
+    {
+      "title": "Azerbaijani",
+      "x-language-type": "living",
+      "x-name-french": "azéri",
+      "x-scope": "macrolanguage",
+      "x-set-1": "az",
+      "const": "aze"
+    },
+    {
+      "title": "Bashkir",
+      "x-language-type": "living",
+      "x-name-french": "bachkir",
+      "x-scope": "individual",
+      "x-set-1": "ba",
+      "const": "bak"
+    },
+    {
+      "title": "Baluchi",
+      "x-language-type": "living",
+      "x-name-french": "baloutchi",
+      "x-scope": "macrolanguage",
+      "const": "bal"
+    },
+    {
+      "title": "Bambara",
+      "x-language-type": "living",
+      "x-name-french": "bambara",
+      "x-scope": "individual",
+      "x-set-1": "bm",
+      "const": "bam"
+    },
+    {
+      "title": "Balinese",
+      "x-language-type": "living",
+      "x-name-french": "balinais",
+      "x-scope": "individual",
+      "const": "ban"
+    },
+    {
+      "title": "Basque",
+      "x-language-type": "living",
+      "x-name-french": "basque",
+      "x-scope": "individual",
+      "x-set-1": "eu",
+      "const": "baq"
+    },
+    {
+      "title": "Basa",
+      "x-language-type": "living",
+      "x-name-french": "basa",
+      "x-scope": "individual",
+      "const": "bas"
+    },
+    {
+      "title": "Beja; Bedawiyet",
+      "x-language-type": "living",
+      "x-name-french": "bedja",
+      "x-scope": "individual",
+      "const": "bej"
+    },
+    {
+      "title": "Belarusian",
+      "x-language-type": "living",
+      "x-name-french": "biélorusse",
+      "x-scope": "individual",
+      "x-set-1": "be",
+      "const": "bel"
+    },
+    {
+      "title": "Bemba",
+      "x-language-type": "living",
+      "x-name-french": "bemba",
+      "x-scope": "individual",
+      "const": "bem"
+    },
+    {
+      "title": "Bengali",
+      "x-language-type": "living",
+      "x-name-french": "bengali",
+      "x-scope": "individual",
+      "x-set-1": "bn",
+      "const": "ben"
+    },
+    {
+      "title": "Bhojpuri",
+      "x-language-type": "living",
+      "x-name-french": "bhojpuri",
+      "x-scope": "individual",
+      "const": "bho"
+    },
+    {
+      "title": "Bikol",
+      "x-language-type": "living",
+      "x-name-french": "bikol",
+      "x-scope": "macrolanguage",
+      "const": "bik"
+    },
+    {
+      "title": "Bini; Edo",
+      "x-language-type": "living",
+      "x-name-french": "bini; edo",
+      "x-scope": "individual",
+      "const": "bin"
+    },
+    {
+      "title": "Bislama",
+      "x-language-type": "living",
+      "x-name-french": "bichlamar",
+      "x-scope": "individual",
+      "x-set-1": "bi",
+      "const": "bis"
+    },
+    {
+      "title": "Siksika",
+      "x-language-type": "living",
+      "x-name-french": "blackfoot",
+      "x-scope": "individual",
+      "const": "bla"
+    },
+    {
+      "title": "Bosnian",
+      "x-language-type": "living",
+      "x-name-french": "bosniaque",
+      "x-scope": "individual",
+      "x-set-1": "bs",
+      "const": "bos"
+    },
+    {
+      "title": "Braj",
+      "x-language-type": "living",
+      "x-name-french": "braj",
+      "x-scope": "individual",
+      "const": "bra"
+    },
+    {
+      "title": "Breton",
+      "x-language-type": "living",
+      "x-name-french": "breton",
+      "x-scope": "individual",
+      "x-set-1": "br",
+      "const": "bre"
+    },
+    {
+      "title": "Buriat",
+      "x-language-type": "living",
+      "x-name-french": "bouriate",
+      "x-scope": "macrolanguage",
+      "const": "bua"
+    },
+    {
+      "title": "Buginese",
+      "x-language-type": "living",
+      "x-name-french": "bugi",
+      "x-scope": "individual",
+      "const": "bug"
+    },
+    {
+      "title": "Bulgarian",
+      "x-language-type": "living",
+      "x-name-french": "bulgare",
+      "x-scope": "individual",
+      "x-set-1": "bg",
+      "const": "bul"
+    },
+    {
+      "title": "Burmese",
+      "x-language-type": "living",
+      "x-name-french": "birman",
+      "x-scope": "individual",
+      "x-set-1": "my",
+      "const": "bur"
+    },
+    {
+      "title": "Blin; Bilin",
+      "x-language-type": "living",
+      "x-name-french": "blin; bilen",
+      "x-scope": "individual",
+      "const": "byn"
+    },
+    {
+      "title": "Caddo",
+      "x-language-type": "living",
+      "x-name-french": "caddo",
+      "x-scope": "individual",
+      "const": "cad"
+    },
+    {
+      "title": "Galibi Carib",
+      "x-language-type": "living",
+      "x-name-french": "karib; galibi; carib",
+      "x-scope": "individual",
+      "const": "car"
+    },
+    {
+      "title": "Catalan; Valencian",
+      "x-language-type": "living",
+      "x-name-french": "catalan; valencien",
+      "x-scope": "individual",
+      "x-set-1": "ca",
+      "const": "cat"
+    },
+    {
+      "title": "Cebuano",
+      "x-language-type": "living",
+      "x-name-french": "cebuano",
+      "x-scope": "individual",
+      "const": "ceb"
+    },
+    {
+      "title": "Chamorro",
+      "x-language-type": "living",
+      "x-name-french": "chamorro",
+      "x-scope": "individual",
+      "x-set-1": "ch",
+      "const": "cha"
+    },
+    {
+      "title": "Chibcha",
+      "x-language-type": "extinct",
+      "x-name-french": "chibcha",
+      "x-scope": "individual",
+      "const": "chb"
+    },
+    {
+      "title": "Chechen",
+      "x-language-type": "living",
+      "x-name-french": "tchétchène",
+      "x-scope": "individual",
+      "x-set-1": "ce",
+      "const": "che"
+    },
+    {
+      "title": "Chagatai",
+      "x-language-type": "extinct",
+      "x-name-french": "djaghataï",
+      "x-scope": "individual",
+      "const": "chg"
+    },
+    {
+      "title": "Chinese",
+      "x-language-type": "living",
+      "x-name-french": "chinois",
+      "x-scope": "macrolanguage",
+      "x-set-1": "zh",
+      "const": "chi"
+    },
+    {
+      "title": "Chuukese",
+      "x-language-type": "living",
+      "x-name-french": "chuuk",
+      "x-scope": "individual",
+      "const": "chk"
+    },
+    {
+      "title": "Mari",
+      "x-language-type": "living",
+      "x-name-french": "mari",
+      "x-scope": "macrolanguage",
+      "const": "chm"
+    },
+    {
+      "title": "Chinook jargon",
+      "x-language-type": "living",
+      "x-name-french": "chinook, jargon",
+      "x-scope": "individual",
+      "const": "chn"
+    },
+    {
+      "title": "Choctaw",
+      "x-language-type": "living",
+      "x-name-french": "choctaw",
+      "x-scope": "individual",
+      "const": "cho"
+    },
+    {
+      "title": "Chipewyan; Dene Suline",
+      "x-language-type": "living",
+      "x-name-french": "chipewyan",
+      "x-scope": "individual",
+      "const": "chp"
+    },
+    {
+      "title": "Cherokee",
+      "x-language-type": "living",
+      "x-name-french": "cherokee",
+      "x-scope": "individual",
+      "const": "chr"
+    },
+    {
+      "title": "Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic",
+      "x-language-type": "historic",
+      "x-name-french": "slavon d'église; vieux slave; slavon liturgique; vieux bulgare",
+      "x-scope": "individual",
+      "x-set-1": "cu",
+      "const": "chu"
+    },
+    {
+      "title": "Chuvash",
+      "x-language-type": "living",
+      "x-name-french": "tchouvache",
+      "x-scope": "individual",
+      "x-set-1": "cv",
+      "const": "chv"
+    },
+    {
+      "title": "Cheyenne",
+      "x-language-type": "living",
+      "x-name-french": "cheyenne",
+      "x-scope": "individual",
+      "const": "chy"
+    },
+    {
+      "title": "Montenegrin",
+      "x-language-type": "living",
+      "x-name-french": "monténégrin",
+      "x-scope": "individual",
+      "const": "cnr"
+    },
+    {
+      "title": "Coptic",
+      "x-language-type": "extinct",
+      "x-name-french": "copte",
+      "x-scope": "individual",
+      "const": "cop"
+    },
+    {
+      "title": "Cornish",
+      "x-language-type": "living",
+      "x-name-french": "cornique",
+      "x-scope": "individual",
+      "x-set-1": "kw",
+      "const": "cor"
+    },
+    {
+      "title": "Corsican",
+      "x-language-type": "living",
+      "x-name-french": "corse",
+      "x-scope": "individual",
+      "x-set-1": "co",
+      "const": "cos"
+    },
+    {
+      "title": "Creoles and pidgins, English based",
+      "x-name-french": "créoles et pidgins basés sur l'anglais",
+      "const": "cpe"
+    },
+    {
+      "title": "Creoles and pidgins, French-based",
+      "x-name-french": "créoles et pidgins basés sur le français",
+      "const": "cpf"
+    },
+    {
+      "title": "Creoles and pidgins, Portuguese-based",
+      "x-name-french": "créoles et pidgins basés sur le portugais",
+      "const": "cpp"
+    },
+    {
+      "title": "Cree",
+      "x-language-type": "living",
+      "x-name-french": "cree",
+      "x-scope": "macrolanguage",
+      "x-set-1": "cr",
+      "const": "cre"
+    },
+    {
+      "title": "Crimean Tatar; Crimean Turkish",
+      "x-language-type": "living",
+      "x-name-french": "tatar de Crimé",
+      "x-scope": "individual",
+      "const": "crh"
+    },
+    {
+      "title": "Creoles and pidgins",
+      "x-name-french": "créoles et pidgins",
+      "const": "crp"
+    },
+    {
+      "title": "Kashubian",
+      "x-language-type": "living",
+      "x-name-french": "kachoube",
+      "x-scope": "individual",
+      "const": "csb"
+    },
+    {
+      "title": "Czech",
+      "x-language-type": "living",
+      "x-name-french": "tchèque",
+      "x-scope": "individual",
+      "x-set-1": "cs",
+      "const": "cze"
+    },
+    {
+      "title": "Dakota",
+      "x-language-type": "living",
+      "x-name-french": "dakota",
+      "x-scope": "individual",
+      "const": "dak"
+    },
+    {
+      "title": "Danish",
+      "x-language-type": "living",
+      "x-name-french": "danois",
+      "x-scope": "individual",
+      "x-set-1": "da",
+      "const": "dan"
+    },
+    {
+      "title": "Dargwa",
+      "x-language-type": "living",
+      "x-name-french": "dargwa",
+      "x-scope": "individual",
+      "const": "dar"
+    },
+    {
+      "title": "Delaware",
+      "x-language-type": "living",
+      "x-name-french": "delaware",
+      "x-scope": "macrolanguage",
+      "const": "del"
+    },
+    {
+      "title": "Slave (Athapascan)",
+      "x-language-type": "living",
+      "x-name-french": "esclave (athapascan)",
+      "x-scope": "macrolanguage",
+      "const": "den"
+    },
+    {
+      "title": "Tlicho; Dogrib",
+      "x-language-type": "living",
+      "x-name-french": "tlicho; dogrib",
+      "x-scope": "individual",
+      "const": "dgr"
+    },
+    {
+      "title": "Dinka",
+      "x-language-type": "living",
+      "x-name-french": "dinka",
+      "x-scope": "macrolanguage",
+      "const": "din"
+    },
+    {
+      "title": "Divehi; Dhivehi; Maldivian",
+      "x-language-type": "living",
+      "x-name-french": "maldivien",
+      "x-scope": "individual",
+      "x-set-1": "dv",
+      "const": "div"
+    },
+    {
+      "title": "Dogri",
+      "x-language-type": "living",
+      "x-name-french": "dogri",
+      "x-scope": "macrolanguage",
+      "const": "doi"
+    },
+    {
+      "title": "Lower Sorbian",
+      "x-language-type": "living",
+      "x-name-french": "bas-sorabe",
+      "x-scope": "individual",
+      "const": "dsb"
+    },
+    {
+      "title": "Duala",
+      "x-language-type": "living",
+      "x-name-french": "douala",
+      "x-scope": "individual",
+      "const": "dua"
+    },
+    {
+      "title": "Dutch, Middle (ca.1050-1350)",
+      "x-language-type": "historic",
+      "x-name-french": "néerlandais moyen (ca. 1050-1350)",
+      "x-scope": "individual",
+      "const": "dum"
+    },
+    {
+      "title": "Dutch; Flemish",
+      "x-language-type": "living",
+      "x-name-french": "néerlandais; flamand",
+      "x-scope": "individual",
+      "x-set-1": "nl",
+      "const": "dut"
+    },
+    {
+      "title": "Dyula",
+      "x-language-type": "living",
+      "x-name-french": "dioula",
+      "x-scope": "individual",
+      "const": "dyu"
+    },
+    {
+      "title": "Dzongkha",
+      "x-language-type": "living",
+      "x-name-french": "dzongkha",
+      "x-scope": "individual",
+      "x-set-1": "dz",
+      "const": "dzo"
+    },
+    {
+      "title": "Efik",
+      "x-language-type": "living",
+      "x-name-french": "efik",
+      "x-scope": "individual",
+      "const": "efi"
+    },
+    {
+      "title": "Egyptian (Ancient)",
+      "x-language-type": "historic",
+      "x-name-french": "égyptien",
+      "x-scope": "individual",
+      "const": "egy"
+    },
+    {
+      "title": "Ekajuk",
+      "x-language-type": "living",
+      "x-name-french": "ekajuk",
+      "x-scope": "individual",
+      "const": "eka"
+    },
+    {
+      "title": "Elamite",
+      "x-language-type": "historic",
+      "x-name-french": "élamite",
+      "x-scope": "individual",
+      "const": "elx"
+    },
+    {
+      "title": "English",
+      "x-language-type": "living",
+      "x-name-french": "anglais",
+      "x-scope": "individual",
+      "x-set-1": "en",
+      "const": "eng"
+    },
+    {
+      "title": "English, Middle (1100-1500)",
+      "x-language-type": "historic",
+      "x-name-french": "anglais moyen (1100-1500)",
+      "x-scope": "individual",
+      "const": "enm"
+    },
+    {
+      "title": "Esperanto",
+      "x-language-type": "constructed",
+      "x-name-french": "espéranto",
+      "x-scope": "individual",
+      "x-set-1": "eo",
+      "const": "epo"
+    },
+    {
+      "title": "Estonian",
+      "x-language-type": "living",
+      "x-name-french": "estonien",
+      "x-scope": "macrolanguage",
+      "x-set-1": "et",
+      "const": "est"
+    },
+    {
+      "title": "Ewe",
+      "x-language-type": "living",
+      "x-name-french": "éwé",
+      "x-scope": "individual",
+      "x-set-1": "ee",
+      "const": "ewe"
+    },
+    {
+      "title": "Ewondo",
+      "x-language-type": "living",
+      "x-name-french": "éwondo",
+      "x-scope": "individual",
+      "const": "ewo"
+    },
+    {
+      "title": "Fang",
+      "x-language-type": "living",
+      "x-name-french": "fang",
+      "x-scope": "individual",
+      "const": "fan"
+    },
+    {
+      "title": "Faroese",
+      "x-language-type": "living",
+      "x-name-french": "féroïen",
+      "x-scope": "individual",
+      "x-set-1": "fo",
+      "const": "fao"
+    },
+    {
+      "title": "Fanti",
+      "x-language-type": "living",
+      "x-name-french": "fanti",
+      "x-scope": "individual",
+      "const": "fat"
+    },
+    {
+      "title": "Fijian",
+      "x-language-type": "living",
+      "x-name-french": "fidjien",
+      "x-scope": "individual",
+      "x-set-1": "fj",
+      "const": "fij"
+    },
+    {
+      "title": "Filipino; Pilipino",
+      "x-language-type": "living",
+      "x-name-french": "filipino; pilipino",
+      "x-scope": "individual",
+      "const": "fil"
+    },
+    {
+      "title": "Finnish",
+      "x-language-type": "living",
+      "x-name-french": "finnois",
+      "x-scope": "individual",
+      "x-set-1": "fi",
+      "const": "fin"
+    },
+    {
+      "title": "Fon",
+      "x-language-type": "living",
+      "x-name-french": "fon",
+      "x-scope": "individual",
+      "const": "fon"
+    },
+    {
+      "title": "French",
+      "x-language-type": "living",
+      "x-name-french": "français",
+      "x-scope": "individual",
+      "x-set-1": "fr",
+      "const": "fre"
+    },
+    {
+      "title": "French, Middle (ca.1400-1600)",
+      "x-language-type": "historic",
+      "x-name-french": "français moyen (1400-1600)",
+      "x-scope": "individual",
+      "const": "frm"
+    },
+    {
+      "title": "French, Old (842-ca.1400)",
+      "x-language-type": "historic",
+      "x-name-french": "français ancien (842-ca.1400)",
+      "x-scope": "individual",
+      "const": "fro"
+    },
+    {
+      "title": "Northern Frisian",
+      "x-language-type": "living",
+      "x-name-french": "frison septentrional",
+      "x-scope": "individual",
+      "const": "frr"
+    },
+    {
+      "title": "Eastern Frisian",
+      "x-language-type": "living",
+      "x-name-french": "frison oriental",
+      "x-scope": "individual",
+      "const": "frs"
+    },
+    {
+      "title": "Western Frisian",
+      "x-language-type": "living",
+      "x-name-french": "frison occidental",
+      "x-scope": "individual",
+      "x-set-1": "fy",
+      "const": "fry"
+    },
+    {
+      "title": "Fulah",
+      "x-language-type": "living",
+      "x-name-french": "peul",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ff",
+      "const": "ful"
+    },
+    {
+      "title": "Friulian",
+      "x-language-type": "living",
+      "x-name-french": "frioulan",
+      "x-scope": "individual",
+      "const": "fur"
+    },
+    {
+      "title": "Ga",
+      "x-language-type": "living",
+      "x-name-french": "ga",
+      "x-scope": "individual",
+      "const": "gaa"
+    },
+    {
+      "title": "Gayo",
+      "x-language-type": "living",
+      "x-name-french": "gayo",
+      "x-scope": "individual",
+      "const": "gay"
+    },
+    {
+      "title": "Gbaya",
+      "x-language-type": "living",
+      "x-name-french": "gbaya",
+      "x-scope": "macrolanguage",
+      "const": "gba"
+    },
+    {
+      "title": "Georgian",
+      "x-language-type": "living",
+      "x-name-french": "géorgien",
+      "x-scope": "individual",
+      "x-set-1": "ka",
+      "const": "geo"
+    },
+    {
+      "title": "German",
+      "x-language-type": "living",
+      "x-name-french": "allemand",
+      "x-scope": "individual",
+      "x-set-1": "de",
+      "const": "ger"
+    },
+    {
+      "title": "Geez",
+      "x-language-type": "historic",
+      "x-name-french": "guèze",
+      "x-scope": "individual",
+      "const": "gez"
+    },
+    {
+      "title": "Gilbertese",
+      "x-language-type": "living",
+      "x-name-french": "kiribati",
+      "x-scope": "individual",
+      "const": "gil"
+    },
+    {
+      "title": "Gaelic; Scottish Gaelic",
+      "x-language-type": "living",
+      "x-name-french": "gaélique; gaélique écossais",
+      "x-scope": "individual",
+      "x-set-1": "gd",
+      "const": "gla"
+    },
+    {
+      "title": "Irish",
+      "x-language-type": "living",
+      "x-name-french": "irlandais",
+      "x-scope": "individual",
+      "x-set-1": "ga",
+      "const": "gle"
+    },
+    {
+      "title": "Galician",
+      "x-language-type": "living",
+      "x-name-french": "galicien",
+      "x-scope": "individual",
+      "x-set-1": "gl",
+      "const": "glg"
+    },
+    {
+      "title": "Manx",
+      "x-language-type": "living",
+      "x-name-french": "manx; mannois",
+      "x-scope": "individual",
+      "x-set-1": "gv",
+      "const": "glv"
+    },
+    {
+      "title": "German, Middle High (ca.1050-1500)",
+      "x-language-type": "historic",
+      "x-name-french": "allemand, moyen haut (ca. 1050-1500)",
+      "x-scope": "individual",
+      "const": "gmh"
+    },
+    {
+      "title": "German, Old High (ca.750-1050)",
+      "x-language-type": "historic",
+      "x-name-french": "allemand, vieux haut (ca. 750-1050)",
+      "x-scope": "individual",
+      "const": "goh"
+    },
+    {
+      "title": "Gondi",
+      "x-language-type": "living",
+      "x-name-french": "gond",
+      "x-scope": "macrolanguage",
+      "const": "gon"
+    },
+    {
+      "title": "Gorontalo",
+      "x-language-type": "living",
+      "x-name-french": "gorontalo",
+      "x-scope": "individual",
+      "const": "gor"
+    },
+    {
+      "title": "Gothic",
+      "x-language-type": "historic",
+      "x-name-french": "gothique",
+      "x-scope": "individual",
+      "const": "got"
+    },
+    {
+      "title": "Grebo",
+      "x-language-type": "living",
+      "x-name-french": "grebo",
+      "x-scope": "macrolanguage",
+      "const": "grb"
+    },
+    {
+      "title": "Greek, Ancient (to 1453)",
+      "x-language-type": "historic",
+      "x-name-french": "grec ancien (jusqu'à 1453)",
+      "x-scope": "individual",
+      "const": "grc"
+    },
+    {
+      "title": "Modern Greek (1453-)",
+      "x-language-type": "living",
+      "x-name-french": "grec moderne (1453-)",
+      "x-scope": "individual",
+      "x-set-1": "el",
+      "const": "gre"
+    },
+    {
+      "title": "Guarani",
+      "x-language-type": "living",
+      "x-name-french": "guarani",
+      "x-scope": "macrolanguage",
+      "x-set-1": "gn",
+      "const": "grn"
+    },
+    {
+      "title": "Swiss German; Alemannic; Alsatian",
+      "x-language-type": "living",
+      "x-name-french": "suisse alémanique; alémanique; alsacien",
+      "x-scope": "individual",
+      "const": "gsw"
+    },
+    {
+      "title": "Gujarati",
+      "x-language-type": "living",
+      "x-name-french": "goudjrati",
+      "x-scope": "individual",
+      "x-set-1": "gu",
+      "const": "guj"
+    },
+    {
+      "title": "Gwich'in",
+      "x-language-type": "living",
+      "x-name-french": "gwich'in",
+      "x-scope": "individual",
+      "const": "gwi"
+    },
+    {
+      "title": "Haida",
+      "x-language-type": "living",
+      "x-name-french": "haida",
+      "x-scope": "macrolanguage",
+      "const": "hai"
+    },
+    {
+      "title": "Haitian; Haitian Creole",
+      "x-language-type": "living",
+      "x-name-french": "haïtien; créole haïtien",
+      "x-scope": "individual",
+      "x-set-1": "ht",
+      "const": "hat"
+    },
+    {
+      "title": "Hausa",
+      "x-language-type": "living",
+      "x-name-french": "haoussa",
+      "x-scope": "individual",
+      "x-set-1": "ha",
+      "const": "hau"
+    },
+    {
+      "title": "Hawaiian",
+      "x-language-type": "living",
+      "x-name-french": "hawaïen",
+      "x-scope": "individual",
+      "const": "haw"
+    },
+    {
+      "title": "Hebrew",
+      "x-language-type": "living",
+      "x-name-french": "hébreu",
+      "x-scope": "individual",
+      "x-set-1": "he",
+      "const": "heb"
+    },
+    {
+      "title": "Herero",
+      "x-language-type": "living",
+      "x-name-french": "herero",
+      "x-scope": "individual",
+      "x-set-1": "hz",
+      "const": "her"
+    },
+    {
+      "title": "Hiligaynon",
+      "x-language-type": "living",
+      "x-name-french": "hiligaynon",
+      "x-scope": "individual",
+      "const": "hil"
+    },
+    {
+      "title": "Hindi",
+      "x-language-type": "living",
+      "x-name-french": "hindi",
+      "x-scope": "individual",
+      "x-set-1": "hi",
+      "const": "hin"
+    },
+    {
+      "title": "Hittite",
+      "x-language-type": "historic",
+      "x-name-french": "hittite",
+      "x-scope": "individual",
+      "const": "hit"
+    },
+    {
+      "title": "Hmong; Mong",
+      "x-language-type": "living",
+      "x-name-french": "hmong",
+      "x-scope": "macrolanguage",
+      "const": "hmn"
+    },
+    {
+      "title": "Hiri Motu",
+      "x-language-type": "living",
+      "x-name-french": "hiri motu",
+      "x-scope": "individual",
+      "x-set-1": "ho",
+      "const": "hmo"
+    },
+    {
+      "title": "Croatian",
+      "x-language-type": "living",
+      "x-name-french": "croate",
+      "x-scope": "individual",
+      "x-set-1": "hr",
+      "const": "hrv"
+    },
+    {
+      "title": "Upper Sorbian",
+      "x-language-type": "living",
+      "x-name-french": "haut-sorabe",
+      "x-scope": "individual",
+      "const": "hsb"
+    },
+    {
+      "title": "Hungarian",
+      "x-language-type": "living",
+      "x-name-french": "hongrois",
+      "x-scope": "individual",
+      "x-set-1": "hu",
+      "const": "hun"
+    },
+    {
+      "title": "Hupa",
+      "x-language-type": "living",
+      "x-name-french": "hupa",
+      "x-scope": "individual",
+      "const": "hup"
+    },
+    {
+      "title": "Iban",
+      "x-language-type": "living",
+      "x-name-french": "iban",
+      "x-scope": "individual",
+      "const": "iba"
+    },
+    {
+      "title": "Igbo",
+      "x-language-type": "living",
+      "x-name-french": "igbo",
+      "x-scope": "individual",
+      "x-set-1": "ig",
+      "const": "ibo"
+    },
+    {
+      "title": "Icelandic",
+      "x-language-type": "living",
+      "x-name-french": "islandais",
+      "x-scope": "individual",
+      "x-set-1": "is",
+      "const": "ice"
+    },
+    {
+      "title": "Ido",
+      "x-language-type": "constructed",
+      "x-name-french": "ido",
+      "x-scope": "individual",
+      "x-set-1": "io",
+      "const": "ido"
+    },
+    {
+      "title": "Sichuan Yi; Nuosu",
+      "x-language-type": "living",
+      "x-name-french": "yi de Sichuan",
+      "x-scope": "individual",
+      "x-set-1": "ii",
+      "const": "iii"
+    },
+    {
+      "title": "Inuktitut",
+      "x-language-type": "living",
+      "x-name-french": "inuktitut",
+      "x-scope": "macrolanguage",
+      "x-set-1": "iu",
+      "const": "iku"
+    },
+    {
+      "title": "Interlingue; Occidental",
+      "x-language-type": "constructed",
+      "x-name-french": "interlingue",
+      "x-scope": "individual",
+      "x-set-1": "ie",
+      "const": "ile"
+    },
+    {
+      "title": "Iloko",
+      "x-language-type": "living",
+      "x-name-french": "ilocano",
+      "x-scope": "individual",
+      "const": "ilo"
+    },
+    {
+      "title": "Interlingua (International Auxiliary Language Association)",
+      "x-language-type": "constructed",
+      "x-name-french": "interlingua (langue auxiliaire internationale)",
+      "x-scope": "individual",
+      "x-set-1": "ia",
+      "const": "ina"
+    },
+    {
+      "title": "Indonesian",
+      "x-language-type": "living",
+      "x-name-french": "indonésien",
+      "x-scope": "individual",
+      "x-set-1": "id",
+      "const": "ind"
+    },
+    {
+      "title": "Ingush",
+      "x-language-type": "living",
+      "x-name-french": "ingouche",
+      "x-scope": "individual",
+      "const": "inh"
+    },
+    {
+      "title": "Inupiaq",
+      "x-language-type": "living",
+      "x-name-french": "inupiaq",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ik",
+      "const": "ipk"
+    },
+    {
+      "title": "Italian",
+      "x-language-type": "living",
+      "x-name-french": "italien",
+      "x-scope": "individual",
+      "x-set-1": "it",
+      "const": "ita"
+    },
+    {
+      "title": "Javanese",
+      "x-language-type": "living",
+      "x-name-french": "javanais",
+      "x-scope": "individual",
+      "x-set-1": "jv",
+      "const": "jav"
+    },
+    {
+      "title": "Lojban",
+      "x-language-type": "constructed",
+      "x-name-french": "lojban",
+      "x-scope": "individual",
+      "const": "jbo"
+    },
+    {
+      "title": "Japanese",
+      "x-language-type": "living",
+      "x-name-french": "japonais",
+      "x-scope": "individual",
+      "x-set-1": "ja",
+      "const": "jpn"
+    },
+    {
+      "title": "Judeo-Persian",
+      "x-language-type": "living",
+      "x-name-french": "judéo-persan",
+      "x-scope": "individual",
+      "const": "jpr"
+    },
+    {
+      "title": "Judeo-Arabic",
+      "x-language-type": "living",
+      "x-name-french": "judéo-arabe",
+      "x-scope": "macrolanguage",
+      "const": "jrb"
+    },
+    {
+      "title": "Kara-Kalpak",
+      "x-language-type": "living",
+      "x-name-french": "karakalpak",
+      "x-scope": "individual",
+      "const": "kaa"
+    },
+    {
+      "title": "Kabyle",
+      "x-language-type": "living",
+      "x-name-french": "kabyle",
+      "x-scope": "individual",
+      "const": "kab"
+    },
+    {
+      "title": "Kachin; Jingpho",
+      "x-language-type": "living",
+      "x-name-french": "kachin; jingpho",
+      "x-scope": "individual",
+      "const": "kac"
+    },
+    {
+      "title": "Kalaallisut; Greenlandic",
+      "x-language-type": "living",
+      "x-name-french": "groenlandais",
+      "x-scope": "individual",
+      "x-set-1": "kl",
+      "const": "kal"
+    },
+    {
+      "title": "Kamba",
+      "x-language-type": "living",
+      "x-name-french": "kamba",
+      "x-scope": "individual",
+      "const": "kam"
+    },
+    {
+      "title": "Kannada",
+      "x-language-type": "living",
+      "x-name-french": "kannada",
+      "x-scope": "individual",
+      "x-set-1": "kn",
+      "const": "kan"
+    },
+    {
+      "title": "Kashmiri",
+      "x-language-type": "living",
+      "x-name-french": "kashmiri",
+      "x-scope": "individual",
+      "x-set-1": "ks",
+      "const": "kas"
+    },
+    {
+      "title": "Kanuri",
+      "x-language-type": "living",
+      "x-name-french": "kanouri",
+      "x-scope": "macrolanguage",
+      "x-set-1": "kr",
+      "const": "kau"
+    },
+    {
+      "title": "Kawi",
+      "x-language-type": "historic",
+      "x-name-french": "kawi",
+      "x-scope": "individual",
+      "const": "kaw"
+    },
+    {
+      "title": "Kazakh",
+      "x-language-type": "living",
+      "x-name-french": "kazakh",
+      "x-scope": "individual",
+      "x-set-1": "kk",
+      "const": "kaz"
+    },
+    {
+      "title": "Kabardian",
+      "x-language-type": "living",
+      "x-name-french": "kabardien",
+      "x-scope": "individual",
+      "const": "kbd"
+    },
+    {
+      "title": "Khasi",
+      "x-language-type": "living",
+      "x-name-french": "khasi",
+      "x-scope": "individual",
+      "const": "kha"
+    },
+    {
+      "title": "Central Khmer",
+      "x-language-type": "living",
+      "x-name-french": "khmer central",
+      "x-scope": "individual",
+      "x-set-1": "km",
+      "const": "khm"
+    },
+    {
+      "title": "Khotanese; Sakan",
+      "x-language-type": "historic",
+      "x-name-french": "khotanais; sakan",
+      "x-scope": "individual",
+      "const": "kho"
+    },
+    {
+      "title": "Kikuyu; Gikuyu",
+      "x-language-type": "living",
+      "x-name-french": "kikuyu",
+      "x-scope": "individual",
+      "x-set-1": "ki",
+      "const": "kik"
+    },
+    {
+      "title": "Kinyarwanda",
+      "x-language-type": "living",
+      "x-name-french": "rwanda",
+      "x-scope": "individual",
+      "x-set-1": "rw",
+      "const": "kin"
+    },
+    {
+      "title": "Kirghiz; Kyrgyz",
+      "x-language-type": "living",
+      "x-name-french": "kirghiz",
+      "x-scope": "individual",
+      "x-set-1": "ky",
+      "const": "kir"
+    },
+    {
+      "title": "Kimbundu",
+      "x-language-type": "living",
+      "x-name-french": "kimbundu",
+      "x-scope": "individual",
+      "const": "kmb"
+    },
+    {
+      "title": "Konkani",
+      "x-language-type": "living",
+      "x-name-french": "konkani",
+      "x-scope": "macrolanguage",
+      "const": "kok"
+    },
+    {
+      "title": "Komi",
+      "x-language-type": "living",
+      "x-name-french": "kom",
+      "x-scope": "macrolanguage",
+      "x-set-1": "kv",
+      "const": "kom"
+    },
+    {
+      "title": "Kongo",
+      "x-language-type": "living",
+      "x-name-french": "kongo",
+      "x-scope": "macrolanguage",
+      "x-set-1": "kg",
+      "const": "kon"
+    },
+    {
+      "title": "Korean",
+      "x-language-type": "living",
+      "x-name-french": "coréen",
+      "x-scope": "individual",
+      "x-set-1": "ko",
+      "const": "kor"
+    },
+    {
+      "title": "Kosraean",
+      "x-language-type": "living",
+      "x-name-french": "kosrae",
+      "x-scope": "individual",
+      "const": "kos"
+    },
+    {
+      "title": "Kpelle",
+      "x-language-type": "living",
+      "x-name-french": "kpellé",
+      "x-scope": "macrolanguage",
+      "const": "kpe"
+    },
+    {
+      "title": "Karachay-Balkar",
+      "x-language-type": "living",
+      "x-name-french": "karatchai balkar",
+      "x-scope": "individual",
+      "const": "krc"
+    },
+    {
+      "title": "Karelian",
+      "x-language-type": "living",
+      "x-name-french": "carélien",
+      "x-scope": "individual",
+      "const": "krl"
+    },
+    {
+      "title": "Kurukh",
+      "x-language-type": "living",
+      "x-name-french": "kurukh",
+      "x-scope": "individual",
+      "const": "kru"
+    },
+    {
+      "title": "Kuanyama; Kwanyama",
+      "x-language-type": "living",
+      "x-name-french": "kuanyama; kwanyama",
+      "x-scope": "individual",
+      "x-set-1": "kj",
+      "const": "kua"
+    },
+    {
+      "title": "Kumyk",
+      "x-language-type": "living",
+      "x-name-french": "koumyk",
+      "x-scope": "individual",
+      "const": "kum"
+    },
+    {
+      "title": "Kurdish",
+      "x-language-type": "living",
+      "x-name-french": "kurde",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ku",
+      "const": "kur"
+    },
+    {
+      "title": "Kutenai",
+      "x-language-type": "living",
+      "x-name-french": "kutenai",
+      "x-scope": "individual",
+      "const": "kut"
+    },
+    {
+      "title": "Ladino",
+      "x-language-type": "living",
+      "x-name-french": "judéo-espagnol",
+      "x-scope": "individual",
+      "const": "lad"
+    },
+    {
+      "title": "Lahnda",
+      "x-language-type": "living",
+      "x-name-french": "lahnda",
+      "x-scope": "macrolanguage",
+      "const": "lah"
+    },
+    {
+      "title": "Lamba",
+      "x-language-type": "living",
+      "x-name-french": "lamba",
+      "x-scope": "individual",
+      "const": "lam"
+    },
+    {
+      "title": "Lao",
+      "x-language-type": "living",
+      "x-name-french": "lao",
+      "x-scope": "individual",
+      "x-set-1": "lo",
+      "const": "lao"
+    },
+    {
+      "title": "Latin",
+      "x-language-type": "historic",
+      "x-name-french": "latin",
+      "x-scope": "individual",
+      "x-set-1": "la",
+      "const": "lat"
+    },
+    {
+      "title": "Latvian",
+      "x-language-type": "living",
+      "x-name-french": "letton",
+      "x-scope": "macrolanguage",
+      "x-set-1": "lv",
+      "const": "lav"
+    },
+    {
+      "title": "Lezghian",
+      "x-language-type": "living",
+      "x-name-french": "lezghien",
+      "x-scope": "individual",
+      "const": "lez"
+    },
+    {
+      "title": "Limburgan; Limburger; Limburgish",
+      "x-language-type": "living",
+      "x-name-french": "limbourgeois",
+      "x-scope": "individual",
+      "x-set-1": "li",
+      "const": "lim"
+    },
+    {
+      "title": "Lingala",
+      "x-language-type": "living",
+      "x-name-french": "lingala",
+      "x-scope": "individual",
+      "x-set-1": "ln",
+      "const": "lin"
+    },
+    {
+      "title": "Lithuanian",
+      "x-language-type": "living",
+      "x-name-french": "lituanien",
+      "x-scope": "individual",
+      "x-set-1": "lt",
+      "const": "lit"
+    },
+    {
+      "title": "Mongo",
+      "x-language-type": "living",
+      "x-name-french": "mongo",
+      "x-scope": "individual",
+      "const": "lol"
+    },
+    {
+      "title": "Lozi",
+      "x-language-type": "living",
+      "x-name-french": "lozi",
+      "x-scope": "individual",
+      "const": "loz"
+    },
+    {
+      "title": "Luxembourgish; Letzeburgesch",
+      "x-language-type": "living",
+      "x-name-french": "luxembourgeois",
+      "x-scope": "individual",
+      "x-set-1": "lb",
+      "const": "ltz"
+    },
+    {
+      "title": "Luba-Lulua",
+      "x-language-type": "living",
+      "x-name-french": "luba-lulua",
+      "x-scope": "individual",
+      "const": "lua"
+    },
+    {
+      "title": "Luba-Katanga",
+      "x-language-type": "living",
+      "x-name-french": "luba-katanga",
+      "x-scope": "individual",
+      "x-set-1": "lu",
+      "const": "lub"
+    },
+    {
+      "title": "Ganda",
+      "x-language-type": "living",
+      "x-name-french": "ganda",
+      "x-scope": "individual",
+      "x-set-1": "lg",
+      "const": "lug"
+    },
+    {
+      "title": "Luiseno",
+      "x-language-type": "extinct",
+      "x-name-french": "luiseno",
+      "x-scope": "individual",
+      "const": "lui"
+    },
+    {
+      "title": "Lunda",
+      "x-language-type": "living",
+      "x-name-french": "lunda",
+      "x-scope": "individual",
+      "const": "lun"
+    },
+    {
+      "title": "Luo (Kenya and Tanzania)",
+      "x-language-type": "living",
+      "x-name-french": "luo (Kenya et Tanzanie)",
+      "x-scope": "individual",
+      "const": "luo"
+    },
+    {
+      "title": "Lushai",
+      "x-language-type": "living",
+      "x-name-french": "lushai",
+      "x-scope": "individual",
+      "const": "lus"
+    },
+    {
+      "title": "Macedonian",
+      "x-language-type": "living",
+      "x-name-french": "macédonien",
+      "x-scope": "individual",
+      "x-set-1": "mk",
+      "const": "mac"
+    },
+    {
+      "title": "Madurese",
+      "x-language-type": "living",
+      "x-name-french": "madourais",
+      "x-scope": "individual",
+      "const": "mad"
+    },
+    {
+      "title": "Magahi",
+      "x-language-type": "living",
+      "x-name-french": "magahi",
+      "x-scope": "individual",
+      "const": "mag"
+    },
+    {
+      "title": "Marshallese",
+      "x-language-type": "living",
+      "x-name-french": "marshall",
+      "x-scope": "individual",
+      "x-set-1": "mh",
+      "const": "mah"
+    },
+    {
+      "title": "Maithili",
+      "x-language-type": "living",
+      "x-name-french": "maithili",
+      "x-scope": "individual",
+      "const": "mai"
+    },
+    {
+      "title": "Makasar",
+      "x-language-type": "living",
+      "x-name-french": "makassar",
+      "x-scope": "individual",
+      "const": "mak"
+    },
+    {
+      "title": "Malayalam",
+      "x-language-type": "living",
+      "x-name-french": "malayalam",
+      "x-scope": "individual",
+      "x-set-1": "ml",
+      "const": "mal"
+    },
+    {
+      "title": "Mandingo",
+      "x-language-type": "living",
+      "x-name-french": "mandingue",
+      "x-scope": "macrolanguage",
+      "const": "man"
+    },
+    {
+      "title": "Maori",
+      "x-language-type": "living",
+      "x-name-french": "maori",
+      "x-scope": "individual",
+      "x-set-1": "mi",
+      "const": "mao"
+    },
+    {
+      "title": "Marathi",
+      "x-language-type": "living",
+      "x-name-french": "marathe",
+      "x-scope": "individual",
+      "x-set-1": "mr",
+      "const": "mar"
+    },
+    {
+      "title": "Masai",
+      "x-language-type": "living",
+      "x-name-french": "massaï",
+      "x-scope": "individual",
+      "const": "mas"
+    },
+    {
+      "title": "Malay",
+      "x-language-type": "living",
+      "x-name-french": "malais",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ms",
+      "const": "may"
+    },
+    {
+      "title": "Moksha",
+      "x-language-type": "living",
+      "x-name-french": "moksa",
+      "x-scope": "individual",
+      "const": "mdf"
+    },
+    {
+      "title": "Mandar",
+      "x-language-type": "living",
+      "x-name-french": "mandar",
+      "x-scope": "individual",
+      "const": "mdr"
+    },
+    {
+      "title": "Mende",
+      "x-language-type": "living",
+      "x-name-french": "mendé",
+      "x-scope": "individual",
+      "const": "men"
+    },
+    {
+      "title": "Irish, Middle (900-1200)",
+      "x-language-type": "historic",
+      "x-name-french": "irlandais moyen (900-1200)",
+      "x-scope": "individual",
+      "const": "mga"
+    },
+    {
+      "title": "Mi'kmaq; Micmac",
+      "x-language-type": "living",
+      "x-name-french": "mi'kmaq; micmac",
+      "x-scope": "individual",
+      "const": "mic"
+    },
+    {
+      "title": "Minangkabau",
+      "x-language-type": "living",
+      "x-name-french": "minangkabau",
+      "x-scope": "individual",
+      "const": "min"
+    },
+    {
+      "title": "Malagasy",
+      "x-language-type": "living",
+      "x-name-french": "malgache",
+      "x-scope": "macrolanguage",
+      "x-set-1": "mg",
+      "const": "mlg"
+    },
+    {
+      "title": "Maltese",
+      "x-language-type": "living",
+      "x-name-french": "maltais",
+      "x-scope": "individual",
+      "x-set-1": "mt",
+      "const": "mlt"
+    },
+    {
+      "title": "Manchu",
+      "x-language-type": "living",
+      "x-name-french": "mandchou",
+      "x-scope": "individual",
+      "const": "mnc"
+    },
+    {
+      "title": "Manipuri",
+      "x-language-type": "living",
+      "x-name-french": "manipuri",
+      "x-scope": "individual",
+      "const": "mni"
+    },
+    {
+      "title": "Mohawk",
+      "x-language-type": "living",
+      "x-name-french": "mohawk",
+      "x-scope": "individual",
+      "const": "moh"
+    },
+    {
+      "title": "Mongolian",
+      "x-language-type": "living",
+      "x-name-french": "mongol",
+      "x-scope": "macrolanguage",
+      "x-set-1": "mn",
+      "const": "mon"
+    },
+    {
+      "title": "Mossi",
+      "x-language-type": "living",
+      "x-name-french": "moré",
+      "x-scope": "individual",
+      "const": "mos"
+    },
+    {
+      "title": "Creek",
+      "x-language-type": "living",
+      "x-name-french": "muskogee",
+      "x-scope": "individual",
+      "const": "mus"
+    },
+    {
+      "title": "Mirandese",
+      "x-language-type": "living",
+      "x-name-french": "mirandais",
+      "x-scope": "individual",
+      "const": "mwl"
+    },
+    {
+      "title": "Marwari",
+      "x-language-type": "living",
+      "x-name-french": "marvari",
+      "x-scope": "macrolanguage",
+      "const": "mwr"
+    },
+    {
+      "title": "Erzya",
+      "x-language-type": "living",
+      "x-name-french": "erza",
+      "x-scope": "individual",
+      "const": "myv"
+    },
+    {
+      "title": "Neapolitan",
+      "x-language-type": "living",
+      "x-name-french": "napolitain",
+      "x-scope": "individual",
+      "const": "nap"
+    },
+    {
+      "title": "Nauru",
+      "x-language-type": "living",
+      "x-name-french": "nauruan",
+      "x-scope": "individual",
+      "x-set-1": "na",
+      "const": "nau"
+    },
+    {
+      "title": "Navajo; Navaho",
+      "x-language-type": "living",
+      "x-name-french": "navaho",
+      "x-scope": "individual",
+      "x-set-1": "nv",
+      "const": "nav"
+    },
+    {
+      "title": "South Ndebele",
+      "x-language-type": "living",
+      "x-name-french": "ndébélé du Sud",
+      "x-scope": "individual",
+      "x-set-1": "nr",
+      "const": "nbl"
+    },
+    {
+      "title": "North Ndebele",
+      "x-language-type": "living",
+      "x-name-french": "ndébélé du Nord",
+      "x-scope": "individual",
+      "x-set-1": "nd",
+      "const": "nde"
+    },
+    {
+      "title": "Ndonga",
+      "x-language-type": "living",
+      "x-name-french": "ndonga",
+      "x-scope": "individual",
+      "x-set-1": "ng",
+      "const": "ndo"
+    },
+    {
+      "title": "Low German; Low Saxon; German, Low; Saxon, Low",
+      "x-language-type": "living",
+      "x-name-french": "bas allemand; bas saxon; allemand, bas; saxon, bas",
+      "x-scope": "individual",
+      "const": "nds"
+    },
+    {
+      "title": "Nepali",
+      "x-language-type": "living",
+      "x-name-french": "népalais",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ne",
+      "const": "nep"
+    },
+    {
+      "title": "Nepal Bhasa; Newar; Newari",
+      "x-language-type": "living",
+      "x-name-french": "nepal bhasa; néwar; newari",
+      "x-scope": "individual",
+      "const": "new"
+    },
+    {
+      "title": "Nias",
+      "x-language-type": "living",
+      "x-name-french": "nias",
+      "x-scope": "individual",
+      "const": "nia"
+    },
+    {
+      "title": "Niuean",
+      "x-language-type": "living",
+      "x-name-french": "niué",
+      "x-scope": "individual",
+      "const": "niu"
+    },
+    {
+      "title": "Norwegian Nynorsk",
+      "x-language-type": "living",
+      "x-name-french": "norvégien nynorsk",
+      "x-scope": "individual",
+      "x-set-1": "nn",
+      "const": "nno"
+    },
+    {
+      "title": "Norwegian Bokmål",
+      "x-language-type": "living",
+      "x-name-french": "norvégien bokmål",
+      "x-scope": "individual",
+      "x-set-1": "nb",
+      "const": "nob"
+    },
+    {
+      "title": "Nogai",
+      "x-language-type": "living",
+      "x-name-french": "nogaï; nogay",
+      "x-scope": "individual",
+      "const": "nog"
+    },
+    {
+      "title": "Norse, Old",
+      "x-language-type": "historic",
+      "x-name-french": "norrois, vieux",
+      "x-scope": "individual",
+      "const": "non"
+    },
+    {
+      "title": "Norwegian",
+      "x-language-type": "living",
+      "x-name-french": "norvégien",
+      "x-scope": "macrolanguage",
+      "x-set-1": "no",
+      "const": "nor"
+    },
+    {
+      "title": "N'Ko",
+      "x-language-type": "living",
+      "x-name-french": "n'ko",
+      "x-scope": "individual",
+      "const": "nqo"
+    },
+    {
+      "title": "Pedi; Sepedi; Northern Sotho",
+      "x-language-type": "living",
+      "x-name-french": "pedi; sepedi; sotho du Nord",
+      "x-scope": "individual",
+      "const": "nso"
+    },
+    {
+      "title": "Classical Newari; Old Newari; Classical Nepal Bhasa",
+      "x-language-type": "historic",
+      "x-name-french": "newari classique",
+      "x-scope": "individual",
+      "const": "nwc"
+    },
+    {
+      "title": "Chichewa; Chewa; Nyanja",
+      "x-language-type": "living",
+      "x-name-french": "chichewa; chewa; nyanja",
+      "x-scope": "individual",
+      "x-set-1": "ny",
+      "const": "nya"
+    },
+    {
+      "title": "Nyamwezi",
+      "x-language-type": "living",
+      "x-name-french": "nyamwezi",
+      "x-scope": "individual",
+      "const": "nym"
+    },
+    {
+      "title": "Nyankole",
+      "x-language-type": "living",
+      "x-name-french": "nyankolé",
+      "x-scope": "individual",
+      "const": "nyn"
+    },
+    {
+      "title": "Nyoro",
+      "x-language-type": "living",
+      "x-name-french": "nyoro",
+      "x-scope": "individual",
+      "const": "nyo"
+    },
+    {
+      "title": "Nzima",
+      "x-language-type": "living",
+      "x-name-french": "nzema",
+      "x-scope": "individual",
+      "const": "nzi"
+    },
+    {
+      "title": "Occitan (post 1500)",
+      "x-language-type": "living",
+      "x-name-french": "occitan (après 1500)",
+      "x-scope": "individual",
+      "x-set-1": "oc",
+      "const": "oci"
+    },
+    {
+      "title": "Ojibwa",
+      "x-language-type": "living",
+      "x-name-french": "ojibwa",
+      "x-scope": "macrolanguage",
+      "x-set-1": "oj",
+      "const": "oji"
+    },
+    {
+      "title": "Oriya",
+      "x-language-type": "living",
+      "x-name-french": "oriya",
+      "x-scope": "macrolanguage",
+      "x-set-1": "or",
+      "const": "ori"
+    },
+    {
+      "title": "Oromo",
+      "x-language-type": "living",
+      "x-name-french": "galla",
+      "x-scope": "macrolanguage",
+      "x-set-1": "om",
+      "const": "orm"
+    },
+    {
+      "title": "Osage",
+      "x-language-type": "living",
+      "x-name-french": "osage",
+      "x-scope": "individual",
+      "const": "osa"
+    },
+    {
+      "title": "Ossetian; Ossetic",
+      "x-language-type": "living",
+      "x-name-french": "ossète",
+      "x-scope": "individual",
+      "x-set-1": "os",
+      "const": "oss"
+    },
+    {
+      "title": "Turkish, Ottoman (1500-1928)",
+      "x-language-type": "historic",
+      "x-name-french": "turc ottoman (1500-1928)",
+      "x-scope": "individual",
+      "const": "ota"
+    },
+    {
+      "title": "Pangasinan",
+      "x-language-type": "living",
+      "x-name-french": "pangasinan",
+      "x-scope": "individual",
+      "const": "pag"
+    },
+    {
+      "title": "Pahlavi",
+      "x-language-type": "historic",
+      "x-name-french": "pahlavi",
+      "x-scope": "individual",
+      "const": "pal"
+    },
+    {
+      "title": "Pampanga; Kapampangan",
+      "x-language-type": "living",
+      "x-name-french": "pampangan",
+      "x-scope": "individual",
+      "const": "pam"
+    },
+    {
+      "title": "Panjabi; Punjabi",
+      "x-language-type": "living",
+      "x-name-french": "pendjabi",
+      "x-scope": "individual",
+      "x-set-1": "pa",
+      "const": "pan"
+    },
+    {
+      "title": "Papiamento",
+      "x-language-type": "living",
+      "x-name-french": "papiamento",
+      "x-scope": "individual",
+      "const": "pap"
+    },
+    {
+      "title": "Palauan",
+      "x-language-type": "living",
+      "x-name-french": "palau",
+      "x-scope": "individual",
+      "const": "pau"
+    },
+    {
+      "title": "Persian, Old (ca.600-400 B.C.)",
+      "x-language-type": "historic",
+      "x-name-french": "perse, vieux (ca. 600-400 av. J.-C.)",
+      "x-scope": "individual",
+      "const": "peo"
+    },
+    {
+      "title": "Persian",
+      "x-language-type": "living",
+      "x-name-french": "persan",
+      "x-scope": "macrolanguage",
+      "x-set-1": "fa",
+      "const": "per"
+    },
+    {
+      "title": "Phoenician",
+      "x-language-type": "historic",
+      "x-name-french": "phénicien",
+      "x-scope": "individual",
+      "const": "phn"
+    },
+    {
+      "title": "Pali",
+      "x-language-type": "historic",
+      "x-name-french": "pali",
+      "x-scope": "individual",
+      "x-set-1": "pi",
+      "const": "pli"
+    },
+    {
+      "title": "Polish",
+      "x-language-type": "living",
+      "x-name-french": "polonais",
+      "x-scope": "individual",
+      "x-set-1": "pl",
+      "const": "pol"
+    },
+    {
+      "title": "Pohnpeian",
+      "x-language-type": "living",
+      "x-name-french": "pohnpei",
+      "x-scope": "individual",
+      "const": "pon"
+    },
+    {
+      "title": "Portuguese",
+      "x-language-type": "living",
+      "x-name-french": "portugais",
+      "x-scope": "individual",
+      "x-set-1": "pt",
+      "const": "por"
+    },
+    {
+      "title": "Provençal, Old (to 1500); Occitan, Old (to 1500)",
+      "x-language-type": "historic",
+      "x-name-french": "provençal ancien (jusqu'à 1500); occitan ancien (jusqu'à 1500)",
+      "x-scope": "individual",
+      "const": "pro"
+    },
+    {
+      "title": "Pushto; Pashto",
+      "x-language-type": "living",
+      "x-name-french": "pachto",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ps",
+      "const": "pus"
+    },
+    {
+      "title": "Reserved for local use",
+      "x-name-french": "réservée à l'usage local",
+      "const": "qaa-qtz"
+    },
+    {
+      "title": "Quechua",
+      "x-language-type": "living",
+      "x-name-french": "quechua",
+      "x-scope": "macrolanguage",
+      "x-set-1": "qu",
+      "const": "que"
+    },
+    {
+      "title": "Rajasthani",
+      "x-language-type": "living",
+      "x-name-french": "rajasthani",
+      "x-scope": "macrolanguage",
+      "const": "raj"
+    },
+    {
+      "title": "Rapanui",
+      "x-language-type": "living",
+      "x-name-french": "rapanui",
+      "x-scope": "individual",
+      "const": "rap"
+    },
+    {
+      "title": "Rarotongan; Cook Islands Maori",
+      "x-language-type": "living",
+      "x-name-french": "rarotonga; maori des îles Cook",
+      "x-scope": "individual",
+      "const": "rar"
+    },
+    {
+      "title": "Romansh",
+      "x-language-type": "living",
+      "x-name-french": "romanche",
+      "x-scope": "individual",
+      "x-set-1": "rm",
+      "const": "roh"
+    },
+    {
+      "title": "Romany",
+      "x-language-type": "living",
+      "x-name-french": "tsigane",
+      "x-scope": "macrolanguage",
+      "const": "rom"
+    },
+    {
+      "title": "Romanian; Moldavian; Moldovan",
+      "x-language-type": "living",
+      "x-name-french": "roumain; moldave",
+      "x-scope": "individual",
+      "x-set-1": "ro",
+      "const": "rum"
+    },
+    {
+      "title": "Rundi",
+      "x-language-type": "living",
+      "x-name-french": "rundi",
+      "x-scope": "individual",
+      "x-set-1": "rn",
+      "const": "run"
+    },
+    {
+      "title": "Aromanian; Arumanian; Macedo-Romanian",
+      "x-language-type": "living",
+      "x-name-french": "aroumain; macédo-roumain",
+      "x-scope": "individual",
+      "const": "rup"
+    },
+    {
+      "title": "Russian",
+      "x-language-type": "living",
+      "x-name-french": "russe",
+      "x-scope": "individual",
+      "x-set-1": "ru",
+      "const": "rus"
+    },
+    {
+      "title": "Sandawe",
+      "x-language-type": "living",
+      "x-name-french": "sandawe",
+      "x-scope": "individual",
+      "const": "sad"
+    },
+    {
+      "title": "Sango",
+      "x-language-type": "living",
+      "x-name-french": "sango",
+      "x-scope": "individual",
+      "x-set-1": "sg",
+      "const": "sag"
+    },
+    {
+      "title": "Yakut",
+      "x-language-type": "living",
+      "x-name-french": "iakoute",
+      "x-scope": "individual",
+      "const": "sah"
+    },
+    {
+      "title": "Samaritan Aramaic",
+      "x-language-type": "extinct",
+      "x-name-french": "samaritain",
+      "x-scope": "individual",
+      "const": "sam"
+    },
+    {
+      "title": "Sanskrit",
+      "x-language-type": "historic",
+      "x-name-french": "sanskrit",
+      "x-scope": "macrolanguage",
+      "x-set-1": "sa",
+      "const": "san"
+    },
+    {
+      "title": "Sasak",
+      "x-language-type": "living",
+      "x-name-french": "sasak",
+      "x-scope": "individual",
+      "const": "sas"
+    },
+    {
+      "title": "Santali",
+      "x-language-type": "living",
+      "x-name-french": "santal",
+      "x-scope": "individual",
+      "const": "sat"
+    },
+    {
+      "title": "Sicilian",
+      "x-language-type": "living",
+      "x-name-french": "sicilien",
+      "x-scope": "individual",
+      "const": "scn"
+    },
+    {
+      "title": "Scots",
+      "x-language-type": "living",
+      "x-name-french": "écossais",
+      "x-scope": "individual",
+      "const": "sco"
+    },
+    {
+      "title": "Selkup",
+      "x-language-type": "living",
+      "x-name-french": "selkoupe",
+      "x-scope": "individual",
+      "const": "sel"
+    },
+    {
+      "title": "Irish, Old (to 900)",
+      "x-language-type": "historic",
+      "x-name-french": "irlandais ancien (jusqu'à 900)",
+      "x-scope": "individual",
+      "const": "sga"
+    },
+    {
+      "title": "Shan",
+      "x-language-type": "living",
+      "x-name-french": "chan",
+      "x-scope": "individual",
+      "const": "shn"
+    },
+    {
+      "title": "Sidamo",
+      "x-language-type": "living",
+      "x-name-french": "sidamo",
+      "x-scope": "individual",
+      "const": "sid"
+    },
+    {
+      "title": "Sinhala; Sinhalese",
+      "x-language-type": "living",
+      "x-name-french": "singhalais",
+      "x-scope": "individual",
+      "x-set-1": "si",
+      "const": "sin"
+    },
+    {
+      "title": "Slovak",
+      "x-language-type": "living",
+      "x-name-french": "slovaque",
+      "x-scope": "individual",
+      "x-set-1": "sk",
+      "const": "slo"
+    },
+    {
+      "title": "Slovenian",
+      "x-language-type": "living",
+      "x-name-french": "slovène",
+      "x-scope": "individual",
+      "x-set-1": "sl",
+      "const": "slv"
+    },
+    {
+      "title": "Southern Sami",
+      "x-language-type": "living",
+      "x-name-french": "sami du Sud",
+      "x-scope": "individual",
+      "const": "sma"
+    },
+    {
+      "title": "Northern Sami",
+      "x-language-type": "living",
+      "x-name-french": "sami du Nord",
+      "x-scope": "individual",
+      "x-set-1": "se",
+      "const": "sme"
+    },
+    {
+      "title": "Lule Sami",
+      "x-language-type": "living",
+      "x-name-french": "sami de Lule",
+      "x-scope": "individual",
+      "const": "smj"
+    },
+    {
+      "title": "Inari Sami",
+      "x-language-type": "living",
+      "x-name-french": "sami d'Inari",
+      "x-scope": "individual",
+      "const": "smn"
+    },
+    {
+      "title": "Samoan",
+      "x-language-type": "living",
+      "x-name-french": "samoan",
+      "x-scope": "individual",
+      "x-set-1": "sm",
+      "const": "smo"
+    },
+    {
+      "title": "Skolt Sami",
+      "x-language-type": "living",
+      "x-name-french": "sami skolt",
+      "x-scope": "individual",
+      "const": "sms"
+    },
+    {
+      "title": "Shona",
+      "x-language-type": "living",
+      "x-name-french": "shona",
+      "x-scope": "individual",
+      "x-set-1": "sn",
+      "const": "sna"
+    },
+    {
+      "title": "Sindhi",
+      "x-language-type": "living",
+      "x-name-french": "sindhi",
+      "x-scope": "individual",
+      "x-set-1": "sd",
+      "const": "snd"
+    },
+    {
+      "title": "Soninke",
+      "x-language-type": "living",
+      "x-name-french": "soninké",
+      "x-scope": "individual",
+      "const": "snk"
+    },
+    {
+      "title": "Sogdian",
+      "x-language-type": "historic",
+      "x-name-french": "sogdien",
+      "x-scope": "individual",
+      "const": "sog"
+    },
+    {
+      "title": "Somali",
+      "x-language-type": "living",
+      "x-name-french": "somali",
+      "x-scope": "individual",
+      "x-set-1": "so",
+      "const": "som"
+    },
+    {
+      "title": "Sotho, Southern",
+      "x-language-type": "living",
+      "x-name-french": "sotho du Sud",
+      "x-scope": "individual",
+      "x-set-1": "st",
+      "const": "sot"
+    },
+    {
+      "title": "Spanish; Castilian",
+      "x-language-type": "living",
+      "x-name-french": "espagnol; castillan",
+      "x-scope": "individual",
+      "x-set-1": "es",
+      "const": "spa"
+    },
+    {
+      "title": "Sardinian",
+      "x-language-type": "living",
+      "x-name-french": "sarde",
+      "x-scope": "macrolanguage",
+      "x-set-1": "sc",
+      "const": "srd"
+    },
+    {
+      "title": "Sranan Tongo",
+      "x-language-type": "living",
+      "x-name-french": "sranan tongo",
+      "x-scope": "individual",
+      "const": "srn"
+    },
+    {
+      "title": "Serbian",
+      "x-language-type": "living",
+      "x-name-french": "serbe",
+      "x-scope": "individual",
+      "x-set-1": "sr",
+      "const": "srp"
+    },
+    {
+      "title": "Serer",
+      "x-language-type": "living",
+      "x-name-french": "sérère",
+      "x-scope": "individual",
+      "const": "srr"
+    },
+    {
+      "title": "Swati",
+      "x-language-type": "living",
+      "x-name-french": "swati",
+      "x-scope": "individual",
+      "x-set-1": "ss",
+      "const": "ssw"
+    },
+    {
+      "title": "Sukuma",
+      "x-language-type": "living",
+      "x-name-french": "sukuma",
+      "x-scope": "individual",
+      "const": "suk"
+    },
+    {
+      "title": "Sundanese",
+      "x-language-type": "living",
+      "x-name-french": "soundanais",
+      "x-scope": "individual",
+      "x-set-1": "su",
+      "const": "sun"
+    },
+    {
+      "title": "Susu",
+      "x-language-type": "living",
+      "x-name-french": "soussou",
+      "x-scope": "individual",
+      "const": "sus"
+    },
+    {
+      "title": "Sumerian",
+      "x-language-type": "historic",
+      "x-name-french": "sumérien",
+      "x-scope": "individual",
+      "const": "sux"
+    },
+    {
+      "title": "Swahili",
+      "x-language-type": "living",
+      "x-name-french": "swahili",
+      "x-scope": "macrolanguage",
+      "x-set-1": "sw",
+      "const": "swa"
+    },
+    {
+      "title": "Swedish",
+      "x-language-type": "living",
+      "x-name-french": "suédois",
+      "x-scope": "individual",
+      "x-set-1": "sv",
+      "const": "swe"
+    },
+    {
+      "title": "Classical Syriac",
+      "x-language-type": "historic",
+      "x-name-french": "syriaque classique",
+      "x-scope": "individual",
+      "const": "syc"
+    },
+    {
+      "title": "Syriac",
+      "x-language-type": "living",
+      "x-name-french": "syriaque",
+      "x-scope": "macrolanguage",
+      "const": "syr"
+    },
+    {
+      "title": "Tahitian",
+      "x-language-type": "living",
+      "x-name-french": "tahitien",
+      "x-scope": "individual",
+      "x-set-1": "ty",
+      "const": "tah"
+    },
+    {
+      "title": "Tamil",
+      "x-language-type": "living",
+      "x-name-french": "tamoul",
+      "x-scope": "individual",
+      "x-set-1": "ta",
+      "const": "tam"
+    },
+    {
+      "title": "Tatar",
+      "x-language-type": "living",
+      "x-name-french": "tatar",
+      "x-scope": "individual",
+      "x-set-1": "tt",
+      "const": "tat"
+    },
+    {
+      "title": "Telugu",
+      "x-language-type": "living",
+      "x-name-french": "télougou",
+      "x-scope": "individual",
+      "x-set-1": "te",
+      "const": "tel"
+    },
+    {
+      "title": "Timne",
+      "x-language-type": "living",
+      "x-name-french": "temne",
+      "x-scope": "individual",
+      "const": "tem"
+    },
+    {
+      "title": "Tereno",
+      "x-language-type": "living",
+      "x-name-french": "tereno",
+      "x-scope": "individual",
+      "const": "ter"
+    },
+    {
+      "title": "Tetum",
+      "x-language-type": "living",
+      "x-name-french": "tetum",
+      "x-scope": "individual",
+      "const": "tet"
+    },
+    {
+      "title": "Tajik",
+      "x-language-type": "living",
+      "x-name-french": "tadjik",
+      "x-scope": "individual",
+      "x-set-1": "tg",
+      "const": "tgk"
+    },
+    {
+      "title": "Tagalog",
+      "x-language-type": "living",
+      "x-name-french": "tagalog",
+      "x-scope": "individual",
+      "x-set-1": "tl",
+      "const": "tgl"
+    },
+    {
+      "title": "Thai",
+      "x-language-type": "living",
+      "x-name-french": "thaï",
+      "x-scope": "individual",
+      "x-set-1": "th",
+      "const": "tha"
+    },
+    {
+      "title": "Tibetan",
+      "x-language-type": "living",
+      "x-name-french": "tibétain",
+      "x-scope": "individual",
+      "x-set-1": "bo",
+      "const": "tib"
+    },
+    {
+      "title": "Tigre",
+      "x-language-type": "living",
+      "x-name-french": "tigré",
+      "x-scope": "individual",
+      "const": "tig"
+    },
+    {
+      "title": "Tigrinya",
+      "x-language-type": "living",
+      "x-name-french": "tigrigna",
+      "x-scope": "individual",
+      "x-set-1": "ti",
+      "const": "tir"
+    },
+    {
+      "title": "Tiv",
+      "x-language-type": "living",
+      "x-name-french": "tiv",
+      "x-scope": "individual",
+      "const": "tiv"
+    },
+    {
+      "title": "Tokelau",
+      "x-language-type": "living",
+      "x-name-french": "tokelau",
+      "x-scope": "individual",
+      "const": "tkl"
+    },
+    {
+      "title": "Klingon; tlhIngan-Hol",
+      "x-language-type": "constructed",
+      "x-name-french": "klingon",
+      "x-scope": "individual",
+      "const": "tlh"
+    },
+    {
+      "title": "Tlingit",
+      "x-language-type": "living",
+      "x-name-french": "tlingit",
+      "x-scope": "individual",
+      "const": "tli"
+    },
+    {
+      "title": "Tamashek",
+      "x-language-type": "living",
+      "x-name-french": "tamacheq",
+      "x-scope": "macrolanguage",
+      "const": "tmh"
+    },
+    {
+      "title": "Tonga (Nyasa)",
+      "x-language-type": "living",
+      "x-name-french": "tonga (Nyasa)",
+      "x-scope": "individual",
+      "const": "tog"
+    },
+    {
+      "title": "Tonga (Tonga Islands)",
+      "x-language-type": "living",
+      "x-name-french": "tongan (Îles Tonga)",
+      "x-scope": "individual",
+      "x-set-1": "to",
+      "const": "ton"
+    },
+    {
+      "title": "Tok Pisin",
+      "x-language-type": "living",
+      "x-name-french": "tok pisin",
+      "x-scope": "individual",
+      "const": "tpi"
+    },
+    {
+      "title": "Tsimshian",
+      "x-language-type": "living",
+      "x-name-french": "tsimshian",
+      "x-scope": "individual",
+      "const": "tsi"
+    },
+    {
+      "title": "Tswana",
+      "x-language-type": "living",
+      "x-name-french": "tswana",
+      "x-scope": "individual",
+      "x-set-1": "tn",
+      "const": "tsn"
+    },
+    {
+      "title": "Tsonga",
+      "x-language-type": "living",
+      "x-name-french": "tsonga",
+      "x-scope": "individual",
+      "x-set-1": "ts",
+      "const": "tso"
+    },
+    {
+      "title": "Turkmen",
+      "x-language-type": "living",
+      "x-name-french": "turkmène",
+      "x-scope": "individual",
+      "x-set-1": "tk",
+      "const": "tuk"
+    },
+    {
+      "title": "Tumbuka",
+      "x-language-type": "living",
+      "x-name-french": "tumbuka",
+      "x-scope": "individual",
+      "const": "tum"
+    },
+    {
+      "title": "Turkish",
+      "x-language-type": "living",
+      "x-name-french": "turc",
+      "x-scope": "individual",
+      "x-set-1": "tr",
+      "const": "tur"
+    },
+    {
+      "title": "Tuvalu",
+      "x-language-type": "living",
+      "x-name-french": "tuvalu",
+      "x-scope": "individual",
+      "const": "tvl"
+    },
+    {
+      "title": "Twi",
+      "x-language-type": "living",
+      "x-name-french": "twi",
+      "x-scope": "individual",
+      "x-set-1": "tw",
+      "const": "twi"
+    },
+    {
+      "title": "Tuvinian",
+      "x-language-type": "living",
+      "x-name-french": "touva",
+      "x-scope": "individual",
+      "const": "tyv"
+    },
+    {
+      "title": "Udmurt",
+      "x-language-type": "living",
+      "x-name-french": "oudmourte",
+      "x-scope": "individual",
+      "const": "udm"
+    },
+    {
+      "title": "Ugaritic",
+      "x-language-type": "historic",
+      "x-name-french": "ougaritique",
+      "x-scope": "individual",
+      "const": "uga"
+    },
+    {
+      "title": "Uighur; Uyghur",
+      "x-language-type": "living",
+      "x-name-french": "ouïgour",
+      "x-scope": "individual",
+      "x-set-1": "ug",
+      "const": "uig"
+    },
+    {
+      "title": "Ukrainian",
+      "x-language-type": "living",
+      "x-name-french": "ukrainien",
+      "x-scope": "individual",
+      "x-set-1": "uk",
+      "const": "ukr"
+    },
+    {
+      "title": "Umbundu",
+      "x-language-type": "living",
+      "x-name-french": "umbundu",
+      "x-scope": "individual",
+      "const": "umb"
+    },
+    {
+      "title": "Undetermined",
+      "x-language-type": "special",
+      "x-name-french": "indéterminée",
+      "x-scope": "special",
+      "const": "und"
+    },
+    {
+      "title": "Urdu",
+      "x-language-type": "living",
+      "x-name-french": "ourdou",
+      "x-scope": "individual",
+      "x-set-1": "ur",
+      "const": "urd"
+    },
+    {
+      "title": "Uzbek",
+      "x-language-type": "living",
+      "x-name-french": "ouszbek",
+      "x-scope": "macrolanguage",
+      "x-set-1": "uz",
+      "const": "uzb"
+    },
+    {
+      "title": "Vai",
+      "x-language-type": "living",
+      "x-name-french": "vaï",
+      "x-scope": "individual",
+      "const": "vai"
+    },
+    {
+      "title": "Venda",
+      "x-language-type": "living",
+      "x-name-french": "venda",
+      "x-scope": "individual",
+      "x-set-1": "ve",
+      "const": "ven"
+    },
+    {
+      "title": "Vietnamese",
+      "x-language-type": "living",
+      "x-name-french": "vietnamien",
+      "x-scope": "individual",
+      "x-set-1": "vi",
+      "const": "vie"
+    },
+    {
+      "title": "Volapük",
+      "x-language-type": "constructed",
+      "x-name-french": "volapük",
+      "x-scope": "individual",
+      "x-set-1": "vo",
+      "const": "vol"
+    },
+    {
+      "title": "Votic",
+      "x-language-type": "living",
+      "x-name-french": "vote",
+      "x-scope": "individual",
+      "const": "vot"
+    },
+    {
+      "title": "Wolaitta; Wolaytta",
+      "x-language-type": "living",
+      "x-name-french": "wolaitta; wolaytta",
+      "x-scope": "individual",
+      "const": "wal"
+    },
+    {
+      "title": "Waray",
+      "x-language-type": "living",
+      "x-name-french": "waray",
+      "x-scope": "individual",
+      "const": "war"
+    },
+    {
+      "title": "Washo",
+      "x-language-type": "living",
+      "x-name-french": "washo",
+      "x-scope": "individual",
+      "const": "was"
+    },
+    {
+      "title": "Welsh",
+      "x-language-type": "living",
+      "x-name-french": "gallois",
+      "x-scope": "individual",
+      "x-set-1": "cy",
+      "const": "wel"
+    },
+    {
+      "title": "Walloon",
+      "x-language-type": "living",
+      "x-name-french": "wallon",
+      "x-scope": "individual",
+      "x-set-1": "wa",
+      "const": "wln"
+    },
+    {
+      "title": "Wolof",
+      "x-language-type": "living",
+      "x-name-french": "wolof",
+      "x-scope": "individual",
+      "x-set-1": "wo",
+      "const": "wol"
+    },
+    {
+      "title": "Kalmyk; Oirat",
+      "x-language-type": "living",
+      "x-name-french": "kalmouk; oïrat",
+      "x-scope": "individual",
+      "const": "xal"
+    },
+    {
+      "title": "Xhosa",
+      "x-language-type": "living",
+      "x-name-french": "xhosa",
+      "x-scope": "individual",
+      "x-set-1": "xh",
+      "const": "xho"
+    },
+    {
+      "title": "Yao",
+      "x-language-type": "living",
+      "x-name-french": "yao",
+      "x-scope": "individual",
+      "const": "yao"
+    },
+    {
+      "title": "Yapese",
+      "x-language-type": "living",
+      "x-name-french": "yapois",
+      "x-scope": "individual",
+      "const": "yap"
+    },
+    {
+      "title": "Yiddish",
+      "x-language-type": "living",
+      "x-name-french": "yiddish",
+      "x-scope": "macrolanguage",
+      "x-set-1": "yi",
+      "const": "yid"
+    },
+    {
+      "title": "Yoruba",
+      "x-language-type": "living",
+      "x-name-french": "yoruba",
+      "x-scope": "individual",
+      "x-set-1": "yo",
+      "const": "yor"
+    },
+    {
+      "title": "Zapotec",
+      "x-language-type": "living",
+      "x-name-french": "zapotèque",
+      "x-scope": "macrolanguage",
+      "const": "zap"
+    },
+    {
+      "title": "Blissymbols; Blissymbolics; Bliss",
+      "x-language-type": "constructed",
+      "x-name-french": "symboles Bliss; Bliss",
+      "x-scope": "individual",
+      "const": "zbl"
+    },
+    {
+      "title": "Zenaga",
+      "x-language-type": "living",
+      "x-name-french": "zenaga",
+      "x-scope": "individual",
+      "const": "zen"
+    },
+    {
+      "title": "Standard Moroccan Tamazight",
+      "x-language-type": "living",
+      "x-name-french": "amazighe standard marocain",
+      "x-scope": "individual",
+      "const": "zgh"
+    },
+    {
+      "title": "Zhuang; Chuang",
+      "x-language-type": "living",
+      "x-name-french": "zhuang; chuang",
+      "x-scope": "macrolanguage",
+      "x-set-1": "za",
+      "const": "zha"
+    },
+    {
+      "title": "Zulu",
+      "x-language-type": "living",
+      "x-name-french": "zoulou",
+      "x-scope": "individual",
+      "x-set-1": "zu",
+      "const": "zul"
+    },
+    {
+      "title": "Zuni",
+      "x-language-type": "living",
+      "x-name-french": "zuni",
+      "x-scope": "individual",
+      "const": "zun"
+    },
+    {
+      "title": "No linguistic content; Not applicable",
+      "x-language-type": "special",
+      "x-name-french": "pas de contenu linguistique; non applicable",
+      "x-scope": "special",
+      "const": "zxx"
+    },
+    {
+      "title": "Zaza; Dimili; Dimli; Kirdki; Kirmanjki; Zazaki",
+      "x-language-type": "living",
+      "x-name-french": "zaza; dimili; dimli; kirdki; kirmanjki; zazaki",
+      "x-scope": "macrolanguage",
+      "const": "zza"
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 639-2:2023 Terminologic Language Code",
+  "description": "A three-letter terminologic language code from ISO 639-2",
+  "$comment": "Set 2 terminologic is a superset of Set 1 and a subset of Set 3. Terminologic codes are based on native language names. Only about 20 languages have both bibliographic and terminologic codes",
+  "examples": [ "bod", "ces", "cym", "deu" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/74575.html" ],
+  "anyOf": [
+    {
+      "title": "Tibetan",
+      "x-language-type": "living",
+      "x-name-french": "tibétain",
+      "x-scope": "individual",
+      "x-set-1": "bo",
+      "const": "bod"
+    },
+    {
+      "title": "Czech",
+      "x-language-type": "living",
+      "x-name-french": "tchèque",
+      "x-scope": "individual",
+      "x-set-1": "cs",
+      "const": "ces"
+    },
+    {
+      "title": "Welsh",
+      "x-language-type": "living",
+      "x-name-french": "gallois",
+      "x-scope": "individual",
+      "x-set-1": "cy",
+      "const": "cym"
+    },
+    {
+      "title": "German",
+      "x-language-type": "living",
+      "x-name-french": "allemand",
+      "x-scope": "individual",
+      "x-set-1": "de",
+      "const": "deu"
+    },
+    {
+      "title": "Modern Greek (1453-)",
+      "x-language-type": "living",
+      "x-name-french": "grec moderne (1453-)",
+      "x-scope": "individual",
+      "x-set-1": "el",
+      "const": "ell"
+    },
+    {
+      "title": "Basque",
+      "x-language-type": "living",
+      "x-name-french": "basque",
+      "x-scope": "individual",
+      "x-set-1": "eu",
+      "const": "eus"
+    },
+    {
+      "title": "Persian",
+      "x-language-type": "living",
+      "x-name-french": "persan",
+      "x-scope": "macrolanguage",
+      "x-set-1": "fa",
+      "const": "fas"
+    },
+    {
+      "title": "French",
+      "x-language-type": "living",
+      "x-name-french": "français",
+      "x-scope": "individual",
+      "x-set-1": "fr",
+      "const": "fra"
+    },
+    {
+      "title": "Armenian",
+      "x-language-type": "living",
+      "x-name-french": "arménien",
+      "x-scope": "individual",
+      "x-set-1": "hy",
+      "const": "hye"
+    },
+    {
+      "title": "Icelandic",
+      "x-language-type": "living",
+      "x-name-french": "islandais",
+      "x-scope": "individual",
+      "x-set-1": "is",
+      "const": "isl"
+    },
+    {
+      "title": "Georgian",
+      "x-language-type": "living",
+      "x-name-french": "géorgien",
+      "x-scope": "individual",
+      "x-set-1": "ka",
+      "const": "kat"
+    },
+    {
+      "title": "Macedonian",
+      "x-language-type": "living",
+      "x-name-french": "macédonien",
+      "x-scope": "individual",
+      "x-set-1": "mk",
+      "const": "mkd"
+    },
+    {
+      "title": "Maori",
+      "x-language-type": "living",
+      "x-name-french": "maori",
+      "x-scope": "individual",
+      "x-set-1": "mi",
+      "const": "mri"
+    },
+    {
+      "title": "Malay",
+      "x-language-type": "living",
+      "x-name-french": "malais",
+      "x-scope": "macrolanguage",
+      "x-set-1": "ms",
+      "const": "msa"
+    },
+    {
+      "title": "Burmese",
+      "x-language-type": "living",
+      "x-name-french": "birman",
+      "x-scope": "individual",
+      "x-set-1": "my",
+      "const": "mya"
+    },
+    {
+      "title": "Dutch; Flemish",
+      "x-language-type": "living",
+      "x-name-french": "néerlandais; flamand",
+      "x-scope": "individual",
+      "x-set-1": "nl",
+      "const": "nld"
+    },
+    {
+      "title": "Romanian; Moldavian; Moldovan",
+      "x-language-type": "living",
+      "x-name-french": "roumain; moldave",
+      "x-scope": "individual",
+      "x-set-1": "ro",
+      "const": "ron"
+    },
+    {
+      "title": "Slovak",
+      "x-language-type": "living",
+      "x-name-french": "slovaque",
+      "x-scope": "individual",
+      "x-set-1": "sk",
+      "const": "slk"
+    },
+    {
+      "title": "Albanian",
+      "x-language-type": "living",
+      "x-name-french": "albanais",
+      "x-scope": "macrolanguage",
+      "x-set-1": "sq",
+      "const": "sqi"
+    },
+    {
+      "title": "Chinese",
+      "x-language-type": "living",
+      "x-name-french": "chinois",
+      "x-scope": "macrolanguage",
+      "x-set-1": "zh",
+      "const": "zho"
+    }
+  ]
+}

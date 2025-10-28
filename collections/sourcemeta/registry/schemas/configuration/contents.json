@@ -10,7 +10,7 @@
         "required": [ "include" ],
         "properties": {
           "include": {
-            "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ieee/posix/path.json"
+            "$ref": "../../../../../vendor/collections/sourcemeta/std/v0/schemas/ieee/posix/2017/path.json"
           }
         },
         "additionalProperties": false
