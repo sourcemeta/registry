@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 4217:2015 Numeric Precious Metal Code",
+  "description": "A three-digit numeric code for precious metals (2025-05-12)",
+  "examples": [ 959, 961, 962, 964 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/iso-4217-currency-codes.html" ],
+  "anyOf": [
+    {
+      "title": "Gold",
+      "const": 959
+    },
+    {
+      "title": "Silver",
+      "const": 961
+    },
+    {
+      "title": "Platinum",
+      "const": 962
+    },
+    {
+      "title": "Palladium",
+      "const": 964
+    }
+  ]
+}

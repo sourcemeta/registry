@@ -22,7 +22,7 @@
             "type": "array",
             "minItems": 1,
             "items": {
-              "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/jsonpointer/pointer.json"
+              "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/jsonpointer/pointer.json"
             }
           }
         },
@@ -30,7 +30,7 @@
       }
     },
     "score": {
-      "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/iso/units/percentage.json"
+      "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/iso/units/2022/percentage.json"
     }
   },
   "additionalProperties": false

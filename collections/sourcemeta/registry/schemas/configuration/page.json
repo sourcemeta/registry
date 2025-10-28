@@ -17,13 +17,13 @@
       "$ref": "./contents.json"
     },
     "email": {
-      "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/email/address.json"
+      "$ref": "../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/email/address.json"
     },
     "github": {
       "type": "string"
     },
     "website": {
-      "$ref": "../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
+      "$ref": "../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/url.json"
     }
   },
   "additionalProperties": false

@@ -1,0 +1,1998 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 3166-1:2020 Alpha-3 Country Code",
+  "description": "A three-letter country code from ISO 3166-1",
+  "examples": [ "ABW", "AFG", "AGO", "AIA" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/iso-3166-country-codes.html" ],
+  "anyOf": [
+    {
+      "title": "Aruba",
+      "x-alpha-2": "AW",
+      "x-numeric": 533,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "ABW"
+    },
+    {
+      "title": "Afghanistan",
+      "x-alpha-2": "AF",
+      "x-numeric": 4,
+      "x-region": "Asia",
+      "x-sub-region": "Southern Asia",
+      "const": "AFG"
+    },
+    {
+      "title": "Angola",
+      "x-alpha-2": "AO",
+      "x-numeric": 24,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "AGO"
+    },
+    {
+      "title": "Anguilla",
+      "x-alpha-2": "AI",
+      "x-numeric": 660,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "AIA"
+    },
+    {
+      "title": "Åland Islands",
+      "x-alpha-2": "AX",
+      "x-numeric": 248,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "ALA"
+    },
+    {
+      "title": "Albania",
+      "x-alpha-2": "AL",
+      "x-numeric": 8,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "ALB"
+    },
+    {
+      "title": "Andorra",
+      "x-alpha-2": "AD",
+      "x-numeric": 20,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "AND"
+    },
+    {
+      "title": "United Arab Emirates",
+      "x-alpha-2": "AE",
+      "x-numeric": 784,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "ARE"
+    },
+    {
+      "title": "Argentina",
+      "x-alpha-2": "AR",
+      "x-numeric": 32,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "ARG"
+    },
+    {
+      "title": "Armenia",
+      "x-alpha-2": "AM",
+      "x-numeric": 51,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "ARM"
+    },
+    {
+      "title": "American Samoa",
+      "x-alpha-2": "AS",
+      "x-numeric": 16,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "ASM"
+    },
+    {
+      "title": "Antarctica",
+      "x-alpha-2": "AQ",
+      "x-numeric": 10,
+      "const": "ATA"
+    },
+    {
+      "title": "French Southern Territories",
+      "x-alpha-2": "TF",
+      "x-numeric": 260,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "ATF"
+    },
+    {
+      "title": "Antigua and Barbuda",
+      "x-alpha-2": "AG",
+      "x-numeric": 28,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "ATG"
+    },
+    {
+      "title": "Australia",
+      "x-alpha-2": "AU",
+      "x-numeric": 36,
+      "x-region": "Oceania",
+      "x-sub-region": "Australia and New Zealand",
+      "const": "AUS"
+    },
+    {
+      "title": "Austria",
+      "x-alpha-2": "AT",
+      "x-numeric": 40,
+      "x-region": "Europe",
+      "x-sub-region": "Western Europe",
+      "const": "AUT"
+    },
+    {
+      "title": "Azerbaijan",
+      "x-alpha-2": "AZ",
+      "x-numeric": 31,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "AZE"
+    },
+    {
+      "title": "Burundi",
+      "x-alpha-2": "BI",
+      "x-numeric": 108,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "BDI"
+    },
+    {
+      "title": "Belgium",
+      "x-alpha-2": "BE",
+      "x-numeric": 56,
+      "x-region": "Europe",
+      "x-sub-region": "Western Europe",
+      "const": "BEL"
+    },
+    {
+      "title": "Benin",
+      "x-alpha-2": "BJ",
+      "x-numeric": 204,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "BEN"
+    },
+    {
+      "title": "Bonaire, Sint Eustatius and Saba",
+      "x-alpha-2": "BQ",
+      "x-numeric": 535,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "BES"
+    },
+    {
+      "title": "Burkina Faso",
+      "x-alpha-2": "BF",
+      "x-numeric": 854,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "BFA"
+    },
+    {
+      "title": "Bangladesh",
+      "x-alpha-2": "BD",
+      "x-numeric": 50,
+      "x-region": "Asia",
+      "x-sub-region": "Southern Asia",
+      "const": "BGD"
+    },
+    {
+      "title": "Bulgaria",
+      "x-alpha-2": "BG",
+      "x-numeric": 100,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "BGR"
+    },
+    {
+      "title": "Bahrain",
+      "x-alpha-2": "BH",
+      "x-numeric": 48,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "BHR"
+    },
+    {
+      "title": "Bahamas",
+      "x-alpha-2": "BS",
+      "x-numeric": 44,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "BHS"
+    },
+    {
+      "title": "Bosnia and Herzegovina",
+      "x-alpha-2": "BA",
+      "x-numeric": 70,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "BIH"
+    },
+    {
+      "title": "Saint Barthélemy",
+      "x-alpha-2": "BL",
+      "x-numeric": 652,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "BLM"
+    },
+    {
+      "title": "Belarus",
+      "x-alpha-2": "BY",
+      "x-numeric": 112,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "BLR"
+    },
+    {
+      "title": "Belize",
+      "x-alpha-2": "BZ",
+      "x-numeric": 84,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "BLZ"
+    },
+    {
+      "title": "Bermuda",
+      "x-alpha-2": "BM",
+      "x-numeric": 60,
+      "x-region": "Americas",
+      "x-sub-region": "Northern America",
+      "const": "BMU"
+    },
+    {
+      "title": "Bolivia, Plurinational State of",
+      "x-alpha-2": "BO",
+      "x-numeric": 68,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "BOL"
+    },
+    {
+      "title": "Brazil",
+      "x-alpha-2": "BR",
+      "x-numeric": 76,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "BRA"
+    },
+    {
+      "title": "Barbados",
+      "x-alpha-2": "BB",
+      "x-numeric": 52,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "BRB"
+    },
+    {
+      "title": "Brunei Darussalam",
+      "x-alpha-2": "BN",
+      "x-numeric": 96,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "BRN"
+    },
+    {
+      "title": "Bhutan",
+      "x-alpha-2": "BT",
+      "x-numeric": 64,
+      "x-region": "Asia",
+      "x-sub-region": "Southern Asia",
+      "const": "BTN"
+    },
+    {
+      "title": "Bouvet Island",
+      "x-alpha-2": "BV",
+      "x-numeric": 74,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "BVT"
+    },
+    {
+      "title": "Botswana",
+      "x-alpha-2": "BW",
+      "x-numeric": 72,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "BWA"
+    },
+    {
+      "title": "Central African Republic",
+      "x-alpha-2": "CF",
+      "x-numeric": 140,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "CAF"
+    },
+    {
+      "title": "Canada",
+      "x-alpha-2": "CA",
+      "x-numeric": 124,
+      "x-region": "Americas",
+      "x-sub-region": "Northern America",
+      "const": "CAN"
+    },
+    {
+      "title": "Cocos (Keeling) Islands",
+      "x-alpha-2": "CC",
+      "x-numeric": 166,
+      "x-region": "Oceania",
+      "x-sub-region": "Australia and New Zealand",
+      "const": "CCK"
+    },
+    {
+      "title": "Switzerland",
+      "x-alpha-2": "CH",
+      "x-numeric": 756,
+      "x-region": "Europe",
+      "x-sub-region": "Western Europe",
+      "const": "CHE"
+    },
+    {
+      "title": "Chile",
+      "x-alpha-2": "CL",
+      "x-numeric": 152,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "CHL"
+    },
+    {
+      "title": "China",
+      "x-alpha-2": "CN",
+      "x-numeric": 156,
+      "x-region": "Asia",
+      "x-sub-region": "Eastern Asia",
+      "const": "CHN"
+    },
+    {
+      "title": "Côte d'Ivoire",
+      "x-alpha-2": "CI",
+      "x-numeric": 384,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "CIV"
+    },
+    {
+      "title": "Cameroon",
+      "x-alpha-2": "CM",
+      "x-numeric": 120,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "CMR"
+    },
+    {
+      "title": "Congo, Democratic Republic of the",
+      "x-alpha-2": "CD",
+      "x-numeric": 180,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "COD"
+    },
+    {
+      "title": "Congo",
+      "x-alpha-2": "CG",
+      "x-numeric": 178,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "COG"
+    },
+    {
+      "title": "Cook Islands",
+      "x-alpha-2": "CK",
+      "x-numeric": 184,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "COK"
+    },
+    {
+      "title": "Colombia",
+      "x-alpha-2": "CO",
+      "x-numeric": 170,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "COL"
+    },
+    {
+      "title": "Comoros",
+      "x-alpha-2": "KM",
+      "x-numeric": 174,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "COM"
+    },
+    {
+      "title": "Cabo Verde",
+      "x-alpha-2": "CV",
+      "x-numeric": 132,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "CPV"
+    },
+    {
+      "title": "Costa Rica",
+      "x-alpha-2": "CR",
+      "x-numeric": 188,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "CRI"
+    },
+    {
+      "title": "Cuba",
+      "x-alpha-2": "CU",
+      "x-numeric": 192,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "CUB"
+    },
+    {
+      "title": "Curaçao",
+      "x-alpha-2": "CW",
+      "x-numeric": 531,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "CUW"
+    },
+    {
+      "title": "Christmas Island",
+      "x-alpha-2": "CX",
+      "x-numeric": 162,
+      "x-region": "Oceania",
+      "x-sub-region": "Australia and New Zealand",
+      "const": "CXR"
+    },
+    {
+      "title": "Cayman Islands",
+      "x-alpha-2": "KY",
+      "x-numeric": 136,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "CYM"
+    },
+    {
+      "title": "Cyprus",
+      "x-alpha-2": "CY",
+      "x-numeric": 196,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "CYP"
+    },
+    {
+      "title": "Czechia",
+      "x-alpha-2": "CZ",
+      "x-numeric": 203,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "CZE"
+    },
+    {
+      "title": "Germany",
+      "x-alpha-2": "DE",
+      "x-numeric": 276,
+      "x-region": "Europe",
+      "x-sub-region": "Western Europe",
+      "const": "DEU"
+    },
+    {
+      "title": "Djibouti",
+      "x-alpha-2": "DJ",
+      "x-numeric": 262,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "DJI"
+    },
+    {
+      "title": "Dominica",
+      "x-alpha-2": "DM",
+      "x-numeric": 212,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "DMA"
+    },
+    {
+      "title": "Denmark",
+      "x-alpha-2": "DK",
+      "x-numeric": 208,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "DNK"
+    },
+    {
+      "title": "Dominican Republic",
+      "x-alpha-2": "DO",
+      "x-numeric": 214,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "DOM"
+    },
+    {
+      "title": "Algeria",
+      "x-alpha-2": "DZ",
+      "x-numeric": 12,
+      "x-region": "Africa",
+      "x-sub-region": "Northern Africa",
+      "const": "DZA"
+    },
+    {
+      "title": "Ecuador",
+      "x-alpha-2": "EC",
+      "x-numeric": 218,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "ECU"
+    },
+    {
+      "title": "Egypt",
+      "x-alpha-2": "EG",
+      "x-numeric": 818,
+      "x-region": "Africa",
+      "x-sub-region": "Northern Africa",
+      "const": "EGY"
+    },
+    {
+      "title": "Eritrea",
+      "x-alpha-2": "ER",
+      "x-numeric": 232,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "ERI"
+    },
+    {
+      "title": "Western Sahara",
+      "x-alpha-2": "EH",
+      "x-numeric": 732,
+      "x-region": "Africa",
+      "x-sub-region": "Northern Africa",
+      "const": "ESH"
+    },
+    {
+      "title": "Spain",
+      "x-alpha-2": "ES",
+      "x-numeric": 724,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "ESP"
+    },
+    {
+      "title": "Estonia",
+      "x-alpha-2": "EE",
+      "x-numeric": 233,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "EST"
+    },
+    {
+      "title": "Ethiopia",
+      "x-alpha-2": "ET",
+      "x-numeric": 231,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "ETH"
+    },
+    {
+      "title": "Finland",
+      "x-alpha-2": "FI",
+      "x-numeric": 246,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "FIN"
+    },
+    {
+      "title": "Fiji",
+      "x-alpha-2": "FJ",
+      "x-numeric": 242,
+      "x-region": "Oceania",
+      "x-sub-region": "Melanesia",
+      "const": "FJI"
+    },
+    {
+      "title": "Falkland Islands (Malvinas)",
+      "x-alpha-2": "FK",
+      "x-numeric": 238,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "FLK"
+    },
+    {
+      "title": "France",
+      "x-alpha-2": "FR",
+      "x-numeric": 250,
+      "x-region": "Europe",
+      "x-sub-region": "Western Europe",
+      "const": "FRA"
+    },
+    {
+      "title": "Faroe Islands",
+      "x-alpha-2": "FO",
+      "x-numeric": 234,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "FRO"
+    },
+    {
+      "title": "Micronesia, Federated States of",
+      "x-alpha-2": "FM",
+      "x-numeric": 583,
+      "x-region": "Oceania",
+      "x-sub-region": "Micronesia",
+      "const": "FSM"
+    },
+    {
+      "title": "Gabon",
+      "x-alpha-2": "GA",
+      "x-numeric": 266,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "GAB"
+    },
+    {
+      "title": "United Kingdom of Great Britain and Northern Ireland",
+      "x-alpha-2": "GB",
+      "x-numeric": 826,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "GBR"
+    },
+    {
+      "title": "Georgia",
+      "x-alpha-2": "GE",
+      "x-numeric": 268,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "GEO"
+    },
+    {
+      "title": "Guernsey",
+      "x-alpha-2": "GG",
+      "x-numeric": 831,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "GGY"
+    },
+    {
+      "title": "Ghana",
+      "x-alpha-2": "GH",
+      "x-numeric": 288,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "GHA"
+    },
+    {
+      "title": "Gibraltar",
+      "x-alpha-2": "GI",
+      "x-numeric": 292,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "GIB"
+    },
+    {
+      "title": "Guinea",
+      "x-alpha-2": "GN",
+      "x-numeric": 324,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "GIN"
+    },
+    {
+      "title": "Guadeloupe",
+      "x-alpha-2": "GP",
+      "x-numeric": 312,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "GLP"
+    },
+    {
+      "title": "Gambia",
+      "x-alpha-2": "GM",
+      "x-numeric": 270,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "GMB"
+    },
+    {
+      "title": "Guinea-Bissau",
+      "x-alpha-2": "GW",
+      "x-numeric": 624,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "GNB"
+    },
+    {
+      "title": "Equatorial Guinea",
+      "x-alpha-2": "GQ",
+      "x-numeric": 226,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "GNQ"
+    },
+    {
+      "title": "Greece",
+      "x-alpha-2": "GR",
+      "x-numeric": 300,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "GRC"
+    },
+    {
+      "title": "Grenada",
+      "x-alpha-2": "GD",
+      "x-numeric": 308,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "GRD"
+    },
+    {
+      "title": "Greenland",
+      "x-alpha-2": "GL",
+      "x-numeric": 304,
+      "x-region": "Americas",
+      "x-sub-region": "Northern America",
+      "const": "GRL"
+    },
+    {
+      "title": "Guatemala",
+      "x-alpha-2": "GT",
+      "x-numeric": 320,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "GTM"
+    },
+    {
+      "title": "French Guiana",
+      "x-alpha-2": "GF",
+      "x-numeric": 254,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "GUF"
+    },
+    {
+      "title": "Guam",
+      "x-alpha-2": "GU",
+      "x-numeric": 316,
+      "x-region": "Oceania",
+      "x-sub-region": "Micronesia",
+      "const": "GUM"
+    },
+    {
+      "title": "Guyana",
+      "x-alpha-2": "GY",
+      "x-numeric": 328,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "GUY"
+    },
+    {
+      "title": "Hong Kong",
+      "x-alpha-2": "HK",
+      "x-numeric": 344,
+      "x-region": "Asia",
+      "x-sub-region": "Eastern Asia",
+      "const": "HKG"
+    },
+    {
+      "title": "Heard Island and McDonald Islands",
+      "x-alpha-2": "HM",
+      "x-numeric": 334,
+      "x-region": "Oceania",
+      "x-sub-region": "Australia and New Zealand",
+      "const": "HMD"
+    },
+    {
+      "title": "Honduras",
+      "x-alpha-2": "HN",
+      "x-numeric": 340,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "HND"
+    },
+    {
+      "title": "Croatia",
+      "x-alpha-2": "HR",
+      "x-numeric": 191,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "HRV"
+    },
+    {
+      "title": "Haiti",
+      "x-alpha-2": "HT",
+      "x-numeric": 332,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "HTI"
+    },
+    {
+      "title": "Hungary",
+      "x-alpha-2": "HU",
+      "x-numeric": 348,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "HUN"
+    },
+    {
+      "title": "Indonesia",
+      "x-alpha-2": "ID",
+      "x-numeric": 360,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "IDN"
+    },
+    {
+      "title": "Isle of Man",
+      "x-alpha-2": "IM",
+      "x-numeric": 833,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "IMN"
+    },
+    {
+      "title": "India",
+      "x-alpha-2": "IN",
+      "x-numeric": 356,
+      "x-region": "Asia",
+      "x-sub-region": "Southern Asia",
+      "const": "IND"
+    },
+    {
+      "title": "British Indian Ocean Territory",
+      "x-alpha-2": "IO",
+      "x-numeric": 86,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "IOT"
+    },
+    {
+      "title": "Ireland",
+      "x-alpha-2": "IE",
+      "x-numeric": 372,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "IRL"
+    },
+    {
+      "title": "Iran, Islamic Republic of",
+      "x-alpha-2": "IR",
+      "x-numeric": 364,
+      "x-region": "Asia",
+      "x-sub-region": "Southern Asia",
+      "const": "IRN"
+    },
+    {
+      "title": "Iraq",
+      "x-alpha-2": "IQ",
+      "x-numeric": 368,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "IRQ"
+    },
+    {
+      "title": "Iceland",
+      "x-alpha-2": "IS",
+      "x-numeric": 352,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "ISL"
+    },
+    {
+      "title": "Israel",
+      "x-alpha-2": "IL",
+      "x-numeric": 376,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "ISR"
+    },
+    {
+      "title": "Italy",
+      "x-alpha-2": "IT",
+      "x-numeric": 380,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "ITA"
+    },
+    {
+      "title": "Jamaica",
+      "x-alpha-2": "JM",
+      "x-numeric": 388,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "JAM"
+    },
+    {
+      "title": "Jersey",
+      "x-alpha-2": "JE",
+      "x-numeric": 832,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "JEY"
+    },
+    {
+      "title": "Jordan",
+      "x-alpha-2": "JO",
+      "x-numeric": 400,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "JOR"
+    },
+    {
+      "title": "Japan",
+      "x-alpha-2": "JP",
+      "x-numeric": 392,
+      "x-region": "Asia",
+      "x-sub-region": "Eastern Asia",
+      "const": "JPN"
+    },
+    {
+      "title": "Kazakhstan",
+      "x-alpha-2": "KZ",
+      "x-numeric": 398,
+      "x-region": "Asia",
+      "x-sub-region": "Central Asia",
+      "const": "KAZ"
+    },
+    {
+      "title": "Kenya",
+      "x-alpha-2": "KE",
+      "x-numeric": 404,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "KEN"
+    },
+    {
+      "title": "Kyrgyzstan",
+      "x-alpha-2": "KG",
+      "x-numeric": 417,
+      "x-region": "Asia",
+      "x-sub-region": "Central Asia",
+      "const": "KGZ"
+    },
+    {
+      "title": "Cambodia",
+      "x-alpha-2": "KH",
+      "x-numeric": 116,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "KHM"
+    },
+    {
+      "title": "Kiribati",
+      "x-alpha-2": "KI",
+      "x-numeric": 296,
+      "x-region": "Oceania",
+      "x-sub-region": "Micronesia",
+      "const": "KIR"
+    },
+    {
+      "title": "Saint Kitts and Nevis",
+      "x-alpha-2": "KN",
+      "x-numeric": 659,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "KNA"
+    },
+    {
+      "title": "Korea, Republic of",
+      "x-alpha-2": "KR",
+      "x-numeric": 410,
+      "x-region": "Asia",
+      "x-sub-region": "Eastern Asia",
+      "const": "KOR"
+    },
+    {
+      "title": "Kuwait",
+      "x-alpha-2": "KW",
+      "x-numeric": 414,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "KWT"
+    },
+    {
+      "title": "Lao People's Democratic Republic",
+      "x-alpha-2": "LA",
+      "x-numeric": 418,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "LAO"
+    },
+    {
+      "title": "Lebanon",
+      "x-alpha-2": "LB",
+      "x-numeric": 422,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "LBN"
+    },
+    {
+      "title": "Liberia",
+      "x-alpha-2": "LR",
+      "x-numeric": 430,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "LBR"
+    },
+    {
+      "title": "Libya",
+      "x-alpha-2": "LY",
+      "x-numeric": 434,
+      "x-region": "Africa",
+      "x-sub-region": "Northern Africa",
+      "const": "LBY"
+    },
+    {
+      "title": "Saint Lucia",
+      "x-alpha-2": "LC",
+      "x-numeric": 662,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "LCA"
+    },
+    {
+      "title": "Liechtenstein",
+      "x-alpha-2": "LI",
+      "x-numeric": 438,
+      "x-region": "Europe",
+      "x-sub-region": "Western Europe",
+      "const": "LIE"
+    },
+    {
+      "title": "Sri Lanka",
+      "x-alpha-2": "LK",
+      "x-numeric": 144,
+      "x-region": "Asia",
+      "x-sub-region": "Southern Asia",
+      "const": "LKA"
+    },
+    {
+      "title": "Lesotho",
+      "x-alpha-2": "LS",
+      "x-numeric": 426,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "LSO"
+    },
+    {
+      "title": "Lithuania",
+      "x-alpha-2": "LT",
+      "x-numeric": 440,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "LTU"
+    },
+    {
+      "title": "Luxembourg",
+      "x-alpha-2": "LU",
+      "x-numeric": 442,
+      "x-region": "Europe",
+      "x-sub-region": "Western Europe",
+      "const": "LUX"
+    },
+    {
+      "title": "Latvia",
+      "x-alpha-2": "LV",
+      "x-numeric": 428,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "LVA"
+    },
+    {
+      "title": "Macao",
+      "x-alpha-2": "MO",
+      "x-numeric": 446,
+      "x-region": "Asia",
+      "x-sub-region": "Eastern Asia",
+      "const": "MAC"
+    },
+    {
+      "title": "Saint Martin (French part)",
+      "x-alpha-2": "MF",
+      "x-numeric": 663,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "MAF"
+    },
+    {
+      "title": "Morocco",
+      "x-alpha-2": "MA",
+      "x-numeric": 504,
+      "x-region": "Africa",
+      "x-sub-region": "Northern Africa",
+      "const": "MAR"
+    },
+    {
+      "title": "Monaco",
+      "x-alpha-2": "MC",
+      "x-numeric": 492,
+      "x-region": "Europe",
+      "x-sub-region": "Western Europe",
+      "const": "MCO"
+    },
+    {
+      "title": "Moldova, Republic of",
+      "x-alpha-2": "MD",
+      "x-numeric": 498,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "MDA"
+    },
+    {
+      "title": "Madagascar",
+      "x-alpha-2": "MG",
+      "x-numeric": 450,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "MDG"
+    },
+    {
+      "title": "Maldives",
+      "x-alpha-2": "MV",
+      "x-numeric": 462,
+      "x-region": "Asia",
+      "x-sub-region": "Southern Asia",
+      "const": "MDV"
+    },
+    {
+      "title": "Mexico",
+      "x-alpha-2": "MX",
+      "x-numeric": 484,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "MEX"
+    },
+    {
+      "title": "Marshall Islands",
+      "x-alpha-2": "MH",
+      "x-numeric": 584,
+      "x-region": "Oceania",
+      "x-sub-region": "Micronesia",
+      "const": "MHL"
+    },
+    {
+      "title": "North Macedonia",
+      "x-alpha-2": "MK",
+      "x-numeric": 807,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "MKD"
+    },
+    {
+      "title": "Mali",
+      "x-alpha-2": "ML",
+      "x-numeric": 466,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "MLI"
+    },
+    {
+      "title": "Malta",
+      "x-alpha-2": "MT",
+      "x-numeric": 470,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "MLT"
+    },
+    {
+      "title": "Myanmar",
+      "x-alpha-2": "MM",
+      "x-numeric": 104,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "MMR"
+    },
+    {
+      "title": "Montenegro",
+      "x-alpha-2": "ME",
+      "x-numeric": 499,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "MNE"
+    },
+    {
+      "title": "Mongolia",
+      "x-alpha-2": "MN",
+      "x-numeric": 496,
+      "x-region": "Asia",
+      "x-sub-region": "Eastern Asia",
+      "const": "MNG"
+    },
+    {
+      "title": "Northern Mariana Islands",
+      "x-alpha-2": "MP",
+      "x-numeric": 580,
+      "x-region": "Oceania",
+      "x-sub-region": "Micronesia",
+      "const": "MNP"
+    },
+    {
+      "title": "Mozambique",
+      "x-alpha-2": "MZ",
+      "x-numeric": 508,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "MOZ"
+    },
+    {
+      "title": "Mauritania",
+      "x-alpha-2": "MR",
+      "x-numeric": 478,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "MRT"
+    },
+    {
+      "title": "Montserrat",
+      "x-alpha-2": "MS",
+      "x-numeric": 500,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "MSR"
+    },
+    {
+      "title": "Martinique",
+      "x-alpha-2": "MQ",
+      "x-numeric": 474,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "MTQ"
+    },
+    {
+      "title": "Mauritius",
+      "x-alpha-2": "MU",
+      "x-numeric": 480,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "MUS"
+    },
+    {
+      "title": "Malawi",
+      "x-alpha-2": "MW",
+      "x-numeric": 454,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "MWI"
+    },
+    {
+      "title": "Malaysia",
+      "x-alpha-2": "MY",
+      "x-numeric": 458,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "MYS"
+    },
+    {
+      "title": "Mayotte",
+      "x-alpha-2": "YT",
+      "x-numeric": 175,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "MYT"
+    },
+    {
+      "title": "Namibia",
+      "x-alpha-2": "NA",
+      "x-numeric": 516,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "NAM"
+    },
+    {
+      "title": "New Caledonia",
+      "x-alpha-2": "NC",
+      "x-numeric": 540,
+      "x-region": "Oceania",
+      "x-sub-region": "Melanesia",
+      "const": "NCL"
+    },
+    {
+      "title": "Niger",
+      "x-alpha-2": "NE",
+      "x-numeric": 562,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "NER"
+    },
+    {
+      "title": "Norfolk Island",
+      "x-alpha-2": "NF",
+      "x-numeric": 574,
+      "x-region": "Oceania",
+      "x-sub-region": "Australia and New Zealand",
+      "const": "NFK"
+    },
+    {
+      "title": "Nigeria",
+      "x-alpha-2": "NG",
+      "x-numeric": 566,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "NGA"
+    },
+    {
+      "title": "Nicaragua",
+      "x-alpha-2": "NI",
+      "x-numeric": 558,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "NIC"
+    },
+    {
+      "title": "Niue",
+      "x-alpha-2": "NU",
+      "x-numeric": 570,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "NIU"
+    },
+    {
+      "title": "Netherlands, Kingdom of the",
+      "x-alpha-2": "NL",
+      "x-numeric": 528,
+      "x-region": "Europe",
+      "x-sub-region": "Western Europe",
+      "const": "NLD"
+    },
+    {
+      "title": "Norway",
+      "x-alpha-2": "NO",
+      "x-numeric": 578,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "NOR"
+    },
+    {
+      "title": "Nepal",
+      "x-alpha-2": "NP",
+      "x-numeric": 524,
+      "x-region": "Asia",
+      "x-sub-region": "Southern Asia",
+      "const": "NPL"
+    },
+    {
+      "title": "Nauru",
+      "x-alpha-2": "NR",
+      "x-numeric": 520,
+      "x-region": "Oceania",
+      "x-sub-region": "Micronesia",
+      "const": "NRU"
+    },
+    {
+      "title": "New Zealand",
+      "x-alpha-2": "NZ",
+      "x-numeric": 554,
+      "x-region": "Oceania",
+      "x-sub-region": "Australia and New Zealand",
+      "const": "NZL"
+    },
+    {
+      "title": "Oman",
+      "x-alpha-2": "OM",
+      "x-numeric": 512,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "OMN"
+    },
+    {
+      "title": "Pakistan",
+      "x-alpha-2": "PK",
+      "x-numeric": 586,
+      "x-region": "Asia",
+      "x-sub-region": "Southern Asia",
+      "const": "PAK"
+    },
+    {
+      "title": "Panama",
+      "x-alpha-2": "PA",
+      "x-numeric": 591,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "PAN"
+    },
+    {
+      "title": "Pitcairn",
+      "x-alpha-2": "PN",
+      "x-numeric": 612,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "PCN"
+    },
+    {
+      "title": "Peru",
+      "x-alpha-2": "PE",
+      "x-numeric": 604,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "PER"
+    },
+    {
+      "title": "Philippines",
+      "x-alpha-2": "PH",
+      "x-numeric": 608,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "PHL"
+    },
+    {
+      "title": "Palau",
+      "x-alpha-2": "PW",
+      "x-numeric": 585,
+      "x-region": "Oceania",
+      "x-sub-region": "Micronesia",
+      "const": "PLW"
+    },
+    {
+      "title": "Papua New Guinea",
+      "x-alpha-2": "PG",
+      "x-numeric": 598,
+      "x-region": "Oceania",
+      "x-sub-region": "Melanesia",
+      "const": "PNG"
+    },
+    {
+      "title": "Poland",
+      "x-alpha-2": "PL",
+      "x-numeric": 616,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "POL"
+    },
+    {
+      "title": "Puerto Rico",
+      "x-alpha-2": "PR",
+      "x-numeric": 630,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "PRI"
+    },
+    {
+      "title": "Korea, Democratic People's Republic of",
+      "x-alpha-2": "KP",
+      "x-numeric": 408,
+      "x-region": "Asia",
+      "x-sub-region": "Eastern Asia",
+      "const": "PRK"
+    },
+    {
+      "title": "Portugal",
+      "x-alpha-2": "PT",
+      "x-numeric": 620,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "PRT"
+    },
+    {
+      "title": "Paraguay",
+      "x-alpha-2": "PY",
+      "x-numeric": 600,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "PRY"
+    },
+    {
+      "title": "Palestine, State of",
+      "x-alpha-2": "PS",
+      "x-numeric": 275,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "PSE"
+    },
+    {
+      "title": "French Polynesia",
+      "x-alpha-2": "PF",
+      "x-numeric": 258,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "PYF"
+    },
+    {
+      "title": "Qatar",
+      "x-alpha-2": "QA",
+      "x-numeric": 634,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "QAT"
+    },
+    {
+      "title": "Réunion",
+      "x-alpha-2": "RE",
+      "x-numeric": 638,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "REU"
+    },
+    {
+      "title": "Romania",
+      "x-alpha-2": "RO",
+      "x-numeric": 642,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "ROU"
+    },
+    {
+      "title": "Russian Federation",
+      "x-alpha-2": "RU",
+      "x-numeric": 643,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "RUS"
+    },
+    {
+      "title": "Rwanda",
+      "x-alpha-2": "RW",
+      "x-numeric": 646,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "RWA"
+    },
+    {
+      "title": "Saudi Arabia",
+      "x-alpha-2": "SA",
+      "x-numeric": 682,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "SAU"
+    },
+    {
+      "title": "Sudan",
+      "x-alpha-2": "SD",
+      "x-numeric": 729,
+      "x-region": "Africa",
+      "x-sub-region": "Northern Africa",
+      "const": "SDN"
+    },
+    {
+      "title": "Senegal",
+      "x-alpha-2": "SN",
+      "x-numeric": 686,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "SEN"
+    },
+    {
+      "title": "Singapore",
+      "x-alpha-2": "SG",
+      "x-numeric": 702,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "SGP"
+    },
+    {
+      "title": "South Georgia and the South Sandwich Islands",
+      "x-alpha-2": "GS",
+      "x-numeric": 239,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "SGS"
+    },
+    {
+      "title": "Saint Helena, Ascension and Tristan da Cunha",
+      "x-alpha-2": "SH",
+      "x-numeric": 654,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "SHN"
+    },
+    {
+      "title": "Svalbard and Jan Mayen",
+      "x-alpha-2": "SJ",
+      "x-numeric": 744,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "SJM"
+    },
+    {
+      "title": "Solomon Islands",
+      "x-alpha-2": "SB",
+      "x-numeric": 90,
+      "x-region": "Oceania",
+      "x-sub-region": "Melanesia",
+      "const": "SLB"
+    },
+    {
+      "title": "Sierra Leone",
+      "x-alpha-2": "SL",
+      "x-numeric": 694,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "SLE"
+    },
+    {
+      "title": "El Salvador",
+      "x-alpha-2": "SV",
+      "x-numeric": 222,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "SLV"
+    },
+    {
+      "title": "San Marino",
+      "x-alpha-2": "SM",
+      "x-numeric": 674,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "SMR"
+    },
+    {
+      "title": "Somalia",
+      "x-alpha-2": "SO",
+      "x-numeric": 706,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "SOM"
+    },
+    {
+      "title": "Saint Pierre and Miquelon",
+      "x-alpha-2": "PM",
+      "x-numeric": 666,
+      "x-region": "Americas",
+      "x-sub-region": "Northern America",
+      "const": "SPM"
+    },
+    {
+      "title": "Serbia",
+      "x-alpha-2": "RS",
+      "x-numeric": 688,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "SRB"
+    },
+    {
+      "title": "South Sudan",
+      "x-alpha-2": "SS",
+      "x-numeric": 728,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "SSD"
+    },
+    {
+      "title": "Sao Tome and Principe",
+      "x-alpha-2": "ST",
+      "x-numeric": 678,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "STP"
+    },
+    {
+      "title": "Suriname",
+      "x-alpha-2": "SR",
+      "x-numeric": 740,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "SUR"
+    },
+    {
+      "title": "Slovakia",
+      "x-alpha-2": "SK",
+      "x-numeric": 703,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "SVK"
+    },
+    {
+      "title": "Slovenia",
+      "x-alpha-2": "SI",
+      "x-numeric": 705,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "SVN"
+    },
+    {
+      "title": "Sweden",
+      "x-alpha-2": "SE",
+      "x-numeric": 752,
+      "x-region": "Europe",
+      "x-sub-region": "Northern Europe",
+      "const": "SWE"
+    },
+    {
+      "title": "Eswatini",
+      "x-alpha-2": "SZ",
+      "x-numeric": 748,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "SWZ"
+    },
+    {
+      "title": "Sint Maarten (Dutch part)",
+      "x-alpha-2": "SX",
+      "x-numeric": 534,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "SXM"
+    },
+    {
+      "title": "Seychelles",
+      "x-alpha-2": "SC",
+      "x-numeric": 690,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "SYC"
+    },
+    {
+      "title": "Syrian Arab Republic",
+      "x-alpha-2": "SY",
+      "x-numeric": 760,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "SYR"
+    },
+    {
+      "title": "Turks and Caicos Islands",
+      "x-alpha-2": "TC",
+      "x-numeric": 796,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "TCA"
+    },
+    {
+      "title": "Chad",
+      "x-alpha-2": "TD",
+      "x-numeric": 148,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "TCD"
+    },
+    {
+      "title": "Togo",
+      "x-alpha-2": "TG",
+      "x-numeric": 768,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "TGO"
+    },
+    {
+      "title": "Thailand",
+      "x-alpha-2": "TH",
+      "x-numeric": 764,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "THA"
+    },
+    {
+      "title": "Tajikistan",
+      "x-alpha-2": "TJ",
+      "x-numeric": 762,
+      "x-region": "Asia",
+      "x-sub-region": "Central Asia",
+      "const": "TJK"
+    },
+    {
+      "title": "Tokelau",
+      "x-alpha-2": "TK",
+      "x-numeric": 772,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "TKL"
+    },
+    {
+      "title": "Turkmenistan",
+      "x-alpha-2": "TM",
+      "x-numeric": 795,
+      "x-region": "Asia",
+      "x-sub-region": "Central Asia",
+      "const": "TKM"
+    },
+    {
+      "title": "Timor-Leste",
+      "x-alpha-2": "TL",
+      "x-numeric": 626,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "TLS"
+    },
+    {
+      "title": "Tonga",
+      "x-alpha-2": "TO",
+      "x-numeric": 776,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "TON"
+    },
+    {
+      "title": "Trinidad and Tobago",
+      "x-alpha-2": "TT",
+      "x-numeric": 780,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "TTO"
+    },
+    {
+      "title": "Tunisia",
+      "x-alpha-2": "TN",
+      "x-numeric": 788,
+      "x-region": "Africa",
+      "x-sub-region": "Northern Africa",
+      "const": "TUN"
+    },
+    {
+      "title": "Türkiye",
+      "x-alpha-2": "TR",
+      "x-numeric": 792,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "TUR"
+    },
+    {
+      "title": "Tuvalu",
+      "x-alpha-2": "TV",
+      "x-numeric": 798,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "TUV"
+    },
+    {
+      "title": "Taiwan, Province of China",
+      "x-alpha-2": "TW",
+      "x-numeric": 158,
+      "const": "TWN"
+    },
+    {
+      "title": "Tanzania, United Republic of",
+      "x-alpha-2": "TZ",
+      "x-numeric": 834,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "TZA"
+    },
+    {
+      "title": "Uganda",
+      "x-alpha-2": "UG",
+      "x-numeric": 800,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "UGA"
+    },
+    {
+      "title": "Ukraine",
+      "x-alpha-2": "UA",
+      "x-numeric": 804,
+      "x-region": "Europe",
+      "x-sub-region": "Eastern Europe",
+      "const": "UKR"
+    },
+    {
+      "title": "United States Minor Outlying Islands",
+      "x-alpha-2": "UM",
+      "x-numeric": 581,
+      "x-region": "Oceania",
+      "x-sub-region": "Micronesia",
+      "const": "UMI"
+    },
+    {
+      "title": "Uruguay",
+      "x-alpha-2": "UY",
+      "x-numeric": 858,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "URY"
+    },
+    {
+      "title": "United States of America",
+      "x-alpha-2": "US",
+      "x-numeric": 840,
+      "x-region": "Americas",
+      "x-sub-region": "Northern America",
+      "const": "USA"
+    },
+    {
+      "title": "Uzbekistan",
+      "x-alpha-2": "UZ",
+      "x-numeric": 860,
+      "x-region": "Asia",
+      "x-sub-region": "Central Asia",
+      "const": "UZB"
+    },
+    {
+      "title": "Holy See",
+      "x-alpha-2": "VA",
+      "x-numeric": 336,
+      "x-region": "Europe",
+      "x-sub-region": "Southern Europe",
+      "const": "VAT"
+    },
+    {
+      "title": "Saint Vincent and the Grenadines",
+      "x-alpha-2": "VC",
+      "x-numeric": 670,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "VCT"
+    },
+    {
+      "title": "Venezuela, Bolivarian Republic of",
+      "x-alpha-2": "VE",
+      "x-numeric": 862,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "VEN"
+    },
+    {
+      "title": "Virgin Islands (British)",
+      "x-alpha-2": "VG",
+      "x-numeric": 92,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "VGB"
+    },
+    {
+      "title": "Virgin Islands (U.S.)",
+      "x-alpha-2": "VI",
+      "x-numeric": 850,
+      "x-region": "Americas",
+      "x-sub-region": "Latin America and the Caribbean",
+      "const": "VIR"
+    },
+    {
+      "title": "Viet Nam",
+      "x-alpha-2": "VN",
+      "x-numeric": 704,
+      "x-region": "Asia",
+      "x-sub-region": "South-eastern Asia",
+      "const": "VNM"
+    },
+    {
+      "title": "Vanuatu",
+      "x-alpha-2": "VU",
+      "x-numeric": 548,
+      "x-region": "Oceania",
+      "x-sub-region": "Melanesia",
+      "const": "VUT"
+    },
+    {
+      "title": "Wallis and Futuna",
+      "x-alpha-2": "WF",
+      "x-numeric": 876,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "WLF"
+    },
+    {
+      "title": "Samoa",
+      "x-alpha-2": "WS",
+      "x-numeric": 882,
+      "x-region": "Oceania",
+      "x-sub-region": "Polynesia",
+      "const": "WSM"
+    },
+    {
+      "title": "Yemen",
+      "x-alpha-2": "YE",
+      "x-numeric": 887,
+      "x-region": "Asia",
+      "x-sub-region": "Western Asia",
+      "const": "YEM"
+    },
+    {
+      "title": "South Africa",
+      "x-alpha-2": "ZA",
+      "x-numeric": 710,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "ZAF"
+    },
+    {
+      "title": "Zambia",
+      "x-alpha-2": "ZM",
+      "x-numeric": 894,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "ZMB"
+    },
+    {
+      "title": "Zimbabwe",
+      "x-alpha-2": "ZW",
+      "x-numeric": 716,
+      "x-region": "Africa",
+      "x-sub-region": "Sub-Saharan Africa",
+      "const": "ZWE"
+    }
+  ]
+}

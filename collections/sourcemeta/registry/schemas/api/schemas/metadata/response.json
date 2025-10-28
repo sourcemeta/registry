@@ -17,7 +17,7 @@
             "type": "string"
           },
           "path": {
-            "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
+            "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/uri-relative.json"
           }
         },
         "additionalProperties": false
@@ -53,22 +53,22 @@
           "type": [ "string", "null" ]
         },
         "baseDialect": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/uri.json"
         },
         "bytes": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/iso/it/byte.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/iso/it/2015/byte.json"
         },
         "dialect": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/uri.json"
         },
         "health": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/iso/units/percentage.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/iso/units/2022/percentage.json"
         },
         "identifier": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/url.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/url.json"
         },
         "path": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0.0.1/schemas/ietf/uri/uri-relative.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/uri-relative.json"
         },
         "provenance": {
           "type": [ "string", "null" ]

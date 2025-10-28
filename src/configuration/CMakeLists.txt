@@ -4,7 +4,7 @@ sourcemeta_library(NAMESPACE sourcemeta PROJECT registry NAME configuration
 
 # Compile the configuration schema
 set(REGISTRY_SCHEMAS "${PROJECT_SOURCE_DIR}/collections/sourcemeta/registry/schemas")
-set(STD_SCHEMAS "${PROJECT_SOURCE_DIR}/vendor/collections/sourcemeta/std/v0.0.1/schemas")
+set(STD_SCHEMAS "${PROJECT_SOURCE_DIR}/vendor/collections/sourcemeta/std/v0/schemas")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.json"
   COMMAND "$<TARGET_FILE:jsonschema_cli>" compile --minify
     "${REGISTRY_SCHEMAS}/configuration/configuration.json"
@@ -18,9 +18,9 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/template.json"
     "${REGISTRY_SCHEMAS}/configuration/page.json"
     "${REGISTRY_SCHEMAS}/configuration/rpath.json"
     "${STD_SCHEMAS}/ietf/email/address.json"
-    "${STD_SCHEMAS}/ieee/posix/path.json"
-    "${STD_SCHEMAS}/ieee/posix/path-absolute.json"
-    "${STD_SCHEMAS}/ieee/posix/path-relative.json"
+    "${STD_SCHEMAS}/ieee/posix/2017/path.json"
+    "${STD_SCHEMAS}/ieee/posix/2017/path-absolute.json"
+    "${STD_SCHEMAS}/ieee/posix/2017/path-relative.json"
     "${STD_SCHEMAS}/ietf/uri/uri-reference.json"
     "${STD_SCHEMAS}/ietf/uri/uri-relative.json"
     "${STD_SCHEMAS}/ietf/uri/uri.json"

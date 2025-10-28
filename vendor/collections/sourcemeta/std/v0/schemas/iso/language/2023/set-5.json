@@ -1,0 +1,331 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 639-5:2023 Language Family Code",
+  "description": "A three-letter code for language families and groups from ISO 639-5",
+  "$comment": "Set 5 codes language families and groups, not individual languages. It is independent from Sets 1-3",
+  "examples": [ "afa", "alg", "apa", "art" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/74575.html" ],
+  "anyOf": [
+    {
+      "title": "Afro-Asiatic languages",
+      "x-name-french": "afro-asiatiques, langues",
+      "const": "afa"
+    },
+    {
+      "title": "Algonquian languages",
+      "x-name-french": "algonquines, langues",
+      "const": "alg"
+    },
+    {
+      "title": "Apache languages",
+      "x-name-french": "apaches, langues",
+      "const": "apa"
+    },
+    {
+      "title": "Artificial languages",
+      "x-name-french": "artificielles, langues",
+      "const": "art"
+    },
+    {
+      "title": "Athapascan languages",
+      "x-name-french": "athapascanes, langues",
+      "const": "ath"
+    },
+    {
+      "title": "Australian languages",
+      "x-name-french": "australiennes, langues",
+      "const": "aus"
+    },
+    {
+      "title": "Banda languages",
+      "x-name-french": "banda, langues",
+      "const": "bad"
+    },
+    {
+      "title": "Bamileke languages",
+      "x-name-french": "bamiléké, langues",
+      "const": "bai"
+    },
+    {
+      "title": "Baltic languages",
+      "x-name-french": "baltes, langues",
+      "const": "bat"
+    },
+    {
+      "title": "Berber languages",
+      "x-name-french": "berbères, langues",
+      "const": "ber"
+    },
+    {
+      "title": "Bihari languages",
+      "x-name-french": "langues biharis",
+      "const": "bih"
+    },
+    {
+      "title": "Bantu languages",
+      "x-name-french": "bantou, langues",
+      "const": "bnt"
+    },
+    {
+      "title": "Batak languages",
+      "x-name-french": "batak, langues",
+      "const": "btk"
+    },
+    {
+      "title": "Central American Indian languages",
+      "x-name-french": "amérindiennes de L'Amérique centrale, langues",
+      "const": "cai"
+    },
+    {
+      "title": "Caucasian languages",
+      "x-name-french": "caucasiennes, langues",
+      "const": "cau"
+    },
+    {
+      "title": "Celtic languages",
+      "x-name-french": "celtiques, langues; celtes, langues",
+      "const": "cel"
+    },
+    {
+      "title": "Chamic languages",
+      "x-name-french": "chames, langues",
+      "const": "cmc"
+    },
+    {
+      "title": "Cushitic languages",
+      "x-name-french": "couchitiques, langues",
+      "const": "cus"
+    },
+    {
+      "title": "Land Dayak languages",
+      "x-name-french": "dayak, langues",
+      "const": "day"
+    },
+    {
+      "title": "Dravidian languages",
+      "x-name-french": "dravidiennes, langues",
+      "const": "dra"
+    },
+    {
+      "title": "Finno-Ugrian languages",
+      "x-name-french": "finno-ougriennes, langues",
+      "const": "fiu"
+    },
+    {
+      "title": "Germanic languages",
+      "x-name-french": "germaniques, langues",
+      "const": "gem"
+    },
+    {
+      "title": "Himachali languages; Western Pahari languages",
+      "x-name-french": "langues himachalis; langues paharis occidentales",
+      "const": "him"
+    },
+    {
+      "title": "Ijo languages",
+      "x-name-french": "ijo, langues",
+      "const": "ijo"
+    },
+    {
+      "title": "Indic languages",
+      "x-name-french": "indo-aryennes, langues",
+      "const": "inc"
+    },
+    {
+      "title": "Indo-European languages",
+      "x-name-french": "indo-européennes, langues",
+      "const": "ine"
+    },
+    {
+      "title": "Iranian languages",
+      "x-name-french": "iraniennes, langues",
+      "const": "ira"
+    },
+    {
+      "title": "Iroquoian languages",
+      "x-name-french": "iroquoises, langues",
+      "const": "iro"
+    },
+    {
+      "title": "Karen languages",
+      "x-name-french": "karen, langues",
+      "const": "kar"
+    },
+    {
+      "title": "Khoisan languages",
+      "x-name-french": "khoïsan, langues",
+      "const": "khi"
+    },
+    {
+      "title": "Kru languages",
+      "x-name-french": "krou, langues",
+      "const": "kro"
+    },
+    {
+      "title": "Austronesian languages",
+      "x-name-french": "austronésiennes, langues",
+      "const": "map"
+    },
+    {
+      "title": "Uncoded languages",
+      "x-name-french": "langues non codées",
+      "const": "mis"
+    },
+    {
+      "title": "Mon-Khmer languages",
+      "x-name-french": "môn-khmer, langues",
+      "const": "mkh"
+    },
+    {
+      "title": "Manobo languages",
+      "x-name-french": "manobo, langues",
+      "const": "mno"
+    },
+    {
+      "title": "Multiple languages",
+      "x-name-french": "multilingue",
+      "const": "mul"
+    },
+    {
+      "title": "Munda languages",
+      "x-name-french": "mounda, langues",
+      "const": "mun"
+    },
+    {
+      "title": "Mayan languages",
+      "x-name-french": "maya, langues",
+      "const": "myn"
+    },
+    {
+      "title": "Nahuatl languages",
+      "x-name-french": "nahuatl, langues",
+      "const": "nah"
+    },
+    {
+      "title": "North American Indian languages",
+      "x-name-french": "nord-amérindiennes, langues",
+      "const": "nai"
+    },
+    {
+      "title": "Niger-Kordofanian languages",
+      "x-name-french": "nigéro-kordofaniennes, langues",
+      "const": "nic"
+    },
+    {
+      "title": "Nubian languages",
+      "x-name-french": "nubiennes, langues",
+      "const": "nub"
+    },
+    {
+      "title": "Otomian languages",
+      "x-name-french": "otomi, langues",
+      "const": "oto"
+    },
+    {
+      "title": "Papuan languages",
+      "x-name-french": "papoues, langues",
+      "const": "paa"
+    },
+    {
+      "title": "Philippine languages",
+      "x-name-french": "philippines, langues",
+      "const": "phi"
+    },
+    {
+      "title": "Prakrit languages",
+      "x-name-french": "prâkrit, langues",
+      "const": "pra"
+    },
+    {
+      "title": "Romance languages",
+      "x-name-french": "romanes, langues",
+      "const": "roa"
+    },
+    {
+      "title": "South American Indian languages",
+      "x-name-french": "sud-amérindiennes, langues",
+      "const": "sai"
+    },
+    {
+      "title": "Salishan languages",
+      "x-name-french": "salishennes, langues",
+      "const": "sal"
+    },
+    {
+      "title": "Semitic languages",
+      "x-name-french": "sémitiques, langues",
+      "const": "sem"
+    },
+    {
+      "title": "Sign Languages",
+      "x-name-french": "langues des signes",
+      "const": "sgn"
+    },
+    {
+      "title": "Siouan languages",
+      "x-name-french": "sioux, langues",
+      "const": "sio"
+    },
+    {
+      "title": "Sino-Tibetan languages",
+      "x-name-french": "sino-tibétaines, langues",
+      "const": "sit"
+    },
+    {
+      "title": "Slavic languages",
+      "x-name-french": "slaves, langues",
+      "const": "sla"
+    },
+    {
+      "title": "Sami languages",
+      "x-name-french": "sames, langues",
+      "const": "smi"
+    },
+    {
+      "title": "Songhai languages",
+      "x-name-french": "songhai, langues",
+      "const": "son"
+    },
+    {
+      "title": "Nilo-Saharan languages",
+      "x-name-french": "nilo-sahariennes, langues",
+      "const": "ssa"
+    },
+    {
+      "title": "Tai languages",
+      "x-name-french": "tai, langues",
+      "const": "tai"
+    },
+    {
+      "title": "Tupi languages",
+      "x-name-french": "tupi, langues",
+      "const": "tup"
+    },
+    {
+      "title": "Altaic languages",
+      "x-name-french": "altaïques, langues",
+      "const": "tut"
+    },
+    {
+      "title": "Wakashan languages",
+      "x-name-french": "wakashanes, langues",
+      "const": "wak"
+    },
+    {
+      "title": "Sorbian languages",
+      "x-name-french": "sorabes, langues",
+      "const": "wen"
+    },
+    {
+      "title": "Yupik languages",
+      "x-name-french": "yupik, langues",
+      "const": "ypk"
+    },
+    {
+      "title": "Zande languages",
+      "x-name-french": "zandé, langues",
+      "const": "znd"
+    }
+  ]
+}
