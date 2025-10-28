@@ -18,7 +18,8 @@ catalogs with enterprise-grade governance capabilities.
 - **[:briefcase: Commercial Licensing](https://registry.sourcemeta.com/commercial)** - Enterprise support
 - **[:speech_balloon: Community Support](https://github.com/sourcemeta/registry/discussions)** - GitHub Discussions
 
-> [!TIP] Do you want to level up your JSON Schema skills? Check out
+> [!TIP]
+> Do you want to level up your JSON Schema skills? Check out
 > [learnjsonschema.com](https://www.learnjsonschema.com), our growing JSON
 > Schema documentation website, our [JSON Schema for
 > OpenAPI](https://www.sourcemeta.com/courses/jsonschema-for-openapi) video
