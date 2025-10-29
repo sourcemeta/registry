@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema gYear",
+  "description": "The gYear datatype represents a gregorian calendar year (§3.2.11)",
+  "$comment": "Year 0000 is not allowed in XML Schema 1.0",
+  "examples": [ "1999", "1999Z", "1999+01:00", "-1999" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#gYear" ],
+  "type": "string",
+  "pattern": "^-?(?!0000)[0-9]{4}(Z|[+-]([01][0-9]|2[0-3]):[0-5][0-9])?$"
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema base64Binary",
+  "description": "The base64Binary datatype represents Base64-encoded arbitrary binary data (§3.2.16)",
+  "examples": [
+    "R0lGODlhAQABAAAAACw=",
+    "SGVsbG8gV29ybGQh",
+    "YQ==",
+    "YWI=",
+    "YWJj",
+    ""
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#base64Binary" ],
+  "$ref": "../../../ietf/encoding/base64.json",
+  "contentEncoding": "base64",
+  "contentMediaType": "application/octet-stream"
+}

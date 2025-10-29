@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "RFC 5646 BCP 47 Language Tag",
-  "description": "A language tag conforming to language tag full syntax at the syntax level only",
+  "title": "RFC 5646 Language Tag (BCP 47)",
+  "description": "A language tag conforming to language tags at the syntax level only",
   "examples": [
     "en",
     "en-US",

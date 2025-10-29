@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 4648 Base64url Encoding",
+  "description": "Base64 encoding with URL and filename safe alphabet as defined in RFC 4648 section 5. Uses hyphen (-) and underscore (_) instead of plus (+) and slash (/)",
+  "examples": [
+    "R0lGODlhAQABAAAAACw=",
+    "SGVsbG8gV29ybGQh",
+    "YQ==",
+    "YWI=",
+    "YWJj",
+    ""
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc4648.html#section-5" ],
+  "type": "string",
+  "pattern": "^([A-Za-z0-9_-]{4})*([A-Za-z0-9_-]{2}==|[A-Za-z0-9_-]{3}=)?$",
+  "contentEncoding": "base64url"
+}

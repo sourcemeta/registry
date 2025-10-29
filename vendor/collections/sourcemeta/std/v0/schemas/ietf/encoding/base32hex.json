@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 4648 Base32hex Encoding",
+  "description": "Uses digits 0-9 and uppercase letters A-V (32 characters total). Padding with = to multiple of 8 characters",
+  "examples": [
+    "91IMOR3F41BMUSJCCG======",
+    "C5H66===",
+    "CPNMU===",
+    "CPNMUO8=",
+    "CPNMUOJ1",
+    ""
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc4648.html#section-7" ],
+  "type": "string",
+  "pattern": "^([0-9A-V]{8})*([0-9A-V]{2}={6}|[0-9A-V]{4}={4}|[0-9A-V]{5}={3}|[0-9A-V]{7}=)?$",
+  "contentEncoding": "base32hex"
+}

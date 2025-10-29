@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IEEE 754-2019 Single Precision Binary Floating-Point (binary32)",
+  "description": "A 32-bit binary floating-point format",
+  "examples": [
+    0.0,
+    1.5,
+    -3.14,
+    340282346638528859811704183484516925440.0,
+    -340282346638528859811704183484516925440.0,
+    1.4013e-45
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://ieeexplore.ieee.org/document/8766229" ],
+  "type": "number",
+  "maximum": 340282346638528859811704183484516925440.0,
+  "minimum": -340282346638528859811704183484516925440.0
+}

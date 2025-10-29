@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema ENTITY",
+  "description": "Represents references to unparsed entities declared in the DTD (§3.3.11)",
+  "$comment": "ENTITY is syntactically an NCName. The constraint that it references a declared unparsed entity is DTD validation, not a schema concern",
+  "examples": [ "imageEntity", "_entity1", "logo-ref", "attachment_99" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#ENTITY" ],
+  "$ref": "ncname.json"
+}

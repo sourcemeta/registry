@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema unsignedInt",
+  "description": "Represents 32-bit unsigned integers (§3.3.22)",
+  "examples": [ 0, 1, 4294967295, 2147483648, 42 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#unsignedInt" ],
+  "$ref": "../../../iso/c/2024/uint32.json"
+}

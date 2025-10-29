@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema boolean",
+  "description": "The boolean datatype represents binary logic values (§3.2.2)",
+  "examples": [ true, false ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#boolean" ],
+  "type": "boolean"
+}

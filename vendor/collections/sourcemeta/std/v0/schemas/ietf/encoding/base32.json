@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 4648 Base32 Encoding",
+  "description": "Uses uppercase letters A-Z and digits 2-7 (32 characters total). Padding with = to multiple of 8 characters",
+  "examples": [
+    "JBSWY3DPEBLW64TMMQ======",
+    "MFRGG===",
+    "MZXW6===",
+    "MZXW6YQ=",
+    "MZXW6YTB",
+    ""
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc4648.html#section-6" ],
+  "type": "string",
+  "pattern": "^([A-Z2-7]{8})*([A-Z2-7]{2}={6}|[A-Z2-7]{4}={4}|[A-Z2-7]{5}={3}|[A-Z2-7]{7}=)?$",
+  "contentEncoding": "base32"
+}

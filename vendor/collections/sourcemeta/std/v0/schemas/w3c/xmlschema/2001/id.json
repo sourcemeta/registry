@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema ID",
+  "description": "Represents unique identifiers within an XML document (§3.3.8)",
+  "$comment": "ID is syntactically an NCName. The uniqueness constraint is a validation concern, not a schema concern",
+  "examples": [ "uniqueId", "_id123", "user-profile", "element_42" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#ID" ],
+  "$ref": "ncname.json"
+}

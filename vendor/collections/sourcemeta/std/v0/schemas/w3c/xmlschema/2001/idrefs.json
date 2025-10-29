@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema IDREFS",
+  "description": "Represents a list of references to ID values (§3.3.10)",
+  "$comment": "IDREFS is a space-separated list of IDREF values. In JSON Schema, this is represented as an array with at least one item",
+  "examples": [
+    [ "ref1", "ref2" ],
+    [ "_id1", "_id2", "_id3" ],
+    [ "singleRef" ],
+    [ "link-a", "link-b", "link-c" ]
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#IDREFS" ],
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "$ref": "idref.json"
+  }
+}

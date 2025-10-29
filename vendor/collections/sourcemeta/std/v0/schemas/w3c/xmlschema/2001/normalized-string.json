@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema normalizedString",
+  "description": "Represents white space normalized strings (§3.3.1)",
+  "examples": [
+    "This is a normalized string",
+    "Multiple  spaces  are  allowed",
+    "Leading and trailing spaces are allowed ",
+    " Also leading spaces",
+    "",
+    "Unicode: 你好世界",
+    "Special chars: @#$%^&*()"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#normalizedString" ],
+  "$ref": "string.json",
+  "not": {
+    "$comment": "Carriage return (#xD), line feed (#xA), and tab (#x9) are not allowed",
+    "pattern": "[\\r\\n\\t]"
+  }
+}

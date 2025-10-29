@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO/IEC 9899:2024 Single Precision Floating Point (float)",
+  "description": "A single precision (32-bit) floating point type",
+  "examples": [
+    0.0,
+    1.5,
+    -3.14,
+    340282346638528859811704183484516925440.0,
+    -340282346638528859811704183484516925440.0,
+    "NAN",
+    "INFINITY",
+    "-INFINITY"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/82075.html" ],
+  "anyOf": [
+    {
+      "$ref": "../../../ieee/floating-point/2019/binary32.json"
+    },
+    {
+      "$ref": "./float-special.json"
+    }
+  ]
+}

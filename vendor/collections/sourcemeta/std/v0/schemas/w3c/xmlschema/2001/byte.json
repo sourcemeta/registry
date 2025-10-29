@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema byte",
+  "description": "Represents 8-bit signed integers (§3.3.19)",
+  "examples": [ 0, 1, -1, 127, -128, 42, -99 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#byte" ],
+  "$ref": "../../../iso/c/2024/int8.json"
+}

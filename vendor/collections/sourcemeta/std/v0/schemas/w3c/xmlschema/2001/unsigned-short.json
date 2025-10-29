@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema unsignedShort",
+  "description": "Represents 16-bit unsigned integers (§3.3.23)",
+  "examples": [ 0, 1, 65535, 32768, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#unsignedShort" ],
+  "$ref": "../../../iso/c/2024/uint16.json"
+}

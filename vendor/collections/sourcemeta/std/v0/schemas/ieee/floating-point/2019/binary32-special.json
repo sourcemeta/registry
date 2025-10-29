@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IEEE 754-2019 Single Precision Binary Floating-Point with Special Values (binary32)",
+  "description": "A 32-bit binary floating-point format, extended to accept special values as strings",
+  "examples": [
+    0.0,
+    1.5,
+    -3.14,
+    340282346638528859811704183484516925440.0,
+    -340282346638528859811704183484516925440.0,
+    "NaN",
+    "+Inf",
+    "-Inf",
+    "sNaN"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://ieeexplore.ieee.org/document/8766229" ],
+  "anyOf": [
+    {
+      "$ref": "./binary32.json"
+    },
+    {
+      "$ref": "./special.json"
+    }
+  ]
+}

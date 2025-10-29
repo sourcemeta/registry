@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema anyURI",
+  "description": "The anyURI datatype represents a Uniform Resource Identifier Reference (URI) (§3.2.17)",
+  "examples": [
+    "http://www.example.com",
+    "https://www.example.com/path/to/resource",
+    "ftp://ftp.example.com/file.txt",
+    "mailto:user@example.com",
+    "../relative/path.html",
+    "http://www.example.com/path#fragment",
+    "urn:isbn:0-395-36341-1",
+    ""
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#anyURI" ],
+  "$ref": "../../../ietf/uri/uri-reference.json"
+}

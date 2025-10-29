@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema NMTOKENS",
+  "description": "Represents a list of XML name tokens (§3.3.4)",
+  "$comment": "NMTOKENS is a space-separated list of NMTOKEN values. In JSON Schema, this is represented as an array with at least one item",
+  "examples": [
+    [ "token1", "token2" ],
+    [ "abc", "123", "data-value" ],
+    [ "single" ],
+    [ "one", "two", "three", "four" ]
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#NMTOKENS" ],
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "$ref": "nmtoken.json"
+  }
+}

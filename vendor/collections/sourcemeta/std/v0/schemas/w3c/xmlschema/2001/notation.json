@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema NOTATION",
+  "description": "Represents the NOTATION attribute type from XML 1.0 (§3.2.16). The value space of NOTATION is the set of QNames of notations declared in the current schema. The lexical space consists of QName strings that reference notation declarations. Note that the semantic constraint requiring the QName to reference an actual notation declaration in the schema cannot be validated in isolation by this schema",
+  "examples": [ "jpeg", "png", "gif", "svg", "mime:image-jpeg", "format:pdf" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.w3.org/TR/xmlschema-2/#NOTATION",
+    "https://www.w3.org/TR/2000/REC-xml-20001006#NT-NotationType"
+  ],
+  "$ref": "qname.json"
+}

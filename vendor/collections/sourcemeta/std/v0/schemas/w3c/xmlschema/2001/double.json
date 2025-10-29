@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema double",
+  "description": "The double datatype corresponds to IEEE double-precision 64-bit floating point (§3.2.5)",
+  "examples": [ 0.0, 1.5, -3.14159, "INF", "-INF", "NaN" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#double" ],
+  "anyOf": [
+    {
+      "$ref": "../../../ieee/floating-point/2019/binary64.json"
+    },
+    {
+      "enum": [ "INF", "-INF", "NaN" ]
+    }
+  ]
+}

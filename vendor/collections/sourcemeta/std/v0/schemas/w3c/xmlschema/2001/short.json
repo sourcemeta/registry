@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema short",
+  "description": "Represents 16-bit signed integers (§3.3.18)",
+  "examples": [ 0, 1, -1, 32767, -32768, 1000, -1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#short" ],
+  "$ref": "../../../iso/c/2024/int16.json"
+}

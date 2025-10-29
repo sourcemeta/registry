@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO/IEC 9899:2024 Unsigned 32-bit Integer (uint32_t)",
+  "description": "An unsigned integer type with width of exactly 32 bits",
+  "examples": [ 0, 1, 4294967295, 2147483648, 42 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/82075.html" ],
+  "type": "integer",
+  "maximum": 4294967295,
+  "minimum": 0
+}

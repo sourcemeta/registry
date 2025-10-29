@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO/IEC 9899:2024 Special Floating-Point Values",
+  "description": "Special floating-point values as defined in `<math.h>`",
+  "examples": [ "NAN", "INFINITY", "-INFINITY" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/82075.html" ],
+  "enum": [ "NAN", "INFINITY", "-INFINITY" ]
+}

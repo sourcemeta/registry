@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema gMonthDay",
+  "description": "The gMonthDay datatype represents a specific day in a month (§3.2.12)",
+  "examples": [ "--09-14", "--09-14Z", "--09-14+01:00", "--02-29" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#gMonthDay" ],
+  "type": "string",
+  "pattern": "^(--(0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|--02-(0[1-9]|1[0-9]|2[0-9])|--(0[469]|11)-(0[1-9]|[12][0-9]|30))(Z|[+-]([01][0-9]|2[0-3]):[0-5][0-9])?$"
+}

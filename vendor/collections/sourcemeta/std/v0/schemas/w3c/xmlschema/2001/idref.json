@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema IDREF",
+  "description": "Represents references to ID values within an XML document (§3.3.9)",
+  "$comment": "IDREF is syntactically an NCName. The constraint that it references an existing ID is a validation concern, not a schema concern",
+  "examples": [ "refToId", "_ref123", "user-link", "target_42" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#IDREF" ],
+  "$ref": "ncname.json"
+}

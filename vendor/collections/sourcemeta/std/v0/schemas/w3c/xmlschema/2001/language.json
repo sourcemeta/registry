@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema language",
+  "description": "Represents natural language identifiers as defined by RFC 3066 (§3.3.3)",
+  "examples": [ "en", "en-US", "fr-FR", "de-DE", "ja", "zh-CN" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.w3.org/TR/xmlschema-2/#language",
+    "https://www.rfc-editor.org/rfc/rfc3066.html"
+  ],
+  "$ref": "../../../ietf/language/3066/tag-syntax.json"
+}
