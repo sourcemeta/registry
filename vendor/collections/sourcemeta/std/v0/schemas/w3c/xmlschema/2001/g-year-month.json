@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema gYearMonth",
+  "description": "The gYearMonth datatype represents a specific gregorian month in a specific gregorian year (§3.2.10)",
+  "$comment": "Year 0000 is not allowed in XML Schema 1.0",
+  "examples": [ "1999-05", "1999-05Z", "1999-05+01:00", "-1999-05" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#gYearMonth" ],
+  "type": "string",
+  "pattern": "^-?(?!0000)[0-9]{4}-(0[1-9]|1[0-2])(Z|[+-]([01][0-9]|2[0-3]):[0-5][0-9])?$"
+}

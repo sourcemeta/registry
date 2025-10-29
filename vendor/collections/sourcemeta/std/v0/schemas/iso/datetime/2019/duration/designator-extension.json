@@ -1,0 +1,426 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601-2:2019 Duration with Negative Support (Designator Format)",
+  "description": "A duration in designator format with optional minus sign for reverse direction P[n]Y[n]M[n]DT[n]H[n]M[n]S or -P[n]Y[n]M[n]DT[n]H[n]M[n]S (§4.4.1.9)",
+  "examples": [
+    "P3Y6M4DT12H30M5S",
+    "P1Y",
+    "PT1H",
+    "P1DT1S",
+    "-P100D",
+    "-P1Y2M3D",
+    "-P3Y6M4DT12H30M5S",
+    "-PT5H30M"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/70908.html" ],
+  "type": "string",
+  "allOf": [
+    {
+      "not": {
+        "const": "P"
+      }
+    },
+    {
+      "not": {
+        "const": "PT"
+      }
+    },
+    {
+      "not": {
+        "const": "-P"
+      }
+    },
+    {
+      "not": {
+        "const": "-PT"
+      }
+    }
+  ],
+  "anyOf": [
+    {
+      "$comment": "Positive: Date-only: Years with decimal (lowest order)",
+      "pattern": "^P[0-9]+(?:\\.[0-9]+)?Y$"
+    },
+    {
+      "$comment": "Positive: Date-only: Years (integer) + Months with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date-only: Years (integer) + Months (integer) + Days with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+M[0-9]+(?:\\.[0-9]+)?D$"
+    },
+    {
+      "$comment": "Positive: Date-only: Months with decimal (lowest order)",
+      "pattern": "^P[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date-only: Months (integer) + Days with decimal (lowest order)",
+      "pattern": "^P[0-9]+M[0-9]+(?:\\.[0-9]+)?D$"
+    },
+    {
+      "$comment": "Positive: Date-only: Days with decimal (lowest order)",
+      "pattern": "^P[0-9]+(?:\\.[0-9]+)?D$"
+    },
+    {
+      "$comment": "Positive: Time-only: Hours with decimal (lowest order)",
+      "pattern": "^PT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Positive: Time-only: Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^PT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Time-only: Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^PT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Time-only: Minutes with decimal (lowest order)",
+      "pattern": "^PT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Time-only: Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^PT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Time-only: Seconds with decimal (lowest order)",
+      "pattern": "^PT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years + Hours with decimal (lowest order)",
+      "pattern": "^P[0-9]+YT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+YT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+YT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+YT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+YT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+YT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months + Hours with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+MT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+MT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+MT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+MT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+MT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+MT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months (integer) + Days + Hours with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months (integer) + Days + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months (integer) + Days + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months (integer) + Days + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months (integer) + Days + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Years (integer) + Months (integer) + Days + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months + Hours with decimal (lowest order)",
+      "pattern": "^P[0-9]+MT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+MT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+MT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+MT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+MT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+MT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months (integer) + Days + Hours with decimal (lowest order)",
+      "pattern": "^P[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months (integer) + Days + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+M[0-9]+DT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months (integer) + Days + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+M[0-9]+DT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months (integer) + Days + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months (integer) + Days + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+M[0-9]+DT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Months (integer) + Days + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Days + Hours with decimal (lowest order)",
+      "pattern": "^P[0-9]+DT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Days + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+DT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Days + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+DT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Days + Minutes with decimal (lowest order)",
+      "pattern": "^P[0-9]+DT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Days + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+DT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Positive: Date+Time: Days + Seconds with decimal (lowest order)",
+      "pattern": "^P[0-9]+DT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date-only: Years with decimal (lowest order)",
+      "pattern": "^-P[0-9]+(?:\\.[0-9]+)?Y$"
+    },
+    {
+      "$comment": "Negative: Date-only: Years (integer) + Months with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date-only: Years (integer) + Months (integer) + Days with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+M[0-9]+(?:\\.[0-9]+)?D$"
+    },
+    {
+      "$comment": "Negative: Date-only: Months with decimal (lowest order)",
+      "pattern": "^-P[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date-only: Months (integer) + Days with decimal (lowest order)",
+      "pattern": "^-P[0-9]+M[0-9]+(?:\\.[0-9]+)?D$"
+    },
+    {
+      "$comment": "Negative: Date-only: Days with decimal (lowest order)",
+      "pattern": "^-P[0-9]+(?:\\.[0-9]+)?D$"
+    },
+    {
+      "$comment": "Negative: Time-only: Hours with decimal (lowest order)",
+      "pattern": "^-PT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Negative: Time-only: Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^-PT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Time-only: Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-PT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Time-only: Minutes with decimal (lowest order)",
+      "pattern": "^-PT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Time-only: Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-PT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Time-only: Seconds with decimal (lowest order)",
+      "pattern": "^-PT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years + Hours with decimal (lowest order)",
+      "pattern": "^-P[0-9]+YT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+YT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+YT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+YT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+YT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+YT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months + Hours with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+MT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+MT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+MT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+MT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+MT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+MT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months (integer) + Days + Hours with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months (integer) + Days + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months (integer) + Days + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months (integer) + Days + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months (integer) + Days + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Years (integer) + Months (integer) + Days + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+Y[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months + Hours with decimal (lowest order)",
+      "pattern": "^-P[0-9]+MT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+MT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+MT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+MT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+MT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+MT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months (integer) + Days + Hours with decimal (lowest order)",
+      "pattern": "^-P[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months (integer) + Days + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+M[0-9]+DT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months (integer) + Days + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+M[0-9]+DT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months (integer) + Days + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months (integer) + Days + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+M[0-9]+DT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Months (integer) + Days + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+M[0-9]+DT[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Days + Hours with decimal (lowest order)",
+      "pattern": "^-P[0-9]+DT[0-9]+(?:\\.[0-9]+)?H$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Days + Hours (integer) + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+DT[0-9]+H[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Days + Hours (integer) + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+DT[0-9]+H[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Days + Minutes with decimal (lowest order)",
+      "pattern": "^-P[0-9]+DT[0-9]+(?:\\.[0-9]+)?M$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Days + Minutes (integer) + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+DT[0-9]+M[0-9]+(?:\\.[0-9]+)?S$"
+    },
+    {
+      "$comment": "Negative: Date+Time: Days + Seconds with decimal (lowest order)",
+      "pattern": "^-P[0-9]+DT[0-9]+(?:\\.[0-9]+)?S$"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 4648 Base16 Encoding",
+  "description": "Uses digits 0-9 and letters A-F (case-insensitive). Each byte encodes to exactly 2 characters, no padding required",
+  "examples": [
+    "48656C6C6F20576F726C6421",
+    "DEADBEEF",
+    "0FB7",
+    "666F6F626172",
+    ""
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc4648.html#section-8" ],
+  "type": "string",
+  "not": {
+    "pattern": "[\\x00-\\x1F]"
+  },
+  "pattern": "^([0-9A-Fa-f]{2})*$",
+  "contentEncoding": "base16"
+}

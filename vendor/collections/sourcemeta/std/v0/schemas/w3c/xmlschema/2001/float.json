@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema float",
+  "description": "The float datatype corresponds to IEEE single-precision 32-bit floating point (§3.2.4)",
+  "examples": [ 0.0, 1.5, -3.14, "INF", "-INF", "NaN" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#float" ],
+  "anyOf": [
+    {
+      "$ref": "../../../ieee/floating-point/2019/binary32.json"
+    },
+    {
+      "enum": [ "INF", "-INF", "NaN" ]
+    }
+  ]
+}

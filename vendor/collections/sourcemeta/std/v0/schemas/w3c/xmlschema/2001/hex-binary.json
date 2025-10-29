@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema hexBinary",
+  "description": "The hexBinary datatype represents arbitrary hex-encoded binary data (§3.2.15)",
+  "examples": [ "0FB7", "0fb7", "0123456789ABCDEF", "DEADBEEF", "" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#hexBinary" ],
+  "$ref": "../../../ietf/encoding/base16.json"
+}

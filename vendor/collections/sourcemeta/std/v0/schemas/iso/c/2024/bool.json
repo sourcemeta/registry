@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO/IEC 9899:2024 Boolean Type (bool)",
+  "description": "A boolean type that can hold the values 0 (false) or 1 (true)",
+  "$comment": "In C, bool is represented as an integer type that can only hold 0 or 1. Defined in `<stdbool.h>` as `_Bool`",
+  "examples": [ 0, 1 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/82075.html" ],
+  "enum": [ 0, 1 ]
+}

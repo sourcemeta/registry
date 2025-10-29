@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO/IEC 9899:2024 Signed 64-bit Integer (int64_t)",
+  "description": "A signed integer type with width of exactly 64 bits",
+  "examples": [
+    0,
+    1,
+    -1,
+    9223372036854775807,
+    -9223372036854775808,
+    1000000000,
+    -1000000000
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/82075.html" ],
+  "type": "integer",
+  "maximum": 9223372036854775807,
+  "minimum": -9223372036854775808
+}

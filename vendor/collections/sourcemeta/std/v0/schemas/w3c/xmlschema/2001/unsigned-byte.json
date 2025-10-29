@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema unsignedByte",
+  "description": "Represents 8-bit unsigned integers (§3.3.24)",
+  "examples": [ 0, 1, 255, 128, 42 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#unsignedByte" ],
+  "$ref": "../../../iso/c/2024/uint8.json"
+}

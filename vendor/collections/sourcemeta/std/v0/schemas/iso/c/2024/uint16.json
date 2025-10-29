@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO/IEC 9899:2024 Unsigned 16-bit Integer (uint16_t)",
+  "description": "An unsigned integer type with width of exactly 16 bits",
+  "examples": [ 0, 1, 65535, 32768, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/82075.html" ],
+  "type": "integer",
+  "maximum": 65535,
+  "minimum": 0
+}

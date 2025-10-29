@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema duration",
+  "description": "The duration datatype represents a duration of time in ISO 8601 format with optional minus sign for negative durations (§3.2.6)",
+  "examples": [
+    "P1Y2M3DT10H30M",
+    "-P120D",
+    "P1347Y",
+    "P1347M",
+    "P1Y2MT2H",
+    "-P1347M"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#duration" ],
+  "$ref": "../../../iso/datetime/2019/duration/designator-extension.json"
+}

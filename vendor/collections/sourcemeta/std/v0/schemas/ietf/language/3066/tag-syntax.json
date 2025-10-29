@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 3066 Language Tag",
+  "description": "A language tag conforming to language tags at the syntax level only",
+  "examples": [
+    "en",
+    "en-US",
+    "de-DE",
+    "fr-FR",
+    "ja",
+    "zh-CN",
+    "es-MX",
+    "i-navajo",
+    "x-private",
+    "en-US-x-twain"
+  ],
+  "deprecated": true,
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc3066.html" ],
+  "type": "string",
+  "not": {
+    "$comment": "Cannot contain whitespace or control characters",
+    "pattern": "[\\s]"
+  },
+  "pattern": "^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$"
+}

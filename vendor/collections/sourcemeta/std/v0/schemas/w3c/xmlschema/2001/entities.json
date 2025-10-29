@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema ENTITIES",
+  "description": "Represents a list of references to unparsed entities (§3.3.12)",
+  "$comment": "ENTITIES is a space-separated list of ENTITY values. In JSON Schema, this is represented as an array with at least one item",
+  "examples": [
+    [ "entity1", "entity2" ],
+    [ "_img1", "_img2", "_img3" ],
+    [ "singleEntity" ],
+    [ "logo", "banner", "icon" ]
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#ENTITIES" ],
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "$ref": "entity.json"
+  }
+}

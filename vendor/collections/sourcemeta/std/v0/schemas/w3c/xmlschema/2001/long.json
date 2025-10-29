@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "W3C XML Schema long",
+  "description": "Represents 64-bit signed integers (§3.3.16)",
+  "examples": [
+    0,
+    1,
+    -1,
+    9223372036854775807,
+    -9223372036854775808,
+    1000000000,
+    -1000000000
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.w3.org/TR/xmlschema-2/#long" ],
+  "$ref": "../../../iso/c/2024/int64.json"
+}

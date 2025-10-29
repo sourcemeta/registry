@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IEEE 754-2019 Special Floating-Point Values",
+  "description": "Special floating-point values: NaN (Not-a-Number) with quiet and signaling variants, and positive/negative infinities",
+  "examples": [ "NaN", "qNaN", "sNaN", "+Inf", "-Inf" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://ieeexplore.ieee.org/document/8766229" ],
+  "enum": [ "NaN", "qNaN", "sNaN", "+Inf", "-Inf" ]
+}

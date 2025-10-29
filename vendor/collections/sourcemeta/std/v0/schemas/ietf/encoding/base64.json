@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RFC 4648 Base64 Encoding",
+  "description": "Uses uppercase letters A-Z, lowercase letters a-z, digits 0-9, plus sign (+), and forward slash (/), with equals sign (=) used for padding",
+  "examples": [
+    "R0lGODlhAQABAAAAACw=",
+    "SGVsbG8gV29ybGQh",
+    "YQ==",
+    "YWI=",
+    "YWJj",
+    ""
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.rfc-editor.org/rfc/rfc4648.html#section-4" ],
+  "type": "string",
+  "pattern": "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+  "contentEncoding": "base64"
+}
