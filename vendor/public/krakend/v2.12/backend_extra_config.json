@@ -120,6 +120,9 @@
     "qos/circuit-breaker": {
       "$ref": "qos/circuit-breaker.json"
     },
+    "qos/circuit-breaker/http": {
+      "$ref": "qos/circuit-breaker-http.json"
+    },
     "qos/http-cache": {
       "title": "Backend Cache",
       "description": "Enable in-memory caching for backend responses for as long as its `Cache-Control` header permits. Only safe methods are cached (GET or HEAD). The final backend URL and the `Vary` headers are used to create the caching key.\n\nSee: https://www.krakend.io/docs/backends/caching/",

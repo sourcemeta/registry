@@ -98,6 +98,22 @@
                     "image"
                   ]
                 },
+                "input_headers": {
+                  "title": "Allowed Headers In",
+                  "description": "Defines the list of all headers allowed to reach the backend when passed.\nBy default, KrakenD won't pass any header from the client to the backend. This list is **case-insensitive**. You can declare headers in lowercase, uppercase, or mixed.\nAn entry `[\"Cookie\"]` forwards all cookies, and a single star element `[\"*\"]` as value forwards everything to the backend (**it's safer to avoid this option**), including cookies. See [headers forwarding](https://www.krakend.io/docs/endpoints/parameter-forwarding/#headers-forwarding)",
+                  "default": [],
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "title": "Forwarded header",
+                    "examples": [
+                      "User-Agent",
+                      "Accept",
+                      "*"
+                    ],
+                    "type": "string"
+                  }
+                },
                 "input_schema": {
                   "title": "Input JSON Schema",
                   "description": "The input JSON schema to validate the input parameters sent by the AI client. The schema is **essential** in most clients to understand how to pass parameters to the MCP server. The schema must be a valid [2020-12 draft JSON Schema](https://json-schema.org/understanding-json-schema/) object.\n\nSee: https://www.krakend.io/docs/enterprise/ai-gateway/mcp-server/",
