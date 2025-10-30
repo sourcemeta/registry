@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.krakend.io/schema/v2.12/qos/circuit-breaker-http.json",
+  "title": "Circuit Breaker",
+  "description": "Enterprise only. The HTTP circuit breaker prevents sending more traffic to a backend that is returning status codes that are considered errors.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-circuit-breaker/",
+  "type": "object",
+  "required": [
+    "interval",
+    "timeout",
+    "max_errors",
+    "valid_status_codes"
+  ],
+  "properties": {
+    "interval": {
+      "$id": "#qos/circuit-breaker/http/interval",
+      "title": "Interval",
+      "description": "Time window where the errors count, in seconds.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-circuit-breaker/",
+      "type": "integer"
+    },
+    "log_status_change": {
+      "$id": "#qos/circuit-breaker/http/log_status_change",
+      "title": "Log status change",
+      "description": "Whether to log the changes of state of this circuit breaker or not.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-circuit-breaker/",
+      "default": false,
+      "type": "boolean"
+    },
+    "max_errors": {
+      "$id": "#qos/circuit-breaker/http/max_errors",
+      "title": "Max Errors",
+      "description": "The **CONSECUTIVE** (not total) number of errors within the `interval` window to consider the backend unhealthy. All HTTP status codes different than `20x` are considered an error, except for the `no-op` encoding that does not evaluate status codes and is limited to connectivity/networking, security and component errors. See the definition of error below.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-circuit-breaker/",
+      "examples": [
+        5
+      ],
+      "type": "integer"
+    },
+    "name": {
+      "$id": "#qos/circuit-breaker/http/name",
+      "title": "Name",
+      "description": "A friendly name to follow this circuit breaker's activity in the logs.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-circuit-breaker/",
+      "examples": [
+        "cb-backend-1"
+      ],
+      "type": "string"
+    },
+    "timeout": {
+      "$id": "#qos/circuit-breaker/http/timeout",
+      "title": "Timeout",
+      "description": "For how many seconds the circuit breaker will wait before testing again if the backend is healthy. This number of seconds can also be read as the **minimum cooldown** of the backend interaction.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-circuit-breaker/",
+      "examples": [
+        10
+      ],
+      "type": "integer"
+    },
+    "valid_status_codes": {
+      "$id": "#qos/circuit-breaker/http/valid_status_codes",
+      "title": "Valid Status Codes",
+      "description": "A list of HTTP status codes that will be considered successful responses. Any response with a status code not in this list will be counted as an error by the circuit breaker.\n\nSee: https://www.krakend.io/docs/enterprise/backends/http-circuit-breaker/",
+      "examples": [
+        [
+          200,
+          201,
+          404
+        ]
+      ],
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "integer",
+        "maximum": 599,
+        "minimum": 100
+      }
+    }
+  },
+  "patternProperties": {
+    "^[@$_#]": {}
+  },
+  "additionalProperties": false
+}
