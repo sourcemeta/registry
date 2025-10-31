@@ -5,19 +5,19 @@
 
 #include <sourcemeta/blaze/compiler.h>
 
-#include <cstdlib>  // EXIT_SUCCESS, EXIT_FAILURE
 #include <iostream> // std::cerr, std::cout
 
 #include "command.h"
+#include "configuration.h"
+#include "error.h"
+#include "resolver.h"
 #include "utils.h"
 
-auto sourcemeta::jsonschema::cli::compile(
-    const sourcemeta::core::Options &options) -> int {
+auto sourcemeta::jsonschema::compile(const sourcemeta::core::Options &options)
+    -> void {
   if (options.positional().size() < 1) {
-    std::cerr
-        << "error: This command expects a path to a schema. For example:\n\n"
-        << "  jsonschema compile path/to/schema.json\n";
-    return EXIT_FAILURE;
+    throw PositionalArgumentError{"This command expects a path to a schema",
+                                  "jsonschema compile path/to/schema.json"};
   }
 
   const auto &schema_path{options.positional().at(0)};
@@ -30,11 +30,7 @@ auto sourcemeta::jsonschema::cli::compile(
   const auto schema{sourcemeta::core::read_yaml_or_json(schema_path)};
 
   if (!sourcemeta::core::is_schema(schema)) {
-    std::cerr << "error: The schema file you provided does not represent a "
-                 "valid JSON Schema\n  "
-              << sourcemeta::core::weakly_canonical(schema_path).string()
-              << "\n";
-    return EXIT_FAILURE;
+    throw NotSchemaError{schema_path};
   }
 
   const auto fast_mode{options.contains("fast")};
@@ -56,6 +52,4 @@ auto sourcemeta::jsonschema::cli::compile(
   }
 
   std::cout << "\n";
-
-  return EXIT_SUCCESS;
 }

@@ -5,14 +5,18 @@
 
 #include <sourcemeta/blaze/linter.h>
 
-#include <cstdlib>  // EXIT_SUCCESS, EXIT_FAILURE
+#include <cstdlib>  // EXIT_FAILURE
 #include <fstream>  // std::ofstream
 #include <iostream> // std::cerr, std::cout
 #include <numeric>  // std::accumulate
 #include <sstream>  // std::ostringstream
 
 #include "command.h"
+#include "configuration.h"
 #include "error.h"
+#include "input.h"
+#include "logger.h"
+#include "resolver.h"
 #include "utils.h"
 
 template <typename Options, typename Iterator>
@@ -21,11 +25,11 @@ static auto disable_lint_rules(sourcemeta::core::SchemaTransformer &bundle,
                                Iterator last) -> void {
   for (auto iterator = first; iterator != last; ++iterator) {
     if (bundle.remove(std::string{*iterator})) {
-      sourcemeta::jsonschema::cli::log_verbose(options)
+      sourcemeta::jsonschema::LOG_VERBOSE(options)
           << "Disabling rule: " << *iterator << "\n";
     } else {
-      sourcemeta::jsonschema::cli::log_verbose(options)
-          << "warning: Cannot exclude unknown rule: " << *iterator << "\n";
+      sourcemeta::jsonschema::LOG_WARNING()
+          << "Cannot exclude unknown rule: " << *iterator << "\n";
     }
   }
 }
@@ -46,10 +50,9 @@ static auto reindent(const std::string_view &value,
   }
 }
 
-static auto
-get_lint_callback(sourcemeta::core::JSON &errors_array,
-                  const sourcemeta::jsonschema::cli::InputJSON &entry,
-                  const bool output_json) -> auto {
+static auto get_lint_callback(sourcemeta::core::JSON &errors_array,
+                              const sourcemeta::jsonschema::InputJSON &entry,
+                              const bool output_json) -> auto {
   return [&entry, &errors_array,
           output_json](const auto &pointer, const auto &name,
                        const auto &message, const auto &result) {
@@ -89,7 +92,7 @@ get_lint_callback(sourcemeta::core::JSON &errors_array,
 
       std::cout << ":\n";
       std::cout << "  " << message << " (" << name << ")\n";
-      std::cout << "    at schema location \"";
+      std::cout << "    at location \"";
       sourcemeta::core::stringify(schema_location, std::cout);
       std::cout << "\"\n";
 
@@ -103,20 +106,8 @@ get_lint_callback(sourcemeta::core::JSON &errors_array,
   };
 }
 
-constexpr std::string_view AUTOFIX_ERROR{R"EOF(
-This is an unexpected error, as making the auto-fix functionality work in all
-cases is tricky. We are working hard to improve the auto-fixing functionality
-to handle all possible edge cases, but for now, try again without `--fix/-f`
-and apply the suggestions by hand.
-
-Also consider consider reporting this problematic case to the issue tracker,
-so we can add it to the test suite and fix it:
-
-https://github.com/sourcemeta/jsonschema/issues
-)EOF"};
-
-auto sourcemeta::jsonschema::cli::lint(const sourcemeta::core::Options &options)
-    -> int {
+auto sourcemeta::jsonschema::lint(const sourcemeta::core::Options &options)
+    -> void {
   const bool output_json = options.contains("json");
 
   sourcemeta::core::SchemaTransformer bundle;
@@ -136,8 +127,8 @@ auto sourcemeta::jsonschema::cli::lint(const sourcemeta::core::Options &options)
 
   if (options.contains("only")) {
     if (options.contains("exclude")) {
-      std::cerr << "error: Cannot use --only and --exclude at the same time\n";
-      return EXIT_FAILURE;
+      throw OptionConflictError{
+          "Cannot use --only and --exclude at the same time"};
     }
 
     std::unordered_set<std::string_view> blacklist;
@@ -146,11 +137,10 @@ auto sourcemeta::jsonschema::cli::lint(const sourcemeta::core::Options &options)
     }
 
     for (const auto &only : options.at("only")) {
-      log_verbose(options) << "Only enabling rule: " << only << "\n";
+      LOG_VERBOSE(options) << "Only enabling rule: " << only << "\n";
       if (blacklist.erase(only) == 0) {
-        std::cerr << "error: The following linting rule does not exist\n";
-        std::cerr << "  " << only << "\n";
-        return EXIT_FAILURE;
+        throw InvalidLintRuleError{"The following linting rule does not exist",
+                                   std::string{only}};
       }
     }
 
@@ -185,7 +175,7 @@ auto sourcemeta::jsonschema::cli::lint(const sourcemeta::core::Options &options)
     }
 
     std::cout << "Number of rules: " << count << "\n";
-    return EXIT_SUCCESS;
+    return;
   }
 
   bool result{true};
@@ -202,46 +192,44 @@ auto sourcemeta::jsonschema::cli::lint(const sourcemeta::core::Options &options)
 
       const auto &custom_resolver{
           resolver(options, options.contains("http"), dialect, configuration)};
-      log_verbose(options) << "Linting: " << entry.first.string() << "\n";
+      LOG_VERBOSE(options) << "Linting: " << entry.first.string() << "\n";
       if (entry.first.extension() == ".yaml" ||
           entry.first.extension() == ".yml") {
-        std::cerr << "The --fix option is not supported for YAML input files\n";
-        return EXIT_FAILURE;
+        throw YAMLInputError{
+            "The --fix option is not supported for YAML input files",
+            entry.first};
       }
 
       auto copy = entry.second;
 
-      const auto wrapper_result = sourcemeta::jsonschema::try_catch([&]() {
-        try {
-          bundle.apply(
-              copy, sourcemeta::core::schema_official_walker, custom_resolver,
-              get_lint_callback(errors_array, entry, output_json), dialect,
-              sourcemeta::core::URI::from_path(entry.first).recompose());
-          return EXIT_SUCCESS;
-        } catch (const sourcemeta::core::SchemaTransformRuleProcessedTwiceError
-                     &error) {
-          std::cerr << "error: " << error.what() << "\n";
-          std::cerr << "  at " << entry.first.string() << "\n";
-          std::cerr << "  at schema location \""
-                    << sourcemeta::core::to_string(error.location()) << "\"\n";
-          std::cerr << AUTOFIX_ERROR;
-          return EXIT_FAILURE;
-        } catch (const sourcemeta::core::SchemaBrokenReferenceError &error) {
-          std::cerr << "error: Could not autofix the schema without breaking "
-                       "its internal references\n";
-          std::cerr << "  at " << entry.first.string() << "\n";
-          std::cerr << "  at schema location \""
-                    << sourcemeta::core::to_string(error.location()) << "\"\n";
-          std::cerr << AUTOFIX_ERROR;
-          return EXIT_FAILURE;
-        } catch (const sourcemeta::core::SchemaUnknownBaseDialectError &) {
-          throw FileError<sourcemeta::core::SchemaUnknownBaseDialectError>(
-              entry.first);
-        } catch (const sourcemeta::core::SchemaResolutionError &error) {
-          throw FileError<sourcemeta::core::SchemaResolutionError>(entry.first,
-                                                                   error);
-        }
-      });
+      const auto wrapper_result =
+          sourcemeta::jsonschema::try_catch(options, [&]() {
+            try {
+              bundle.apply(
+                  copy, sourcemeta::core::schema_official_walker,
+                  custom_resolver,
+                  get_lint_callback(errors_array, entry, output_json), dialect,
+                  sourcemeta::core::URI::from_path(entry.first).recompose());
+              return EXIT_SUCCESS;
+            } catch (
+                const sourcemeta::core::SchemaTransformRuleProcessedTwiceError
+                    &error) {
+              throw LintAutoFixError{error.what(), entry.first,
+                                     error.location()};
+            } catch (
+                const sourcemeta::core::SchemaBrokenReferenceError &error) {
+              throw LintAutoFixError{
+                  "Could not autofix the schema without breaking its internal "
+                  "references",
+                  entry.first, error.location()};
+            } catch (const sourcemeta::core::SchemaUnknownBaseDialectError &) {
+              throw FileError<sourcemeta::core::SchemaUnknownBaseDialectError>(
+                  entry.first);
+            } catch (const sourcemeta::core::SchemaResolutionError &error) {
+              throw FileError<sourcemeta::core::SchemaResolutionError>(
+                  entry.first, error);
+            }
+          });
 
       if (wrapper_result == EXIT_SUCCESS) {
         if (copy != entry.second) {
@@ -261,29 +249,30 @@ auto sourcemeta::jsonschema::cli::lint(const sourcemeta::core::Options &options)
       const auto dialect{default_dialect(options, configuration)};
       const auto &custom_resolver{
           resolver(options, options.contains("http"), dialect, configuration)};
-      log_verbose(options) << "Linting: " << entry.first.string() << "\n";
+      LOG_VERBOSE(options) << "Linting: " << entry.first.string() << "\n";
 
-      const auto wrapper_result = sourcemeta::jsonschema::try_catch([&]() {
-        try {
-          const auto subresult = bundle.check(
-              entry.second, sourcemeta::core::schema_official_walker,
-              custom_resolver,
-              get_lint_callback(errors_array, entry, output_json), dialect,
-              sourcemeta::core::URI::from_path(entry.first).recompose());
-          scores.emplace_back(subresult.second);
-          if (subresult.first) {
-            return EXIT_SUCCESS;
-          } else {
-            return EXIT_FAILURE;
-          }
-        } catch (const sourcemeta::core::SchemaUnknownBaseDialectError &) {
-          throw FileError<sourcemeta::core::SchemaUnknownBaseDialectError>(
-              entry.first);
-        } catch (const sourcemeta::core::SchemaResolutionError &error) {
-          throw FileError<sourcemeta::core::SchemaResolutionError>(entry.first,
-                                                                   error);
-        }
-      });
+      const auto wrapper_result =
+          sourcemeta::jsonschema::try_catch(options, [&]() {
+            try {
+              const auto subresult = bundle.check(
+                  entry.second, sourcemeta::core::schema_official_walker,
+                  custom_resolver,
+                  get_lint_callback(errors_array, entry, output_json), dialect,
+                  sourcemeta::core::URI::from_path(entry.first).recompose());
+              scores.emplace_back(subresult.second);
+              if (subresult.first) {
+                return EXIT_SUCCESS;
+              } else {
+                return EXIT_FAILURE;
+              }
+            } catch (const sourcemeta::core::SchemaUnknownBaseDialectError &) {
+              throw FileError<sourcemeta::core::SchemaUnknownBaseDialectError>(
+                  entry.first);
+            } catch (const sourcemeta::core::SchemaResolutionError &error) {
+              throw FileError<sourcemeta::core::SchemaResolutionError>(
+                  entry.first, error);
+            }
+          });
 
       if (wrapper_result != EXIT_SUCCESS) {
         result = false;
@@ -309,5 +298,7 @@ auto sourcemeta::jsonschema::cli::lint(const sourcemeta::core::Options &options)
     std::cout << "\n";
   }
 
-  return result ? EXIT_SUCCESS : EXIT_FAILURE;
+  if (!result) {
+    throw Fail{EXIT_FAILURE};
+  }
 }
