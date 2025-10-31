@@ -31,7 +31,7 @@ struct GENERATE_MATERIALISED_SCHEMA {
           const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
           const Context &data) -> void {
     const auto timestamp_start{std::chrono::steady_clock::now()};
-    const auto schema{data.second.get()(data.first)};
+    auto schema{data.second.get()(data.first)};
     assert(schema.has_value());
     const auto dialect_identifier{sourcemeta::core::dialect(schema.value())};
     assert(dialect_identifier.has_value());
@@ -51,13 +51,15 @@ struct GENERATE_MATERIALISED_SCHEMA {
     const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
+    sourcemeta::core::format(schema.value(),
+                             sourcemeta::core::schema_official_walker,
+                             data.second.get(), dialect_identifier.value());
     sourcemeta::registry::write_pretty_json(
         destination, schema.value(), "application/schema+json",
         sourcemeta::registry::Encoding::GZIP,
         sourcemeta::core::JSON{dialect_identifier.value()},
         std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
-                                                              timestamp_start),
-        sourcemeta::core::schema_format_compare);
+                                                              timestamp_start));
   }
 
   class MetaschemaError : public std::exception {
@@ -280,13 +282,18 @@ struct GENERATE_BUNDLE {
     assert(dialect_identifier.has_value());
     const auto timestamp_end{std::chrono::steady_clock::now()};
     std::filesystem::create_directories(destination.parent_path());
+    sourcemeta::core::format(
+        schema, sourcemeta::core::schema_official_walker,
+        [&callback, &resolver](const auto identifier) {
+          return resolver(identifier, callback);
+        },
+        dialect_identifier.value());
     sourcemeta::registry::write_pretty_json(
         destination, schema, "application/schema+json",
         sourcemeta::registry::Encoding::GZIP,
         sourcemeta::core::JSON{dialect_identifier.value()},
         std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
-                                                              timestamp_start),
-        sourcemeta::core::schema_format_compare);
+                                                              timestamp_start));
   }
 };
 
@@ -310,13 +317,18 @@ struct GENERATE_EDITOR {
     assert(dialect_identifier.has_value());
     const auto timestamp_end{std::chrono::steady_clock::now()};
     std::filesystem::create_directories(destination.parent_path());
+    sourcemeta::core::format(
+        schema, sourcemeta::core::schema_official_walker,
+        [&callback, &resolver](const auto identifier) {
+          return resolver(identifier, callback);
+        },
+        dialect_identifier.value());
     sourcemeta::registry::write_pretty_json(
         destination, schema, "application/schema+json",
         sourcemeta::registry::Encoding::GZIP,
         sourcemeta::core::JSON{dialect_identifier.value()},
         std::chrono::duration_cast<std::chrono::milliseconds>(timestamp_end -
-                                                              timestamp_start),
-        sourcemeta::core::schema_format_compare);
+                                                              timestamp_start));
   }
 };
 
