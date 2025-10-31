@@ -28,7 +28,8 @@ struct GENERATE_MATERIALISED_SCHEMA {
   static auto
   handler(const std::filesystem::path &destination,
           const sourcemeta::core::BuildDependencies<std::filesystem::path> &,
-          const sourcemeta::core::BuildDynamicCallback<std::filesystem::path> &,
+          const sourcemeta::core::BuildDynamicCallback<std::filesystem::path>
+              &callback,
           const Context &data) -> void {
     const auto timestamp_start{std::chrono::steady_clock::now()};
     auto schema{data.second.get()(data.first)};
@@ -51,9 +52,12 @@ struct GENERATE_MATERIALISED_SCHEMA {
     const auto timestamp_end{std::chrono::steady_clock::now()};
 
     std::filesystem::create_directories(destination.parent_path());
-    sourcemeta::core::format(schema.value(),
-                             sourcemeta::core::schema_official_walker,
-                             data.second.get(), dialect_identifier.value());
+    sourcemeta::core::format(
+        schema.value(), sourcemeta::core::schema_official_walker,
+        [&callback, &data](const auto identifier) {
+          return data.second.get()(identifier, callback);
+        },
+        dialect_identifier.value());
     sourcemeta::registry::write_pretty_json(
         destination, schema.value(), "application/schema+json",
         sourcemeta::registry::Encoding::GZIP,
