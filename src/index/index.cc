@@ -547,13 +547,13 @@ auto main(int argc, char *argv[]) noexcept -> int {
     std::cerr << "  to " << error.identifier() << "\n";
     return EXIT_FAILURE;
   } catch (const sourcemeta::core::OptionsUnexpectedValueFlagError &error) {
-    std::cerr << "error: " << error.what() << " '" << error.name() << "'\n";
+    std::cerr << "error: " << error.what() << " '" << error.option() << "'\n";
     return EXIT_FAILURE;
   } catch (const sourcemeta::core::OptionsMissingOptionValueError &error) {
-    std::cerr << "error: " << error.what() << " '" << error.name() << "'\n";
+    std::cerr << "error: " << error.what() << " '" << error.option() << "'\n";
     return EXIT_FAILURE;
   } catch (const sourcemeta::core::OptionsUnknownOptionError &error) {
-    std::cerr << "error: " << error.what() << " '" << error.name() << "'\n";
+    std::cerr << "error: " << error.what() << " '" << error.option() << "'\n";
     return EXIT_FAILURE;
   } catch (const sourcemeta::registry::ConfigurationValidationError &error) {
     std::cerr << "error: " << error.what() << "\n" << error.stacktrace();

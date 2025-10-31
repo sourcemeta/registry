@@ -90,9 +90,9 @@ last_response: body
 [Asserts]
 header "ETag" exists
 header "Last-Modified" exists
-jsonpath "$.bytes" == 311
+jsonpath "$.bytes" == 278
 jsonpath "$.baseDialect" == "http://json-schema.org/draft-04/schema#"
-jsonpath "$.health" == 67
+jsonpath "$.health" == 50
 jsonpath "$.dependencies" == 0
 jsonpath "$.dialect" == "http://json-schema.org/draft-04/schema#"
 jsonpath "$.identifier" == "{{base}}/test/schemas/draft4-top-level-ref"

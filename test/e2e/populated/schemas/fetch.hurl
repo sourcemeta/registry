@@ -65,11 +65,7 @@ HTTP 200
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "{{base}}/test/schemas/draft4-top-level-ref",
   "examples": [ "draft4 does not define `examples`!" ],
-  "allOf": [
-    {
-      "$ref": "#/definitions/foo"
-    }
-  ],
+  "$ref": "#/definitions/foo",
   "definitions": {
     "foo": {
       "type": "string"
@@ -157,11 +153,7 @@ HTTP 200
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/test/schemas/no-id-draft7-ref",
-  "allOf": [
-    {
-      "$ref": "string"
-    }
-  ]
+  "$ref": "string"
 }
 
 # With absolute references
