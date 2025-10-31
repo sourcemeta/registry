@@ -4,20 +4,21 @@
 #include <sourcemeta/core/jsonschema.h>
 #include <sourcemeta/core/yaml.h>
 
-#include <cstdlib>  // EXIT_SUCCESS
 #include <iostream> // std::cout
 
 #include "command.h"
+#include "configuration.h"
+#include "error.h"
+#include "logger.h"
+#include "resolver.h"
 #include "utils.h"
 
-auto sourcemeta::jsonschema::cli::bundle(
-    const sourcemeta::core::Options &options) -> int {
+auto sourcemeta::jsonschema::bundle(const sourcemeta::core::Options &options)
+    -> void {
 
   if (options.positional().size() < 1) {
-    std::cerr
-        << "error: This command expects a path to a schema. For example:\n\n"
-        << "  jsonschema bundle path/to/schema.json\n";
-    return EXIT_FAILURE;
+    throw PositionalArgumentError{"This command expects a path to a schema",
+                                  "jsonschema bundle path/to/schema.json"};
   }
 
   const std::filesystem::path schema_path{options.positional().front()};
@@ -35,24 +36,25 @@ auto sourcemeta::jsonschema::cli::bundle(
                                .recompose());
 
   if (options.contains("without-id")) {
-    std::cerr << "warning: You are opting in to remove schema identifiers in "
-                 "the bundled schema.\n";
-    std::cerr << "The only legit use case of this advanced feature we know of "
-                 "is to workaround\n";
-    std::cerr << "non-compliant JSON Schema implementations such as Visual "
-                 "Studio Code.\n";
-    std::cerr << "Otherwise, this is not needed and may harm other use "
-                 "cases. For example,\n";
-    std::cerr << "you will be unable to reference the resulting schema from "
-                 "other schemas\n";
-    std::cerr << "using the --resolve/-r option.\n";
+    sourcemeta::jsonschema::LOG_WARNING()
+        << "You are opting in to remove schema identifiers in "
+           "the bundled schema.\n"
+        << "The only legit use case of this advanced feature we know of "
+           "is to workaround\n"
+        << "non-compliant JSON Schema implementations such as Visual "
+           "Studio Code.\n"
+        << "Otherwise, this is not needed and may harm other use "
+           "cases. For example,\n"
+        << "you will be unable to reference the resulting schema from "
+           "other schemas\n"
+        << "using the --resolve/-r option.\n";
     sourcemeta::core::for_editor(schema,
                                  sourcemeta::core::schema_official_walker,
                                  custom_resolver, dialect);
   }
 
-  sourcemeta::core::prettify(schema, std::cout,
-                             sourcemeta::core::schema_format_compare);
+  sourcemeta::core::format(schema, sourcemeta::core::schema_official_walker,
+                           custom_resolver, dialect);
+  sourcemeta::core::prettify(schema, std::cout);
   std::cout << "\n";
-  return EXIT_SUCCESS;
 }

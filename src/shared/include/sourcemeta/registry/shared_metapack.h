@@ -45,13 +45,12 @@ auto write_json(const std::filesystem::path &destination,
                 const sourcemeta::core::JSON &extension,
                 const std::chrono::milliseconds duration) -> void;
 
-auto write_pretty_json(
-    const std::filesystem::path &destination,
-    const sourcemeta::core::JSON &document,
-    const sourcemeta::core::JSON::String &mime, const Encoding encoding,
-    const sourcemeta::core::JSON &extension,
-    const std::chrono::milliseconds duration,
-    const sourcemeta::core::JSON::KeyComparison &compare = nullptr) -> void;
+auto write_pretty_json(const std::filesystem::path &destination,
+                       const sourcemeta::core::JSON &document,
+                       const sourcemeta::core::JSON::String &mime,
+                       const Encoding encoding,
+                       const sourcemeta::core::JSON &extension,
+                       const std::chrono::milliseconds duration) -> void;
 
 auto write_text(const std::filesystem::path &destination,
                 const std::string_view contents,

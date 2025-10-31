@@ -1,61 +1,69 @@
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonschema.h>
 
-#include <cstdlib>  // EXIT_SUCCESS, EXIT_FAILURE
 #include <fstream>  // std::ofstream
 #include <iostream> // std::cerr
 #include <sstream>  // std::ostringstream
 
 #include "command.h"
+#include "error.h"
+#include "input.h"
+#include "logger.h"
+#include "resolver.h"
 #include "utils.h"
 
-auto sourcemeta::jsonschema::cli::fmt(const sourcemeta::core::Options &options)
-    -> int {
+auto sourcemeta::jsonschema::fmt(const sourcemeta::core::Options &options)
+    -> void {
   const auto indentation{parse_indentation(options)};
   for (const auto &entry : for_each_json(options)) {
     if (entry.first.extension() == ".yaml" ||
         entry.first.extension() == ".yml") {
-      std::cerr << "This command does not support YAML input files yet\n";
-      return EXIT_FAILURE;
+      throw YAMLInputError{"This command does not support YAML input files yet",
+                           entry.first};
     }
-
-    std::ifstream input{entry.first};
-    std::ostringstream buffer;
-    buffer << input.rdbuf();
 
     if (options.contains("check")) {
-      log_verbose(options) << "Checking: " << entry.first.string() << "\n";
+      LOG_VERBOSE(options) << "Checking: " << entry.first.string() << "\n";
     } else {
-      log_verbose(options) << "Formatting: " << entry.first.string() << "\n";
+      LOG_VERBOSE(options) << "Formatting: " << entry.first.string() << "\n";
     }
+
+    const auto configuration_path{find_configuration(entry.first)};
+    const auto &configuration{read_configuration(options, configuration_path)};
+    const auto dialect{default_dialect(options, configuration)};
+    const auto &custom_resolver{
+        resolver(options, options.contains("http"), dialect, configuration)};
 
     std::ostringstream expected;
     if (options.contains("keep-ordering")) {
       sourcemeta::core::prettify(entry.second, expected, indentation);
     } else {
-      sourcemeta::core::prettify(entry.second, expected,
-                                 sourcemeta::core::schema_format_compare,
-                                 indentation);
+      auto copy = entry.second;
+      sourcemeta::core::format(copy, sourcemeta::core::schema_official_walker,
+                               custom_resolver, dialect);
+      sourcemeta::core::prettify(copy, expected, indentation);
     }
     expected << "\n";
 
+    std::ifstream current_stream{entry.first};
+    std::ostringstream current;
+    current << current_stream.rdbuf();
+
     if (options.contains("check")) {
-      if (buffer.str() == expected.str()) {
-        log_verbose(options) << "PASS: " << entry.first.string() << "\n";
+      if (current.str() == expected.str()) {
+        LOG_VERBOSE(options) << "PASS: " << entry.first.string() << "\n";
       } else {
         std::cerr << "FAIL: " << entry.first.string() << "\n";
         std::cerr << "Got:\n"
-                  << buffer.str() << "\nBut expected:\n"
+                  << current.str() << "\nBut expected:\n"
                   << expected.str() << "\n";
-        return EXIT_FAILURE;
+        throw Fail{EXIT_FAILURE};
       }
     } else {
-      if (buffer.str() != expected.str()) {
+      if (current.str() != expected.str()) {
         std::ofstream output{entry.first};
         output << expected.str();
       }
     }
   }
-
-  return EXIT_SUCCESS;
 }

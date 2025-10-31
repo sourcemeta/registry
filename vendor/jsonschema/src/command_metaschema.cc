@@ -8,16 +8,20 @@
 #include <sourcemeta/blaze/output.h>
 
 #include <cassert>  // assert
-#include <cstdlib>  // EXIT_SUCCESS, EXIT_FAILURE
 #include <iostream> // std::cerr
 #include <map>      // std::map
 #include <string>   // std::string
 
 #include "command.h"
+#include "configuration.h"
+#include "error.h"
+#include "input.h"
+#include "logger.h"
+#include "resolver.h"
 #include "utils.h"
 
-auto sourcemeta::jsonschema::cli::metaschema(
-    const sourcemeta::core::Options &options) -> int {
+auto sourcemeta::jsonschema::metaschema(
+    const sourcemeta::core::Options &options) -> void {
   const auto trace{options.contains("trace")};
   const auto json_output{options.contains("json")};
 
@@ -28,11 +32,7 @@ auto sourcemeta::jsonschema::cli::metaschema(
 
   for (const auto &entry : for_each_json(options)) {
     if (!sourcemeta::core::is_schema(entry.second)) {
-      std::cerr << "error: The schema file you provided does not represent a "
-                   "valid JSON Schema\n  "
-                << sourcemeta::core::weakly_canonical(entry.first).string()
-                << "\n";
-      return EXIT_FAILURE;
+      throw NotSchemaError{entry.first};
     }
 
     const auto configuration_path{find_configuration(entry.first)};
@@ -96,7 +96,7 @@ auto sourcemeta::jsonschema::cli::metaschema(
         sourcemeta::blaze::SimpleOutput output{entry.second};
         if (evaluator.validate(cache.at(dialect.value()), entry.second,
                                std::ref(output))) {
-          log_verbose(options)
+          LOG_VERBOSE(options)
               << "ok: "
               << sourcemeta::core::weakly_canonical(entry.first).string()
               << "\n  matches " << dialect.value() << "\n";
@@ -119,8 +119,9 @@ auto sourcemeta::jsonschema::cli::metaschema(
     }
   }
 
-  return result ? EXIT_SUCCESS
-                // Report a different exit code for validation failures, to
-                // distinguish them from other errors
-                : 2;
+  if (!result) {
+    // Report a different exit code for validation failures, to
+    // distinguish them from other errors
+    throw Fail{2};
+  }
 }

@@ -10,11 +10,15 @@
 
 #include <chrono>   // std::chrono
 #include <cmath>    // std::sqrt
-#include <cstdlib>  // EXIT_SUCCESS, EXIT_FAILURE
 #include <iostream> // std::cerr
 #include <string>   // std::string
 
 #include "command.h"
+#include "configuration.h"
+#include "error.h"
+#include "input.h"
+#include "logger.h"
+#include "resolver.h"
 #include "utils.h"
 
 namespace {
@@ -39,7 +43,7 @@ auto get_schema_template(const sourcemeta::core::JSON &bundled,
     -> sourcemeta::blaze::Template {
   const auto precompiled{get_precompiled_schema_template_path(options)};
   if (precompiled.has_value()) {
-    sourcemeta::jsonschema::cli::log_verbose(options)
+    sourcemeta::jsonschema::LOG_VERBOSE(options)
         << "Parsing pre-compiled schema template: "
         << sourcemeta::core::weakly_canonical(precompiled.value()).string()
         << "\n";
@@ -50,8 +54,9 @@ auto get_schema_template(const sourcemeta::core::JSON &bundled,
     if (precompiled_result.has_value()) {
       return precompiled_result.value();
     } else {
-      std::cerr << "warning: Failed to parse pre-compiled schema template. "
-                   "Compiling from scratch\n";
+      sourcemeta::jsonschema::LOG_WARNING()
+          << "Failed to parse pre-compiled schema template. "
+             "Compiling from scratch\n";
     }
   }
 
@@ -126,22 +131,20 @@ auto run_loop(sourcemeta::blaze::Evaluator &evaluator,
 
 } // namespace
 
-auto sourcemeta::jsonschema::cli::validate(
-    const sourcemeta::core::Options &options) -> int {
+auto sourcemeta::jsonschema::validate(const sourcemeta::core::Options &options)
+    -> void {
   if (options.positional().size() < 1) {
-    std::cerr
-        << "error: This command expects a path to a schema and a path to an\n"
-        << "instance to validate against the schema. For example:\n\n"
-        << "  jsonschema validate path/to/schema.json path/to/instance.json\n";
-    return EXIT_FAILURE;
+    throw PositionalArgumentError{
+        "This command expects a path to a schema and a path to an\n"
+        "instance to validate against the schema",
+        "jsonschema validate path/to/schema.json path/to/instance.json"};
   }
 
   if (options.positional().size() < 2) {
-    std::cerr
-        << "error: In addition to the schema, you must also pass an argument\n"
-        << "that represents the instance to validate against. For example:\n\n"
-        << "  jsonschema validate path/to/schema.json path/to/instance.json\n";
-    return EXIT_FAILURE;
+    throw PositionalArgumentError{
+        "In addition to the schema, you must also pass an argument\n"
+        "that represents the instance to validate against",
+        "jsonschema validate path/to/schema.json path/to/instance.json"};
   }
 
   const auto &schema_path{options.positional().at(0)};
@@ -154,11 +157,7 @@ auto sourcemeta::jsonschema::cli::validate(
   const auto schema{sourcemeta::core::read_yaml_or_json(schema_path)};
 
   if (!sourcemeta::core::is_schema(schema)) {
-    std::cerr << "error: The schema file you provided does not represent a "
-                 "valid JSON Schema\n  "
-              << sourcemeta::core::weakly_canonical(schema_path).string()
-              << "\n";
-    return EXIT_FAILURE;
+    throw NotSchemaError{schema_path};
   }
 
   const auto fast_mode{options.contains("fast")};
@@ -194,7 +193,7 @@ auto sourcemeta::jsonschema::cli::validate(
   for (; iterator != options.positional().cend(); ++iterator) {
     const std::filesystem::path instance_path{*iterator};
     if (instance_path.extension() == ".jsonl") {
-      log_verbose(options)
+      LOG_VERBOSE(options)
           << "Interpreting input as JSONL: "
           << sourcemeta::core::weakly_canonical(instance_path).string() << "\n";
       std::int64_t index{0};
@@ -260,7 +259,7 @@ auto sourcemeta::jsonschema::cli::validate(
               break;
             }
           } else if (subresult) {
-            log_verbose(options)
+            LOG_VERBOSE(options)
                 << "ok: "
                 << sourcemeta::core::weakly_canonical(instance_path).string()
                 << " (entry #" << index << ")"
@@ -287,7 +286,7 @@ auto sourcemeta::jsonschema::cli::validate(
       }
 
       if (index == 0) {
-        log_verbose(options) << "warning: The JSONL file is empty\n";
+        sourcemeta::jsonschema::LOG_WARNING() << "The JSONL file is empty\n";
       }
     } else {
       sourcemeta::core::PointerPositionTracker tracker;
@@ -335,7 +334,7 @@ auto sourcemeta::jsonschema::cli::validate(
         sourcemeta::core::prettify(suboutput, std::cout);
         std::cout << "\n";
       } else if (subresult) {
-        log_verbose(options)
+        LOG_VERBOSE(options)
             << "ok: "
             << sourcemeta::core::weakly_canonical(instance_path).string()
             << "\n  matches "
@@ -352,8 +351,9 @@ auto sourcemeta::jsonschema::cli::validate(
     }
   }
 
-  return result ? EXIT_SUCCESS
-                // Report a different exit code for validation failures, to
-                // distinguish them from other errors
-                : 2;
+  if (!result) {
+    // Report a different exit code for validation failures, to
+    // distinguish them from other errors
+    throw Fail{2};
+  }
 }
