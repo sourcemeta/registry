@@ -6,12 +6,15 @@
 #include <sourcemeta/jsonbinpack/runtime.h>
 
 #include <cassert>    // assert
-#include <cstdlib>    // EXIT_SUCCESS
 #include <filesystem> // std::filesystem
 #include <fstream>    // std::ifstream
 #include <iostream>   // std::cout, std::endl
 
 #include "command.h"
+#include "configuration.h"
+#include "error.h"
+#include "logger.h"
+#include "resolver.h"
 #include "utils.h"
 
 static auto has_data(std::ifstream &stream) -> bool {
@@ -27,14 +30,12 @@ static auto has_data(std::ifstream &stream) -> bool {
   return (current_pos < end_pos) && stream.good();
 }
 
-auto sourcemeta::jsonschema::cli::decode(
-    const sourcemeta::core::Options &options) -> int {
+auto sourcemeta::jsonschema::decode(const sourcemeta::core::Options &options)
+    -> void {
   if (options.positional().size() < 2) {
-    std::cerr
-        << "error: This command expects a path to a binary file and an "
-           "output path. For example:\n\n"
-        << "  jsonschema decode path/to/output.binpack path/to/document.json\n";
-    return EXIT_FAILURE;
+    throw PositionalArgumentError{
+        "This command expects a path to a binary file and an output path",
+        "jsonschema decode path/to/output.binpack path/to/document.json"};
   }
 
   // TODO: Take a real schema as argument
@@ -66,7 +67,7 @@ auto sourcemeta::jsonschema::cli::decode(
   sourcemeta::jsonbinpack::Decoder decoder{input_stream};
 
   if (output.extension() == ".jsonl") {
-    log_verbose(options) << "Interpreting input as JSONL: "
+    LOG_VERBOSE(options) << "Interpreting input as JSONL: "
                          << sourcemeta::core::weakly_canonical(
                                 options.positional().front())
                                 .string()
@@ -74,25 +75,21 @@ auto sourcemeta::jsonschema::cli::decode(
 
     std::size_t count{0};
     while (has_data(input_stream)) {
-      log_verbose(options) << "Decoding entry #" << count << "\n";
-      const auto document{decoder.read(encoding)};
+      LOG_VERBOSE(options) << "Decoding entry #" << count << "\n";
+      auto document{decoder.read(encoding)};
       if (count > 0) {
         output_stream << "\n";
       }
 
-      sourcemeta::core::prettify(document, output_stream,
-                                 sourcemeta::core::schema_format_compare);
+      sourcemeta::core::prettify(document, output_stream);
       count += 1;
     }
   } else {
-    const auto document{decoder.read(encoding)};
-    sourcemeta::core::prettify(document, output_stream,
-                               sourcemeta::core::schema_format_compare);
+    auto document{decoder.read(encoding)};
+    sourcemeta::core::prettify(document, output_stream);
   }
 
   output_stream << "\n";
   output_stream.flush();
   output_stream.close();
-
-  return EXIT_SUCCESS;
 }

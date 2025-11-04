@@ -7,22 +7,24 @@
 #include <sourcemeta/jsonbinpack/compiler.h>
 #include <sourcemeta/jsonbinpack/runtime.h>
 
-#include <cstdlib>    // EXIT_SUCCESS
 #include <filesystem> // std::filesystem
 #include <fstream>    // std::ofstream
 #include <iostream>   // std::cout, std::endl
 
 #include "command.h"
+#include "configuration.h"
+#include "error.h"
+#include "input.h"
+#include "logger.h"
+#include "resolver.h"
 #include "utils.h"
 
-auto sourcemeta::jsonschema::cli::encode(
-    const sourcemeta::core::Options &options) -> int {
+auto sourcemeta::jsonschema::encode(const sourcemeta::core::Options &options)
+    -> void {
   if (options.positional().size() < 2) {
-    std::cerr
-        << "error: This command expects a path to a JSON document and an "
-           "output path. For example:\n\n"
-        << "  jsonschema encode path/to/document.json path/to/output.binpack\n";
-    return EXIT_FAILURE;
+    throw PositionalArgumentError{
+        "This command expects a path to a JSON document and an output path",
+        "jsonschema encode path/to/document.json path/to/output.binpack"};
   }
 
   // TODO: Take a real schema as argument
@@ -46,7 +48,7 @@ auto sourcemeta::jsonschema::cli::encode(
   std::cerr << "original file size: " << original_size << " bytes\n";
 
   if (document.extension() == ".jsonl") {
-    log_verbose(options)
+    LOG_VERBOSE(options)
         << "Interpreting input as JSONL: "
         << sourcemeta::core::weakly_canonical(document).string() << "\n";
 
@@ -58,7 +60,7 @@ auto sourcemeta::jsonschema::cli::encode(
     sourcemeta::jsonbinpack::Encoder encoder{output_stream};
     std::size_t count{0};
     for (const auto &entry : sourcemeta::core::JSONL{stream}) {
-      log_verbose(options) << "Encoding entry #" << count << "\n";
+      LOG_VERBOSE(options) << "Encoding entry #" << count << "\n";
       encoder.write(entry, encoding);
       count += 1;
     }
@@ -87,6 +89,4 @@ auto sourcemeta::jsonschema::cli::encode(
               << (static_cast<std::uint64_t>(total_size) * 100 / original_size)
               << "%\n";
   }
-
-  return EXIT_SUCCESS;
 }
