@@ -12,6 +12,7 @@
           "description": "A growing collection of hand-crafted high-quality schemas by Sourcemeta",
           "email": "hello@sourcemeta.com",
           "github": "sourcemeta/std",
+          "website": "https://www.sourcemeta/products/std",
           "contents": {
             "v0": {
               "include": "./jsonschema.json"

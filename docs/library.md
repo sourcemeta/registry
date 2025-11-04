@@ -100,7 +100,7 @@ These collections are available in every edition of the Sourcemeta Registry
 | `@openapi/v3.0` | [OpenAPI](https://www.openapis.org) | The world's most widely used API description standard | [Link](https://schemas.sourcemeta.com/openapi/v3.0) |
 | `@openapi/v2.0` | [OpenAPI](https://www.openapis.org) | The world's most widely used API description standard | [Link](https://schemas.sourcemeta.com/openapi/v2.0) |
 | `@sourcemeta/registry` | [Sourcemeta Registry](https://registry.sourcemeta.com) | Schemas that define the Sourcemeta Registry itself | [Link](https://schemas.sourcemeta.com/sourcemeta/registry) |
-| `@sourcemeta/std` | [Sourcemeta Standard Library](https://github.com/sourcemeta/std) | The Sourcemeta JSON Schema Standard Library | [Link](https://schemas.sourcemeta.com/sourcemeta/std) |
+| `@sourcemeta/std` | [Sourcemeta Standard Library](https://www.sourcemeta.com/products/std) | The Sourcemeta JSON Schema Standard Library | [Link](https://schemas.sourcemeta.com/sourcemeta/std) |
 
 [^1]: The built-in collections we offer are redistributed directly from their
   upstream sources *without modification*. As such, any issues, errors, or
