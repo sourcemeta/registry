@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL DTR 2024-01-31 SQNamesItemType",
+  "description": "This type is for collections of Simplified QNames",
+  "examples": [
+    [ "xbrli:monetary" ],
+    [ "iso4217:USD", "custom:MyElement" ],
+    [ "ns1:foo", "ns2:bar", "ns3:baz" ]
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/dtr/dtr.html",
+    "https://www.xbrl.org/dtr/type/2024-01-31/types.xsd"
+  ],
+  "type": "array",
+  "items": {
+    "$ref": "sqname-item-type.json"
+  }
+}

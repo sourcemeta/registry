@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR length Item Type units (2024-10-22)",
+  "description": "Valid units for lengthItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "ft", "in", "mi" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Foot",
+      "description": "Twelve Inches",
+      "x-status": "REC",
+      "x-symbol": "ft",
+      "const": "ft"
+    },
+    {
+      "title": "Inch",
+      "description": "Inch",
+      "x-status": "REC",
+      "x-symbol": "in",
+      "const": "in"
+    },
+    {
+      "title": "Mile",
+      "description": "5280 Feet",
+      "x-status": "REC",
+      "x-symbol": "mi",
+      "const": "mi"
+    },
+    {
+      "title": "Nautical Mile",
+      "description": "1.15078 Miles (One Minute of Arc Latitude)",
+      "x-status": "REC",
+      "x-symbol": "nmi",
+      "const": "nmi"
+    },
+    {
+      "title": "Yard",
+      "description": "Three Feet",
+      "x-status": "REC",
+      "x-symbol": "yd",
+      "const": "yd"
+    },
+    {
+      "title": "Centimetre",
+      "description": "One-hundreth of Metre",
+      "x-status": "REC",
+      "x-symbol": "cm",
+      "const": "cm"
+    },
+    {
+      "title": "Decimetre",
+      "description": "Decimetre",
+      "x-status": "REC",
+      "x-symbol": "dm",
+      "const": "dm"
+    },
+    {
+      "title": "Kilometre",
+      "description": "Thousand Metres",
+      "x-status": "REC",
+      "x-symbol": "km",
+      "const": "km"
+    },
+    {
+      "title": "Metre",
+      "description": "Metre",
+      "x-status": "REC",
+      "x-symbol": "m",
+      "const": "m"
+    },
+    {
+      "title": "Millimetre",
+      "description": "One-thousandth of Metre",
+      "x-status": "REC",
+      "x-symbol": "mm",
+      "const": "mm"
+    }
+  ]
+}

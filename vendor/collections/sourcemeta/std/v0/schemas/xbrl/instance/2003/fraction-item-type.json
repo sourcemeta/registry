@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL fractionItemType",
+  "description": "XBRL item type for fractional values with explicit numerator and denominator. Represented as a two-element array of W3C XML Schema decimal values",
+  "examples": [
+    [ 1.5, 2 ],
+    [ -100, 3.5 ],
+    [ 5, -2.5 ],
+    [ 0, 1 ]
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/Specification/XBRL-2.1/REC-2003-12-31/XBRL-2.1-REC-2003-12-31+corrected-errata-2013-02-20.html#_5.1.1.3",
+    "https://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"
+  ],
+  "type": "array",
+  "maxItems": 2,
+  "minItems": 2,
+  "prefixItems": [
+    {
+      "$ref": "../../../w3c/xmlschema/2001/decimal.json"
+    },
+    {
+      "$ref": "../../../w3c/xmlschema/2001/decimal.json",
+      "not": {
+        "const": 0
+      }
+    }
+  ]
+}

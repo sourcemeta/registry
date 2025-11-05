@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR area Item Type units (2024-10-22)",
+  "description": "Valid units for areaItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "acre", "sqft", "sqmi" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Acre",
+      "description": "Acre",
+      "x-status": "REC",
+      "x-symbol": "a",
+      "const": "acre"
+    },
+    {
+      "title": "Square Foot",
+      "description": "Square Foot",
+      "x-status": "REC",
+      "x-symbol": "ft²",
+      "const": "sqft"
+    },
+    {
+      "title": "Square Mile",
+      "description": "Square Miles",
+      "x-status": "REC",
+      "x-symbol": "mi²",
+      "const": "sqmi"
+    },
+    {
+      "title": "Square Yard",
+      "description": "Square Yard",
+      "x-status": "REC",
+      "x-symbol": "yd²",
+      "const": "sqyd"
+    },
+    {
+      "title": "Hectare",
+      "description": "Hectare",
+      "x-status": "REC",
+      "x-symbol": "ha",
+      "const": "ha"
+    },
+    {
+      "title": "Square km",
+      "description": "Square Kilometer",
+      "x-status": "REC",
+      "x-symbol": "km²",
+      "const": "sqkm"
+    },
+    {
+      "title": "Square metre",
+      "description": "Square Metre",
+      "x-status": "REC",
+      "x-symbol": "m²",
+      "const": "sqm"
+    }
+  ]
+}

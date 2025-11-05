@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL sharesItemType",
+  "description": "This datatype serves as the datatype for share based financial concepts. Based on W3C XML Schema decimal",
+  "examples": [ 100.5, -25.0, 0 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/Specification/XBRL-2.1/REC-2003-12-31/XBRL-2.1-REC-2003-12-31+corrected-errata-2013-02-20.html#_5.1.1.3",
+    "https://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"
+  ],
+  "$ref": "../../../w3c/xmlschema/2001/decimal.json"
+}

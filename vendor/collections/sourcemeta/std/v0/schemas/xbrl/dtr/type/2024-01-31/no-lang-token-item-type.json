@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL DTR 2024-01-31 noLangTokenItemType",
+  "description": "This type is for values that should not have any language association, such as identifiers",
+  "examples": [ "identifier123", "SKU-45678", "CODE_ABC" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/dtr/dtr.html",
+    "https://www.xbrl.org/dtr/type/2024-01-31/types.xsd"
+  ],
+  "$ref": "../../../../xbrl/instance/2003/token-item-type.json"
+}

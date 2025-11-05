@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL DTR 2024-01-31 ghgEmissionsPerMonetaryItemType",
+  "description": "This type represents greenhouse gas emissions per monetary unit, such as emissions intensity",
+  "examples": [ 1000.5, 25.75, 100 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/dtr/dtr.html",
+    "https://www.xbrl.org/dtr/type/2024-01-31/types.xsd"
+  ],
+  "$ref": "../../../../xbrl/instance/2003/decimal-item-type.json"
+}

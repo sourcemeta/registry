@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL monetaryItemType",
+  "description": "The monetary type serves as the datatype for those financial concepts in a taxonomy which denote units in a currency",
+  "examples": [
+    {
+      "value": 100.5,
+      "currency": "USD"
+    },
+    {
+      "value": -25.0,
+      "currency": "EUR"
+    },
+    {
+      "value": 0,
+      "currency": "GBP"
+    }
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/Specification/XBRL-2.1/REC-2003-12-31/XBRL-2.1-REC-2003-12-31+corrected-errata-2013-02-20.html#_5.1.1.3",
+    "https://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"
+  ],
+  "type": "object",
+  "required": [ "value", "currency" ],
+  "properties": {
+    "value": {
+      "$ref": "../../../w3c/xmlschema/2001/decimal.json"
+    },
+    "currency": {
+      "$comment": "References ISO currencies as defined in the XBRL 2.1 specification. The XBRL Units Type Registry (UTR) also defines monetary units with additional XBRL-specific metadata and status (REC/CR). For general XBRL usage, this ISO reference is appropriate. For strict regulatory compliance or XBRL-specific unit validation, use the UTR unit schema as an additional validation layer",
+      "$ref": "../../../iso/currency/2015/alpha-currency.json"
+    }
+  }
+}

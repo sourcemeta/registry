@@ -2,16 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "W3C XML Schema negativeInteger",
   "description": "Represents strictly negative integers (§3.3.15)",
-  "$comment": "XML Schema supports arbitrary precision. JSON Schema's integer type is limited to the 64-bit range for safe interoperability per RFC 8259. This schema uses string representation to maintain XML Schema's arbitrary precision semantics",
-  "examples": [
-    "-1",
-    "-42",
-    "-1000",
-    "-9223372036854775808",
-    "-999999999999999999999999999999"
-  ],
+  "$comment": "XML Schema supports arbitrary precision integers. JSON's number type is limited to the safe integer range (±2^53-1) per IEEE 754. To properly validate arbitrary precision integers, use a JSON Schema evaluator that supports arbitrary precision integer handling",
+  "examples": [ -1, -42, -1000, -9223372036854775808 ],
   "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
   "x-links": [ "https://www.w3.org/TR/xmlschema-2/#negativeInteger" ],
-  "type": "string",
-  "pattern": "^-[1-9][0-9]*$"
+  "type": "integer",
+  "maximum": -1
 }

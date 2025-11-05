@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL DTR 2024-01-31 prefixedContentItemType",
+  "description": "This type is for values that rely on namespace-prefix bindings in documents for their interpretation",
+  "examples": [ "xbrli:monetary", "iso4217:USD", "custom:MyElement" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/dtr/dtr.html",
+    "https://www.xbrl.org/dtr/type/2024-01-31/types.xsd"
+  ],
+  "$ref": "../../../../xbrl/instance/2003/token-item-type.json"
+}
