@@ -1,0 +1,1219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://www.iptc.org/std/ninjs/ninjs-schema_3.1.json#",
+  "type": "object",
+  "title": "IPTC ninjs - News in JSON - version 3.1",
+  "description": "A news item as JSON object -- copyright 2025 IPTC - International Press Telecommunications Council - www.iptc.org - This document is published under the Creative Commons Attribution 4.0 license, see  http://creativecommons.org/licenses/by/4.0/",
+  "$defs": {
+    "datesObjectType": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "All dates pertaining to an event, a planning or a coverage, in particular the start and end date and any recurrence information",
+      "properties": {
+        "startDate": {
+          "title": "Start Date",
+          "description": "The date and time at which the event starts.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "endDate": {
+          "title": "End Date",
+          "description": "The date and time at which the event ends.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "expectedStartDate": {
+          "description": "The approximate date (and optionally time) at which the event or coverage is expected to start.",
+          "$ref": "#/$defs/truncatedDateTimeType"
+        },
+        "expectedEndDate": {
+          "description": "The approximate date (and optionally time) at which the event or coverage is expected to end.",
+          "$ref": "#/$defs/truncatedDateTimeType"
+        },
+        "expectedDuration": {
+          "description": "The time period that the event or coverage is expected to last. Must use the iCalendar duration format (RFC 5545). (Actual duration can be calculated from startDate and endDate)",
+          "type": "string"
+        },
+        "recurrence": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Specifies recurrence information about the event.",
+          "properties": {
+            "recurrenceDates": {
+              "type": "array",
+              "description": "Date(s) (and optionally times) on which the event occurs.",
+              "$ref": "#/$defs/truncatedDateTimeType"
+            },
+            "recurrenceRules": {
+              "type": "array",
+              "description": "Date(s) (and optionally times) on which the event occurs.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "frequency": {
+                    "title": "Frequency",
+                    "description": "The FREQ rule part identifies the type of recurrence rule.",
+                    "type": "string",
+                    "enum": [
+                      "secondly",
+                      "minutely",
+                      "hourly",
+                      "daily",
+                      "weekly",
+                      "monthly",
+                      "yearly"
+                    ]
+                  },
+                  "interval": {
+                    "description": "The INTERVAL rule part contains a positive integer representing how often the recurrence rule repeats.",
+                    "type": "integer"
+                  },
+                  "until": {
+                    "description": "The UNTIL rule part defines a date-time value which bounds the recurrence rule in an inclusive manner.",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "count": {
+                    "description": "The COUNT rule part defines the number of occurrences at which to range-bound the recurrence.",
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "oneOf": [
+            {
+              "required": [
+                "startDate"
+              ]
+            },
+            {
+              "required": [
+                "expectedStartDate"
+              ]
+            }
+          ]
+        },
+        {
+          "oneOf": [
+            {
+              "required": [
+                "endDate"
+              ]
+            },
+            {
+              "required": [
+                "expectedEndDate"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "contactInfoType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Type would be method of communication like phone, mobile, address etc.",
+          "type": "string"
+        },
+        "role": {
+          "description": "Role refers to type and could be private, office etc",
+          "type": "string"
+        },
+        "lang": {
+          "description": "Language of this contactInfo instance. The value should follow IETF BCP47.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable name of the contact method, such as a name for a web page, name of persons twitter account etc",
+          "type": "string"
+        },
+        "value": {
+          "description": "Actual phone number, email address, web url etc.",
+          "type": "string"
+        },
+        "address": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "The address of a person, place or organisation.",
+          "properties": {
+            "lines": {
+              "description": "An array of lines to construct an address. The order is important to construct a correct address.",
+              "type": "array",
+              "items": {
+                "description": "One line in the address lines array.",
+                "type": "string"
+              }
+            },
+            "locality": {
+              "description": "A city/town/village etc. part of the address.",
+              "type": "string"
+            },
+            "area": {
+              "description": "A subdivision of a country part of the address.",
+              "type": "string"
+            },
+            "postalCode": {
+              "description": "A postal code part of the address.",
+              "type": "string"
+            },
+            "country": {
+              "description": "A country part of the address.",
+              "type": "string"
+            }
+          }
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "value"
+          ]
+        },
+        {
+          "required": [
+            "address"
+          ]
+        }
+      ]
+    },
+    "commissionedType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "by": {
+          "title": "By",
+          "description": "The person or party that commissioned the content.",
+          "type": "string"
+        },
+        "on": {
+          "title": "On",
+          "description": "The date at which the content was commissioned.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "references": {
+          "title": "References",
+          "description": "Identifiers that help with the commissioning process such as purchase orders and work order numbers.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "description": "Name of the reference",
+                "type": "string"
+              },
+              "value": {
+                "title": "Value",
+                "description": "Value of the reference",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "truncatedDateTimeType": {
+      "description": "Allows any of year (xs:gYear, YYYY), year/month (xs:gYearMonth, YYYY-MM), year/month/day (xs:date YYYY-MM-DD), and full datetime (xs:dateTime, YYYY-MM-DDTHH:MM:SS+HH:MM), all with an optional timezone suffix. Note that this does NOT include ISO8601 month of year (xs:gMonth, --MM) or yearly day (xs:gMonthDay, --MM-DD)",
+      "type": "string",
+      "pattern": "^(-?(?:[1-9][0-9]*)?[0-9]{4})(-(1[0-2]|0[1-9])(-(3[01]|0[1-9]|[12][0-9])(T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?)?)?)?$"
+    },
+    "organisationType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "description": "The name of the organisation",
+          "type": "string"
+        },
+        "rel": {
+          "title": "Relationship",
+          "description": "The relationship of the content of the news object to the organisation.",
+          "type": "string"
+        },
+        "uri": {
+          "title": "URI",
+          "description": "The identifier of the organisation as a complete uri.",
+          "type": "string",
+          "format": "uri"
+        },
+        "literal": {
+          "title": "Literal",
+          "description": "An identifier for the organisation as a free-text string.",
+          "type": "string"
+        },
+        "symbols": {
+          "title": "Symbols",
+          "description": "Symbols used for a financial instrument linked to the organisation at a specific market place",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "exchange": {
+                "title": "Exchange",
+                "description": "Identifier for the marketplace which uses the ticker symbols of the symbol property",
+                "type": "string"
+              },
+              "symbolType": {
+                "title": "Symbol type uri",
+                "description": "Type of financial symbol used. Suggested CV: http://cv.iptc.org/newscodes/financialinstrumentsymboltype/",
+                "type": "string",
+                "format": "uri"
+              },
+              "symbol": {
+                "title": "Symbol",
+                "description": "Symbol identifier, including ticker symbols.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "contactInfo": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/contactInfoType"
+          }
+        }
+      }
+    },
+    "renditionType": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A specific rendition of the content of the news object.",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "title": "Name",
+          "description": "The name of this object in the array of renditions, for example 'thumbnail'. Suggested CV: http://cv.iptc.org/newscodes/rendition/",
+          "type": "string"
+        },
+        "href": {
+          "title": "href",
+          "description": "The URL for accessing the rendition as a resource.",
+          "type": "string",
+          "format": "uri"
+        },
+        "contentType": {
+          "title": "Content Type",
+          "description": "The IANA Media Type which applies to this rendition.",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "description": "A title for the link to the rendition resource",
+          "type": "string"
+        },
+        "width": {
+          "title": "Width",
+          "description": "For still and moving images: the width of the display area measured in pixels.",
+          "type": "integer"
+        },
+        "height": {
+          "title": "Height",
+          "description": "For still and moving images: the height of the display area measured in pixels.",
+          "type": "integer"
+        },
+        "sizeInBytes": {
+          "title": "Size in bytes",
+          "description": "The size of the rendition resource in bytes.",
+          "type": "integer"
+        },
+        "duration": {
+          "title": "Duration",
+          "description": "The total time duration of the content in seconds (fractional seconds are allowed).",
+          "type": "number"
+        },
+        "format": {
+          "title": "Format",
+          "description": "A refinement of a generic content type (i.e. IANA media type) by a literal string value. Suggested CV: http://cv.iptc.org/newscodes/format/",
+          "type": "string"
+        },
+        "aspectRatio": {
+          "title": "Aspect ratio",
+          "description": "Aspect ratio of an image or video file, which is the ratio of the pixel width to its height, such as 16:9 and 4:3.",
+          "type": "string"
+        },
+        "videoCodec": {
+          "title": "Video codec",
+          "description": "The video encoding system used to create the content. Suggested CV: http://cv.iptc.org/newscodes/videocodec/",
+          "type": "string"
+        },
+        "frameRate": {
+          "title": "Frame rate",
+          "description": "The number of video frames per second, which is the rate at which the material should be shown in order to achieve the intended visual effect.",
+          "type": "number"
+        },
+        "poi": {
+          "type": "object",
+          "additionalProperties": false,
+          "title": "Point of Interest",
+          "description": "The main point of interest of the rendition, expressed in pixels from the top left.",
+          "properties": {
+            "x": {
+              "title": "X",
+              "description": "The x-coordinate of the point of interest of the rendition.",
+              "type": "integer"
+            },
+            "y": {
+              "title": "Y",
+              "description": "The y-coordinate of the point of interest of the rendition.",
+              "type": "integer"
+            }
+          }
+        },
+        "transportProtocol": {
+          "title": "Transport protocol",
+          "description": "The transport/flow type of the flow (B2B stream).",
+          "type": "string"
+        },
+        "scanType": {
+          "title": "Scan type (video profile)",
+          "description": "The scan type of the video i.e. progressive or interlaced.",
+          "type": "string",
+          "enum": [
+            "progressive",
+            "interlaced"
+          ]
+        },
+        "bitrate": {
+          "title": "Bitrate",
+          "description": "The bitrate of the video. Should always include units, e.g. 400 kbps.",
+          "type": "string"
+        }
+      }
+    },
+    "newsObjectType": {
+      "title": "Type",
+      "description": "The generic news type of this news object. Based on http://cv.iptc.org/newscodes/ninature/",
+      "type": "string",
+      "enum": [
+        "text",
+        "audio",
+        "video",
+        "picture",
+        "graphic",
+        "composite",
+        "component",
+        "event",
+        "planning"
+      ]
+    },
+    "ninjsType": {
+      "description": "The root schema of ninjs as a type to make it possible to combine schema parts.",
+      "type": "object",
+      "required": [
+        "uri"
+      ],
+      "properties": {
+        "uri": {
+          "title": "Uniform Resource Identifier",
+          "description": "The global unique identifier for this news object. This is the only required property and should be used to identify the ninjs object, not for links to external resources etc.",
+          "type": "string",
+          "format": "uri"
+        },
+        "type": {
+          "$ref": "#/$defs/newsObjectType"
+        },
+        "representationType": {
+          "title": "Representation type",
+          "description": "Indicates how complete this representation of a news item is.",
+          "type": "string",
+          "enum": [
+            "full",
+            "partial"
+          ]
+        },
+        "profile": {
+          "title": "Profile",
+          "description": "An identifier for the structure of the news object. This can be any string but we suggest something identifying the structure of the content such as 'text-only' or 'text-photo'. Profiles are typically provider-specific.",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "description": "The version of the news object which is identified by the uri property.",
+          "type": "string"
+        },
+        "firstCreated": {
+          "title": "First created",
+          "description": "Indicates when the first version of this ninjs object was created.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "versionCreated": {
+          "title": "Version created",
+          "description": "The date and time when this version of this ninjs object was created.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "contentCreated": {
+          "title": "Content created",
+          "description": "The date and time when the content of this ninjs object was originally created. For example an old photo that is now handled as a ninjs object.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "embargoedUntil": {
+          "title": "Embargoed until",
+          "description": "The date and time before which all versions of the news object are embargoed. If absent, this object is not embargoed.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "pubStatus": {
+          "title": "Publication status",
+          "description": "The publishing status of the news object. Default value is 'usable'.",
+          "type": "string",
+          "enum": [
+            "usable",
+            "withheld",
+            "canceled"
+          ]
+        },
+        "urgency": {
+          "title": "Urgency",
+          "description": "The editorial urgency of the content. Values from 1 to 9. 1 represents the highest urgency, 9 the lowest.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9
+        },
+        "copyrightHolder": {
+          "title": "Copyright holder",
+          "description": "The person or organisation claiming the intellectual property for the content.",
+          "type": "string"
+        },
+        "copyrightNotice": {
+          "title": "Copyright notice",
+          "description": "Any necessary copyright notice for claiming the intellectual property for the content.",
+          "type": "string"
+        },
+        "usageTerms": {
+          "title": "Usage terms",
+          "description": "A natural-language statement about the usage terms pertaining to the content.",
+          "type": "string"
+        },
+        "edNote": {
+          "title": "Editorial note",
+          "description": "A note that is intended to be read by internal staff at the receiving organisation, but not intended to be published. Consider using this before using the descriptions array.",
+          "type": "string"
+        },
+        "language": {
+          "title": "Language",
+          "description": "The human language used by the content. The value should follow IETF BCP47.",
+          "type": "string"
+        },
+        "descriptions": {
+          "title": "Descriptions",
+          "description": "An array of one or more descriptions of the ninjs object. See also edNote for information from provider to reciever. Descriptions are seen as metadata. For a simple description use an array with one object only containing the value property. Role and contentType are then undefined and their interpretation is up to the provider.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "role": {
+                "title": "Role",
+                "description": "The role of this description.",
+                "type": "string"
+              },
+              "contentType": {
+                "title": "Content Type",
+                "description": "The IANA (Internet Assigned Numbers Authority) media type of the content of this description. Previously known as MIME Type.",
+                "type": "string"
+              },
+              "value": {
+                "title": "Value",
+                "description": "The descriptive text identified with the above role and/or contentType.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "bodies": {
+          "title": "Bodies",
+          "description": "An array of body objects with the content as text or with markup. For a simple body use an array with one object only containing the value property. If role and contentType are undefined, their interpretation is up to the provider.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "role": {
+                "title": "Role",
+                "description": "The role of this body.",
+                "type": "string"
+              },
+              "contentType": {
+                "title": "Content Type",
+                "description": "The IANA (Internet Assigned Numbers Authority) media type of the content of this body. Previously known as MIME Type.",
+                "type": "string"
+              },
+              "charCount": {
+                "title": "Character count",
+                "description": "The total character count in this body excluding figure captions.",
+                "type": "integer"
+              },
+              "wordCount": {
+                "title": "Word count",
+                "description": "The total number of words in this body excluding figure captions.",
+                "type": "integer"
+              },
+              "value": {
+                "title": "Value",
+                "description": "The body text identified with the above role and contentType.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "headlines": {
+          "title": "Headlines",
+          "description": "An array of objects containing various types of headlines. For a simple headline use an array with one object only containing the value property. Role and contentType are then undefined and it is up to the provider.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "value"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "role": {
+                "title": "Role",
+                "description": "The role of this headline",
+                "type": "string"
+              },
+              "contentType": {
+                "title": "Content Type",
+                "description": "The IANA (Internet Assigned Numbers Authority) media type of the content of this headline. Previously known as MIME Type.",
+                "type": "string"
+              },
+              "value": {
+                "title": "Value",
+                "description": "The headline identified with the above role and/or contentType.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "people": {
+          "title": "People",
+          "description": "An array of objects describing individual human beings.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "description": "The name of a person",
+                "type": "string"
+              },
+              "rel": {
+                "title": "Relationship",
+                "description": "The relationship of the content of the news object to the person",
+                "type": "string"
+              },
+              "uri": {
+                "title": "URI",
+                "description": "The identifier for the person as a complete uri with the code.",
+                "type": "string",
+                "format": "uri"
+              },
+              "literal": {
+                "title": "Literal",
+                "description": "An identifier for the person as a free-text string.",
+                "type": "string"
+              },
+              "contactInfo": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/contactInfoType"
+                }
+              }
+            }
+          }
+        },
+        "organisations": {
+          "title": "Organisations",
+          "description": "An array of objects describing administrative and functional structures which may, for example, act as a business, as a political party or not-for-profit entity.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/organisationType"
+          }
+        },
+        "places": {
+          "title": "Places",
+          "description": "An array of named locations.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "description": "The name of the place",
+                "type": "string"
+              },
+              "rel": {
+                "title": "Relationship",
+                "description": "The relationship of the content of the news object to the place",
+                "type": "string"
+              },
+              "uri": {
+                "title": "URI",
+                "description": "The identifier for the place as a complete uri",
+                "type": "string",
+                "format": "uri"
+              },
+              "literal": {
+                "title": "Literal",
+                "description": "An identifier for the place as a free-text string.",
+                "type": "string"
+              },
+              "contactInfo": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/contactInfoType"
+                }
+              },
+              "geoJSON": {
+                "$ref": "https://geojson.org/schema/GeoJSON.json#"
+              }
+            }
+          }
+        },
+        "subjects": {
+          "title": "Subjects",
+          "description": "An array of objects holding concepts with a relationship to the content.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "description": "The name of the subject.",
+                "type": "string"
+              },
+              "rel": {
+                "title": "Relationship",
+                "description": "The relationship of the content of the news object to the subject",
+                "type": "string"
+              },
+              "uri": {
+                "title": "URI",
+                "description": "The identifier of the subject as a complete uri.",
+                "type": "string",
+                "format": "uri"
+              },
+              "literal": {
+                "title": "Literal",
+                "description": "An identifier for the subject as a free-text string.",
+                "type": "string"
+              },
+              "creator": {
+                "title": "Creator",
+                "description": "Specifies which entity (person, organisation or system) that created or last edited the property.",
+                "type": "string"
+              },
+              "relevance": {
+                "title": "Relevance",
+                "description": "The relevance of the metadata to the news item.",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "confidence": {
+                "title": "Confidence",
+                "description": "The confidence with which the metadata has been assigned.",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        },
+        "events": {
+          "title": "Events",
+          "description": "An array of objects describing something which happens in a planned or unplanned manner.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "title": "ID",
+                "description": "An ID for the event.",
+                "type": "string"
+              },
+              "name": {
+                "title": "Name",
+                "description": "The name of the event.",
+                "type": "string"
+              },
+              "rel": {
+                "title": "Relationship",
+                "description": "The relationship of the content of the news object to the event.",
+                "type": "string"
+              },
+              "uri": {
+                "title": "URI",
+                "description": "The identifier for the event as a complete uri.",
+                "type": "string",
+                "format": "uri"
+              },
+              "literal": {
+                "title": "Literal",
+                "description": "An identifier for the event as a free-text string.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "eventDetails": {
+          "title": "Event Details",
+          "description": "A container for properties related to a planned event.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "eventStatus": {
+              "type": "string",
+              "description": "Status of the event (as opposed to the status of coverage of the event). Suggested CV: http://cv.iptc.org/newscodes/eventstatus/",
+              "format": "uri"
+            },
+            "plannedCoverageStatus": {
+              "type": "string",
+              "description": "Status of the coverage (as opposed to the status of the event itself). Suggested CV: http://cv.iptc.org/newscodes/newscoveragestatus/",
+              "format": "uri"
+            },
+            "dates": {
+              "type": "object",
+              "description": "Dates and times for this event.",
+              "$ref": "#/$defs/datesObjectType"
+            },
+            "organiser": {
+              "type": "object",
+              "description": "A person or organisation organising the event.",
+              "$ref": "#/$defs/organisationType"
+            }
+          }
+        },
+        "plannedCoverage": {
+          "title": "Planned Coverage",
+          "description": "An array of objects specifying planned coverage which may or may not be related to an event.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "uri": {
+                "description": "The local identifier of the element which MUST be persistent for all versions of the item, i.e. for its entire lifecycle.",
+                "type": "string",
+                "format": "uri"
+              },
+              "title": {
+                "description": "A human-readable title for the planned content.",
+                "type": "string"
+              },
+              "pubStatus": {
+                "title": "Publication status",
+                "description": "The publishing status of the plannedCoverage object. Default value is 'usable'.",
+                "type": "string",
+                "enum": [
+                  "usable",
+                  "withheld",
+                  "canceled"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "description": "The generic news type of the planned content. Based on: http://cv.iptc.org/newscodes/ninature/ nar:itemClass",
+                "$ref": "#/$defs/newsObjectType"
+              },
+              "commissioned": {
+                "type": "object",
+                "description": "Information about the commissioning of this content.",
+                "$ref": "#/$defs/commissionedType"
+              },
+              "dates": {
+                "type": "object",
+                "description": "Dates and times for this planned content.",
+                "$ref": "#/$defs/datesObjectType"
+              },
+              "audiences": {
+                "type": "array",
+                "description": "Intended audiences for the planned content.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "audience": {
+                      "description": "Intended audience(s) for the content.",
+                      "type": "string"
+                    },
+                    "significance": {
+                      "description": "A qualifier which indicates the expected significance of the content for this specific audience.",
+                      "type": "integer"
+                    }
+                  }
+                }
+              },
+              "exclAudience": {
+                "type": "array",
+                "description": "Excluded audience(s) for the planned content.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "edNote": {
+                "description": "Additional natural language information about the planned content addressed to the editorial people receiving and processing the item.",
+                "type": "string"
+              },
+              "urgency": {
+                "description": "The editorial urgency of the planned content, as scoped by the parent element.",
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9
+              },
+              "language": {
+                "description": "The human language used by the planned content. The value should follow IETF BCP47.",
+                "type": "string"
+              },
+              "itemCount": {
+                "description": "Number of planned items of this kind expressed by a range.",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "rangeFrom": {
+                    "type": "integer"
+                  },
+                  "rangeTo": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "wordCount": {
+                "description": "The count of words of textual content.",
+                "type": "integer"
+              },
+              "renditions": {
+                "title": "Renditions",
+                "description": "An array of objects showing the planned renditions of the news object.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/renditionType"
+                }
+              }
+            }
+          }
+        },
+        "objects": {
+          "title": "Objects",
+          "description": "An array of objects describing something material, excluding persons.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "description": "The name of the object.",
+                "type": "string"
+              },
+              "rel": {
+                "title": "Relationship",
+                "description": "The relationship of the content of the news object to the object.",
+                "type": "string"
+              },
+              "uri": {
+                "title": "URI",
+                "description": "The identifier for the object as a complete uri.",
+                "type": "string",
+                "format": "uri"
+              },
+              "literal": {
+                "title": "Literal",
+                "description": "An identifier for the object as a free-text string.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "infoSources": {
+          "title": "Info sources",
+          "description": "An array of parties (person or organisation) which originated, modified, enhanced, distributed, aggregated or supplied the content or provided some information used to create or enhance the content.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "description": "The name of the infoSource.",
+                "type": "string"
+              },
+              "role": {
+                "title": "Role",
+                "description": "The role the infoSource in relationship to the content.",
+                "type": "string"
+              },
+              "uri": {
+                "title": "URI",
+                "description": "The identifier of the infosource as a complete uri.",
+                "type": "string",
+                "format": "uri"
+              },
+              "literal": {
+                "title": "Literal",
+                "description": "An identifier for the infoSource as a free-text string.",
+                "type": "string"
+              },
+              "contactInfo": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/contactInfoType"
+                }
+              }
+            }
+          }
+        },
+        "title": {
+          "title": "Title",
+          "description": "A short natural-language name for the item. Title is metadata, use headlines for publishable headlines.",
+          "type": "string"
+        },
+        "by": {
+          "title": "By",
+          "description": "A natural-language statement about the creator (author, photographer etc.) of the content.",
+          "type": "string"
+        },
+        "slugline": {
+          "title": "Slugline",
+          "description": "A human-readable identifier for the item.",
+          "type": "string"
+        },
+        "located": {
+          "title": "Located",
+          "description": "The name of the location from which the content originates.",
+          "type": "string"
+        },
+        "renditions": {
+          "title": "Renditions",
+          "description": "An array of objects with different renditions of the news object.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/renditionType"
+          }
+        },
+        "associations": {
+          "title": "Associations",
+          "description": "An array of objects with content of news objects which are associated with this news object.",
+          "type": "array",
+          "items": {
+            "description": "Each associated object can use all properties in ninjs.",
+            "type": "object",
+            "$ref": "#/$defs/ninjsType",
+            "properties": {
+              "name": {
+                "title": "Name (of associated object)",
+                "description": "Human-readable name of the associated object.",
+                "type": "string"
+              },
+              "rel": {
+                "title": "Relationship",
+                "description": "The relationship between this document and the associated document.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "unevaluatedProperties": false
+          }
+        },
+        "altIds": {
+          "title": "Alternative ids",
+          "description": "Alternative identifiers assigned to the content. Each alternative id can have a role and a value.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "role": {
+                "title": "Role",
+                "description": "The role of the alternative id.",
+                "type": "string"
+              },
+              "value": {
+                "title": "Value",
+                "description": "The alternative id value.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "trustIndicators": {
+          "title": "Trust indicators",
+          "description": "An array of objects to allow links to documents about trust indicators.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "role": {
+                "title": "Role",
+                "description": "The role of the trust indicator as a complete URI. Suggested CV: http://cv.iptc.org/newscodes/trustindicator",
+                "type": "string",
+                "format": "uri"
+              },
+              "title": {
+                "title": "Title",
+                "description": "The title of the resource being referenced.",
+                "type": "string"
+              },
+              "href": {
+                "title": "href",
+                "description": "The URL for accessing the trust indicator resource.",
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        },
+        "standard": {
+          "title": "Standard",
+          "type": "object",
+          "description": "An object with information about standard, version and schema this instance is valid against.",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "title": "Name",
+              "description": "The name of the standard to which this instance conforms, for example 'ninjs'.",
+              "type": "string"
+            },
+            "version": {
+              "title": "Version",
+              "description": "The version of the standard to which this instance conforms, for example '3.0'.",
+              "type": "string"
+            },
+            "schema": {
+              "title": "Schema",
+              "description": "The URI of the JSON Schema to use for validating this instance, for example 'http://www.iptc.org/std/ninjs/ninjs-schema_3.0.json#'",
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "genres": {
+          "title": "Genres",
+          "description": "Indicates a nature, journalistic or intellectual characteristic of the news item.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "description": "The name of the genre.",
+                "type": "string"
+              },
+              "uri": {
+                "title": "URI",
+                "description": "The identifier of the genre as a complete URI. Suggested CV: http://cv.iptc.org/newscodes/genre",
+                "type": "string"
+              },
+              "literal": {
+                "title": "Literal",
+                "description": "An identifier for the genre as a free-text string.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "expires": {
+          "title": "Expires",
+          "description": "The date and time after which the Item is no longer considered editorially relevant by its provider.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "rightsInfo": {
+          "title": "Rights information",
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Expression of rights to be applied to content.",
+          "properties": {
+            "langId": {
+              "type": "string",
+              "title": "Language id",
+              "description": "Identifier for the Rights Expression language used.",
+              "format": "uri"
+            },
+            "linkedRights": {
+              "title": "Linked rights",
+              "description": "A link from the current Item to Web resource with rights related information.",
+              "type": "string",
+              "format": "uri"
+            },
+            "encodedRights": {
+              "title": "Encoded Rights",
+              "type": "string",
+              "description": "Contains a rights expression as defined by a Rights Expression Language."
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "linkedRights"
+              ]
+            },
+            {
+              "required": [
+                "encodedRights"
+              ]
+            }
+          ]
+        },
+        "digitalSourceType": {
+          "title": "Digital Source Type",
+          "description": "Indicates the type of the source of this content",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "title": "Name",
+              "description": "The name of the digital source type.",
+              "type": "string"
+            },
+            "uri": {
+              "title": "URI",
+              "description": "The identifier of the digital source type as a complete URI. Suggested CV: http://cv.iptc.org/newscodes/digitalsourcetype/",
+              "type": "string",
+              "format": "uri"
+            },
+            "literal": {
+              "title": "Literal",
+              "description": "An identifier for the digital source type as a free-text string.",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "$ref": "#/$defs/ninjsType",
+  "unevaluatedProperties": false
+}
