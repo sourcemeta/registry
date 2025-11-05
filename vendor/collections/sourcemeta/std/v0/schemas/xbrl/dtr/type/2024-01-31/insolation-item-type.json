@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL DTR 2024-01-31 insolationItemType",
+  "description": "This type is used in the solar industry to represent a measure of energy per area over time, sometimes called solar irradiation",
+  "examples": [ 1500.5, 200.25, 5000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/dtr/dtr.html",
+    "https://www.xbrl.org/dtr/type/2024-01-31/types.xsd"
+  ],
+  "$ref": "../../../../xbrl/instance/2003/decimal-item-type.json"
+}

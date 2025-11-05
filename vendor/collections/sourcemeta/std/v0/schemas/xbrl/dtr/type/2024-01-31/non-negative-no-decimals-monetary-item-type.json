@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL DTR 2024-01-31 nonNegativeNoDecimalsMonetaryItemType",
+  "description": "A taxonomy may use this type to indicate that monetary items having this type have no cents and cannot be negative",
+  "examples": [
+    {
+      "value": 100,
+      "currency": "USD"
+    },
+    {
+      "value": 25,
+      "currency": "EUR"
+    },
+    {
+      "value": 0,
+      "currency": "GBP"
+    }
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/dtr/dtr.html",
+    "https://www.xbrl.org/dtr/type/2024-01-31/types.xsd"
+  ],
+  "$ref": "../../../../xbrl/instance/2003/monetary-item-type.json",
+  "properties": {
+    "value": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

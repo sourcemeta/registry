@@ -1,0 +1,1320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR monetary Item Type units (2024-10-22)",
+  "description": "Valid units for monetaryItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "AED", "AFN", "ALL" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "U.A.E. dirham",
+      "description": "United Arab Emirates dirham",
+      "x-status": "REC",
+      "x-symbol": "د.إ",
+      "const": "AED"
+    },
+    {
+      "title": "Afghan afghani",
+      "description": "Afghan afghani",
+      "x-status": "REC",
+      "x-symbol": "؋",
+      "const": "AFN"
+    },
+    {
+      "title": "Albanian lek",
+      "description": "Albanian lek",
+      "x-status": "REC",
+      "x-symbol": "L",
+      "const": "ALL"
+    },
+    {
+      "title": "Armenian dram",
+      "description": "Armenian dram",
+      "x-status": "REC",
+      "x-symbol": "֏",
+      "const": "AMD"
+    },
+    {
+      "title": "Netherlands Antillean guilder",
+      "description": "Netherlands Antillean guilder",
+      "x-status": "REC",
+      "x-symbol": "NAƒ",
+      "const": "ANG"
+    },
+    {
+      "title": "Angolan kwanza",
+      "description": "Angolan kwanza",
+      "x-status": "REC",
+      "x-symbol": "Kz",
+      "const": "AOA"
+    },
+    {
+      "title": "Argentine peso",
+      "description": "Argentine peso",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "ARS"
+    },
+    {
+      "title": "Australian dollar",
+      "description": "Australian dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "AUD"
+    },
+    {
+      "title": "Aruban florin",
+      "description": "Aruban florin",
+      "x-status": "REC",
+      "x-symbol": "ƒ",
+      "const": "AWG"
+    },
+    {
+      "title": "Azerbaijani manat",
+      "description": "Azerbaijani manat",
+      "x-status": "REC",
+      "x-symbol": "₼",
+      "const": "AZN"
+    },
+    {
+      "title": "Bosnia and Herzegovina convertible mark",
+      "description": "Bosnia and Herzegovina convertible mark",
+      "x-status": "REC",
+      "x-symbol": "KM",
+      "const": "BAM"
+    },
+    {
+      "title": "Barbados dollar",
+      "description": "Barbados dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "BBD"
+    },
+    {
+      "title": "Bangladeshi taka",
+      "description": "Bangladeshi taka",
+      "x-status": "REC",
+      "x-symbol": "৳",
+      "const": "BDT"
+    },
+    {
+      "title": "Bulgarian lev",
+      "description": "Bulgarian lev",
+      "x-status": "REC",
+      "x-symbol": "лв",
+      "const": "BGN"
+    },
+    {
+      "title": "Bahraini dinar",
+      "description": "Bahraini dinar",
+      "x-status": "REC",
+      "x-symbol": ".د.ب",
+      "const": "BHD"
+    },
+    {
+      "title": "Burundian franc",
+      "description": "Burundian franc",
+      "x-status": "REC",
+      "x-symbol": "FBu",
+      "const": "BIF"
+    },
+    {
+      "title": "Bermuda Dollar",
+      "description": "Bermudian dollar (customarily known as Bermuda dollar)",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "BMD"
+    },
+    {
+      "title": "Brunei dollar",
+      "description": "Brunei dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "BND"
+    },
+    {
+      "title": "Boliviano",
+      "description": "Boliviano",
+      "x-status": "REC",
+      "x-symbol": "Bs.",
+      "const": "BOB"
+    },
+    {
+      "title": "Bolivian Mvdol",
+      "description": "Bolivian Mvdol (funds code)",
+      "x-status": "REC",
+      "const": "BOV"
+    },
+    {
+      "title": "Brazilian real",
+      "description": "Brazilian real",
+      "x-status": "REC",
+      "x-symbol": "R$",
+      "const": "BRL"
+    },
+    {
+      "title": "Bahamian dollar",
+      "description": "Bahamian dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "BSD"
+    },
+    {
+      "title": "Bhutanese ngultrum",
+      "description": "Bhutanese ngultrum",
+      "x-status": "REC",
+      "x-symbol": "Ch.",
+      "const": "BTN"
+    },
+    {
+      "title": "Botswana pula",
+      "description": "Botswana pula",
+      "x-status": "REC",
+      "x-symbol": "P",
+      "const": "BWP"
+    },
+    {
+      "title": "Belarusian ruble",
+      "description": "Belarusian ruble",
+      "x-status": "REC",
+      "x-symbol": "Br",
+      "const": "BYN"
+    },
+    {
+      "title": "Belarusian ruble",
+      "description": "Belarusian ruble",
+      "x-status": "REC",
+      "x-symbol": "Br",
+      "const": "BYR"
+    },
+    {
+      "title": "Belize dollar",
+      "description": "Belize dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "BZD"
+    },
+    {
+      "title": "Canadian dollar",
+      "description": "Canadian dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "CAD"
+    },
+    {
+      "title": "Congolese franc",
+      "description": "Congolese franc",
+      "x-status": "REC",
+      "x-symbol": "CF",
+      "const": "CDF"
+    },
+    {
+      "title": "WIR Bank",
+      "description": "WIR Bank (complementary currency)",
+      "x-status": "REC",
+      "const": "CHE"
+    },
+    {
+      "title": "Swiss franc",
+      "description": "Swiss franc",
+      "x-status": "REC",
+      "x-symbol": "SFr",
+      "const": "CHF"
+    },
+    {
+      "title": "WIR Bank",
+      "description": "WIR Bank (complementary currency)",
+      "x-status": "REC",
+      "const": "CHW"
+    },
+    {
+      "title": "Unidad de Fomento",
+      "description": "Unidad de Fomento (funds code)",
+      "x-status": "REC",
+      "const": "CLF"
+    },
+    {
+      "title": "Chilean peso",
+      "description": "Chilean peso",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "CLP"
+    },
+    {
+      "title": "Chinese yuan",
+      "description": "Chinese yuan (renmibi)",
+      "x-status": "REC",
+      "x-symbol": "¥",
+      "const": "CNY"
+    },
+    {
+      "title": "Colombian peso",
+      "description": "Colombian peso",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "COP"
+    },
+    {
+      "title": "Unidad de Valor Real",
+      "description": "Unidad de Valor Real",
+      "x-status": "REC",
+      "const": "COU"
+    },
+    {
+      "title": "Costa Rican colon",
+      "description": "Costa Rican colon",
+      "x-status": "REC",
+      "x-symbol": "₡",
+      "const": "CRC"
+    },
+    {
+      "title": "Cuban convertible peso",
+      "description": "Cuban convertible peso",
+      "x-status": "REC",
+      "x-symbol": "CUC$",
+      "const": "CUC"
+    },
+    {
+      "title": "Cuban peso",
+      "description": "Cuban peso",
+      "x-status": "REC",
+      "x-symbol": "$MN",
+      "const": "CUP"
+    },
+    {
+      "title": "Cape Verde escudo",
+      "description": "Cape Verde escudo",
+      "x-status": "REC",
+      "x-symbol": "Esc",
+      "const": "CVE"
+    },
+    {
+      "title": "Czech koruna",
+      "description": "Czech koruna",
+      "x-status": "REC",
+      "x-symbol": "Kč",
+      "const": "CZK"
+    },
+    {
+      "title": "Djiboutian franc",
+      "description": "Djiboutian franc",
+      "x-status": "REC",
+      "x-symbol": "Fdj",
+      "const": "DJF"
+    },
+    {
+      "title": "Danish krone",
+      "description": "Danish krone",
+      "x-status": "REC",
+      "x-symbol": "kr",
+      "const": "DKK"
+    },
+    {
+      "title": "Dominican peso",
+      "description": "Dominican peso",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "DOP"
+    },
+    {
+      "title": "Algerian dinar",
+      "description": "Algerian dinar",
+      "x-status": "REC",
+      "x-symbol": "دج",
+      "const": "DZD"
+    },
+    {
+      "title": "Estonian kroon",
+      "description": "Estonian kroon",
+      "x-status": "REC",
+      "const": "EEK"
+    },
+    {
+      "title": "Egyptian pound",
+      "description": "Egyptian pound",
+      "x-status": "REC",
+      "x-symbol": "ج.م.",
+      "const": "EGP"
+    },
+    {
+      "title": "Eritrean nakfa",
+      "description": "Eritrean nakfa",
+      "x-status": "REC",
+      "x-symbol": "Nfk",
+      "const": "ERN"
+    },
+    {
+      "title": "Ethiopian birr",
+      "description": "Ethiopian birr",
+      "x-status": "REC",
+      "x-symbol": "Br",
+      "const": "ETB"
+    },
+    {
+      "title": "Euro",
+      "description": "Euro",
+      "x-status": "REC",
+      "x-symbol": "€",
+      "const": "EUR"
+    },
+    {
+      "title": "Fiji dollar",
+      "description": "Fiji dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "FJD"
+    },
+    {
+      "title": "Falkland Islands pound",
+      "description": "Falkland Islands pound",
+      "x-status": "REC",
+      "x-symbol": "£",
+      "const": "FKP"
+    },
+    {
+      "title": "Pound sterling",
+      "description": "Great Britain Pound sterling",
+      "x-status": "REC",
+      "x-symbol": "£",
+      "const": "GBP"
+    },
+    {
+      "title": "Georgian lari",
+      "description": "Georgian lari",
+      "x-status": "REC",
+      "x-symbol": "ლ",
+      "const": "GEL"
+    },
+    {
+      "title": "Ghanaian cedi",
+      "description": "Ghanaian cedi",
+      "x-status": "REC",
+      "x-symbol": "GH₵",
+      "const": "GHS"
+    },
+    {
+      "title": "Gibraltar pound",
+      "description": "Gibraltar pound",
+      "x-status": "REC",
+      "x-symbol": "£",
+      "const": "GIP"
+    },
+    {
+      "title": "Gambian dalasi",
+      "description": "Gambian dalasi",
+      "x-status": "REC",
+      "x-symbol": "D",
+      "const": "GMD"
+    },
+    {
+      "title": "Guinean franc",
+      "description": "Guinean franc",
+      "x-status": "REC",
+      "x-symbol": "FG",
+      "const": "GNF"
+    },
+    {
+      "title": "Guatemalan quetzal",
+      "description": "Guatemalan quetzal",
+      "x-status": "REC",
+      "x-symbol": "Q",
+      "const": "GTQ"
+    },
+    {
+      "title": "Guyanese dollar",
+      "description": "Guyanese dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "GYD"
+    },
+    {
+      "title": "Hong Kong dollar",
+      "description": "Hong Kong dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "HKD"
+    },
+    {
+      "title": "Honduran lempira",
+      "description": "Honduran lempira",
+      "x-status": "REC",
+      "x-symbol": "L",
+      "const": "HNL"
+    },
+    {
+      "title": "Croatian kuna",
+      "description": "Croatian kuna",
+      "x-status": "REC",
+      "x-symbol": "kn",
+      "const": "HRK"
+    },
+    {
+      "title": "Haitian gourde",
+      "description": "Haitian gourde",
+      "x-status": "REC",
+      "x-symbol": "G",
+      "const": "HTG"
+    },
+    {
+      "title": "Hungarian forint",
+      "description": "Hungarian forint",
+      "x-status": "REC",
+      "x-symbol": "Ft",
+      "const": "HUF"
+    },
+    {
+      "title": "Indonesian rupiah",
+      "description": "Indonesian rupiah",
+      "x-status": "REC",
+      "x-symbol": "Rp",
+      "const": "IDR"
+    },
+    {
+      "title": "Israeli new sheqel",
+      "description": "Israeli new sheqel",
+      "x-status": "REC",
+      "x-symbol": "₪",
+      "const": "ILS"
+    },
+    {
+      "title": "Indian rupee",
+      "description": "Indian rupee",
+      "x-status": "REC",
+      "x-symbol": "₨",
+      "const": "INR"
+    },
+    {
+      "title": "Iraqi dinar",
+      "description": "Iraqi dinar",
+      "x-status": "REC",
+      "x-symbol": "د.ع",
+      "const": "IQD"
+    },
+    {
+      "title": "Iranian rial",
+      "description": "Iranian rial",
+      "x-status": "REC",
+      "x-symbol": "﷼",
+      "const": "IRR"
+    },
+    {
+      "title": "Icelandic króna",
+      "description": "Icelandic króna",
+      "x-status": "REC",
+      "x-symbol": "kr",
+      "const": "ISK"
+    },
+    {
+      "title": "Jamaican dollar",
+      "description": "Jamaican dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "JMD"
+    },
+    {
+      "title": "Jordanian dinar",
+      "description": "Jordanian dinar",
+      "x-status": "REC",
+      "x-symbol": "JD",
+      "const": "JOD"
+    },
+    {
+      "title": "Japanese yen",
+      "description": "Japanese yen",
+      "x-status": "REC",
+      "x-symbol": "¥",
+      "const": "JPY"
+    },
+    {
+      "title": "Kenyan shilling",
+      "description": "Kenyan shilling",
+      "x-status": "REC",
+      "x-symbol": "Ksh",
+      "const": "KES"
+    },
+    {
+      "title": "Kyrgyzstani som",
+      "description": "Kyrgyzstani som",
+      "x-status": "REC",
+      "x-symbol": "сом",
+      "const": "KGS"
+    },
+    {
+      "title": "Cambodian riel",
+      "description": "Cambodian riel",
+      "x-status": "REC",
+      "x-symbol": "៛",
+      "const": "KHR"
+    },
+    {
+      "title": "Comoro franc",
+      "description": "Comoro franc",
+      "x-status": "REC",
+      "x-symbol": "₣",
+      "const": "KMF"
+    },
+    {
+      "title": "North Korean won",
+      "description": "North Korean won",
+      "x-status": "REC",
+      "x-symbol": "₩",
+      "const": "KPW"
+    },
+    {
+      "title": "South Korean won",
+      "description": "South Korean won",
+      "x-status": "REC",
+      "x-symbol": "₩",
+      "const": "KRW"
+    },
+    {
+      "title": "Kuwaiti dinar",
+      "description": "Kuwaiti dinar",
+      "x-status": "REC",
+      "x-symbol": "د.ك",
+      "const": "KWD"
+    },
+    {
+      "title": "Cayman Islands dollar",
+      "description": "Cayman Islands dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "KYD"
+    },
+    {
+      "title": "Kazakhstani tenge",
+      "description": "Kazakhstani tenge",
+      "x-status": "REC",
+      "x-symbol": "₸",
+      "const": "KZT"
+    },
+    {
+      "title": "Lao kip",
+      "description": "Lao kip",
+      "x-status": "REC",
+      "x-symbol": "₭",
+      "const": "LAK"
+    },
+    {
+      "title": "Lebanese pound",
+      "description": "Lebanese pound",
+      "x-status": "REC",
+      "x-symbol": "LL",
+      "const": "LBP"
+    },
+    {
+      "title": "Sri Lanka rupee",
+      "description": "Sri Lanka rupee",
+      "x-status": "REC",
+      "x-symbol": "රු",
+      "const": "LKR"
+    },
+    {
+      "title": "Liberian dollar",
+      "description": "Liberian dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "LRD"
+    },
+    {
+      "title": "Lesotho loti",
+      "description": "Lesotho loti",
+      "x-status": "REC",
+      "x-symbol": "M",
+      "const": "LSL"
+    },
+    {
+      "title": "Lithuanian litas",
+      "description": "Lithuanian litas",
+      "x-status": "REC",
+      "x-symbol": "Lt",
+      "const": "LTL"
+    },
+    {
+      "title": "Latvian lats",
+      "description": "Latvian lats",
+      "x-status": "REC",
+      "x-symbol": "Ls",
+      "const": "LVL"
+    },
+    {
+      "title": "Libyan dinar",
+      "description": "Libyan dinar",
+      "x-status": "REC",
+      "x-symbol": "ل.د",
+      "const": "LYD"
+    },
+    {
+      "title": "Moroccan dirham",
+      "description": "Moroccan dirham",
+      "x-status": "REC",
+      "x-symbol": "د.م.",
+      "const": "MAD"
+    },
+    {
+      "title": "Moldovan leu",
+      "description": "Moldovan leu",
+      "x-status": "REC",
+      "const": "MDL"
+    },
+    {
+      "title": "Malagasy ariary",
+      "description": "Malagasy ariary",
+      "x-status": "REC",
+      "x-symbol": "Ar",
+      "const": "MGA"
+    },
+    {
+      "title": "Macedonian denar",
+      "description": "Macedonian denar",
+      "x-status": "REC",
+      "x-symbol": "ден",
+      "const": "MKD"
+    },
+    {
+      "title": "Myanma kyat",
+      "description": "Myanma kyat",
+      "x-status": "REC",
+      "x-symbol": "K",
+      "const": "MMK"
+    },
+    {
+      "title": "Mongolian tugrik",
+      "description": "Mongolian tugrik",
+      "x-status": "REC",
+      "x-symbol": "₮",
+      "const": "MNT"
+    },
+    {
+      "title": "Macanese pataca",
+      "description": "Macanese pataca",
+      "x-status": "REC",
+      "x-symbol": "MOP$",
+      "const": "MOP"
+    },
+    {
+      "title": "Mauritanian ouguiya",
+      "description": "Ouguiya (Mauritania)",
+      "x-status": "REC",
+      "x-symbol": "UM",
+      "const": "MRO"
+    },
+    {
+      "title": "Mauritanian ouguiya",
+      "description": "Ouguiya (Mauritania)",
+      "x-status": "CR",
+      "x-symbol": "UM",
+      "const": "MRU"
+    },
+    {
+      "title": "Mauritian rupee",
+      "description": "Mauritian rupee",
+      "x-status": "REC",
+      "x-symbol": "₨",
+      "const": "MUR"
+    },
+    {
+      "title": "Maldivian rufiyaa",
+      "description": "Maldivian rufiyaa",
+      "x-status": "REC",
+      "x-symbol": "Rf.",
+      "const": "MVR"
+    },
+    {
+      "title": "Malawian kwacha",
+      "description": "Malawian kwacha",
+      "x-status": "REC",
+      "x-symbol": "MK",
+      "const": "MWK"
+    },
+    {
+      "title": "Mexican peso",
+      "description": "Mexican peso",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "MXN"
+    },
+    {
+      "title": "Mexican UDI",
+      "description": "Mexican Unidad de Inversion (UDI) (funds code)",
+      "x-status": "REC",
+      "const": "MXV"
+    },
+    {
+      "title": "Malaysian ringgit",
+      "description": "Malaysian ringgit",
+      "x-status": "REC",
+      "x-symbol": "RM",
+      "const": "MYR"
+    },
+    {
+      "title": "Mozambican metical",
+      "description": "Mozambican metical",
+      "x-status": "REC",
+      "x-symbol": "MT",
+      "const": "MZN"
+    },
+    {
+      "title": "Namibian dollar",
+      "description": "Namibian dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "NAD"
+    },
+    {
+      "title": "Nigerian naira",
+      "description": "Nigerian naira",
+      "x-status": "REC",
+      "x-symbol": "₦",
+      "const": "NGN"
+    },
+    {
+      "title": "Cordoba oro",
+      "description": "Cordoba oro",
+      "x-status": "REC",
+      "x-symbol": "C$",
+      "const": "NIO"
+    },
+    {
+      "title": "Norwegian krone",
+      "description": "Norwegian krone",
+      "x-status": "REC",
+      "x-symbol": "kr",
+      "const": "NOK"
+    },
+    {
+      "title": "Nepalese rupee",
+      "description": "Nepalese rupee",
+      "x-status": "REC",
+      "x-symbol": "₨",
+      "const": "NPR"
+    },
+    {
+      "title": "New Zealand dollar",
+      "description": "New Zealand dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "NZD"
+    },
+    {
+      "title": "Omani rial",
+      "description": "Omani rial",
+      "x-status": "REC",
+      "x-symbol": "ر.ع.",
+      "const": "OMR"
+    },
+    {
+      "title": "Panamanian balboa",
+      "description": "Panamanian balboa",
+      "x-status": "REC",
+      "x-symbol": "B/.",
+      "const": "PAB"
+    },
+    {
+      "title": "Peruvian nuevo sol",
+      "description": "Peruvian nuevo sol",
+      "x-status": "REC",
+      "x-symbol": "S/",
+      "const": "PEN"
+    },
+    {
+      "title": "Papua New Guinean kina",
+      "description": "Papua New Guinean kina",
+      "x-status": "REC",
+      "x-symbol": "K",
+      "const": "PGK"
+    },
+    {
+      "title": "Philippine peso",
+      "description": "Philippine peso",
+      "x-status": "REC",
+      "x-symbol": "₱",
+      "const": "PHP"
+    },
+    {
+      "title": "Pakistani rupee",
+      "description": "Pakistani rupee",
+      "x-status": "REC",
+      "x-symbol": "₨",
+      "const": "PKR"
+    },
+    {
+      "title": "Polish złoty",
+      "description": "Polish złoty",
+      "x-status": "REC",
+      "x-symbol": "zł",
+      "const": "PLN"
+    },
+    {
+      "title": "Paraguayan guaraní",
+      "description": "Paraguayan guaraní",
+      "x-status": "REC",
+      "x-symbol": "₲",
+      "const": "PYG"
+    },
+    {
+      "title": "Qatari rial",
+      "description": "Qatari rial",
+      "x-status": "REC",
+      "x-symbol": "ر.ق",
+      "const": "QAR"
+    },
+    {
+      "title": "Romanian new leu",
+      "description": "Romanian new leu",
+      "x-status": "REC",
+      "const": "RON"
+    },
+    {
+      "title": "Serbian dinar",
+      "description": "Serbian dinar",
+      "x-status": "REC",
+      "x-symbol": "дин",
+      "const": "RSD"
+    },
+    {
+      "title": "Rouble",
+      "description": "Russian rouble",
+      "x-status": "REC",
+      "x-symbol": "₽",
+      "const": "RUB"
+    },
+    {
+      "title": "Rwandan franc",
+      "description": "Rwandan franc",
+      "x-status": "REC",
+      "x-symbol": "FRw",
+      "const": "RWF"
+    },
+    {
+      "title": "Riyal",
+      "description": "Saudi riyal",
+      "x-status": "REC",
+      "x-symbol": "ر.س",
+      "const": "SAR"
+    },
+    {
+      "title": "Solomon Islands dollar",
+      "description": "Solomon Islands dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "SBD"
+    },
+    {
+      "title": "Seychelles rupee",
+      "description": "Seychelles rupee",
+      "x-status": "REC",
+      "x-symbol": "SRe",
+      "const": "SCR"
+    },
+    {
+      "title": "Sudanese pound",
+      "description": "Sudanese pound",
+      "x-status": "REC",
+      "const": "SDG"
+    },
+    {
+      "title": "Swedish krona",
+      "description": "Swedish krona/kronor",
+      "x-status": "REC",
+      "x-symbol": "kr",
+      "const": "SEK"
+    },
+    {
+      "title": "Singapore dollar",
+      "description": "Singapore dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "SGD"
+    },
+    {
+      "title": "Saint Helena pound",
+      "description": "Saint Helena pound",
+      "x-status": "REC",
+      "x-symbol": "£",
+      "const": "SHP"
+    },
+    {
+      "title": "Leone",
+      "description": "Sierra Leonean leone",
+      "x-status": "REC",
+      "x-symbol": "Le",
+      "const": "SLL"
+    },
+    {
+      "title": "Leone",
+      "description": "Sierra Leonean leone",
+      "x-status": "CR",
+      "x-symbol": "Le",
+      "const": "SLE"
+    },
+    {
+      "title": "Somali shilling",
+      "description": "Somali shilling",
+      "x-status": "REC",
+      "x-symbol": "Sh.So",
+      "const": "SOS"
+    },
+    {
+      "title": "Surinamese dollar",
+      "description": "Surinamese dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "SRD"
+    },
+    {
+      "title": "South Sudanese pound",
+      "description": "South Sudanese pound",
+      "x-status": "REC",
+      "const": "SSP"
+    },
+    {
+      "title": "São Tomé and Príncipe dobra",
+      "description": "São Tomé and Príncipe dobra",
+      "x-status": "REC",
+      "x-symbol": "Db",
+      "const": "STD"
+    },
+    {
+      "title": "Dobra",
+      "description": "São Tomé and Príncipe dobra",
+      "x-status": "CR",
+      "x-symbol": "Db",
+      "const": "STN"
+    },
+    {
+      "title": "Salvadoran colón",
+      "description": "Salvadoran colón",
+      "x-status": "REC",
+      "x-symbol": "₡",
+      "const": "SVC"
+    },
+    {
+      "title": "Syrian pound",
+      "description": "Syrian pound",
+      "x-status": "REC",
+      "x-symbol": "LS",
+      "const": "SYP"
+    },
+    {
+      "title": "Lilangeni",
+      "description": "Swaziland Lilangeni",
+      "x-status": "REC",
+      "x-symbol": "E",
+      "const": "SZL"
+    },
+    {
+      "title": "Baht",
+      "description": "Thai baht",
+      "x-status": "REC",
+      "x-symbol": "฿",
+      "const": "THB"
+    },
+    {
+      "title": "Tajikistani somoni",
+      "description": "Tajikistani somoni",
+      "x-status": "REC",
+      "const": "TJS"
+    },
+    {
+      "title": "Turkmenistani manat",
+      "description": "Turkmenistani manat",
+      "x-status": "REC",
+      "const": "TMT"
+    },
+    {
+      "title": "Tunisian dinar",
+      "description": "Tunisian dinar",
+      "x-status": "REC",
+      "x-symbol": "د.ت",
+      "const": "TND"
+    },
+    {
+      "title": "Pa'anga",
+      "description": "Tongan pa'anga",
+      "x-status": "REC",
+      "x-symbol": "T$",
+      "const": "TOP"
+    },
+    {
+      "title": "Turkish lira",
+      "description": "Turkish lira",
+      "x-status": "REC",
+      "x-symbol": "₺",
+      "const": "TRY"
+    },
+    {
+      "title": "Trinidad and Tobago dollar",
+      "description": "Trinidad and Tobago dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "TTD"
+    },
+    {
+      "title": "New Taiwan dollar",
+      "description": "New Taiwan dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "TWD"
+    },
+    {
+      "title": "Tanzanian shilling",
+      "description": "Tanzanian shilling",
+      "x-status": "REC",
+      "x-symbol": "Tsh",
+      "const": "TZS"
+    },
+    {
+      "title": "Hryvnia",
+      "description": "Ukrainian hryvnia",
+      "x-status": "REC",
+      "x-symbol": "₴",
+      "const": "UAH"
+    },
+    {
+      "title": "Ugandan shilling",
+      "description": "Ugandan shilling",
+      "x-status": "REC",
+      "x-symbol": "USh",
+      "const": "UGX"
+    },
+    {
+      "title": "US Dollar",
+      "description": "United States dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "USD"
+    },
+    {
+      "title": "Next Day US Dollar",
+      "description": "United States dollar (next day) (funds code)",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "USN"
+    },
+    {
+      "title": "Same Day US Dollar",
+      "description": "United States dollar (same day) (funds code)",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "USS"
+    },
+    {
+      "title": "Uruguay Peso en Unidades Indexadas",
+      "description": "Uruguay Peso en Unidades Indexadas (URUIURUI) (funds code)",
+      "x-status": "REC",
+      "const": "UYI"
+    },
+    {
+      "title": "Uruguayan peso",
+      "description": "Uruguayan peso",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "UYU"
+    },
+    {
+      "title": "Unidad Previsional",
+      "description": "Unidad Previsional (Uruguay)",
+      "x-status": "CR",
+      "x-symbol": "UP",
+      "const": "UYW"
+    },
+    {
+      "title": "Som",
+      "description": "Uzbekistan som",
+      "x-status": "REC",
+      "const": "UZS"
+    },
+    {
+      "title": "Venezualan Bolivar",
+      "description": "Bolívar (Bolivarian Republic Of Venezuela)",
+      "x-status": "REC",
+      "x-symbol": "Bs.",
+      "const": "VEB"
+    },
+    {
+      "title": "Venezuelan Bolivar Fuerte",
+      "description": "Bolívar fuerte (Bolivarian Republic Of Venezuela)",
+      "x-status": "REC",
+      "x-symbol": "Bs.F",
+      "const": "VEF"
+    },
+    {
+      "title": "Bolívar Soberano",
+      "description": "Bolívar Soberano (Bolivarian Republic Of Venezuela)",
+      "x-status": "CR",
+      "x-symbol": "Bs.S",
+      "const": "VES"
+    },
+    {
+      "title": "Bolívar Soberano",
+      "description": "Bolívar Soberano (Bolivarian Republic Of Venezuela)",
+      "x-status": "CR",
+      "x-symbol": "Bs.D",
+      "const": "VED"
+    },
+    {
+      "title": "đồng",
+      "description": "Vietnamese đồng",
+      "x-status": "REC",
+      "x-symbol": "₫",
+      "const": "VND"
+    },
+    {
+      "title": "Vanuatu vatu",
+      "description": "Vanuatu vatu",
+      "x-status": "REC",
+      "x-symbol": "VT",
+      "const": "VUV"
+    },
+    {
+      "title": "Samoan tala",
+      "description": "Samoan tala",
+      "x-status": "REC",
+      "x-symbol": "WS$",
+      "const": "WST"
+    },
+    {
+      "title": "CFA Franc BEAC",
+      "description": "CFA franc BEAC",
+      "x-status": "REC",
+      "const": "XAF"
+    },
+    {
+      "title": "Silver",
+      "description": "Silver (one troy ounce)",
+      "x-status": "REC",
+      "const": "XAG"
+    },
+    {
+      "title": "Gold",
+      "description": "Gold (one troy ounce)",
+      "x-status": "REC",
+      "const": "XAU"
+    },
+    {
+      "title": "EURCO",
+      "description": "European Composite Unit (EURCO) (bond market unit)",
+      "x-status": "REC",
+      "const": "XBA"
+    },
+    {
+      "title": "E.M.U.-6",
+      "description": "European Monetary Unit (E.M.U.-6) (bond market unit)",
+      "x-status": "REC",
+      "const": "XBB"
+    },
+    {
+      "title": "E.U.A.-9",
+      "description": "European Unit of Account 9 (E.U.A.-9) (bond market unit)",
+      "x-status": "REC",
+      "const": "XBC"
+    },
+    {
+      "title": "E.U.A.-17",
+      "description": "European Unit of Account 17 (E.U.A.-17) (bond market unit)",
+      "x-status": "REC",
+      "const": "XBD"
+    },
+    {
+      "title": "East Caribbean dollar",
+      "description": "East Caribbean dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "XCD"
+    },
+    {
+      "title": "Special Drawing Rights",
+      "description": "Special Drawing Rights",
+      "x-status": "REC",
+      "const": "XDR"
+    },
+    {
+      "title": "UIC Franc",
+      "description": "UIC franc (special settlement currency)",
+      "x-status": "REC",
+      "const": "XFU"
+    },
+    {
+      "title": "CFA Franc BCEAO",
+      "description": "CFA Franc BCEAO",
+      "x-status": "REC",
+      "const": "XOF"
+    },
+    {
+      "title": "Palladium",
+      "description": "Palladium (one troy ounce)",
+      "x-status": "REC",
+      "const": "XPD"
+    },
+    {
+      "title": "CFP Franc",
+      "description": "CFP franc",
+      "x-status": "REC",
+      "const": "XPF"
+    },
+    {
+      "title": "Platinum",
+      "description": "Platinum (one troy ounce)",
+      "x-status": "REC",
+      "const": "XPT"
+    },
+    {
+      "title": "SUCRE",
+      "description": "Unified System for Regional Compensation (SUCRE)",
+      "x-status": "REC",
+      "x-symbol": "Sucre",
+      "const": "XSU"
+    },
+    {
+      "title": "ADB Unit of Account",
+      "description": "African Development Bank",
+      "x-status": "REC",
+      "const": "XUA"
+    },
+    {
+      "title": "Yemeni rial",
+      "description": "Yemeni rial",
+      "x-status": "REC",
+      "const": "YER"
+    },
+    {
+      "title": "South African rand",
+      "description": "South African rand",
+      "x-status": "REC",
+      "x-symbol": "R",
+      "const": "ZAR"
+    },
+    {
+      "title": "Zambian kwacha",
+      "description": "Zambian kwacha",
+      "x-status": "REC",
+      "x-symbol": "ZK",
+      "const": "ZMK"
+    },
+    {
+      "title": "Zambian kwacha",
+      "description": "Zambian kwacha",
+      "x-status": "REC",
+      "x-symbol": "ZK",
+      "const": "ZMW"
+    },
+    {
+      "title": "Zimbabwe Gold",
+      "description": "Zimbabwe Gold (ZIMBABWE)",
+      "x-status": "REC",
+      "x-symbol": "ZiG",
+      "const": "ZWG"
+    },
+    {
+      "title": "Zimbabwe dollar",
+      "description": "Zimbabwe dollar",
+      "x-status": "REC",
+      "x-symbol": "$",
+      "const": "ZWL"
+    }
+  ]
+}

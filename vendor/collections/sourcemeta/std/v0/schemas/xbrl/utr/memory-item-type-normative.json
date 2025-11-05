@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR memory Item Type units (2024-10-22)",
+  "description": "Valid units for memoryItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "B", "GB", "kB" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Byte",
+      "description": "8 adjacent bits of Memory per IEEE 1541-2002",
+      "x-status": "REC",
+      "x-symbol": "B",
+      "const": "B"
+    },
+    {
+      "title": "Gigabyte",
+      "description": "Gigabytes of Memory per IEEE 1541-2002",
+      "x-status": "REC",
+      "x-symbol": "GB",
+      "const": "GB"
+    },
+    {
+      "title": "Kilobyte",
+      "description": "Kilobytes of Memory per IEEE 1541-2002",
+      "x-status": "REC",
+      "x-symbol": "kB",
+      "const": "kB"
+    },
+    {
+      "title": "Megabyte",
+      "description": "Megabytes of Memory per IEEE 1541-2002",
+      "x-status": "REC",
+      "x-symbol": "MB",
+      "const": "MB"
+    },
+    {
+      "title": "Terabyte",
+      "description": "Terabytes of Memory per IEEE 1541-2002",
+      "x-status": "REC",
+      "x-symbol": "TB",
+      "const": "TB"
+    },
+    {
+      "title": "Petabyte",
+      "description": "Petabytes of Memory per IEEE 1541-2002",
+      "x-status": "REC",
+      "x-symbol": "PB",
+      "const": "PB"
+    }
+  ]
+}

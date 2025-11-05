@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR pure Item Type units (2024-10-22)",
+  "description": "Valid units for pureItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "Monetary_per_Monetary", "pure", "Rate" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Monetary/Monetary",
+      "description": "Exchange Rate Expressed as: Monetary Unit / Monetary Unit",
+      "x-status": "REC",
+      "const": "Monetary_per_Monetary"
+    },
+    {
+      "title": "pure",
+      "description": "Dimensionless (Pure) Number",
+      "x-status": "REC",
+      "const": "pure"
+    },
+    {
+      "title": "Rate",
+      "description": "Rate",
+      "x-status": "REC",
+      "const": "Rate"
+    }
+  ]
+}

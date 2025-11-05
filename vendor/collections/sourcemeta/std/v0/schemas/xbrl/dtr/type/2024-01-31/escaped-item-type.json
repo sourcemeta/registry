@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL DTR 2024-01-31 escapedItemType",
+  "description": "This type specializes string for escaped content and is suitable for representing HTML 4.0 escaped content",
+  "examples": [
+    "&lt;div&gt;Hello&lt;/div&gt;",
+    "Some &amp; text",
+    "Plain text"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/dtr/dtr.html",
+    "https://www.xbrl.org/dtr/type/2024-01-31/types.xsd"
+  ],
+  "$ref": "../../../../xbrl/instance/2003/string-item-type.json"
+}

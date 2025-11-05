@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL DTR 2024-01-31 xmlItemType",
+  "description": "This type indicates that unescaped content must be well-formed XML",
+  "examples": [
+    "<root><node>Content</node></root>",
+    "<document><p>Paragraph</p></document>",
+    "<data>Plain text</data>"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/dtr/dtr.html",
+    "https://www.xbrl.org/dtr/type/2024-01-31/types.xsd"
+  ],
+  "$ref": "../../../../xbrl/instance/2003/string-item-type.json"
+}

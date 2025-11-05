@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR voltage Item Type units (2024-10-22)",
+  "description": "Valid units for voltageItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "V", "kV", "MV" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Volt",
+      "description": "Electromotive Force",
+      "x-status": "REC",
+      "x-symbol": "V",
+      "const": "V"
+    },
+    {
+      "title": "Kilovolt",
+      "description": "Thousand Volts of Electromotive Force",
+      "x-status": "REC",
+      "x-symbol": "kV",
+      "const": "kV"
+    },
+    {
+      "title": "Megavolt",
+      "description": "One million volts",
+      "x-status": "REC",
+      "x-symbol": "MV",
+      "const": "MV"
+    },
+    {
+      "title": "Gigavolt",
+      "description": "One thousand million volts",
+      "x-status": "REC",
+      "x-symbol": "GV",
+      "const": "GV"
+    }
+  ]
+}

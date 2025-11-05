@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR duration Item Type units (2024-10-22)",
+  "description": "Valid units for durationItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "Y", "M", "D" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Year",
+      "description": "Gregorian calendar year of 365 days. Use only as a denominator because durationItemType is not numeric and has no        units.",
+      "x-status": "REC",
+      "x-symbol": "yr",
+      "const": "Y"
+    },
+    {
+      "title": "Month",
+      "description": "Gregorian calendar month of 30.41 days. Use only as a denominator because durationItemType is not numeric and has no        units.",
+      "x-status": "REC",
+      "x-symbol": "mo",
+      "const": "M"
+    },
+    {
+      "title": "Day",
+      "description": "Day of 24 hours. Use only as a denominator because durationItemType is not numeric and has no units.",
+      "x-status": "REC",
+      "x-symbol": "d",
+      "const": "D"
+    },
+    {
+      "title": "Hour",
+      "description": "Hour of 60 minutes. Use only as a denominator because durationItemType is not numeric and has no units.",
+      "x-status": "REC",
+      "x-symbol": "h",
+      "const": "H"
+    },
+    {
+      "title": "Minute",
+      "description": "Minute of 60 seconds. Use only as a denominator because durationItemType is not numeric and has no        units.",
+      "x-status": "REC",
+      "x-symbol": "m",
+      "const": "MM"
+    },
+    {
+      "title": "Second",
+      "description": "Second. Use only as a denominator because durationItemType is not numeric and has no        units.",
+      "x-status": "REC",
+      "x-symbol": "s",
+      "const": "S"
+    },
+    {
+      "title": "Quarter",
+      "description": "Gregorian Calendar Quarter (three months). Use only as a denominator because durationItemType is not numeric and has no units.",
+      "x-status": "REC",
+      "x-symbol": "qtr",
+      "const": "Q"
+    },
+    {
+      "title": "Week",
+      "description": "Gregorian Calendar Week. Use only as a denominator because durationItemType is not numeric and has no units.",
+      "x-status": "REC",
+      "x-symbol": "wk",
+      "const": "WK"
+    }
+  ]
+}

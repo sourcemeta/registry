@@ -15,15 +15,15 @@ Standard Library ("Schemas") under the following editions:
   purposes. Use by or on behalf of a commercial entity, including but not
   limited to for-profit companies, is prohibited under this edition.
 
-- Pro (Commercial): Commercial use without redistribution. Licensee may use the
-  Schemas for commercial purposes, including as part of internal systems,
-  APIs, and publicly exposed specifications (such as OpenAPI specifications).
+- Commercial: Commercial use without redistribution. Licensee may use the
+  Schemas for commercial purposes, including as part of internal systems, APIs,
+  and publicly exposed specifications (such as OpenAPI specifications).
   Redistribution of the Schemas as a direct feature or offering of Licensee's
   product or service is prohibited under this edition.
 
-- Enterprise (Commercial): Commercial use with redistribution rights. Licensee
-  may use and redistribute the Schemas as part of Licensee's product or
-  service, including offering the Schemas as a feature to end users.
+- OEM: Commercial use with redistribution rights. Licensee may use and
+  redistribute the Schemas as part of Licensee's product or service, including
+  offering the Schemas as a feature to end users.
 
 Each License is separately granted to a single Entity, where Entity refers to a
 single legal or natural person, including a company, nonprofit, and government
@@ -52,6 +52,17 @@ separate white-label OEM agreement negotiated directly with Licensor.
   specifications, documentation, or validation endpoints is not considered
   redistribution.
 
+- Incorporation into specifications and standards: Licensee may incorporate the
+  Schemas into genuine specifications, standards, API definitions, or similar
+  derivative works under any edition. Third parties who consume such
+  specifications are licensed to use the incorporated Schemas solely as part of
+  implementing or consuming that specific specification, without requiring a
+  separate license from Licensor. However, derivatives that primarily serve to
+  make the Schemas available in their general-purpose form (such as bundling or
+  referencing the Schemas without substantial additional specification content)
+  is prohibited. Licensee must not create direct or indirect derivative works
+  for the purpose of circumventing the commercial licensing requirements.
+
 - Commercial use definition: "Commercial use" means any use by or on behalf of
   a commercial entity or in connection with revenue-generating activities,
   regardless of whether the Schemas directly generate revenue.
@@ -71,11 +82,11 @@ termination of this License without the right to a refund.
 
 4. License Certificate & Compliance
 
-Commercial editions (Pro and Enterprise) require a valid signed License
-certificate issued by the Licensor and/or proof of payment to the Licensor for
-the monetary amount published by Licensor at the time of purchase. The License
-is fully refundable within 30 days of purchase. The Licensee is responsible for
-all taxes, withholdings, duties and levies arising from the order.
+Commercial editions require a valid signed License certificate issued by the
+Licensor and/or proof of payment to the Licensor for the monetary amount
+published by Licensor at the time of purchase. The License is fully refundable
+within 30 days of purchase. The Licensee is responsible for all taxes,
+withholdings, duties and levies arising from the order.
 
 Licensor reserves the right to audit the Licensee's compliance with this
 License, including, but not limited to requesting usage reports and

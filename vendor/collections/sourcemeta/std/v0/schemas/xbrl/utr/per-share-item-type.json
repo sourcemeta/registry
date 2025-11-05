@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR per Share Item Type units (2024-10-22)",
+  "description": "Valid units for perShareItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "Monetary_per_Share" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Monetary/share",
+      "description": "Monetary Unit / Share",
+      "x-status": "REC",
+      "const": "Monetary_per_Share"
+    }
+  ]
+}

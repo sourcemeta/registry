@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR ghg Emissions Item Type units (2024-10-22)",
+  "description": "Valid units for ghgEmissionsItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "tCO2e", "ktCO2e", "MtCO2e" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Metric tonnes of CO2 equivalent",
+      "description": "Carbon dioxide equivalent is calculated for emissions other than carbon dioxide according to their global warming potential (GWP). As estimates of GWP may change over time, the UTR defines no fixed conversion rates.",
+      "x-status": "REC",
+      "x-symbol": "tCO2e",
+      "const": "tCO2e"
+    },
+    {
+      "title": "Thousand metric tonnes of CO2 equivalent",
+      "description": "Carbon dioxide equivalent is calculated for emissions other than carbon dioxide according to their global warming potential (GWP). As estimates of GWP may change over time, the UTR defines no fixed conversion rates.",
+      "x-status": "REC",
+      "x-symbol": "ktCO2e",
+      "const": "ktCO2e"
+    },
+    {
+      "title": "Million metric tonnes of CO2 equivalent",
+      "description": "Carbon dioxide equivalent is calculated for emissions other than carbon dioxide according to their global warming potential (GWP). As estimates of GWP may change over time, the UTR defines no fixed conversion rates.",
+      "x-status": "REC",
+      "x-symbol": "MtCO2e",
+      "const": "MtCO2e"
+    },
+    {
+      "title": "Thousand million metric tonnes of CO2 equivalent",
+      "description": "Carbon dioxide equivalent is calculated for emissions other than carbon dioxide according to their global warming potential (GWP). As estimates of GWP may change over time, the UTR defines no fixed conversion rates.",
+      "x-status": "REC",
+      "x-symbol": "GtCO2e",
+      "const": "GtCO2e"
+    }
+  ]
+}

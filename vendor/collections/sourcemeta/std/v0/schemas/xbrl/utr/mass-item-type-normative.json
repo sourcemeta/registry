@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR mass Item Type units (2024-10-22)",
+  "description": "Valid units for massItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "lb", "oz", "ozt" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Pound",
+      "description": "Pound of Mass, as Used in Commerce        (http://en.wikipedia.org/wiki/Pound_(mass)#Use_in_Commerce))",
+      "x-status": "REC",
+      "x-symbol": "lb",
+      "const": "lb"
+    },
+    {
+      "title": "Ounce",
+      "description": "US Ounce",
+      "x-status": "REC",
+      "x-symbol": "oz",
+      "const": "oz"
+    },
+    {
+      "title": "Troy Ounce",
+      "description": "Troy Ounce",
+      "x-status": "REC",
+      "x-symbol": "ozt",
+      "const": "ozt"
+    },
+    {
+      "title": "Ton",
+      "description": "US Ton",
+      "x-status": "REC",
+      "x-symbol": "T",
+      "const": "T"
+    },
+    {
+      "title": "Tonne",
+      "description": "Tonne (Metric Tonne, Metric Ton)",
+      "x-status": "REC",
+      "x-symbol": "t",
+      "const": "t"
+    },
+    {
+      "title": "Gram",
+      "description": "Gram",
+      "x-status": "REC",
+      "x-symbol": "g",
+      "const": "g"
+    },
+    {
+      "title": "Kilogram",
+      "description": "Kilogram",
+      "x-status": "REC",
+      "x-symbol": "kg",
+      "const": "kg"
+    },
+    {
+      "title": "Thousand Tons",
+      "description": "One thousand US tons",
+      "x-status": "REC",
+      "x-symbol": "kT",
+      "const": "kT"
+    },
+    {
+      "title": "Million Tons",
+      "description": "One million US tons",
+      "x-status": "REC",
+      "x-symbol": "MT",
+      "const": "MT"
+    },
+    {
+      "title": "Billion Tons",
+      "description": "One thousand million US tons",
+      "x-status": "REC",
+      "x-symbol": "GT",
+      "const": "GT"
+    },
+    {
+      "title": "Kilotonne",
+      "description": "Thousand Tonnes (Metric Tonnes, Metric Tons)",
+      "x-status": "REC",
+      "x-symbol": "kt",
+      "const": "kt"
+    },
+    {
+      "title": "Megatonne",
+      "description": "Million Tonnes (Metric Tonnes, Metric Tons)",
+      "x-status": "REC",
+      "x-symbol": "Mt",
+      "const": "Mt"
+    },
+    {
+      "title": "Gigatonne",
+      "description": "Thousand Million Tonnes (Metric Tonnes, Metric Tons)",
+      "x-status": "REC",
+      "x-symbol": "Gt",
+      "const": "Gt"
+    }
+  ]
+}
