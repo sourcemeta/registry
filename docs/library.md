@@ -40,13 +40,6 @@ the `@` character. To import such a collection, import the corresponding
 identifier to your [configuration file](configuration.md) using the
 [`extends`](configuration.md#extends) keyword.
 
-!!! warning
-
-    The number of schemas from pre-built collections that you import into your
-    instance will count towards your schema limits. *If you go beyond the
-    limits of the free plan, you will need to acquire a [commercial
-    license](commercial.md)*.
-
 For example, let's say your company depends on GeoJSON v1.0.5 and v1.0.4. Their
 identifiers are `@geojson/v1.0.5` and `@geojson/v1.0.4`, respectively.
 Therefore, a minimal example configuration that ingests them both using the

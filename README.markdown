@@ -32,11 +32,9 @@ catalogs with enterprise-grade governance capabilities.
 While the project is publicly available on GitHub, it operates under a
 [source-available
 license](https://github.com/sourcemeta/registry/blob/main/LICENSE) rather than
-a traditional open-source model. You can use the [Starter
-edition](https://github.com/sourcemeta/registry/pkgs/container/registry) for
-free, but using any other edition for any purpose other than for contributing
-back to the project requires a [paid commercial
-license](https://registry.sourcemeta.com/commercial/).
+a traditional open-source model. Commercial use requires a [paid commercial
+license](https://registry.sourcemeta.com/commercial/). Reach out to
+[hello@sourcemeta.com](mailto:hello@sourcemeta.com) to discuss.
 
 > We are typically happy to provide free commercial licenses to open-source
 > projects, non-profits, educational institutions, and research projects.

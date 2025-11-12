@@ -18,19 +18,11 @@ operates under a [source-available
 license](https://github.com/sourcemeta/registry/blob/main/LICENSE) rather than
 a traditional open-source model.
 
-## Starter Edition
+## Editions
 
-You can deploy and use the Registry at no cost with all features included, up
-to a specified limit of schemas (see the
-[Pricing](https://www.sourcemeta.com/#pricing) page for more information). This
-free tier is designed to support individual developers, small teams, and
-organizations getting started with JSON Schema.
-
-## Pro and Enterprise Editions
-
-For deployments requiring ingestion of schemas beyond the free tier limit, a
-commercial license from Sourcemeta is required. This licensing model enables us
-to:
+You can use the Registry at no cost with all features included for
+non-commercial and evaluation purposes. However, commercial deployments require
+a license from Sourcemeta. This licensing model enables us
 
 - Maintain and enhance the Registry's advanced capabilities
 - Provide enterprise-grade support and reliability
@@ -46,9 +38,5 @@ delivering nothing less than exceptional JSON Schema tooling.
 
 ## Next Steps
 
-- **Pricing Information**: Visit
-  [sourcemeta.com](https://www.sourcemeta.com/#pricing) to review licensing
-  options and purchase a commercial license
-- **Questions & Support**: Contact us at
-  [hello@sourcemeta.com](mailto:hello@sourcemeta.com) for licensing inquiries,
-  technical questions, or implementation guidance
+Interested in a commercial license? Contact us at
+[hello@sourcemeta.com](mailto:hello@sourcemeta.com) to discuss further.
