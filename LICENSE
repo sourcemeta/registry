@@ -1,5 +1,7 @@
 Sourcemeta Registry License
 
+For acquiring a commercial license, contact: hello@sourcemeta.com
+
 Copyright (c) 2025 Sourcemeta
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -13,9 +15,9 @@ You may use the Software without a commercial license for:
 1. Evaluation: Testing and evaluating the Software for potential adoption,
    for a reasonable period not exceeding 90 days of evaluation.
 
-2. Non-Commercial Use: Personal, academic, or use by registered non-profit
-   organisations, where the Software is not used in connection with any
-   for-profit business activities.
+2. Non-Commercial Use: Personal, academic, open source, or use by registered
+   non-profit organisations, where the Software is not used in connection with
+   any for-profit business activities.
 
 3. Development and Testing: Internal development and testing environments
    that are not serving production workloads.
