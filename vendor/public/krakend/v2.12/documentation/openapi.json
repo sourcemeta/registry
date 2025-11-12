@@ -327,6 +327,7 @@
             "default": "string",
             "enum": [
               "integer",
+              "number",
               "string",
               "boolean",
               "object",
@@ -437,6 +438,7 @@
             "default": "string",
             "enum": [
               "integer",
+              "number",
               "string",
               "boolean",
               "object",
@@ -459,6 +461,21 @@
                 "string"
               ]
             }
+          },
+          "format": {
+            "title": "Format",
+            "description": "The extending format for the previously defined type. If the type is `number` or `string` you can apply them one of the available formats. If you choose string formats for numbers or viceversa de linter does not check it.\n\nSee: https://www.krakend.io/docs/enterprise/developer/openapi/",
+            "enum": [
+              "int32",
+              "int64",
+              "float",
+              "double",
+              "date",
+              "date-time",
+              "byte",
+              "uuid",
+              ""
+            ]
           },
           "required": {
             "title": "Required",
@@ -571,9 +588,6 @@
       "patternProperties": {
         "default|^[0-9]+$": {
           "type": "object",
-          "required": [
-            "content_type"
-          ],
           "properties": {
             "description": {
               "title": "Description",
