@@ -11,7 +11,7 @@
     "allow": {
       "$id": "#backend/allow",
       "title": "Allow (data manipulation)",
-      "description": "**Only return the fields in the list**. Only the matching fields (case-sensitive) are returned in the final response. Use a dot `.` separator to define nested attributes, e.g.: `a.b` removes `{\"a\":{\"b\": true}}` \n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
+      "description": "**Only return the fields in the list**. Only the matching fields (case-sensitive) are returned in the final response. Use a dot `.` separator to define nested attributes, e.g.: `a.b` returns `{\"a\":{\"b\": true}}` \n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
       "examples": [
         [
           "user_id",
@@ -27,7 +27,7 @@
     "deny": {
       "$id": "#backend/deny",
       "title": "Deny (data manipulation)",
-      "description": "**Don't return the fields in the list**. All matching fields (case-sensitive) defined in the list, are removed from the response. Use a dot `.` separator to definr nested attributes, e.g.: `a.b` removes `{\"a\":{\"b\": true}}`.\n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
+      "description": "**Don't return the fields in the list**. All matching fields (case-sensitive) defined in the list, are removed from the response. Use a dot `.` separator to define nested attributes, e.g.: `a.b` removes `{\"a\":{\"b\": true}}`.\n\nSee: https://www.krakend.io/docs/backends/data-manipulation/",
       "examples": [
         [
           "token",

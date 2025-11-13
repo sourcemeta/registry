@@ -21,7 +21,9 @@
       "title": "Plugin name",
       "description": "An array with the names of plugins to load. The names are defined inside your plugin.\n\nSee: https://www.krakend.io/docs/extending/http-server-plugins/",
       "examples": [
-        "myplugin"
+        [
+          "myplugin"
+        ]
       ],
       "default": [],
       "type": "array"
