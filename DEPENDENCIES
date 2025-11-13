@@ -73,6 +73,6 @@ public/hca-metadata-5-0-0 https://github.com/HumanCellAtlas/metadata-schema 5.0.
 public/dats-1-0-0 https://github.com/datatagsuite/schema 1.0.0
 public/fhir https://github.com/FHIR/packages b401fbd45566006a21243a9b88f1391e32b1ed40
 public/asyncapi https://github.com/asyncapi/spec-json-schemas v6.10.0
-public/ninjs https://github.com/iptc/newsinjson v3.1
+public/ninjs https://github.com/iptc/newsinjson v3.2
 public/apis-json https://github.com/apis-json/api-json 0f64ef6a17a01f54d6bf8e67e001aec9d4bd6b27
 public/sony-x590/v1.0.0 https://github.com/sony/x590schema v1.0.0
