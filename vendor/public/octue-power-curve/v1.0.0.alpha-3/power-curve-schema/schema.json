@@ -1,0 +1,1599 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Power Curves Schema",
+  "description": "Define a set of power curves for a wind turbine.",
+  "$defs": {
+    "2darray": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "3darray": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "4darray": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "rated_power": {
+      "type": "number",
+      "title": "Rated power [W]",
+      "description": "Nominal rated power of the turbine in W. Used for preliminary sizing and search. This value may be overridden on a per-mode basis.",
+      "minimum": 0,
+      "examples": [5000000]
+    },
+    "cut_in_rpm": {
+      "type": "number",
+      "title": "Rotational speed at cut-in [RPM]",
+      "description": "Nominal rotational speed at cut-in (specify 0 for stall-regulated devices) [RPM]. This value may be overriden on a per-mode basis.",
+      "minimum": 0,
+      "examples": [2]
+    },
+    "rated_rpm": {
+      "type": "number",
+      "title": "Rotational speed at rated power [RPM]",
+      "description": "Nominal rotational speed at rated power (or at peak power for stall-regulated devices) [RPM]. This value may be overriden on a per-mode basis.",
+      "minimum": 0,
+      "examples": [12]
+    },
+    "available_hub_heights": {
+      "title": "Available hub heights",
+      "description": "Specify either a discrete list or a continuous range of available hub heights [m]. This value may be overriden to a more restricted subset on a per-mode basis, to allow for specific limitations (such as avoidance of tower resonance). In the early stages of turbine or platform development, this range may not be known so may be omitted.",
+      "anyOf": [
+        {
+          "title": "Specify a range of available hub heights [m]",
+          "type": "object",
+          "description": "Specify a range of available hub heights [m]",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "number",
+              "description": "Minium hub height [m]"
+            },
+            "max": {
+              "type": "number",
+              "description": "Maximum hub height [m]"
+            }
+          },
+          "required": ["min"]
+        },
+        {
+          "title": "Specify a list of discrete available hub heights [m]",
+          "type": "array",
+          "description": "Specify a list of discrete available hub heights [m]",
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      ],
+      "examples": [
+        {
+          "min": 120,
+          "max": 180
+        },
+        [120, 180]
+      ]
+    },
+    "grid_frequencies": {
+      "title": "Grid frequencies [Hz]",
+      "description": "The allowable design grid frequencies in Hz",
+      "type": "array",
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      },
+      "examples": [[50], [50, 60]]
+    },
+    "thermal_regulation": {
+      "title": "Thermal Regulation",
+      "description": "Define thermal shutdowns and derating characteristics",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cold": {
+          "title": "Low Temperature Thermal Shutdown",
+          "description": "Define low-temperature thermal shutdown characteristics",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shutdown_temperature": {
+              "title": "Shutdown Temperature",
+              "description": "Temperature below which the turbine will shut down [degrees C]",
+              "type": "number",
+              "minimum": -273,
+              "maximum": 100
+            },
+            "restart_temperature": {
+              "title": "Restart Temperature",
+              "description": "Temperature above which the turbine will restart following a thermal shutdown [degrees C]",
+              "type": "number",
+              "minimum": -273,
+              "maximum": 100
+            },
+            "restart_duration": {
+              "title": "Restart Duration",
+              "description": "Time delay between restart temperature being exceeded and turbine switching on [s]",
+              "type": "number"
+            }
+          }
+        },
+        "hot": {
+          "title": "High Temperature Thermal Shutdown",
+          "description": "Define high-temperature thermal shutdown characteristics",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shutdown_temperature": {
+              "title": "Shutdown Temperature",
+              "description": "Temperature above which the turbine will shut down [degrees C]",
+              "type": "number",
+              "minimum": -273,
+              "maximum": 100
+            },
+            "restart_temperature": {
+              "title": "Restart Temperature",
+              "description": "Temperature below which the turbine will restart following a thermal shutdown [degrees C]",
+              "type": "number",
+              "minimum": -273,
+              "maximum": 100
+            },
+            "restart_duration": {
+              "title": "Restart Duration",
+              "description": "Time delay between temperature going below the restart temperature, and turbine switching on [s]",
+              "type": "number"
+            }
+          }
+        },
+        "derating": {
+          "title": "Derating",
+          "description": "Define any number of thermal derating curves to limit power performance in extreme temperature ranges. Curves can be based on either altitude or air density.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "anyOf": [
+              {
+                "title": "Altitude and temperature based derating",
+                "required": ["altitude", "power_limit", "temperature"],
+                "additionalProperties": false,
+                "properties": {
+                  "legend": {
+                    "title": "Legend",
+                    "description": "A note related to the applicability or extra context describing the derating",
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "altitude": {
+                    "description": "The altitude at which this derating curve applies [m above the WGS84 spheroid]",
+                    "type": "number"
+                  },
+                  "temperature": {
+                    "description": "A list of atmospheric temperature values [degrees C]",
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "power_limit": {
+                    "description": "A list of power limits each corresponding to an atmospheric temperature value in the previous list [W]",
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              {
+                "title": "Air density and temperature based derating",
+                "required": ["air_density", "power_limit", "temperature"],
+                "additionalProperties": false,
+                "properties": {
+                  "legend": {
+                    "title": "Legend",
+                    "description": "A note related to the applicability or extra context describing the derating",
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "air_density": {
+                    "description": "The air density at which this derating curve applies [kg/m^3]",
+                    "type": "number"
+                  },
+                  "temperature": {
+                    "type": "array",
+                    "description": "A list of atmospheric temperature values [degrees C]",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "power_limit": {
+                    "description": "A list of power limits each corresponding to an atmospheric temperature value in the previous list [W]",
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              {
+                "title": "Temperature-only based derating",
+                "required": ["power_limit", "temperature"],
+                "additionalProperties": false,
+                "properties": {
+                  "legend": {
+                    "title": "Legend",
+                    "description": "A note related to the applicability or extra context describing the derating",
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "temperature": {
+                    "description": "A list of atmospheric temperature values [degrees C]",
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "power_limit": {
+                    "description": "A list of power limits each corresponding to an atmospheric temperature value in the previous list [W]",
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "examples": [
+        {
+          "derating": [
+            {
+              "$comment": "Linear ramp down in low temperatures, altitude 2500",
+              "altitude": 2500,
+              "temperature": [-15, 10],
+              "power_limit": [1.1e6, 2e6]
+            },
+            {
+              "$comment": "Linear ramp down in low temperatures, altitude 1250",
+              "altitude": 1250,
+              "temperature": [-15, 10],
+              "power_limit": [1.4e6, 2e6]
+            },
+            {
+              "$comment": "Linear ramp down in low temperatures, altitude 0",
+              "altitude": 0,
+              "temperature": [-15, 10],
+              "power_limit": [1.6e6, 2e6]
+            },
+            {
+              "$comment": "Linear ramp down to zero in high temperatures, altitude 2500",
+              "altitude": 2500,
+              "temperature": [40, 45],
+              "power_limit": [2e6, 0]
+            },
+            {
+              "$comment": "Linear ramp down to zero in high temperatures, altitude 1250",
+              "altitude": 1250,
+              "temperature": [42, 45],
+              "power_limit": [2e6, 0]
+            },
+            {
+              "$comment": "Linear ramp down to zero in high temperatures, altitude 0",
+              "altitude": 0,
+              "temperature": [42, 45],
+              "power_limit": [2e6, 0]
+            }
+          ],
+          "cold": {
+            "shutdown_temperature": -15,
+            "restart_temperature": -12,
+            "restart_duration": 7200
+          },
+          "hot": {
+            "shutdown_temperature": 45,
+            "restart_temperature": 40,
+            "restart_duration": 30
+          }
+        },
+        {
+          "derating": [
+            {
+              "$comment": "Linear ramp down in low temperatures, air density 1.3",
+              "air_density": 1.3,
+              "temperature": [-15, 10],
+              "power_limit": [1.1e6, 2e6]
+            },
+            {
+              "$comment": "Linear ramp down in low temperatures, air density 1.225",
+              "air_density": 1.225,
+              "temperature": [-15, 10],
+              "power_limit": [1.4e6, 2e6]
+            },
+            {
+              "$comment": "Linear ramp down in low temperatures, air density 0.9",
+              "air_density": 1.225,
+              "temperature": [-15, 10],
+              "power_limit": [1.6e6, 2e6]
+            },
+            {
+              "$comment": "Nonlinear reduction in high temperatures, air density 1.3",
+              "air_density": 1.3,
+              "temperature": [40, 41, 42, 43, 44, 45],
+              "power_limit": [2e6, 1.95e6, 1.85e6, 1.7e6, 1.4e6, 0.8e6]
+            },
+            {
+              "$comment": "Nonlinear reduction in high temperatures, air density 1.225",
+              "air_density": 1.225,
+              "temperature": [40, 41, 42, 43, 44, 45],
+              "power_limit": [2e6, 1.98e6, 1.89e6, 1.8e6, 1.5e6, 0.9e6]
+            },
+            {
+              "$comment": "Nonlinear reduction in high temperatures, air density 0.9",
+              "air_density": 0.9,
+              "temperature": [40, 41, 42, 43, 44, 45],
+              "power_limit": [2e6, 1.98e6, 1.88e6, 2.0e6, 1.7e6, 1.1e6]
+            }
+          ],
+          "cold": {
+            "shutdown_temperature": -15,
+            "restart_temperature": -12,
+            "restart_duration": 2
+          },
+          "hot": {
+            "shutdown_temperature": 45,
+            "restart_temperature": 40,
+            "restart_duration": 0
+          }
+        }
+      ]
+    },
+    "acoustic_emissions_margin": {
+      "title": "Margin",
+      "description": "A recommended margin of error [dB] which may be added to the given sound power levels for practical use.",
+      "type": "number",
+      "examples": [0, 2],
+      "minimum": 0
+    },
+    "acoustic_emissions_weighting": {
+      "title": "Weighting",
+      "description": "Weighting filter that has been applied to sound power level measurements (see IEC 61672:2003 for definitions of curves).",
+      "enum": ["A", "B", "C", "D", "None"],
+      "default": "None"
+    },
+    "acoustic_emissions_wind_speed": {
+      "title": "Wind speed",
+      "description": "Array of wind speed values, referred to hub height, for which the Sound Power Levels are given. The length of this array must match the leading dimension of the Sound Power Level matrix and the length of the total_sound_power_level array. The range of wind speeds should span the operating region of the power curve.",
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0
+      },
+      "minItems": 1
+    },
+    "acoustic_emissions_frequency": {
+      "title": "Frequency",
+      "description": "Array of center-band frequency values for full-octave or one-third-octave band locations, for which the Sound Power Levels are given. The length of this array must match the second dimension of the Sound Power Level matrix.",
+      "type": "array",
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      },
+      "uniqueItems": true
+    }
+  },
+  "required": ["document", "turbine", "power_curves"],
+  "additionalProperties": false,
+  "properties": {
+    "document": {
+      "type": "object",
+      "title": "Document",
+      "description": "Information about this document",
+      "required": ["metadata"],
+      "$comment": "We've added metadata into a property of `document` to facilitate addition of more prescriptive or specific (ie non dublin-core) properties in the future",
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "title": "Dublin-Core Metadata",
+          "description": "Add metadata according to the Dublin Core Metadata Initiative (DCMI) elements/1.1. See https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#section-3 for detailed information on each element.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["term", "value"],
+            "additionalProperties": false,
+            "properties": {
+              "term": {
+                "title": "Term",
+                "description": "The DCMI Element label",
+                "enum": [
+                  "Contributor",
+                  "Coverage",
+                  "Creator",
+                  "Date",
+                  "Description",
+                  "Format",
+                  "Identifier",
+                  "Language",
+                  "Publisher",
+                  "Relation",
+                  "Rights",
+                  "Source",
+                  "Subject",
+                  "Type"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "title": "Value",
+                "description": "The metadata value"
+              }
+            }
+          }
+        }
+      }
+    },
+    "turbine": {
+      "type": "object",
+      "title": "Turbine",
+      "description": "General information about the physical turbine and its default operational values",
+      "required": [
+        "number_of_blades",
+        "model_name",
+        "manufacturer_name",
+        "manufacturer_display_name",
+        "rated_power",
+        "rotor_diameter",
+        "model_description",
+        "drive_type",
+        "regulation_type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "manufacturer_name": {
+          "type": "string",
+          "title": "Manufacturer name",
+          "description": "Full name of the manufacturer (eg a legal entity)",
+          "minLength": 1,
+          "examples": ["Generic Turbines (US) Inc."]
+        },
+        "manufacturer_display_name": {
+          "type": "string",
+          "title": "Manufacturer display name",
+          "description": "Shortened or informal name of the manufacturer (for display purposes, eg in dropdown selectors). See also manufacturer_name.",
+          "maxLength": 40,
+          "minLength": 1,
+          "examples": ["Generic Turbines"]
+        },
+        "model_name": {
+          "type": "string",
+          "title": "Model name",
+          "description": "Name of the turbine model as stated on the Type Certificate, Design Evaluation Confirmity Statement or Statement of Compliance.",
+          "minLength": 1,
+          "maxLength": 40,
+          "examples": ["GT101"]
+        },
+        "model_description": {
+          "type": "string",
+          "title": "Model description",
+          "description": "General description about the turbine model, eg for giving a brief overview in a turbine selection tool.",
+          "examples": ["An example simple turbine with only one mode."]
+        },
+        "platform_name": {
+          "type": "string",
+          "title": "Platform name",
+          "description": "Optional name of the platform on which this turbine model is based.",
+          "maxLength": 40,
+          "examples": ["1.x Series"]
+        },
+        "platform_description": {
+          "type": "string",
+          "title": "Platform description",
+          "description": "Optional general description of the platform on which this turbine model is based.",
+          "examples": [
+            "The 1.x Series platform was designed as a basis for a range of small-scale onshore turbines versatile for a range of site conditions."
+          ]
+        },
+        "rotor_diameter": {
+          "type": "number",
+          "title": "Rotor diameter [m]",
+          "description": "Nominal rotor diameter of the turbine [m]",
+          "examples": [100.0],
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1000
+        },
+        "rotor_tilt": {
+          "type": "number",
+          "title": "Rotor tilt [degrees]",
+          "description": "Shaft angle relative to horizontal used for calculation of inflow losses [degrees]",
+          "examples": [3, 5],
+          "minimum": 0,
+          "exclusiveMaximum": 30
+        },
+        "number_of_blades": {
+          "type": "number",
+          "title": "Number of blades",
+          "description": "The number of blades (typically 3, occasionally 2)",
+          "examples": [3, 2],
+          "exclusiveMinimum": 0
+        },
+        "drive_type": {
+          "title": "Drive type",
+          "description": "The drive type of the turbine",
+          "enum": ["geared", "direct", "other"]
+        },
+        "regulation_type": {
+          "title": "Regulation type",
+          "description": "The regulation type of the turbine.",
+          "enum": ["pitch", "stall", "other"]
+        },
+        "rated_power": {
+          "$ref": "#/$defs/rated_power"
+        },
+        "thermal_regulation": {
+          "$ref": "#/$defs/thermal_regulation"
+        },
+        "cut_in_rpm": {
+          "$ref": "#/$defs/cut_in_rpm"
+        },
+        "rated_rpm": {
+          "$ref": "#/$defs/rated_rpm"
+        },
+        "available_hub_heights": {
+          "$ref": "#/$defs/available_hub_heights"
+        },
+        "grid_frequencies": {
+          "$ref": "#/$defs/grid_frequencies"
+        }
+      }
+    },
+    "design_bases": {
+      "title": "Design bases",
+      "description": "A list of design bases for turbine certification or describing site-specific environmental conditions. Each contains information about the design point (environmental conditions) for which the power curves in this document are intended.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "label",
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Basis label",
+            "description": "A string key identifying the design basis, eg `my_design_basis_1`",
+            "pattern": "^[a-z0-9_]{1,40}$",
+            "minLength": 1,
+            "maxLength": 40,
+            "examples": ["basis_1", "basis_2", "site_xyz_specific"]
+          },
+          "name": {
+            "type": "string",
+            "title": "Basis name",
+            "description": "A human-readable name matching this basis label (eg for use in UIs)",
+            "minLength": 1,
+            "maxLength": 80,
+            "examples": ["Basis 1", "Basis 2", "Site XYZ Specific"]
+          },
+          "certification": {
+            "type": "object",
+            "title": "Certification details",
+            "description": "Information about turbine certification. Omit if a turbine is as-yet uncertified.",
+            "required": [
+              "design_standard",
+              "certificate_reference"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "design_standard": {
+                "title": "Design standard",
+                "description": "The design standard and amendments under which the turbine was certified. Shall include edition number.",
+                "type": "string",  
+                "minLength": 1,
+                "examples": [
+                   "IEC 61400-1:2005/AMD1:2010",
+                   "DIBt-Richtlinie 2012"
+                ]
+              },
+              "certificate_reference": {
+                "type": "string",
+                "title": "Certificate reference",
+                "examples": [
+                  "44 220 15454566-D-IEC Rev. 4",
+                  "IECRE.WE.TC.86.0179-R6"
+                ],
+                "description": "Identifies the certificate associated with the power curve. Note that multiple design bases may refer to the same certificate.",
+                "minLength": 1
+              }
+            }
+          },
+          "design_class": {
+            "title": "Design class",
+            "description": "A fully or partially predefined IEC environmental class",
+            "type": "object",
+            "oneOf": [
+              {
+                "title": "Standard IEC design class",
+                "type": "object",
+                "required": ["class_label"],
+                "additionalProperties": false,
+                "properties": {
+                  "class_label": {
+                    "description": "Specify a predefined IEC design class (I, II, or III)",
+                    "enum": ["I", "II", "III"]
+                  },
+                  "class_modifiers": {
+                    "description": "Specify optional additional modifier on the design class (T for Typhoon and/or CC for Cold Climate)",
+                    "type": "array",
+                    "items": {
+                      "enum": ["CC", "T"]
+                    },
+                    "maxItems": 2
+                  }
+                }
+              },
+              {
+                "title": "Special or custom design class",
+                "type": "object",
+                "required": ["class_label"],
+                "additionalProperties": false,
+                "properties": {
+                  "class_label": {
+                    "title": "Label",
+                    "description": "Specify an IEC class with custom parameters (design class S)",
+                    "const": "S"
+                  },
+                  "class_modifiers": {
+                    "description": "Specify optional additional modifiers on the design class (CC). Note, the typhoon (T) modifier is subsumed by the customisable parameters.",
+                    "type": "array",
+                    "items": {
+                      "const": "CC"
+                    },
+                    "maxItems": 1
+                  },
+                  "annual_average_wind_speed": {
+                    "type": "number",
+                    "title": "Annual average wind speed 'Vave'",
+                    "description": "The annualised average wind speed for which the turbine is certified [m/s]",
+                    "examples": [10, 8.5, 7.5]
+                  },
+                  "annual_average_air_density": {
+                    "type": "number",
+                    "title": "Annual average air density 'rho'",
+                    "description": "The annualised average air density for which the turbine is certified [kg/m^3]",
+                    "examples": [1.15, 1.225, 1.25]
+                  },
+                  "reference_wind_speed": {
+                    "type": "number",
+                    "title": "Reference wind speed 'Vref'",
+                    "description": "The 50-year return value of 10-minute average wind speed for which the turbine is certified [m/s]. Note: the Ve50 (the 3s gust wind speed) can be calculated from V50 according to the standard ratio",
+                    "examples": [50, 42.5, 37.5]
+                  },
+                  "weibull_shape_factor": {
+                    "type": "number",
+                    "title": "Weibull shape factor, 'k'",
+                    "description": "The Weibull distribution shape factor k [dimensionless]. Tip: You can calculate the Weibull scale factor, 'c', from the weibull_shape_factor and the annual_average_wind_speed.",
+                    "examples": [1.5, 2, 2.5, 3, 3.5]
+                  },
+                  "vertical_shear_exponent": {
+                    "type": "number",
+                    "title": "Vertical shear exponent 'alpha'",
+                    "description": "The design wind vertical shear exponent [dimensionless]",
+                    "examples": [0.15, 0.3, 0.45, 0.6]
+                  },
+                  "inclination_angle": {
+                    "title": "Inclination angle",
+                    "description": "The design vertical inclination (inflow) angle [degrees]",
+                    "type": "number",
+                    "examples": [8, 0, -8]
+                  }
+                }
+              }
+            ]
+          },
+          "design_lifetime": {
+            "title": "Design lifetime",
+            "description": "The design lifetime of the turbine [years]. Note that some design classes require particular minimum lifetimes.",
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "examples": [25, 30]
+          },
+          "turbulence": {
+            "title": "Turbulence category or distribution",
+            "description": "Specify the IEC turbulence category or one of several custom distributions.",
+            "anyOf": [
+              {
+                "title": "Standard turbulence category",
+                "type": "object",
+                "$comment": "This is defined as a single-property object rather than a direct string because it's more explicit to include the category keyword (and allows for later adoption of other predefined profiles requiring more sophistication than a string)",
+                "required": ["category"],
+                "additionalProperties": false,
+                "properties": {
+                  "category": {
+                    "title": "Category",
+                    "description": "Specify a predefined IEC turbulence category",
+                    "enum": ["A+", "A", "B", "C"]
+                  }
+                }
+              },
+              {
+                "title": "Special turbulence category",
+                "type": "object",
+                "description": "Specify reference turbulence intensity",
+                "required": ["category", "reference_turbulence_intensity"],
+                "additionalProperties": false,
+                "properties": {
+                  "category": {
+                    "title": "Category",
+                    "description": "Specify a custom/special value of Reference turbulence intensity",
+                    "const": "S",
+                    "default": "S"
+                  },
+                  "reference_turbulence_intensity": {
+                    "type": "number",
+                    "title": "Turbulence intensity",
+                    "description": "Value of Iref, specified as a fraction (eg 0.13)",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                }
+              },
+              {
+                "title": "Characteristic turbulence intensity and slope",
+                "type": "object",
+                "description": "Specify characteristic turbulence intensity and slope consistent with IEC61400-1 Ed2",
+                "required": ["category", "characteristic_turbulence_intensity"],
+                "additionalProperties": false,
+                "properties": {
+                  "category": {
+                    "title": "Category",
+                    "description": "Specify characteristic turbulence consistent with IEC61400-1 Ed2",
+                    "const": "Ed2",
+                    "default": "Ed2"
+                  },
+                  "characteristic_turbulence_intensity": {
+                    "type": "number",
+                    "title": "Characteristic turbulence intensity",
+                    "description": "Value of turbulence intensity I at 15m/s, specified as a fraction (eg 0.13)",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "examples": [0.11, 0.12]
+                  },
+                  "slope": {
+                    "type": "number",
+                    "title": "Slope (a)",
+                    "description": "Specify the slope parameter (a). No slope parameter is used for 61400-1 editions 3 or 4.",
+                    "minimum": 0,
+                    "examples": [2, 3]
+                  }
+                }
+              },
+              {
+                "title": "Normal and Extreme Turbulence Models varying with Wind Speed",
+                "type": "object",
+                "description": "Specify Normal and Extreme Turbulence Models (NTM, ETM) using turbulence intensity as a function of wind speed",
+                "$comment": "The extreme_turbulence_intensity property is not required, to enable legacy entries from earlier standard editions, but should be included where possible",
+                "required": [
+                  "category",
+                  "wind_speed",
+                  "normal_turbulence_intensity"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "category": {
+                    "title": "Category",
+                    "description": "Specify the turbulence category as custom",
+                    "const": "1d-NETM",
+                    "default": "1d-NETM"
+                  },
+                  "wind_speed": {
+                    "type": "array",
+                    "title": "Wind Speed",
+                    "description": "Wind speed in m/s for each entry in the Normal and Extreme Turbulence Model arrays. Wind speed range must cover the entire operating range (below cut-in to above maximum cut-out).",
+                    "items": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    }
+                  },
+                  "normal_turbulence_intensity": {
+                    "type": "array",
+                    "title": "Normal Turbulence Intensity",
+                    "description": "Normal value of I for each wind speed, specified as a fraction (eg 0.13)",
+                    "items": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "extreme_turbulence_intensity": {
+                    "type": "array",
+                    "title": "Extreme Turbulence Intensity",
+                    "description": "Extreme value of I for each wind speed, specified as a fraction (eg 0.13)",
+                    "items": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  }
+                }
+              },
+              {
+                "title": "Normal and Extreme Turbulence Models (NETM) varying with Wind Speed and Lifetime Hours",
+                "type": "object",
+                "description": "Specify Normal Turbulence Model (NTM) as a function of wind speed and lifetime hours, and Extreme Turbulence Models (ETM) as a function of wind speed.",
+                "required": [
+                  "category",
+                  "wind_speed",
+                  "normal_turbulence_intensity",
+                  "normal_hours_per_lifetime",
+                  "extreme_turbulence_intensity"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "category": {
+                    "description": "Set the turbulence category to custom",
+                    "const": "2d-NETM",
+                    "default": "2d-NETM"
+                  },
+                  "wind_speed": {
+                    "type": "array",
+                    "title": "Wind Speed",
+                    "description": "Wind speed in m/s for each entry in the Normal and Extreme Turbulence Model arrays. Wind speed range must cover the entire operating range (below cut-in to above maximum cut-out).",
+                    "items": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    }
+                  },
+                  "normal_turbulence_intensity": {
+                    "type": "array",
+                    "title": "Normal Turbulence Intensity",
+                    "description": "2d array containing normal value of I for each wind speed (row) and probability interval (column), specified as a fraction (eg 0.13). Probability intervals represent evenly spaced bins covering the domain [0,1].",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    }
+                  },
+                  "normal_hours_per_lifetime": {
+                    "type": "array",
+                    "title": "Normal hours per lifetime [h]",
+                    "description": "2d array containing the number of hours spent, through-life, for each wind speed (row) and probability interval (column) [h]",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "minimum": 0
+                      }
+                    }
+                  },
+                  "extreme_turbulence_intensity": {
+                    "type": "array",
+                    "title": "Extreme Turbulence Intensity",
+                    "description": "Extreme value of I for each wind speed, specified as a fraction (eg 0.13)",
+                    "items": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  }
+                }
+              }
+            ],
+            "examples": [
+              {
+                "category": "A"
+              },
+              {
+                "category": "S",
+                "reference_turbulence_intensity": 0.13
+              },
+              {
+                "category": "Ed2",
+                "characteristic_turbulence_intensity": 0.13,
+                "slope": 2
+              },
+              {
+                "category": "1d-NETM",
+                "wind_speed": [1, 2, 25],
+                "normal_turbulence_intensity": [0.85, 0.5, 0.11],
+                "extreme_turbulence_intensity": [0.92, 0.6, 0.15]
+              },
+              {
+                "category": "2d-NETM",
+                "wind_speed": [1, 2, 25],
+                "normal_turbulence_intensity": [
+                  [0.116, 0.1889, 0.2613, 0.3337, 0.46],
+                  [0.116, 0.1889, 0.2613, 0.3337, 0.46],
+                  [0.116, 0.1889, 0.2613, 0.3337, 0.46]
+                ],
+                "normal_hours_per_lifetime": [
+                  [1633.89, 2145.8, 1551.13, 1434.6, 1321.1],
+                  [804.2, 956.3, 756.3, 645.6, 543.7],
+                  [30.5, 60.4, 43.8, 38.5, 27.6]
+                ],
+                "extreme_turbulence_intensity": [0.92, 0.6, 0.15]
+              }
+            ]
+          },
+          "standard_climate": {
+            "type": "object",
+            "description": "Define operating and survival temperatures in standard climates",
+            "additionalProperties": false,
+            "properties": {
+              "operating_temperature_range": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -273.15,
+                  "maximum": 1000
+                }
+              },
+              "survival_temperature_range": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -273.15,
+                  "maximum": 1000
+                }
+              }
+            },
+            "examples": [
+              {
+                "operating_temperature_range": [-10, 40],
+                "survival_temperature_range": [-20, 50]
+              }
+            ]
+          },
+          "cold_climate": {
+            "type": "object",
+            "description": "As per standard climate in eventuality turbine is equipped with a cold weather package",
+            "additionalProperties": false,
+            "properties": {
+              "operating_temperature_range": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -273.15,
+                  "maximum": 1000
+                }
+              },
+              "survival_temperature_range": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -273.15,
+                  "maximum": 1000
+                }
+              }
+            },
+            "examples": [
+              {
+                "operating_temperature_range": [-20, 30],
+                "survival_temperature_range": [-20, 50]
+              }
+            ]
+          },
+          "hot_climate": {
+            "type": "object",
+            "description": "As per standard climate in eventuality turbine is equipped with a hot weather package",
+            "$comment": "TODO Schema team - Can we define why this is different in hot climates than it is in standard climates?",
+            "additionalProperties": false,
+            "properties": {
+              "operating_temperature_range": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -273.15,
+                  "maximum": 1000
+                }
+              },
+              "survival_temperature_range": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -273.15,
+                  "maximum": 1000
+                }
+              }
+            },
+            "examples": [
+              {
+                "operating_temperature_range": [-10, 45],
+                "survival_temperature_range": [-20, 50]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "power_curves": {
+      "type": "object",
+      "title": "Power Curves",
+      "description": "Contains power and thrust curves along with data specific to each operating mode of the turbine",
+      "required": ["operating_modes"],
+      "additionalProperties": false,
+      "properties": {
+        "default_operating_mode_label": {
+          "type": "string",
+          "title": "Default operating mode label",
+          "description": "The label of the mode that is suggested as default in the absence of a specific selection for site or conditions.  Shall match the label of an entry in 'operating_modes'. Note that, if omitted, the first in the list of operating_modes will likely become a de-facto selection by data recipients.",
+          "pattern": "^[a-z0-9_]{1,40}$",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "operating_modes": {
+          "type": "array",
+          "title": "Operating Modes",
+          "description": "Different modes that the turbine can operate in / switch between",
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "name",
+              "description",
+              "cuts",
+              "parameters",
+              "power",
+              "thrust_coefficient"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "label": {
+                "type": "string",
+                "title": "Mode label",
+                "description": "A string key identifying the mode, e.g. `power_optimised_1`",
+                "pattern": "^[a-z0-9_]{1,40}$",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              "name": {
+                "type": "string",
+                "title": "Mode name",
+                "description": "A human-readable name for the mode, eg `Power Optimised 1 (PO1)`",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              "design_bases": {
+                "type": "array",
+                "description": "A list of the design basis labels relevant to this mode. The 'design_bases' array is not required, so this field is also not required. However, if the 'design_bases' array is provided, this field should be populated in order to determine the applicable base(s).",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "description": {
+                "type": "string",
+                "title": "Mode description",
+                "description": "Short human readable text describing the purpose of this mode, which will be rendered into dropdowns and made searchable.",
+                "examples": [
+                  "For general purpose operation in standard climates, or early stage site design",
+                  "For use in noise-reduced situations eg close to population areas or sites of special scientific interest"
+                ]
+              },
+              "cuts": {
+                "title": "Cut-in and cut-out conditions",
+                "type": "array",
+                "description": "A list of the cut-in and cut-out conditions relevant to this power curve",
+                "items": {
+                  "type": "object",
+                  "required": ["cut_type", "wind_speed", "period"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "cut_type": {
+                      "title": "Cut-in/cut-out type",
+                      "description": "Select the type of cut-in/cut-out characteristic to apply",
+                      "enum": [
+                        "low-cut-in",
+                        "high-cut-in",
+                        "low-cut-out",
+                        "high-cut-out"
+                      ]
+                    },
+                    "wind_speed": {
+                      "title": "Reference wind speed [m/s]",
+                      "description": "The wind speed at which the cut-in/cut-out will apply [m/s]",
+                      "type": "number"
+                    },
+                    "period": {
+                      "title": "Period [s]",
+                      "description": "The number of seconds that the reference wind speed is met to apply the cut in/out action [s]",
+                      "type": "number"
+                    }
+                  }
+                },
+                "minItems": 0,
+                "uniqueItems": true
+              },
+              "parameters": {
+                "type": "array",
+                "title": "Parameters",
+                "description": "Independent parameters for which the power and thrust curves are described",
+                "items": {
+                  "type": "object",
+                  "required": ["label", "dimension", "values"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "label": {
+                      "enum": [
+                        "air-density",
+                        "wind-speed",
+                        "turbulence-intensity",
+                        "turbulence-lengthscale",
+                        "monin-obukhov-stability",
+                        "shear-coefficient",
+                        "wind-direction"
+                      ],
+                      "title": "Parameter label",
+                      "description": "A slugified string key used to identify the parameter (e.g. air-density)."
+                    },
+                    "dimension": {
+                      "type": "integer",
+                      "title": "Dimension",
+                      "description": "Dimension of the power curve array along which this parameter varies (0-based)"
+                    },
+                    "values": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "label": {
+                            "const": "air-density"
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "values": {
+                            "title": "Air Density Values",
+                            "description": "Values of air density [kg/m^3] for which this power curve is tabulated"
+                          }
+                        },
+                        "required": ["values"]
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "label": {
+                            "const": "wind-speed"
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "values": {
+                            "title": "Wind Speed Values",
+                            "description": "Values of free-stream wind speed [m/s] at hub height for which this power curve is tabulated"
+                          }
+                        },
+                        "required": ["values"]
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "label": {
+                            "const": "turbulence-intensity"
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "values": {
+                            "items": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1
+                            },
+                            "title": "Turbulence Intensity Values",
+                            "description": "Values of turbulence intensity I [-] (expressed as a factor in the range 0,1 rather than a percentage) for which this power curve is tabulated"
+                          }
+                        },
+                        "required": ["values"]
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "label": {
+                            "const": "turbulence-lengthscale"
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "values": {
+                            "title": "Turbulence Lengthscale Values",
+                            "description": "Values of turbulence integral lengthscale l [m] for which this power curve is tabulated"
+                          }
+                        },
+                        "required": ["values"]
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "label": {
+                            "const": "monin-obukhov-stability"
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "values": {
+                            "title": "Monin-Obukhov Stability Values",
+                            "description": "Values of the the Monin-Obukhov stability parameter zeta [-] for which this power curve is tabulated. Values of zero indicate neutral conditions, vegative condi"
+                          }
+                        },
+                        "required": ["values"]
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "label": {
+                            "const": "shear-coefficient"
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "values": {
+                            "title": "Shear Coefficient Values",
+                            "description": "Values of wind shear coefficient alpha [-] for which this power curve is tabulated"
+                          }
+                        },
+                        "required": ["values"]
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "label": {
+                            "const": "wind-direction"
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "values": {
+                            "title": "Wind Direction Values",
+                            "description": "Values of wind direction [???? degrees clockwise from true north????] for which this power curve is tabulated"
+                          }
+                        },
+                        "required": ["values"]
+                      }
+                    }
+                  ]
+                }
+              },
+              "power": {
+                "title": "Power Curve",
+                "description": "Electrical power values [kW], defined as an N-D array (where N is the number of independent parameters) at the sample points described in the `parameters` property.",
+                "oneOf": [
+                  {
+                    "title": "2 Parameters (2D Array, e.g. air-density and wind-speed)",
+                    "type": "array",
+                    "$ref": "#/$defs/2darray"
+                  },
+                  {
+                    "title": "3 Parameters (3D Array, e.g. turbulent-intensity, air-density and wind-speed)",
+                    "type": "array",
+                    "$ref": "#/$defs/3darray"
+                  },
+                  {
+                    "title": "4 Parameters (4D Array, e.g. monin-obukhov-stability, turbulent-intensity, air-density and wind-speed)",
+                    "type": "array",
+                    "$ref": "#/$defs/4darray"
+                  }
+                ]
+              },
+              "thrust_coefficient": {
+                "title": "Thrust Coefficient Curve",
+                "description": "Thrust coefficients, defined as an N-D array (where N is the number of independent parameters) at the sample points described in the `parameters` property. These arrays shall be the same size and shape as the `power` value. Where coefficient values are provided for only a single air density, the singleton dimension shall be expanded (ie repeat columns to match the size of the `power` array).",
+                "$comment": "Expanding the singleton value in the air-density dimension to match the dimension of the power array may seem futile. However, in an number of cases found during development of the schema, the thrust coefficient is still a function of air density (!!) due to nonlinear effects such as temperature regulation varying with density. Requiring this expansion regardless, whilst apparently wasteful, encourages data consumers to handle all cases consistently.",
+                "oneOf": [
+                  {
+                    "title": "2 Parameters (2D Array, e.g. air-density and wind-speed)",
+                    "type": "array",
+                    "$ref": "#/$defs/2darray"
+                  },
+                  {
+                    "title": "3 Parameters (3D Array, e.g. turbulent-intensity, air-density and wind-speed)",
+                    "type": "array",
+                    "$ref": "#/$defs/3darray"
+                  },
+                  {
+                    "title": "4 Parameters (4D Array, e.g. monin-obukhov-stability, turbulent-intensity, air-density and wind-speed)",
+                    "type": "array",
+                    "$ref": "#/$defs/4darray"
+                  }
+                ]
+              },
+              "acoustic_emissions": {
+                "title": "Acoustic emissions",
+                "description": "Specify the noise (Sound Power Level) emitted by the turbine in this mode of operation",
+                "type": "object",
+                "$comment": "The acoustic_emissions property is not strictly required, in order to facilitate backward compatibility (entering data from existing power curve data sheets which may not contain this data). OEMs should treat this as required, however, and future versions of the standard should consider moving to requiring this field.",
+                "examples": [
+                  {
+                    "$comment": "One third octave example, truncated in the wind speed dimension for brevity",
+                    "margin": 2,
+                    "weighting": "A",
+                    "wind_speed": [5, 6, 7],
+                    "frequency": [
+                      25, 31, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400,
+                      500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150, 4000,
+                      6300, 8000, 10000, 12500, 16000, 20000
+                    ],
+                    "sound_power_level": [
+                      [
+                        8.3, 13.6, 18.4, 45.6, 53.4, 62.2, 71.4, 71.2, 75.1, 80,
+                        84.5, 88.3, 90.7, 92.5, 93.1, 93.8, 93.2, 92.2, 90.6,
+                        88.1, 85.8, 83.5, 80.3, 77.6, 52.9, 51.9, 50.5, 48.7,
+                        46.4, 43.7
+                      ],
+                      [
+                        8.3, 13.6, 18.4, 48.3, 55.8, 62.9, 75.2, 76, 79.3, 84.4,
+                        88.7, 92.2, 94.1, 96, 96.1, 96.3, 95.7, 94.7, 93.3,
+                        91.1, 89, 87.2, 84.3, 80.5, 52.9, 51.9, 50.5, 48.7,
+                        46.4, 43.7
+                      ],
+                      [
+                        8.3, 13.6, 18.4, 49.2, 57.2, 64.6, 76.6, 77.9, 81.4,
+                        85.9, 90, 93.3, 95, 96.9, 96.8, 96.9, 96.4, 95.6, 94.3,
+                        91.8, 89.8, 88, 85.3, 82, 52.9, 51.9, 50.5, 48.7, 46.4,
+                        43.7
+                      ]
+                    ]
+                  },
+                  {
+                    "$comment": "Full octave example, truncated in the wind speed dimension for brevity",
+                    "margin": 2,
+                    "weighting": "A",
+                    "frequency": [
+                      16, 31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000
+                    ],
+                    "wind_speed": [5, 6, 7],
+                    "sound_power_level": [
+                      [
+                        5.2, 19.7, 62.8, 77.7, 90.2, 97.0, 97.9, 93.4, 85.9,
+                        56.6, 51.5
+                      ],
+                      [
+                        5.3, 19.8, 63.8, 82.0, 94.3, 100.3, 100.4, 96.3, 89.6,
+                        56.6, 51.3
+                      ],
+                      [
+                        5.4, 19.8, 65.4, 83.9, 95.5, 101.1, 101.1, 97.1, 90.5,
+                        56.6, 51.5
+                      ]
+                    ]
+                  },
+                  {
+                    "$comment": "Total SPL example, truncated in the wind speed dimension for brevity",
+                    "margin": 2,
+                    "weighting": "A",
+                    "wind_speed": [5, 6, 7],
+                    "sound_power_level": [101.7, 104.7, 105.5]
+                  }
+                ],
+                "required": [
+                  "margin",
+                  "sound_power_level",
+                  "weighting",
+                  "wind_speed"
+                ],
+                "oneOf": [
+                  {
+                    "title": "Emissions at one-third-octave intervals",
+                    "additionalProperties": false,
+                    "properties": {
+                      "margin": {
+                        "$ref": "#/$defs/acoustic_emissions_margin"
+                      },
+                      "weighting": {
+                        "$ref": "#/$defs/acoustic_emissions_weighting"
+                      },
+                      "wind_speed": {
+                        "$ref": "#/$defs/acoustic_emissions_wind_speed"
+                      },
+                      "frequency": {
+                        "$ref": "#/$defs/acoustic_emissions_frequency",
+                        "description": "Array of frequency values at one-third-octave band locations for which the Sound Power Levels are given. The length of this array must match the second dimension of the Sound Power Level matrix. The frequency range should span at least 20 bands and be sufficient that error in summation of frequency sources to total SPL is negligible for the intended purpose.",
+                        "$comment": "At full band, 20 values is sufficient, whilst at one-third octave the opposite is true, so 20 items is used as a cutoff criterion between one-third and full-band definitions.",
+                        "examples": [
+                          [
+                            25, 31, 40, 50, 63, 80, 100, 125, 160, 200, 250,
+                            315, 400, 500, 630, 800, 1000, 1250, 1600, 2000,
+                            2500, 3150, 4000, 6300, 8000, 10000, 12500, 16000,
+                            20000
+                          ]
+                        ],
+                        "minItems": 20
+                      },
+                      "sound_power_level": {
+                        "title": "Sound Power Level (one-third octave intervals)",
+                        "description": "The sound power level [db], specified as a matrix for the given ranges of wind speed and frequency. Total sound power level can be derived by summation along the frequency dimension using the logarithmic method.",
+                        "$comment": "The sound_power_level property is not strictly required for the same reason that its parent, the `acoustic_emissions` property is not required (some existing power curves provide total sound power level only). It is however strongly recommended, again for the same reason.",
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "minItems": 20,
+                          "items": {
+                            "type": "number"
+                          }
+                        },
+                        "minItems": 1
+                      }
+                    }
+                  },
+                  {
+                    "title": "Emissions at full-octave intervals",
+                    "additionalProperties": false,
+                    "properties": {
+                      "margin": {
+                        "$ref": "#/$defs/acoustic_emissions_margin"
+                      },
+                      "weighting": {
+                        "$ref": "#/$defs/acoustic_emissions_weighting"
+                      },
+                      "wind_speed": {
+                        "$ref": "#/$defs/acoustic_emissions_wind_speed"
+                      },
+                      "frequency": {
+                        "$ref": "#/$defs/acoustic_emissions_frequency",
+                        "description": "Array of frequency values at full-octave band locations for which the Sound Power Levels are given. The length of this array must match the second dimension of the Sound Power Level matrix. The frequency range should span less than 20 bands and be sufficient that error in summation of frequency sources to total SPL is negligible for the intended purpose.",
+                        "$comment": "The schema team determined that at full band, 20 values is more than enough to span the range, whilst at one-third octave the opposite is true, so 20 items is used as a cutoff criterion for one-third and full-band definitions.",
+                        "examples": [
+                          [
+                            16, 31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000,
+                            16000
+                          ]
+                        ],
+                        "maxItems": 19
+                      },
+                      "sound_power_level": {
+                        "title": "Sound Power Level (one-third octave intervals)",
+                        "description": "The sound power level [db], specified as a matrix for the given ranges of wind speed and frequency. Total sound power level can be derived by summation along the frequency dimension using the logarithmic method.",
+                        "$comment": "The sound_power_level property is not strictly required for the same reason that its parent, the `acoustic_emissions` property is not required (some existing power curves provide total sound power level only). It is however strongly recommended, again for the same reason.",
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          },
+                          "maxItems": 19,
+                          "minItems": 1
+                        },
+                        "minItems": 1
+                      }
+                    }
+                  },
+                  {
+                    "title": "Total emissions",
+                    "additionalProperties": false,
+                    "properties": {
+                      "margin": {
+                        "$ref": "#/$defs/acoustic_emissions_margin"
+                      },
+                      "weighting": {
+                        "$ref": "#/$defs/acoustic_emissions_weighting"
+                      },
+                      "wind_speed": {
+                        "$ref": "#/$defs/acoustic_emissions_wind_speed"
+                      },
+                      "sound_power_level": {
+                        "title": "Sound Power Level (total)",
+                        "description": "The total sound power level [db], specified for each value of wind speed. Total sound power level can be derived by summation along the frequency dimension using the logarithmic method.",
+                        "$comment": "Providing total sound power levels is not recommended, in favour of one-third band (which covers all users cases), but is provided to enable legacy power curve documents containing only Total SPL information to be encoded.",
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "minItems": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              "overrides": {
+                "title": "Mode-Specific Overrides",
+                "description": "Override of certain data in the `turbine` section, where that data conflicts with requirements of a mode. For example, some operating modes may reduce rated power, or require a more restrictive range of hub heights for structural reasons",
+                "type": "object",
+                "required": [],
+                "examples": [
+                  {
+                    "rated_power": 20e6
+                  },
+                  {
+                    "available_hub_heights": [100, 120]
+                  },
+                  {
+                    "cut_in_rpm": 2.1
+                  },
+                  {
+                    "rated_rpm": 11.8
+                  }
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "rated_power": {
+                    "$ref": "#/$defs/rated_power"
+                  },
+                  "cut_in_rpm": {
+                    "$ref": "#/$defs/cut_in_rpm"
+                  },
+                  "rated_rpm": {
+                    "$ref": "#/$defs/rated_rpm"
+                  },
+                  "available_hub_heights": {
+                    "$ref": "#/$defs/available_hub_heights"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "additional": {
+      "title": "Additional",
+      "type": "object",
+      "properties": {
+        "reference": {
+          "type":"string",
+          "title": "Reference",
+          "description": "An optional url reference to documentation describing contents of the additional.data property."
+        },
+        "schema": {
+          "type":"string",
+          "title": "Schema",
+          "description": "An optional url reference to a schema describing contents of additional.data property."
+        },
+        "data": {
+          "title": "Additional",
+          "type": "object",
+          "description": "Add extra (e.g. manufacturer-specific) data to this field."
+        }
+      }
+    }
+  }
+}

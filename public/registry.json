@@ -252,6 +252,9 @@
             },
             "v1.0.0.alpha-2": {
               "path": "../vendor/public/octue-power-curve/v1.0.0.alpha-2/power-curve-schema"
+            },
+            "v1.0.0.alpha-3": {
+              "path": "../vendor/public/octue-power-curve/v1.0.0.alpha-3/power-curve-schema"
             }
           }
         }

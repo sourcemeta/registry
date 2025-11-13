@@ -58,6 +58,7 @@ public/movielabs-omc-2-6 https://github.com/MovieLabs/OMC v2.6-release-1
 public/krakend https://github.com/krakend/krakend-schema c8be2d273fbbf3ddbaea3aa319ec34f7381dfaa4
 public/octue-power-curve/v1.0.0.alpha-1 https://github.com/octue/power-curve-schema 1.0.0.alpha-1
 public/octue-power-curve/v1.0.0.alpha-2 https://github.com/octue/power-curve-schema 1.0.0.alpha-2
+public/octue-power-curve/v1.0.0.alpha-3 https://github.com/octue/power-curve-schema 1.0.0.alpha-3
 public/usnistgov-mgi-2022-08 https://github.com/usnistgov/mgi-json-schema e5e6aaf3f5eae0d15b88ecbd57f44cc28b035f11
 public/cloudevents-1-0-0 https://github.com/cloudevents/spec v1.0
 public/cloudevents-1-0-1 https://github.com/cloudevents/spec v1.0.1
