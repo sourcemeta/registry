@@ -80,42 +80,6 @@ HTTP 200
 [Asserts]
 jsonpath "$.valid" == true
 
-GET {{base}}/self/api/schemas/metadata/test/schemas/draft4-top-level-ref
-Accept: application/json
-HTTP 200
-Content-Type: application/json
-Access-Control-Allow-Origin: *
-[Captures]
-last_response: body
-[Asserts]
-header "ETag" exists
-header "Last-Modified" exists
-jsonpath "$.bytes" == 278
-jsonpath "$.baseDialect" == "http://json-schema.org/draft-04/schema#"
-jsonpath "$.health" == 50
-jsonpath "$.dependencies" == 0
-jsonpath "$.dialect" == "http://json-schema.org/draft-04/schema#"
-jsonpath "$.identifier" == "{{base}}/test/schemas/draft4-top-level-ref"
-jsonpath "$.path" == "/test/schemas/draft4-top-level-ref"
-jsonpath "$.alert" == null
-jsonpath "$.provenance" == null
-jsonpath "$.examples" count == 0
-jsonpath "$.breadcrumb" count == 3
-jsonpath "$.breadcrumb[0].name" == "test"
-jsonpath "$.breadcrumb[0].path" == "/test"
-jsonpath "$.breadcrumb[1].name" == "schemas"
-jsonpath "$.breadcrumb[1].path" == "/test/schemas"
-jsonpath "$.breadcrumb[2].name" == "draft4-top-level-ref"
-jsonpath "$.breadcrumb[2].path" == "/test/schemas/draft4-top-level-ref"
-
-POST {{base}}/self/api/schemas/evaluate/sourcemeta/registry/api/schemas/metadata/response
-```
-{{last_response}}
-```
-HTTP 200
-[Asserts]
-jsonpath "$.valid" == true
-
 HEAD {{base}}/self/api/schemas/metadata/test/v2.0/schema
 Accept: application/json
 HTTP 200

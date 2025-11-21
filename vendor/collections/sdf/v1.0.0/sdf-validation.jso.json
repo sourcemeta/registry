@@ -1,7 +1,7 @@
 {
   "title": "sdf-validation.cddl",
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#/definitions/sdf-syntax",
+  "allOf": [ { "$ref": "#/definitions/sdf-syntax" } ],
   "definitions": {
     "sdf-syntax": {
       "type": "object",

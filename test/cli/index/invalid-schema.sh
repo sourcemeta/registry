@@ -50,6 +50,15 @@ Using configuration: $(realpath "$TMP")/registry.json
 Detecting: $(realpath "$TMP")/schemas/test.json (#1)
 (100%) Ingesting: https://sourcemeta.com/example/schemas/test
 error: The schema does not adhere to its metaschema
+The integer value 1 was expected to equal one of the following values: "array", "boolean", "integer", "null", "number", "object", and "string"
+  at instance location "/type"
+  at evaluate path "/properties/type/anyOf/0/\$ref/enum"
+The integer value was expected to validate against the statically referenced schema
+  at instance location "/type"
+  at evaluate path "/properties/type/anyOf/0/\$ref"
+The value was expected to be of type array but it was of type integer
+  at instance location "/type"
+  at evaluate path "/properties/type/anyOf/1/type"
 The integer value was expected to validate against at least one of the 2 given subschemas
   at instance location "/type"
   at evaluate path "/properties/type/anyOf"

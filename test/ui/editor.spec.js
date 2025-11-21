@@ -2,14 +2,14 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Schema Editor', () => {
   test('editor loads correct schema data from API', async ({ page }) => {
-    await page.goto('/test/schemas/draft4-top-level-ref');
+    await page.goto('/test/schemas/string');
 
     // Wait for the editor element to be present
     const editor = page.locator('#schema');
     await expect(editor).toBeVisible();
 
     // Fetch the actual schema data from the API
-    const response = await page.request.get('/test/schemas/draft4-top-level-ref.json');
+    const response = await page.request.get('/test/schemas/string.json');
     expect(response.ok()).toBeTruthy();
     const expectedSchema = await response.text();
 

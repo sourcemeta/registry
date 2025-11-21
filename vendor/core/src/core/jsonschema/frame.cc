@@ -311,24 +311,19 @@ auto repopulate_instance_locations(
     sourcemeta::core::SchemaFrame::Instances::mapped_type &destination,
     const std::optional<sourcemeta::core::PointerTemplate> &accumulator)
     -> void {
-  if (cache_entry.orphan && cache_entry.instance_location.empty()) {
-    return;
-  } else if (cache_entry.parent.has_value() &&
-             // Don't consider bases from the root subschema, as if that
-             // subschema has any instance location other than "", then it
-             // indicates a recursive reference
-             !cache_entry.parent.value().empty()) {
+  // Check parent first as even orphan schemas can inherit instance locations
+  // from their parents if the parent is in the evaluation flow
+  if (cache_entry.parent.has_value() &&
+      // Don't consider bases from the root subschema, as if that
+      // subschema has any instance location other than "", then it
+      // indicates a recursive reference
+      !cache_entry.parent.value().empty()) {
     const auto match{instances.find(cache_entry.parent.value())};
     if (match == instances.cend()) {
       return;
     }
 
     for (const auto &parent_instance_location : match->second) {
-      // Guard against overly unrolling recursive schemas
-      if (parent_instance_location == cache_entry.instance_location) {
-        continue;
-      }
-
       auto new_accumulator = cache_entry.relative_instance_location;
       if (accumulator.has_value()) {
         for (const auto &token : accumulator.value()) {
@@ -349,6 +344,9 @@ auto repopulate_instance_locations(
           frame, instances, cache, cache_entry.parent.value(),
           cache.at(cache_entry.parent.value()), destination, new_accumulator);
     }
+  } else if (cache_entry.orphan && cache_entry.instance_location.empty()) {
+    // Only return early for orphan schemas if they don't have a parent
+    return;
   }
 }
 
@@ -490,12 +488,9 @@ auto SchemaFrame::analyse(const JSON &root, const SchemaWalker &walker,
     std::optional<JSON::String> root_id{
         // If we are dealing with nested schemas, then by definition
         // the root has no identifier
-        !path.empty()
-            ? std::nullopt
-            : sourcemeta::core::identify(
-                  schema, root_base_dialect.value(),
-                  sourcemeta::core::SchemaIdentificationStrategy::Loose,
-                  default_id)};
+        !path.empty() ? std::nullopt
+                      : sourcemeta::core::identify(
+                            schema, root_base_dialect.value(), default_id)};
     if (root_id.has_value()) {
       root_id = URI::canonicalize(root_id.value());
     }
@@ -549,7 +544,6 @@ auto SchemaFrame::analyse(const JSON &root, const SchemaWalker &walker,
       // Schema identifier
       std::optional<JSON::String> id{sourcemeta::core::identify(
           entry.subschema.get(), entry.base_dialect.value(),
-          sourcemeta::core::SchemaIdentificationStrategy::Strict,
           entry.pointer.empty() ? root_id : std::nullopt)};
 
       // Store information
@@ -568,9 +562,8 @@ auto SchemaFrame::analyse(const JSON &root, const SchemaWalker &walker,
     for (const auto &entry_index : current_subschema_entries) {
       const auto &entry{subschema_entries[entry_index]};
       if (entry.id.has_value()) {
-        const bool ref_overrides = ref_overrides_adjacent_keywords(
-                                       entry.common.base_dialect.value()) &&
-                                   !entry.common.pointer.empty();
+        const bool ref_overrides =
+            ref_overrides_adjacent_keywords(entry.common.base_dialect.value());
         const bool is_pre_2019_09_location_independent_identifier =
             supports_id_anchors(entry.common.base_dialect.value()) &&
             sourcemeta::core::URI{entry.id.value()}.is_fragment_only();
