@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Kelvin",
+  "description": "The SI unit of thermodynamic temperature. It is defined by taking the fixed numerical value of the Boltzmann constant, k, to be 1.380 649 x 10^-23 when expressed in the unit J K^-1, which is equal to kg m^2 s^-2 K^-1, where the kilogram, metre and second are defined in terms of h, c and Delta_nu_Cs",
+  "examples": [ 0, 273.15, 293.15, 373.15, 100, 300 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "K",
+  "type": "number",
+  "minimum": 0
+}

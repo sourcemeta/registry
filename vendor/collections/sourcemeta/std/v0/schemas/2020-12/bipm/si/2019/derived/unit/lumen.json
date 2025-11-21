@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lumen",
+  "description": "The SI unit of luminous flux. It is equal to cd sr",
+  "examples": [ 0, 100, 800, 1500, 5000, 10000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "lm",
+  "x-units": [ "../../base/unit/candela.json" ],
+  "type": "number",
+  "minimum": 0
+}

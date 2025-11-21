@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Quectoweber",
+  "description": "A multiple of weber equal to 1e-30 weber",
+  "examples": [ 0, 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 1e-30,
+  "x-symbol": "qWb",
+  "$ref": "../unit/weber.json"
+}

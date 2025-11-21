@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$ref": "../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/problem-details/problem.json",
+  "$ref": "../../../../../vendor/collections/sourcemeta/std/v0/schemas/2020-12/ietf/problem-details/problem.json",
   "required": [ "title", "status", "detail" ],
   "properties": {
     "title": {

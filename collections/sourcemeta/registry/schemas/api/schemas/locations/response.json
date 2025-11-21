@@ -36,13 +36,13 @@
           "enum": [ "resource", "anchor", "pointer", "subschema" ]
         },
         "base": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/url.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/2020-12/ietf/uri/url.json"
         },
         "baseDialect": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/uri.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/2020-12/ietf/uri/uri.json"
         },
         "dialect": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/url.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/2020-12/ietf/uri/url.json"
         },
         "parent": {
           "anyOf": [
@@ -50,21 +50,21 @@
               "type": "null"
             },
             {
-              "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/jsonpointer/pointer.json"
+              "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/2020-12/ietf/jsonpointer/pointer.json"
             }
           ]
         },
         "pointer": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/jsonpointer/pointer.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/2020-12/ietf/jsonpointer/pointer.json"
         },
         "position": {
           "$ref": "../position.json"
         },
         "relativePointer": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/jsonpointer/pointer.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/2020-12/ietf/jsonpointer/pointer.json"
         },
         "root": {
-          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/url.json"
+          "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/2020-12/ietf/uri/url.json"
         }
       },
       "additionalProperties": false

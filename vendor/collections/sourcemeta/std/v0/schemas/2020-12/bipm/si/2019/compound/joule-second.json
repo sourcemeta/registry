@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Joule second",
+  "description": "A compound unit of action. It is equal to J s, which is equal to kg m^2 s^-1",
+  "examples": [ 6.62607e-34, 1e-33, 1.0e-32, 1.00e-31 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-units": [ "../derived/unit/joule.json", "../base/unit/second.json" ],
+  "type": "number",
+  "exclusiveMinimum": 0
+}

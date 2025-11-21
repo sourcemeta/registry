@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tesla",
+  "description": "The SI unit of magnetic flux density. It is equal to Wb/m^2, which is equal to kg s^-2 A^-1",
+  "examples": [ 0, 5e-5, 0.001, 1, 10, -0.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "T",
+  "x-units": [
+    "../../base/unit/kilogram.json",
+    "../../base/unit/second.json",
+    "../../base/unit/ampere.json"
+  ],
+  "type": "number"
+}

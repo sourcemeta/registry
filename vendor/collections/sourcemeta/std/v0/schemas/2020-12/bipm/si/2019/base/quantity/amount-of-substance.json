@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Amount of substance",
+  "description": "Amount of substance is a base quantity measured in moles",
+  "examples": [ 0.001, 1, 2, 10, 0.5, 1.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/mole.json"
+}

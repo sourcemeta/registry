@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Speed of light in vacuum",
+  "description": "It has the exact numerical value of 299 792 458 when expressed in the unit m/s",
+  "examples": [ 299792458 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "c",
+  "$ref": "../compound/metre-per-second.json",
+  "const": 299792458
+}

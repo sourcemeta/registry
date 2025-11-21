@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Electric potential difference",
+  "description": "A derived quantity measured in volts",
+  "examples": [ 0, 1.5, 9, 12, 120, 240, -12 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/volt.json"
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Joule",
+  "description": "The SI unit of energy, work, and amount of heat. It is equal to N m, which is equal to kg m^2 s^-2",
+  "examples": [ 0, 1, 100, 1000, 4184, 1000000.0 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "J",
+  "x-units": [
+    "../../base/unit/kilogram.json",
+    "../../base/unit/metre.json",
+    "../../base/unit/second.json"
+  ],
+  "type": "number",
+  "minimum": 0
+}

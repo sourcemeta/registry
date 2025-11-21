@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Kilogram",
+  "description": "The SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant, h, to be 6.626 070 15 x 10^-34 when expressed in the unit J s, which is equal to kg m^2 s^-1, where the metre and the second are defined in terms of c and Delta_nu_Cs",
+  "examples": [ 0.001, 1, 10, 100, 1000, 0.5, 75.3 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "kg",
+  "type": "number",
+  "minimum": 0
+}

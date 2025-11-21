@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Farad",
+  "description": "The SI unit of capacitance. It is equal to C/V, which is equal to kg^-1 m^-2 s^4 A^2",
+  "examples": [ 1e-12, 1e-9, 1e-6, 0.001, 1, 100 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "F",
+  "x-units": [
+    "../../base/unit/kilogram.json",
+    "../../base/unit/metre.json",
+    "../../base/unit/second.json",
+    "../../base/unit/ampere.json"
+  ],
+  "type": "number",
+  "exclusiveMinimum": 0
+}

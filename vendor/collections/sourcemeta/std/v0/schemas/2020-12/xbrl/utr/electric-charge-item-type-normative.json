@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR electric Charge Item Type units (2024-10-22)",
+  "description": "Valid units for electricChargeItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "Ah", "C" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Ampere Hours",
+      "description": "An ampere hour or amp hour is a unit of electric charge, equal to the charge transferred by a steady current of one ampere flowing for one hour",
+      "x-status": "REC",
+      "x-symbol": "Ah",
+      "const": "Ah"
+    },
+    {
+      "title": "Coulomb",
+      "description": "The coulomb is the International System of Units (SI) unit of electric charge. It is the charge transported by a constant current of one ampere in one second",
+      "x-status": "REC",
+      "x-symbol": "C",
+      "const": "C"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Candela",
+  "description": "The SI unit of luminous intensity in a given direction. It is defined by taking the fixed numerical value of the luminous efficacy of monochromatic radiation of frequency 540 x 10^12 Hz, K_cd, to be 683 when expressed in the unit lm W^-1, which is equal to cd sr W^-1, or cd sr kg^-1 m^-2 s^3, where the kilogram, metre and second are defined in terms of h, c and Delta_nu_Cs",
+  "examples": [ 1, 10, 100, 1000, 12.5, 0.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "cd",
+  "type": "number",
+  "minimum": 0
+}

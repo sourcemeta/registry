@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Thermodynamic temperature",
+  "description": "Thermodynamic temperature is a base quantity measured in kelvins",
+  "examples": [ 0, 273.15, 293.15, 373.15, 100, 300 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/kelvin.json"
+}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Luminous intensity",
+  "description": "Luminous intensity is a base quantity measured in candelas",
+  "examples": [ 1, 10, 100, 1000, 12.5, 0.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/candela.json"
+}

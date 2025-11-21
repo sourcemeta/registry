@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Katal",
+  "description": "The SI unit of catalytic activity. It is equal to mol s^-1",
+  "examples": [ 1e-9, 1e-6, 0.001, 1, 10, 100 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "kat",
+  "x-units": [ "../../base/unit/mole.json", "../../base/unit/second.json" ],
+  "type": "number",
+  "exclusiveMinimum": 0
+}

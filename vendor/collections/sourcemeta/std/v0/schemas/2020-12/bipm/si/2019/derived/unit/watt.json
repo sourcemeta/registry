@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Watt",
+  "description": "The SI unit of power and radiant flux. It is equal to J/s, which is equal to kg m^2 s^-3",
+  "examples": [ 0, 1, 100, 1000, 1500, 1000000.0 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "W",
+  "x-units": [
+    "../../base/unit/kilogram.json",
+    "../../base/unit/metre.json",
+    "../../base/unit/second.json"
+  ],
+  "type": "number",
+  "minimum": 0
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gray",
+  "description": "The SI unit of absorbed dose and kerma. It is equal to J/kg, which is equal to m^2 s^-2",
+  "examples": [ 0, 0.001, 0.01, 1, 10, 100 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "Gy",
+  "x-units": [ "../../base/unit/metre.json", "../../base/unit/second.json" ],
+  "type": "number",
+  "minimum": 0
+}

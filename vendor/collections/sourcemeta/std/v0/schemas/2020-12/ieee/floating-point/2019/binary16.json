@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IEEE 754-2019 Half Precision Binary Floating-Point (binary16)",
+  "description": "A 16-bit binary floating-point format. Also known as half precision",
+  "examples": [ 0.0, 1.0, -1.0, 3.14, 65504.0, -65504.0, 6.10352e-5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://ieeexplore.ieee.org/document/8766229" ],
+  "type": "number",
+  "maximum": 65504.0,
+  "minimum": -65504.0
+}

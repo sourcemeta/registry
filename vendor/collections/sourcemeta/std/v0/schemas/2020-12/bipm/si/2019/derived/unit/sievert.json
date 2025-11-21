@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sievert",
+  "description": "The SI unit of dose equivalent. It is equal to J/kg, which is equal to m^2 s^-2. The sievert is also used for the quantities directional dose equivalent and personal dose equivalent",
+  "examples": [ 0, 0.001, 0.01, 0.1, 1, 10 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "Sv",
+  "x-units": [ "../../base/unit/metre.json", "../../base/unit/second.json" ],
+  "type": "number",
+  "minimum": 0
+}

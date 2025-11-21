@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Single-line Text",
+  "description": "A string representing a single line of clean text without leading or trailing whitespace, excessive internal spacing, non-printable characters, newlines, tabs, trailing periods, or other punctuation issues",
+  "examples": [
+    "This is a simple text",
+    "Multiple sentences work fine",
+    "Numbers and symbols: 123 $%&",
+    "Unicode characters are allowed: café, 日本語"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://en.wikipedia.org/wiki/String_(computer_science)" ],
+  "type": "string",
+  "pattern": "^(?!.*\\.$)(?!.*(?<!\\.)\\.\\.(?!\\.))(?!.* [.,;:!?])(?![?!])(?!.*[?!])(?!.*  )(?!.*\\(\\))(?!.*\\[\\])(?!.*--)(?!.*[\\n\\r\\t])(?!.*[\\x00-\\x1F\\x7F])[^\\s](?:.*[^\\s])?$"
+}

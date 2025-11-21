@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Henry",
+  "description": "The SI unit of inductance. It is equal to Wb/A, which is equal to kg m^2 s^-2 A^-2",
+  "examples": [ 1e-9, 1e-6, 0.001, 1, 10, 100 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "H",
+  "x-units": [
+    "../../base/unit/kilogram.json",
+    "../../base/unit/metre.json",
+    "../../base/unit/second.json",
+    "../../base/unit/ampere.json"
+  ],
+  "type": "number",
+  "exclusiveMinimum": 0
+}

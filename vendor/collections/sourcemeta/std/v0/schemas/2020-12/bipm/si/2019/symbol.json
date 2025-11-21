@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Unit symbol",
+  "description": "The symbol of an SI unit",
+  "examples": [
+    "s",
+    "m",
+    "kg",
+    "A",
+    "K",
+    "Hz",
+    "N",
+    "Pa",
+    "J",
+    "W",
+    "V",
+    "Ω",
+    "°C"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "anyOf": [
+    {
+      "$ref": "base/symbol.json"
+    },
+    {
+      "$ref": "derived/symbol.json"
+    }
+  ]
+}

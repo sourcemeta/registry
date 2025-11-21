@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Milliohm",
+  "description": "A multiple of ohm equal to 1e-3 ohm",
+  "examples": [ 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 0.001,
+  "x-symbol": "mΩ",
+  "$ref": "../unit/ohm.json"
+}

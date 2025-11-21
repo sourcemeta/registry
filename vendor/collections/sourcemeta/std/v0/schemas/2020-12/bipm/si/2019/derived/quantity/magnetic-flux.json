@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Magnetic flux",
+  "description": "A derived quantity measured in webers",
+  "examples": [ 0, 0.001, 0.1, 1, 10, -1 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/weber.json"
+}

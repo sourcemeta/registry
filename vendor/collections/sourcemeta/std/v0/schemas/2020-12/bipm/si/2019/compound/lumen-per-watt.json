@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lumen per watt",
+  "description": "A compound unit of luminous efficacy. It is equal to lm W^-1, which is equal to cd sr W^-1, or cd sr kg^-1 m^-2 s^3",
+  "examples": [ 1, 10, 100, 683 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-units": [ "../derived/unit/lumen.json", "../derived/unit/watt.json" ],
+  "type": "number",
+  "exclusiveMinimum": 0
+}

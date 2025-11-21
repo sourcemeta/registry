@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Length",
+  "description": "Length is a base quantity measured in metres",
+  "examples": [ 0, 1, 0.001, 1000, 1.75, 9.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/metre.json"
+}

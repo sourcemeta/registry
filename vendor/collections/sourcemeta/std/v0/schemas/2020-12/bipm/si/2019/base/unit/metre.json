@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Metre",
+  "description": "The SI unit of length. It is defined by taking the fixed numerical value of the speed of light in vacuum, c, to be 299 792 458 when expressed in the unit m s^-1, where the second is defined in terms of Delta_nu_Cs",
+  "examples": [ 0, 1, 0.001, 1000, 1.75, 9.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "m",
+  "type": "number",
+  "minimum": 0
+}

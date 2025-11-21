@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Luminous efficacy of monochromatic radiation",
+  "description": "Of monochromatic radiation of frequency 540 x 10^12 Hz. It has the exact numerical value of 683 when expressed in the unit lm/W, which is equal to cd sr W^-1, or cd sr kg^-1 m^-2 s^3",
+  "examples": [ 683 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "Kcd",
+  "$ref": "../compound/lumen-per-watt.json",
+  "const": 683
+}

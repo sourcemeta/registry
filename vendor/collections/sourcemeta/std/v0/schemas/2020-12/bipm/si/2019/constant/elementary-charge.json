@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Elementary charge",
+  "description": "It has the exact numerical value of 1.602 176 634 x 10^-19 when expressed in the unit C, which is equal to A s",
+  "examples": [ 1.602176634e-19 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "e",
+  "$ref": "../derived/unit/coulomb.json",
+  "const": 1.602176634e-19
+}

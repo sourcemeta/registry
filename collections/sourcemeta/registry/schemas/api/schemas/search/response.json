@@ -12,7 +12,7 @@
         "type": "string"
       },
       "path": {
-        "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/ietf/uri/uri-relative.json"
+        "$ref": "../../../../../../../vendor/collections/sourcemeta/std/v0/schemas/2020-12/ietf/uri/uri-relative.json"
       }
     },
     "additionalProperties": false

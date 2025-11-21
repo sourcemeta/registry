@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hertz",
+  "description": "The SI unit of frequency. It is equal to s^-1. The hertz is used only for periodic phenomena",
+  "examples": [ 1, 50, 60, 1000, 1000000, 2400000000.0 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "Hz",
+  "x-units": [ "../../base/unit/second.json" ],
+  "type": "number",
+  "exclusiveMinimum": 0
+}

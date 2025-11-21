@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Planck constant",
+  "description": "It has the exact numerical value of 6.626 070 15 x 10^-34 when expressed in the unit J s, which is equal to kg m^2 s^-1",
+  "examples": [ 6.62607015e-34 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "h",
+  "$ref": "../compound/joule-second.json",
+  "const": 6.62607015e-34
+}

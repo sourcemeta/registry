@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Metre per second",
+  "description": "A compound unit of velocity. It is equal to m s^-1",
+  "examples": [ 0, 1, 3, 10, 100, 299792458 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-units": [ "../base/unit/metre.json", "../base/unit/second.json" ],
+  "type": "number"
+}

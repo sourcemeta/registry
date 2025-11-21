@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO/IEC 9899:2024 Unsigned 64-bit Integer (uint64_t)",
+  "description": "An unsigned integer type with width of exactly 64 bits",
+  "$comment": "This schema requires a JSON Schema evaluator that supports big integers beyond the 64-bit signed integer interoperability guidelines defined in RFC 8259 for the JSON grammar",
+  "examples": [ 0, 1, 1.8446744073709551615e+19, 9.223372036854775808e+18, 42 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/standard/82075.html" ],
+  "type": "integer",
+  "maximum": 1.8446744073709551615e+19,
+  "minimum": 0
+}
