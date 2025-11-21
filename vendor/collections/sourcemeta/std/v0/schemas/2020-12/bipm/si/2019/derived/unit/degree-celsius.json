@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Degree Celsius",
+  "description": "The SI unit of Celsius temperature. It is equal in magnitude to the kelvin. The quantity Celsius temperature t is related to thermodynamic temperature T by the equation t/°C = T/K - 273.15",
+  "examples": [ -273.15, 0, 20, 37, 100, -40 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "°C",
+  "x-units": [ "../../base/unit/kelvin.json" ],
+  "type": "number",
+  "minimum": -273.15
+}

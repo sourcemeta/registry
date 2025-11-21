@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Activity referred to a radionuclide",
+  "description": "A derived quantity measured in becquerels",
+  "examples": [ 1, 1000, 1000000.0, 37000000000.0, 1000000000000.0 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/becquerel.json"
+}

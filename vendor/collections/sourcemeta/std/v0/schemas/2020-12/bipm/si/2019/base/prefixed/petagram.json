@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Petagram",
+  "description": "A multiple of mass equal to 1e15 gram, which is 1e12 kilogram",
+  "examples": [ 0, 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 1000000000000.0,
+  "x-symbol": "Pg",
+  "$ref": "../unit/kilogram.json"
+}

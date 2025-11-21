@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR energy Item Type units (2024-10-22)",
+  "description": "Valid units for energyItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "Boe", "Btu", "ft_lb" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Barrel of Oil Equivalent",
+      "description": "Barrel of Oil Equivalent",
+      "x-status": "REC",
+      "x-symbol": "Boe",
+      "const": "Boe"
+    },
+    {
+      "title": "British Thermal Unit",
+      "description": "British Thermal Unit",
+      "x-status": "REC",
+      "x-symbol": "BTU",
+      "const": "Btu"
+    },
+    {
+      "title": "Foot-Pound",
+      "description": "Foot-Pound Force",
+      "x-status": "REC",
+      "x-symbol": "ft-lb",
+      "const": "ft_lb"
+    },
+    {
+      "title": "Thousand Barrels of Oil Equivalent",
+      "description": "Thousand Barrels of Oil Equivalent",
+      "x-status": "REC",
+      "x-symbol": "MBoe",
+      "const": "MBoe"
+    },
+    {
+      "title": "Thousand Cubic Foot Equivalent",
+      "description": "Thousand Cubic Foot Equivalent",
+      "x-status": "REC",
+      "x-symbol": "Mcfe",
+      "const": "Mcfe"
+    },
+    {
+      "title": "Millions of Barrels of Oil Equivalent",
+      "description": "Millions of Barrels of Oil Equivalent",
+      "x-status": "REC",
+      "x-symbol": "MMBoe",
+      "const": "MMBoe"
+    },
+    {
+      "title": "Millions of BTU",
+      "description": "Millions of BTU",
+      "x-status": "REC",
+      "x-symbol": "MMBTU",
+      "const": "MMBTU"
+    },
+    {
+      "title": "Calorie",
+      "description": "Calorie",
+      "x-status": "REC",
+      "x-symbol": "Cal",
+      "const": "Cal"
+    },
+    {
+      "title": "Joule",
+      "description": "Joule",
+      "x-status": "REC",
+      "x-symbol": "J",
+      "const": "J"
+    },
+    {
+      "title": "Kilojoule",
+      "description": "Thousand Joules",
+      "x-status": "REC",
+      "x-symbol": "kJ",
+      "const": "kJ"
+    },
+    {
+      "title": "Kilowatt-Hours",
+      "description": "Kilowatt-Hours of Energy",
+      "x-status": "REC",
+      "x-symbol": "kWh",
+      "const": "kWh"
+    },
+    {
+      "title": "mJ",
+      "description": "Millijoules",
+      "x-status": "REC",
+      "x-symbol": "mJ",
+      "const": "mJ"
+    },
+    {
+      "title": "Megawatt-Hour",
+      "description": "Megawatt-Hour",
+      "x-status": "REC",
+      "x-symbol": "MWh",
+      "const": "MWh"
+    },
+    {
+      "title": "Gigawatt-Hour",
+      "description": "Gigawatt-Hour",
+      "x-status": "REC",
+      "x-symbol": "GWh",
+      "const": "GWh"
+    },
+    {
+      "title": "Terawatt-Hour",
+      "description": "Terawatt-Hour",
+      "x-status": "REC",
+      "x-symbol": "TWh",
+      "const": "TWh"
+    },
+    {
+      "title": "Million Cubic Foot Equivalent",
+      "description": "Million cubic feet of natural gas equivalent",
+      "x-status": "REC",
+      "x-symbol": "MMcfe",
+      "const": "MMcfe"
+    },
+    {
+      "title": "Billion Cubic Foot Equivalent",
+      "description": "Thousand million cubic feet of natural gas equivalent",
+      "x-status": "REC",
+      "x-symbol": "Bcfe",
+      "const": "Bcfe"
+    },
+    {
+      "title": "Trillion Cubic Foot Equivalent",
+      "description": "Trillion cubic feet of natural gas equivalent",
+      "x-status": "REC",
+      "x-symbol": "Tcfe",
+      "const": "Tcfe"
+    },
+    {
+      "title": "Megawatt-Month",
+      "description": "Megawatt-Month assuming 730 hours per month",
+      "x-status": "REC",
+      "x-symbol": "MW-M",
+      "const": "MWM"
+    },
+    {
+      "title": "Gigawatt-Month",
+      "description": "Gigawatt-Month assuming 730 hours per month",
+      "x-status": "REC",
+      "x-symbol": "GW-M",
+      "const": "GWM"
+    },
+    {
+      "title": "Watt-Hours",
+      "description": "Watt-Hours of Energy",
+      "x-status": "REC",
+      "x-symbol": "Wh",
+      "const": "Wh"
+    },
+    {
+      "title": "Volt-ampere-hours",
+      "description": "Volt-ampere (VA) hours of energy",
+      "x-status": "REC",
+      "x-symbol": "VAh",
+      "const": "VAh"
+    },
+    {
+      "title": "Dekatherm",
+      "description": "The dekatherm is a unit of energy used to measure natural gas. One dekatherm is equal to 10 therms or one million British thermal units (Btu)",
+      "x-status": "REC",
+      "x-symbol": "dth",
+      "const": "dth"
+    },
+    {
+      "title": "Megawatt-Day",
+      "description": "Megawatt-Day is used to measure energy generated in one day by a power-plant. Is commonly used to define fuel-burnup. A commonly used measure of fuel burnup is the fission energy release per unit mass of fuel",
+      "x-status": "REC",
+      "x-symbol": "MWd",
+      "const": "MWd"
+    },
+    {
+      "title": "Gigajoule",
+      "description": "Billion Joules",
+      "x-status": "REC",
+      "x-symbol": "GJ",
+      "const": "GJ"
+    },
+    {
+      "title": "Megajoule",
+      "description": "Million Joules",
+      "x-status": "REC",
+      "x-symbol": "MJ",
+      "const": "MJ"
+    },
+    {
+      "title": "Terajoule",
+      "description": "Trillion Joules",
+      "x-status": "REC",
+      "x-symbol": "TJ",
+      "const": "TJ"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Magnetic flux density",
+  "description": "A derived quantity measured in teslas",
+  "examples": [ 0, 5e-5, 0.001, 1, 10, -0.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/tesla.json"
+}

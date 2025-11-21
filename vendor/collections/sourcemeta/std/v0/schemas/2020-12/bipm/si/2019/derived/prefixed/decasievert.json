@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Decasievert",
+  "description": "A multiple of sievert equal to 1e1 sievert",
+  "examples": [ 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 10.0,
+  "x-symbol": "daSv",
+  "$ref": "../unit/sievert.json"
+}

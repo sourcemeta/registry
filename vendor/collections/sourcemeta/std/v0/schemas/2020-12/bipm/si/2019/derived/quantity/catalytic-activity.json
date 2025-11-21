@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Catalytic activity",
+  "description": "A derived quantity measured in katals",
+  "examples": [ 1e-9, 1e-6, 0.001, 1, 10, 100 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/katal.json"
+}

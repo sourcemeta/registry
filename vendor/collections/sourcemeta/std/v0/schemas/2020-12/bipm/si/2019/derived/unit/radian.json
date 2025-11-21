@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Radian",
+  "description": "The SI unit of plane angle. It is dimensionless",
+  "examples": [ 0, 1, 3.14159, 6.28318, 1.5708, -1.5708 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "rad",
+  "type": "number"
+}

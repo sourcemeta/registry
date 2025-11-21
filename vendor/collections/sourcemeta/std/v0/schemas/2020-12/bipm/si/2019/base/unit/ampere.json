@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ampere",
+  "description": "The SI unit of electric current. It is defined by taking the fixed numerical value of the elementary charge, e, to be 1.602 176 634 x 10^-19 when expressed in the unit C, which is equal to A s, where the second is defined in terms of Delta_nu_Cs",
+  "examples": [ 0, 1, 5, 10, 0.001, 2.5, -1.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "A",
+  "type": "number"
+}

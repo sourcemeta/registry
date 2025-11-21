@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Decimetre",
+  "description": "A multiple of metre equal to 1e-1 metre",
+  "examples": [ 0, 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 0.1,
+  "x-symbol": "dm",
+  "$ref": "../unit/metre.json"
+}

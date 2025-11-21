@@ -1,4 +1,4 @@
 {
   "x-sourcemeta-registry:provenance": "@@COLLECTION_NAMESPACE@",
-  "path": "./schemas"
+  "path": "./schemas/2020-12"
 }

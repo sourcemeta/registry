@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Avogadro constant",
+  "description": "It has the exact numerical value of 6.022 140 76 x 10^23 when expressed in the unit mol^-1",
+  "examples": [ 6.02214076000000000000000e+23 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "Nₐ",
+  "$ref": "../base/unit/mole.json",
+  "const": 6.02214076000000000000000e+23
+}

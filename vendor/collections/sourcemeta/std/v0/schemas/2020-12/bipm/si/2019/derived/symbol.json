@@ -1,0 +1,2222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Derived unit symbol",
+  "description": "The symbol of an SI derived unit with a special name or prefixed derived unit",
+  "examples": [
+    "Hz",
+    "N",
+    "Pa",
+    "J",
+    "W",
+    "V",
+    "Ω",
+    "°C",
+    "mHz",
+    "kN",
+    "µΩ"
+  ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "anyOf": [
+    {
+      "title": "Radian",
+      "const": "rad"
+    },
+    {
+      "title": "Steradian",
+      "const": "sr"
+    },
+    {
+      "title": "Hertz",
+      "const": "Hz"
+    },
+    {
+      "title": "Newton",
+      "const": "N"
+    },
+    {
+      "title": "Pascal",
+      "const": "Pa"
+    },
+    {
+      "title": "Joule",
+      "const": "J"
+    },
+    {
+      "title": "Watt",
+      "const": "W"
+    },
+    {
+      "title": "Coulomb",
+      "const": "C"
+    },
+    {
+      "title": "Volt",
+      "const": "V"
+    },
+    {
+      "title": "Farad",
+      "const": "F"
+    },
+    {
+      "title": "Ohm",
+      "const": "Ω"
+    },
+    {
+      "title": "Siemens",
+      "const": "S"
+    },
+    {
+      "title": "Weber",
+      "const": "Wb"
+    },
+    {
+      "title": "Tesla",
+      "const": "T"
+    },
+    {
+      "title": "Henry",
+      "const": "H"
+    },
+    {
+      "title": "Degree Celsius",
+      "const": "°C"
+    },
+    {
+      "title": "Lumen",
+      "const": "lm"
+    },
+    {
+      "title": "Lux",
+      "const": "lx"
+    },
+    {
+      "title": "Becquerel",
+      "const": "Bq"
+    },
+    {
+      "title": "Gray",
+      "const": "Gy"
+    },
+    {
+      "title": "Sievert",
+      "const": "Sv"
+    },
+    {
+      "title": "Katal",
+      "const": "kat"
+    },
+    {
+      "title": "Attobecquerel",
+      "const": "aBq"
+    },
+    {
+      "title": "Attocoulomb",
+      "const": "aC"
+    },
+    {
+      "title": "Attodegreecelsius",
+      "const": "a°C"
+    },
+    {
+      "title": "Attofarad",
+      "const": "aF"
+    },
+    {
+      "title": "Attogray",
+      "const": "aGy"
+    },
+    {
+      "title": "Attohenry",
+      "const": "aH"
+    },
+    {
+      "title": "Attohertz",
+      "const": "aHz"
+    },
+    {
+      "title": "Attojoule",
+      "const": "aJ"
+    },
+    {
+      "title": "Attokatal",
+      "const": "akat"
+    },
+    {
+      "title": "Attolumen",
+      "const": "alm"
+    },
+    {
+      "title": "Attolux",
+      "const": "alx"
+    },
+    {
+      "title": "Attonewton",
+      "const": "aN"
+    },
+    {
+      "title": "Attoohm",
+      "const": "aΩ"
+    },
+    {
+      "title": "Attopascal",
+      "const": "aPa"
+    },
+    {
+      "title": "Attoradian",
+      "const": "arad"
+    },
+    {
+      "title": "Attosiemens",
+      "const": "aS"
+    },
+    {
+      "title": "Attosievert",
+      "const": "aSv"
+    },
+    {
+      "title": "Attosteradian",
+      "const": "asr"
+    },
+    {
+      "title": "Attotesla",
+      "const": "aT"
+    },
+    {
+      "title": "Attovolt",
+      "const": "aV"
+    },
+    {
+      "title": "Attowatt",
+      "const": "aW"
+    },
+    {
+      "title": "Attoweber",
+      "const": "aWb"
+    },
+    {
+      "title": "Centibecquerel",
+      "const": "cBq"
+    },
+    {
+      "title": "Centicoulomb",
+      "const": "cC"
+    },
+    {
+      "title": "Centidegreecelsius",
+      "const": "c°C"
+    },
+    {
+      "title": "Centifarad",
+      "const": "cF"
+    },
+    {
+      "title": "Centigray",
+      "const": "cGy"
+    },
+    {
+      "title": "Centihenry",
+      "const": "cH"
+    },
+    {
+      "title": "Centihertz",
+      "const": "cHz"
+    },
+    {
+      "title": "Centijoule",
+      "const": "cJ"
+    },
+    {
+      "title": "Centikatal",
+      "const": "ckat"
+    },
+    {
+      "title": "Centilumen",
+      "const": "clm"
+    },
+    {
+      "title": "Centilux",
+      "const": "clx"
+    },
+    {
+      "title": "Centinewton",
+      "const": "cN"
+    },
+    {
+      "title": "Centiohm",
+      "const": "cΩ"
+    },
+    {
+      "title": "Centipascal",
+      "const": "cPa"
+    },
+    {
+      "title": "Centiradian",
+      "const": "crad"
+    },
+    {
+      "title": "Centisiemens",
+      "const": "cS"
+    },
+    {
+      "title": "Centisievert",
+      "const": "cSv"
+    },
+    {
+      "title": "Centisteradian",
+      "const": "csr"
+    },
+    {
+      "title": "Centitesla",
+      "const": "cT"
+    },
+    {
+      "title": "Centivolt",
+      "const": "cV"
+    },
+    {
+      "title": "Centiwatt",
+      "const": "cW"
+    },
+    {
+      "title": "Centiweber",
+      "const": "cWb"
+    },
+    {
+      "title": "Decabecquerel",
+      "const": "daBq"
+    },
+    {
+      "title": "Decacoulomb",
+      "const": "daC"
+    },
+    {
+      "title": "Decadegreecelsius",
+      "const": "da°C"
+    },
+    {
+      "title": "Decafarad",
+      "const": "daF"
+    },
+    {
+      "title": "Decagray",
+      "const": "daGy"
+    },
+    {
+      "title": "Decahenry",
+      "const": "daH"
+    },
+    {
+      "title": "Decahertz",
+      "const": "daHz"
+    },
+    {
+      "title": "Decajoule",
+      "const": "daJ"
+    },
+    {
+      "title": "Decakatal",
+      "const": "dakat"
+    },
+    {
+      "title": "Decalumen",
+      "const": "dalm"
+    },
+    {
+      "title": "Decalux",
+      "const": "dalx"
+    },
+    {
+      "title": "Decanewton",
+      "const": "daN"
+    },
+    {
+      "title": "Decaohm",
+      "const": "daΩ"
+    },
+    {
+      "title": "Decapascal",
+      "const": "daPa"
+    },
+    {
+      "title": "Decaradian",
+      "const": "darad"
+    },
+    {
+      "title": "Decasiemens",
+      "const": "daS"
+    },
+    {
+      "title": "Decasievert",
+      "const": "daSv"
+    },
+    {
+      "title": "Decasteradian",
+      "const": "dasr"
+    },
+    {
+      "title": "Decatesla",
+      "const": "daT"
+    },
+    {
+      "title": "Decavolt",
+      "const": "daV"
+    },
+    {
+      "title": "Decawatt",
+      "const": "daW"
+    },
+    {
+      "title": "Decaweber",
+      "const": "daWb"
+    },
+    {
+      "title": "Decibecquerel",
+      "const": "dBq"
+    },
+    {
+      "title": "Decicoulomb",
+      "const": "dC"
+    },
+    {
+      "title": "Decidegreecelsius",
+      "const": "d°C"
+    },
+    {
+      "title": "Decifarad",
+      "const": "dF"
+    },
+    {
+      "title": "Decigray",
+      "const": "dGy"
+    },
+    {
+      "title": "Decihenry",
+      "const": "dH"
+    },
+    {
+      "title": "Decihertz",
+      "const": "dHz"
+    },
+    {
+      "title": "Decijoule",
+      "const": "dJ"
+    },
+    {
+      "title": "Decikatal",
+      "const": "dkat"
+    },
+    {
+      "title": "Decilumen",
+      "const": "dlm"
+    },
+    {
+      "title": "Decilux",
+      "const": "dlx"
+    },
+    {
+      "title": "Decinewton",
+      "const": "dN"
+    },
+    {
+      "title": "Deciohm",
+      "const": "dΩ"
+    },
+    {
+      "title": "Decipascal",
+      "const": "dPa"
+    },
+    {
+      "title": "Deciradian",
+      "const": "drad"
+    },
+    {
+      "title": "Decisiemens",
+      "const": "dS"
+    },
+    {
+      "title": "Decisievert",
+      "const": "dSv"
+    },
+    {
+      "title": "Decisteradian",
+      "const": "dsr"
+    },
+    {
+      "title": "Decitesla",
+      "const": "dT"
+    },
+    {
+      "title": "Decivolt",
+      "const": "dV"
+    },
+    {
+      "title": "Deciwatt",
+      "const": "dW"
+    },
+    {
+      "title": "Deciweber",
+      "const": "dWb"
+    },
+    {
+      "title": "Exabecquerel",
+      "const": "EBq"
+    },
+    {
+      "title": "Exacoulomb",
+      "const": "EC"
+    },
+    {
+      "title": "Exadegreecelsius",
+      "const": "E°C"
+    },
+    {
+      "title": "Exafarad",
+      "const": "EF"
+    },
+    {
+      "title": "Exagray",
+      "const": "EGy"
+    },
+    {
+      "title": "Exahenry",
+      "const": "EH"
+    },
+    {
+      "title": "Exahertz",
+      "const": "EHz"
+    },
+    {
+      "title": "Exajoule",
+      "const": "EJ"
+    },
+    {
+      "title": "Exakatal",
+      "const": "Ekat"
+    },
+    {
+      "title": "Exalumen",
+      "const": "Elm"
+    },
+    {
+      "title": "Exalux",
+      "const": "Elx"
+    },
+    {
+      "title": "Exanewton",
+      "const": "EN"
+    },
+    {
+      "title": "Exaohm",
+      "const": "EΩ"
+    },
+    {
+      "title": "Exapascal",
+      "const": "EPa"
+    },
+    {
+      "title": "Exaradian",
+      "const": "Erad"
+    },
+    {
+      "title": "Exasiemens",
+      "const": "ES"
+    },
+    {
+      "title": "Exasievert",
+      "const": "ESv"
+    },
+    {
+      "title": "Exasteradian",
+      "const": "Esr"
+    },
+    {
+      "title": "Exatesla",
+      "const": "ET"
+    },
+    {
+      "title": "Exavolt",
+      "const": "EV"
+    },
+    {
+      "title": "Exawatt",
+      "const": "EW"
+    },
+    {
+      "title": "Exaweber",
+      "const": "EWb"
+    },
+    {
+      "title": "Femtobecquerel",
+      "const": "fBq"
+    },
+    {
+      "title": "Femtocoulomb",
+      "const": "fC"
+    },
+    {
+      "title": "Femtodegreecelsius",
+      "const": "f°C"
+    },
+    {
+      "title": "Femtofarad",
+      "const": "fF"
+    },
+    {
+      "title": "Femtogray",
+      "const": "fGy"
+    },
+    {
+      "title": "Femtohenry",
+      "const": "fH"
+    },
+    {
+      "title": "Femtohertz",
+      "const": "fHz"
+    },
+    {
+      "title": "Femtojoule",
+      "const": "fJ"
+    },
+    {
+      "title": "Femtokatal",
+      "const": "fkat"
+    },
+    {
+      "title": "Femtolumen",
+      "const": "flm"
+    },
+    {
+      "title": "Femtolux",
+      "const": "flx"
+    },
+    {
+      "title": "Femtonewton",
+      "const": "fN"
+    },
+    {
+      "title": "Femtoohm",
+      "const": "fΩ"
+    },
+    {
+      "title": "Femtopascal",
+      "const": "fPa"
+    },
+    {
+      "title": "Femtoradian",
+      "const": "frad"
+    },
+    {
+      "title": "Femtosiemens",
+      "const": "fS"
+    },
+    {
+      "title": "Femtosievert",
+      "const": "fSv"
+    },
+    {
+      "title": "Femtosteradian",
+      "const": "fsr"
+    },
+    {
+      "title": "Femtotesla",
+      "const": "fT"
+    },
+    {
+      "title": "Femtovolt",
+      "const": "fV"
+    },
+    {
+      "title": "Femtowatt",
+      "const": "fW"
+    },
+    {
+      "title": "Femtoweber",
+      "const": "fWb"
+    },
+    {
+      "title": "Gigabecquerel",
+      "const": "GBq"
+    },
+    {
+      "title": "Gigacoulomb",
+      "const": "GC"
+    },
+    {
+      "title": "Gigadegreecelsius",
+      "const": "G°C"
+    },
+    {
+      "title": "Gigafarad",
+      "const": "GF"
+    },
+    {
+      "title": "Gigagray",
+      "const": "GGy"
+    },
+    {
+      "title": "Gigahenry",
+      "const": "GH"
+    },
+    {
+      "title": "Gigahertz",
+      "const": "GHz"
+    },
+    {
+      "title": "Gigajoule",
+      "const": "GJ"
+    },
+    {
+      "title": "Gigakatal",
+      "const": "Gkat"
+    },
+    {
+      "title": "Gigalumen",
+      "const": "Glm"
+    },
+    {
+      "title": "Gigalux",
+      "const": "Glx"
+    },
+    {
+      "title": "Giganewton",
+      "const": "GN"
+    },
+    {
+      "title": "Gigaohm",
+      "const": "GΩ"
+    },
+    {
+      "title": "Gigapascal",
+      "const": "GPa"
+    },
+    {
+      "title": "Gigaradian",
+      "const": "Grad"
+    },
+    {
+      "title": "Gigasiemens",
+      "const": "GS"
+    },
+    {
+      "title": "Gigasievert",
+      "const": "GSv"
+    },
+    {
+      "title": "Gigasteradian",
+      "const": "Gsr"
+    },
+    {
+      "title": "Gigatesla",
+      "const": "GT"
+    },
+    {
+      "title": "Gigavolt",
+      "const": "GV"
+    },
+    {
+      "title": "Gigawatt",
+      "const": "GW"
+    },
+    {
+      "title": "Gigaweber",
+      "const": "GWb"
+    },
+    {
+      "title": "Hectobecquerel",
+      "const": "hBq"
+    },
+    {
+      "title": "Hectocoulomb",
+      "const": "hC"
+    },
+    {
+      "title": "Hectodegreecelsius",
+      "const": "h°C"
+    },
+    {
+      "title": "Hectofarad",
+      "const": "hF"
+    },
+    {
+      "title": "Hectogray",
+      "const": "hGy"
+    },
+    {
+      "title": "Hectohenry",
+      "const": "hH"
+    },
+    {
+      "title": "Hectohertz",
+      "const": "hHz"
+    },
+    {
+      "title": "Hectojoule",
+      "const": "hJ"
+    },
+    {
+      "title": "Hectokatal",
+      "const": "hkat"
+    },
+    {
+      "title": "Hectolumen",
+      "const": "hlm"
+    },
+    {
+      "title": "Hectolux",
+      "const": "hlx"
+    },
+    {
+      "title": "Hectonewton",
+      "const": "hN"
+    },
+    {
+      "title": "Hectoohm",
+      "const": "hΩ"
+    },
+    {
+      "title": "Hectopascal",
+      "const": "hPa"
+    },
+    {
+      "title": "Hectoradian",
+      "const": "hrad"
+    },
+    {
+      "title": "Hectosiemens",
+      "const": "hS"
+    },
+    {
+      "title": "Hectosievert",
+      "const": "hSv"
+    },
+    {
+      "title": "Hectosteradian",
+      "const": "hsr"
+    },
+    {
+      "title": "Hectotesla",
+      "const": "hT"
+    },
+    {
+      "title": "Hectovolt",
+      "const": "hV"
+    },
+    {
+      "title": "Hectowatt",
+      "const": "hW"
+    },
+    {
+      "title": "Hectoweber",
+      "const": "hWb"
+    },
+    {
+      "title": "Kilobecquerel",
+      "const": "kBq"
+    },
+    {
+      "title": "Kilocoulomb",
+      "const": "kC"
+    },
+    {
+      "title": "Kilodegreecelsius",
+      "const": "k°C"
+    },
+    {
+      "title": "Kilofarad",
+      "const": "kF"
+    },
+    {
+      "title": "Kilogray",
+      "const": "kGy"
+    },
+    {
+      "title": "Kilohenry",
+      "const": "kH"
+    },
+    {
+      "title": "Kilohertz",
+      "const": "kHz"
+    },
+    {
+      "title": "Kilojoule",
+      "const": "kJ"
+    },
+    {
+      "title": "Kilokatal",
+      "const": "kkat"
+    },
+    {
+      "title": "Kilolumen",
+      "const": "klm"
+    },
+    {
+      "title": "Kilolux",
+      "const": "klx"
+    },
+    {
+      "title": "Kilonewton",
+      "const": "kN"
+    },
+    {
+      "title": "Kiloohm",
+      "const": "kΩ"
+    },
+    {
+      "title": "Kilopascal",
+      "const": "kPa"
+    },
+    {
+      "title": "Kiloradian",
+      "const": "krad"
+    },
+    {
+      "title": "Kilosiemens",
+      "const": "kS"
+    },
+    {
+      "title": "Kilosievert",
+      "const": "kSv"
+    },
+    {
+      "title": "Kilosteradian",
+      "const": "ksr"
+    },
+    {
+      "title": "Kilotesla",
+      "const": "kT"
+    },
+    {
+      "title": "Kilovolt",
+      "const": "kV"
+    },
+    {
+      "title": "Kilowatt",
+      "const": "kW"
+    },
+    {
+      "title": "Kiloweber",
+      "const": "kWb"
+    },
+    {
+      "title": "Megabecquerel",
+      "const": "MBq"
+    },
+    {
+      "title": "Megacoulomb",
+      "const": "MC"
+    },
+    {
+      "title": "Megadegreecelsius",
+      "const": "M°C"
+    },
+    {
+      "title": "Megafarad",
+      "const": "MF"
+    },
+    {
+      "title": "Megagray",
+      "const": "MGy"
+    },
+    {
+      "title": "Megahenry",
+      "const": "MH"
+    },
+    {
+      "title": "Megahertz",
+      "const": "MHz"
+    },
+    {
+      "title": "Megajoule",
+      "const": "MJ"
+    },
+    {
+      "title": "Megakatal",
+      "const": "Mkat"
+    },
+    {
+      "title": "Megalumen",
+      "const": "Mlm"
+    },
+    {
+      "title": "Megalux",
+      "const": "Mlx"
+    },
+    {
+      "title": "Meganewton",
+      "const": "MN"
+    },
+    {
+      "title": "Megaohm",
+      "const": "MΩ"
+    },
+    {
+      "title": "Megapascal",
+      "const": "MPa"
+    },
+    {
+      "title": "Megaradian",
+      "const": "Mrad"
+    },
+    {
+      "title": "Megasiemens",
+      "const": "MS"
+    },
+    {
+      "title": "Megasievert",
+      "const": "MSv"
+    },
+    {
+      "title": "Megasteradian",
+      "const": "Msr"
+    },
+    {
+      "title": "Megatesla",
+      "const": "MT"
+    },
+    {
+      "title": "Megavolt",
+      "const": "MV"
+    },
+    {
+      "title": "Megawatt",
+      "const": "MW"
+    },
+    {
+      "title": "Megaweber",
+      "const": "MWb"
+    },
+    {
+      "title": "Microbecquerel",
+      "const": "µBq"
+    },
+    {
+      "title": "Microcoulomb",
+      "const": "µC"
+    },
+    {
+      "title": "Microdegreecelsius",
+      "const": "µ°C"
+    },
+    {
+      "title": "Microfarad",
+      "const": "µF"
+    },
+    {
+      "title": "Microgray",
+      "const": "µGy"
+    },
+    {
+      "title": "Microhenry",
+      "const": "µH"
+    },
+    {
+      "title": "Microhertz",
+      "const": "µHz"
+    },
+    {
+      "title": "Microjoule",
+      "const": "µJ"
+    },
+    {
+      "title": "Microkatal",
+      "const": "µkat"
+    },
+    {
+      "title": "Microlumen",
+      "const": "µlm"
+    },
+    {
+      "title": "Microlux",
+      "const": "µlx"
+    },
+    {
+      "title": "Micronewton",
+      "const": "µN"
+    },
+    {
+      "title": "Microohm",
+      "const": "µΩ"
+    },
+    {
+      "title": "Micropascal",
+      "const": "µPa"
+    },
+    {
+      "title": "Microradian",
+      "const": "µrad"
+    },
+    {
+      "title": "Microsiemens",
+      "const": "µS"
+    },
+    {
+      "title": "Microsievert",
+      "const": "µSv"
+    },
+    {
+      "title": "Microsteradian",
+      "const": "µsr"
+    },
+    {
+      "title": "Microtesla",
+      "const": "µT"
+    },
+    {
+      "title": "Microvolt",
+      "const": "µV"
+    },
+    {
+      "title": "Microwatt",
+      "const": "µW"
+    },
+    {
+      "title": "Microweber",
+      "const": "µWb"
+    },
+    {
+      "title": "Millibecquerel",
+      "const": "mBq"
+    },
+    {
+      "title": "Millicoulomb",
+      "const": "mC"
+    },
+    {
+      "title": "Millidegreecelsius",
+      "const": "m°C"
+    },
+    {
+      "title": "Millifarad",
+      "const": "mF"
+    },
+    {
+      "title": "Milligray",
+      "const": "mGy"
+    },
+    {
+      "title": "Millihenry",
+      "const": "mH"
+    },
+    {
+      "title": "Millihertz",
+      "const": "mHz"
+    },
+    {
+      "title": "Millijoule",
+      "const": "mJ"
+    },
+    {
+      "title": "Millikatal",
+      "const": "mkat"
+    },
+    {
+      "title": "Millilumen",
+      "const": "mlm"
+    },
+    {
+      "title": "Millilux",
+      "const": "mlx"
+    },
+    {
+      "title": "Millinewton",
+      "const": "mN"
+    },
+    {
+      "title": "Milliohm",
+      "const": "mΩ"
+    },
+    {
+      "title": "Millipascal",
+      "const": "mPa"
+    },
+    {
+      "title": "Milliradian",
+      "const": "mrad"
+    },
+    {
+      "title": "Millisiemens",
+      "const": "mS"
+    },
+    {
+      "title": "Millisievert",
+      "const": "mSv"
+    },
+    {
+      "title": "Millisteradian",
+      "const": "msr"
+    },
+    {
+      "title": "Millitesla",
+      "const": "mT"
+    },
+    {
+      "title": "Millivolt",
+      "const": "mV"
+    },
+    {
+      "title": "Milliwatt",
+      "const": "mW"
+    },
+    {
+      "title": "Milliweber",
+      "const": "mWb"
+    },
+    {
+      "title": "Nanobecquerel",
+      "const": "nBq"
+    },
+    {
+      "title": "Nanocoulomb",
+      "const": "nC"
+    },
+    {
+      "title": "Nanodegreecelsius",
+      "const": "n°C"
+    },
+    {
+      "title": "Nanofarad",
+      "const": "nF"
+    },
+    {
+      "title": "Nanogray",
+      "const": "nGy"
+    },
+    {
+      "title": "Nanohenry",
+      "const": "nH"
+    },
+    {
+      "title": "Nanohertz",
+      "const": "nHz"
+    },
+    {
+      "title": "Nanojoule",
+      "const": "nJ"
+    },
+    {
+      "title": "Nanokatal",
+      "const": "nkat"
+    },
+    {
+      "title": "Nanolumen",
+      "const": "nlm"
+    },
+    {
+      "title": "Nanolux",
+      "const": "nlx"
+    },
+    {
+      "title": "Nanonewton",
+      "const": "nN"
+    },
+    {
+      "title": "Nanoohm",
+      "const": "nΩ"
+    },
+    {
+      "title": "Nanopascal",
+      "const": "nPa"
+    },
+    {
+      "title": "Nanoradian",
+      "const": "nrad"
+    },
+    {
+      "title": "Nanosiemens",
+      "const": "nS"
+    },
+    {
+      "title": "Nanosievert",
+      "const": "nSv"
+    },
+    {
+      "title": "Nanosteradian",
+      "const": "nsr"
+    },
+    {
+      "title": "Nanotesla",
+      "const": "nT"
+    },
+    {
+      "title": "Nanovolt",
+      "const": "nV"
+    },
+    {
+      "title": "Nanowatt",
+      "const": "nW"
+    },
+    {
+      "title": "Nanoweber",
+      "const": "nWb"
+    },
+    {
+      "title": "Petabecquerel",
+      "const": "PBq"
+    },
+    {
+      "title": "Petacoulomb",
+      "const": "PC"
+    },
+    {
+      "title": "Petadegreecelsius",
+      "const": "P°C"
+    },
+    {
+      "title": "Petafarad",
+      "const": "PF"
+    },
+    {
+      "title": "Petagray",
+      "const": "PGy"
+    },
+    {
+      "title": "Petahenry",
+      "const": "PH"
+    },
+    {
+      "title": "Petahertz",
+      "const": "PHz"
+    },
+    {
+      "title": "Petajoule",
+      "const": "PJ"
+    },
+    {
+      "title": "Petakatal",
+      "const": "Pkat"
+    },
+    {
+      "title": "Petalumen",
+      "const": "Plm"
+    },
+    {
+      "title": "Petalux",
+      "const": "Plx"
+    },
+    {
+      "title": "Petanewton",
+      "const": "PN"
+    },
+    {
+      "title": "Petaohm",
+      "const": "PΩ"
+    },
+    {
+      "title": "Petapascal",
+      "const": "PPa"
+    },
+    {
+      "title": "Petaradian",
+      "const": "Prad"
+    },
+    {
+      "title": "Petasiemens",
+      "const": "PS"
+    },
+    {
+      "title": "Petasievert",
+      "const": "PSv"
+    },
+    {
+      "title": "Petasteradian",
+      "const": "Psr"
+    },
+    {
+      "title": "Petatesla",
+      "const": "PT"
+    },
+    {
+      "title": "Petavolt",
+      "const": "PV"
+    },
+    {
+      "title": "Petawatt",
+      "const": "PW"
+    },
+    {
+      "title": "Petaweber",
+      "const": "PWb"
+    },
+    {
+      "title": "Picobecquerel",
+      "const": "pBq"
+    },
+    {
+      "title": "Picocoulomb",
+      "const": "pC"
+    },
+    {
+      "title": "Picodegreecelsius",
+      "const": "p°C"
+    },
+    {
+      "title": "Picofarad",
+      "const": "pF"
+    },
+    {
+      "title": "Picogray",
+      "const": "pGy"
+    },
+    {
+      "title": "Picohenry",
+      "const": "pH"
+    },
+    {
+      "title": "Picohertz",
+      "const": "pHz"
+    },
+    {
+      "title": "Picojoule",
+      "const": "pJ"
+    },
+    {
+      "title": "Picokatal",
+      "const": "pkat"
+    },
+    {
+      "title": "Picolumen",
+      "const": "plm"
+    },
+    {
+      "title": "Picolux",
+      "const": "plx"
+    },
+    {
+      "title": "Piconewton",
+      "const": "pN"
+    },
+    {
+      "title": "Picoohm",
+      "const": "pΩ"
+    },
+    {
+      "title": "Picopascal",
+      "const": "pPa"
+    },
+    {
+      "title": "Picoradian",
+      "const": "prad"
+    },
+    {
+      "title": "Picosiemens",
+      "const": "pS"
+    },
+    {
+      "title": "Picosievert",
+      "const": "pSv"
+    },
+    {
+      "title": "Picosteradian",
+      "const": "psr"
+    },
+    {
+      "title": "Picotesla",
+      "const": "pT"
+    },
+    {
+      "title": "Picovolt",
+      "const": "pV"
+    },
+    {
+      "title": "Picowatt",
+      "const": "pW"
+    },
+    {
+      "title": "Picoweber",
+      "const": "pWb"
+    },
+    {
+      "title": "Quectobecquerel",
+      "const": "qBq"
+    },
+    {
+      "title": "Quectocoulomb",
+      "const": "qC"
+    },
+    {
+      "title": "Quectodegreecelsius",
+      "const": "q°C"
+    },
+    {
+      "title": "Quectofarad",
+      "const": "qF"
+    },
+    {
+      "title": "Quectogray",
+      "const": "qGy"
+    },
+    {
+      "title": "Quectohenry",
+      "const": "qH"
+    },
+    {
+      "title": "Quectohertz",
+      "const": "qHz"
+    },
+    {
+      "title": "Quectojoule",
+      "const": "qJ"
+    },
+    {
+      "title": "Quectokatal",
+      "const": "qkat"
+    },
+    {
+      "title": "Quectolumen",
+      "const": "qlm"
+    },
+    {
+      "title": "Quectolux",
+      "const": "qlx"
+    },
+    {
+      "title": "Quectonewton",
+      "const": "qN"
+    },
+    {
+      "title": "Quectoohm",
+      "const": "qΩ"
+    },
+    {
+      "title": "Quectopascal",
+      "const": "qPa"
+    },
+    {
+      "title": "Quectoradian",
+      "const": "qrad"
+    },
+    {
+      "title": "Quectosiemens",
+      "const": "qS"
+    },
+    {
+      "title": "Quectosievert",
+      "const": "qSv"
+    },
+    {
+      "title": "Quectosteradian",
+      "const": "qsr"
+    },
+    {
+      "title": "Quectotesla",
+      "const": "qT"
+    },
+    {
+      "title": "Quectovolt",
+      "const": "qV"
+    },
+    {
+      "title": "Quectowatt",
+      "const": "qW"
+    },
+    {
+      "title": "Quectoweber",
+      "const": "qWb"
+    },
+    {
+      "title": "Quettabecquerel",
+      "const": "QBq"
+    },
+    {
+      "title": "Quettacoulomb",
+      "const": "QC"
+    },
+    {
+      "title": "Quettadegreecelsius",
+      "const": "Q°C"
+    },
+    {
+      "title": "Quettafarad",
+      "const": "QF"
+    },
+    {
+      "title": "Quettagray",
+      "const": "QGy"
+    },
+    {
+      "title": "Quettahenry",
+      "const": "QH"
+    },
+    {
+      "title": "Quettahertz",
+      "const": "QHz"
+    },
+    {
+      "title": "Quettajoule",
+      "const": "QJ"
+    },
+    {
+      "title": "Quettakatal",
+      "const": "Qkat"
+    },
+    {
+      "title": "Quettalumen",
+      "const": "Qlm"
+    },
+    {
+      "title": "Quettalux",
+      "const": "Qlx"
+    },
+    {
+      "title": "Quettanewton",
+      "const": "QN"
+    },
+    {
+      "title": "Quettaohm",
+      "const": "QΩ"
+    },
+    {
+      "title": "Quettapascal",
+      "const": "QPa"
+    },
+    {
+      "title": "Quettaradian",
+      "const": "Qrad"
+    },
+    {
+      "title": "Quettasiemens",
+      "const": "QS"
+    },
+    {
+      "title": "Quettasievert",
+      "const": "QSv"
+    },
+    {
+      "title": "Quettasteradian",
+      "const": "Qsr"
+    },
+    {
+      "title": "Quettatesla",
+      "const": "QT"
+    },
+    {
+      "title": "Quettavolt",
+      "const": "QV"
+    },
+    {
+      "title": "Quettawatt",
+      "const": "QW"
+    },
+    {
+      "title": "Quettaweber",
+      "const": "QWb"
+    },
+    {
+      "title": "Ronnabecquerel",
+      "const": "RBq"
+    },
+    {
+      "title": "Ronnacoulomb",
+      "const": "RC"
+    },
+    {
+      "title": "Ronnadegreecelsius",
+      "const": "R°C"
+    },
+    {
+      "title": "Ronnafarad",
+      "const": "RF"
+    },
+    {
+      "title": "Ronnagray",
+      "const": "RGy"
+    },
+    {
+      "title": "Ronnahenry",
+      "const": "RH"
+    },
+    {
+      "title": "Ronnahertz",
+      "const": "RHz"
+    },
+    {
+      "title": "Ronnajoule",
+      "const": "RJ"
+    },
+    {
+      "title": "Ronnakatal",
+      "const": "Rkat"
+    },
+    {
+      "title": "Ronnalumen",
+      "const": "Rlm"
+    },
+    {
+      "title": "Ronnalux",
+      "const": "Rlx"
+    },
+    {
+      "title": "Ronnanewton",
+      "const": "RN"
+    },
+    {
+      "title": "Ronnaohm",
+      "const": "RΩ"
+    },
+    {
+      "title": "Ronnapascal",
+      "const": "RPa"
+    },
+    {
+      "title": "Ronnaradian",
+      "const": "Rrad"
+    },
+    {
+      "title": "Ronnasiemens",
+      "const": "RS"
+    },
+    {
+      "title": "Ronnasievert",
+      "const": "RSv"
+    },
+    {
+      "title": "Ronnasteradian",
+      "const": "Rsr"
+    },
+    {
+      "title": "Ronnatesla",
+      "const": "RT"
+    },
+    {
+      "title": "Ronnavolt",
+      "const": "RV"
+    },
+    {
+      "title": "Ronnawatt",
+      "const": "RW"
+    },
+    {
+      "title": "Ronnaweber",
+      "const": "RWb"
+    },
+    {
+      "title": "Rontobecquerel",
+      "const": "rBq"
+    },
+    {
+      "title": "Rontocoulomb",
+      "const": "rC"
+    },
+    {
+      "title": "Rontodegreecelsius",
+      "const": "r°C"
+    },
+    {
+      "title": "Rontofarad",
+      "const": "rF"
+    },
+    {
+      "title": "Rontogray",
+      "const": "rGy"
+    },
+    {
+      "title": "Rontohenry",
+      "const": "rH"
+    },
+    {
+      "title": "Rontohertz",
+      "const": "rHz"
+    },
+    {
+      "title": "Rontojoule",
+      "const": "rJ"
+    },
+    {
+      "title": "Rontokatal",
+      "const": "rkat"
+    },
+    {
+      "title": "Rontolumen",
+      "const": "rlm"
+    },
+    {
+      "title": "Rontolux",
+      "const": "rlx"
+    },
+    {
+      "title": "Rontonewton",
+      "const": "rN"
+    },
+    {
+      "title": "Rontoohm",
+      "const": "rΩ"
+    },
+    {
+      "title": "Rontopascal",
+      "const": "rPa"
+    },
+    {
+      "title": "Rontoradian",
+      "const": "rrad"
+    },
+    {
+      "title": "Rontosiemens",
+      "const": "rS"
+    },
+    {
+      "title": "Rontosievert",
+      "const": "rSv"
+    },
+    {
+      "title": "Rontosteradian",
+      "const": "rsr"
+    },
+    {
+      "title": "Rontotesla",
+      "const": "rT"
+    },
+    {
+      "title": "Rontovolt",
+      "const": "rV"
+    },
+    {
+      "title": "Rontowatt",
+      "const": "rW"
+    },
+    {
+      "title": "Rontoweber",
+      "const": "rWb"
+    },
+    {
+      "title": "Terabecquerel",
+      "const": "TBq"
+    },
+    {
+      "title": "Teracoulomb",
+      "const": "TC"
+    },
+    {
+      "title": "Teradegreecelsius",
+      "const": "T°C"
+    },
+    {
+      "title": "Terafarad",
+      "const": "TF"
+    },
+    {
+      "title": "Teragray",
+      "const": "TGy"
+    },
+    {
+      "title": "Terahenry",
+      "const": "TH"
+    },
+    {
+      "title": "Terahertz",
+      "const": "THz"
+    },
+    {
+      "title": "Terajoule",
+      "const": "TJ"
+    },
+    {
+      "title": "Terakatal",
+      "const": "Tkat"
+    },
+    {
+      "title": "Teralumen",
+      "const": "Tlm"
+    },
+    {
+      "title": "Teralux",
+      "const": "Tlx"
+    },
+    {
+      "title": "Teranewton",
+      "const": "TN"
+    },
+    {
+      "title": "Teraohm",
+      "const": "TΩ"
+    },
+    {
+      "title": "Terapascal",
+      "const": "TPa"
+    },
+    {
+      "title": "Teraradian",
+      "const": "Trad"
+    },
+    {
+      "title": "Terasiemens",
+      "const": "TS"
+    },
+    {
+      "title": "Terasievert",
+      "const": "TSv"
+    },
+    {
+      "title": "Terasteradian",
+      "const": "Tsr"
+    },
+    {
+      "title": "Teratesla",
+      "const": "TT"
+    },
+    {
+      "title": "Teravolt",
+      "const": "TV"
+    },
+    {
+      "title": "Terawatt",
+      "const": "TW"
+    },
+    {
+      "title": "Teraweber",
+      "const": "TWb"
+    },
+    {
+      "title": "Yoctobecquerel",
+      "const": "yBq"
+    },
+    {
+      "title": "Yoctocoulomb",
+      "const": "yC"
+    },
+    {
+      "title": "Yoctodegreecelsius",
+      "const": "y°C"
+    },
+    {
+      "title": "Yoctofarad",
+      "const": "yF"
+    },
+    {
+      "title": "Yoctogray",
+      "const": "yGy"
+    },
+    {
+      "title": "Yoctohenry",
+      "const": "yH"
+    },
+    {
+      "title": "Yoctohertz",
+      "const": "yHz"
+    },
+    {
+      "title": "Yoctojoule",
+      "const": "yJ"
+    },
+    {
+      "title": "Yoctokatal",
+      "const": "ykat"
+    },
+    {
+      "title": "Yoctolumen",
+      "const": "ylm"
+    },
+    {
+      "title": "Yoctolux",
+      "const": "ylx"
+    },
+    {
+      "title": "Yoctonewton",
+      "const": "yN"
+    },
+    {
+      "title": "Yoctoohm",
+      "const": "yΩ"
+    },
+    {
+      "title": "Yoctopascal",
+      "const": "yPa"
+    },
+    {
+      "title": "Yoctoradian",
+      "const": "yrad"
+    },
+    {
+      "title": "Yoctosiemens",
+      "const": "yS"
+    },
+    {
+      "title": "Yoctosievert",
+      "const": "ySv"
+    },
+    {
+      "title": "Yoctosteradian",
+      "const": "ysr"
+    },
+    {
+      "title": "Yoctotesla",
+      "const": "yT"
+    },
+    {
+      "title": "Yoctovolt",
+      "const": "yV"
+    },
+    {
+      "title": "Yoctowatt",
+      "const": "yW"
+    },
+    {
+      "title": "Yoctoweber",
+      "const": "yWb"
+    },
+    {
+      "title": "Yottabecquerel",
+      "const": "YBq"
+    },
+    {
+      "title": "Yottacoulomb",
+      "const": "YC"
+    },
+    {
+      "title": "Yottadegreecelsius",
+      "const": "Y°C"
+    },
+    {
+      "title": "Yottafarad",
+      "const": "YF"
+    },
+    {
+      "title": "Yottagray",
+      "const": "YGy"
+    },
+    {
+      "title": "Yottahenry",
+      "const": "YH"
+    },
+    {
+      "title": "Yottahertz",
+      "const": "YHz"
+    },
+    {
+      "title": "Yottajoule",
+      "const": "YJ"
+    },
+    {
+      "title": "Yottakatal",
+      "const": "Ykat"
+    },
+    {
+      "title": "Yottalumen",
+      "const": "Ylm"
+    },
+    {
+      "title": "Yottalux",
+      "const": "Ylx"
+    },
+    {
+      "title": "Yottanewton",
+      "const": "YN"
+    },
+    {
+      "title": "Yottaohm",
+      "const": "YΩ"
+    },
+    {
+      "title": "Yottapascal",
+      "const": "YPa"
+    },
+    {
+      "title": "Yottaradian",
+      "const": "Yrad"
+    },
+    {
+      "title": "Yottasiemens",
+      "const": "YS"
+    },
+    {
+      "title": "Yottasievert",
+      "const": "YSv"
+    },
+    {
+      "title": "Yottasteradian",
+      "const": "Ysr"
+    },
+    {
+      "title": "Yottatesla",
+      "const": "YT"
+    },
+    {
+      "title": "Yottavolt",
+      "const": "YV"
+    },
+    {
+      "title": "Yottawatt",
+      "const": "YW"
+    },
+    {
+      "title": "Yottaweber",
+      "const": "YWb"
+    },
+    {
+      "title": "Zeptobecquerel",
+      "const": "zBq"
+    },
+    {
+      "title": "Zeptocoulomb",
+      "const": "zC"
+    },
+    {
+      "title": "Zeptodegreecelsius",
+      "const": "z°C"
+    },
+    {
+      "title": "Zeptofarad",
+      "const": "zF"
+    },
+    {
+      "title": "Zeptogray",
+      "const": "zGy"
+    },
+    {
+      "title": "Zeptohenry",
+      "const": "zH"
+    },
+    {
+      "title": "Zeptohertz",
+      "const": "zHz"
+    },
+    {
+      "title": "Zeptojoule",
+      "const": "zJ"
+    },
+    {
+      "title": "Zeptokatal",
+      "const": "zkat"
+    },
+    {
+      "title": "Zeptolumen",
+      "const": "zlm"
+    },
+    {
+      "title": "Zeptolux",
+      "const": "zlx"
+    },
+    {
+      "title": "Zeptonewton",
+      "const": "zN"
+    },
+    {
+      "title": "Zeptoohm",
+      "const": "zΩ"
+    },
+    {
+      "title": "Zeptopascal",
+      "const": "zPa"
+    },
+    {
+      "title": "Zeptoradian",
+      "const": "zrad"
+    },
+    {
+      "title": "Zeptosiemens",
+      "const": "zS"
+    },
+    {
+      "title": "Zeptosievert",
+      "const": "zSv"
+    },
+    {
+      "title": "Zeptosteradian",
+      "const": "zsr"
+    },
+    {
+      "title": "Zeptotesla",
+      "const": "zT"
+    },
+    {
+      "title": "Zeptovolt",
+      "const": "zV"
+    },
+    {
+      "title": "Zeptowatt",
+      "const": "zW"
+    },
+    {
+      "title": "Zeptoweber",
+      "const": "zWb"
+    },
+    {
+      "title": "Zettabecquerel",
+      "const": "ZBq"
+    },
+    {
+      "title": "Zettacoulomb",
+      "const": "ZC"
+    },
+    {
+      "title": "Zettadegreecelsius",
+      "const": "Z°C"
+    },
+    {
+      "title": "Zettafarad",
+      "const": "ZF"
+    },
+    {
+      "title": "Zettagray",
+      "const": "ZGy"
+    },
+    {
+      "title": "Zettahenry",
+      "const": "ZH"
+    },
+    {
+      "title": "Zettahertz",
+      "const": "ZHz"
+    },
+    {
+      "title": "Zettajoule",
+      "const": "ZJ"
+    },
+    {
+      "title": "Zettakatal",
+      "const": "Zkat"
+    },
+    {
+      "title": "Zettalumen",
+      "const": "Zlm"
+    },
+    {
+      "title": "Zettalux",
+      "const": "Zlx"
+    },
+    {
+      "title": "Zettanewton",
+      "const": "ZN"
+    },
+    {
+      "title": "Zettaohm",
+      "const": "ZΩ"
+    },
+    {
+      "title": "Zettapascal",
+      "const": "ZPa"
+    },
+    {
+      "title": "Zettaradian",
+      "const": "Zrad"
+    },
+    {
+      "title": "Zettasiemens",
+      "const": "ZS"
+    },
+    {
+      "title": "Zettasievert",
+      "const": "ZSv"
+    },
+    {
+      "title": "Zettasteradian",
+      "const": "Zsr"
+    },
+    {
+      "title": "Zettatesla",
+      "const": "ZT"
+    },
+    {
+      "title": "Zettavolt",
+      "const": "ZV"
+    },
+    {
+      "title": "Zettawatt",
+      "const": "ZW"
+    },
+    {
+      "title": "Zettaweber",
+      "const": "ZWb"
+    }
+  ]
+}

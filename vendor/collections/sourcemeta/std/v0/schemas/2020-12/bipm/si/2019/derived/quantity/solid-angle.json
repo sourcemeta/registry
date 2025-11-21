@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Solid angle",
+  "description": "A derived quantity measured in steradians",
+  "examples": [ 0, 1, 12.5664, 4.18879, 0.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/steradian.json"
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Becquerel",
+  "description": "The SI unit of activity referred to a radionuclide. It is equal to s^-1. The becquerel is used only for stochastic processes in radioactive decay",
+  "examples": [ 1, 1000, 1000000.0, 37000000000.0, 1000000000000.0 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "Bq",
+  "x-units": [ "../../base/unit/second.json" ],
+  "type": "number",
+  "exclusiveMinimum": 0
+}

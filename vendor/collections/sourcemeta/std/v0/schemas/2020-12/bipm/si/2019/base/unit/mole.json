@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mole",
+  "description": "The SI unit of amount of substance. One mole contains exactly 6.022 140 76 x 10^23 elementary entities. This number is the fixed numerical value of the Avogadro constant, N_A, when expressed in the unit mol^-1 and is called the Avogadro number. The amount of substance, symbol n, of a system is a measure of the number of specified elementary entities. An elementary entity may be an atom, a molecule, an ion, an electron, any other particle or specified group of particles",
+  "examples": [ 0.001, 1, 2, 10, 0.5, 1.5 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "mol",
+  "type": "number",
+  "exclusiveMinimum": 0
+}

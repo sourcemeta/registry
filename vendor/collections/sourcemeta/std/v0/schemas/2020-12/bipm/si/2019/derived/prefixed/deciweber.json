@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Deciweber",
+  "description": "A multiple of weber equal to 1e-1 weber",
+  "examples": [ 0, 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 0.1,
+  "x-symbol": "dWb",
+  "$ref": "../unit/weber.json"
+}

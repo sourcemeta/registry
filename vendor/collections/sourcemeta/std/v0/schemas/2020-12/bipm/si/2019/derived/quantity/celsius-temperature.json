@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Celsius temperature",
+  "description": "A derived quantity measured in degrees Celsius",
+  "examples": [ -273.15, 0, 20, 37, 100, -40 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/degree-celsius.json"
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ohm",
+  "description": "The SI unit of electric resistance. It is equal to V/A, which is equal to kg m^2 s^-3 A^-2",
+  "examples": [ 1, 10, 100, 1000, 10000, 1000000.0 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "Ω",
+  "x-units": [
+    "../../base/unit/kilogram.json",
+    "../../base/unit/metre.json",
+    "../../base/unit/second.json",
+    "../../base/unit/ampere.json"
+  ],
+  "type": "number",
+  "exclusiveMinimum": 0
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Nanovolt",
+  "description": "A multiple of volt equal to 1e-9 volt",
+  "examples": [ 0, 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 1e-9,
+  "x-symbol": "nV",
+  "$ref": "../unit/volt.json"
+}

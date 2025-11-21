@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Joule per kelvin",
+  "description": "A compound unit of heat capacity and entropy. It is equal to J K^-1, which is equal to kg m^2 s^-2 K^-1",
+  "examples": [ 1.38065e-23, 1.00e-22, 1e-21, 1.0e-20, 0.001, 1, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-units": [ "../derived/unit/joule.json", "../base/unit/kelvin.json" ],
+  "type": "number",
+  "exclusiveMinimum": 0
+}

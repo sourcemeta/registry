@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Power",
+  "description": "A derived quantity measured in watts",
+  "examples": [ 0, 1, 100, 1000, 1500, 1000000.0 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/watt.json"
+}

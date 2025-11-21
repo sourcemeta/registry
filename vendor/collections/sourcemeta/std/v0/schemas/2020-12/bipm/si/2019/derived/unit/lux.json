@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lux",
+  "description": "The SI unit of illuminance. It is equal to lm/m^2, which is equal to cd sr m^-2",
+  "examples": [ 0, 1, 100, 400, 1000, 10000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "lx",
+  "x-units": [ "../../base/unit/candela.json", "../../base/unit/metre.json" ],
+  "type": "number",
+  "minimum": 0
+}

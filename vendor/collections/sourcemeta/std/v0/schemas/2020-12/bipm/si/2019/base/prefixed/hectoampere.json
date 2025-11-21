@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hectoampere",
+  "description": "A multiple of ampere equal to 1e2 ampere",
+  "examples": [ 0, 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 100.0,
+  "x-symbol": "hA",
+  "$ref": "../unit/ampere.json"
+}

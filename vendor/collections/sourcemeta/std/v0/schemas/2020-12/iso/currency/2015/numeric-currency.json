@@ -1,0 +1,1110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 4217:2015 Numeric Currency Code",
+  "description": "A three-digit numeric currency code, excluding funds and precious metals (2025-05-12)",
+  "examples": [ 8, 12, 32, 36 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.iso.org/iso-4217-currency-codes.html" ],
+  "anyOf": [
+    {
+      "title": "Lek",
+      "x-country-names": [ "ALBANIA" ],
+      "x-minor-unit": 2,
+      "const": 8
+    },
+    {
+      "title": "Algerian Dinar",
+      "x-country-names": [ "ALGERIA" ],
+      "x-minor-unit": 2,
+      "const": 12
+    },
+    {
+      "title": "Argentine Peso",
+      "x-country-names": [ "ARGENTINA" ],
+      "x-minor-unit": 2,
+      "const": 32
+    },
+    {
+      "title": "Australian Dollar",
+      "x-country-names": [
+        "AUSTRALIA",
+        "CHRISTMAS ISLAND",
+        "COCOS (KEELING) ISLANDS (THE)",
+        "HEARD ISLAND AND McDONALD ISLANDS",
+        "KIRIBATI",
+        "NAURU",
+        "NORFOLK ISLAND",
+        "TUVALU"
+      ],
+      "x-minor-unit": 2,
+      "const": 36
+    },
+    {
+      "title": "Bahamian Dollar",
+      "x-country-names": [ "BAHAMAS (THE)" ],
+      "x-minor-unit": 2,
+      "const": 44
+    },
+    {
+      "title": "Bahraini Dinar",
+      "x-country-names": [ "BAHRAIN" ],
+      "x-minor-unit": 3,
+      "const": 48
+    },
+    {
+      "title": "Taka",
+      "x-country-names": [ "BANGLADESH" ],
+      "x-minor-unit": 2,
+      "const": 50
+    },
+    {
+      "title": "Armenian Dram",
+      "x-country-names": [ "ARMENIA" ],
+      "x-minor-unit": 2,
+      "const": 51
+    },
+    {
+      "title": "Barbados Dollar",
+      "x-country-names": [ "BARBADOS" ],
+      "x-minor-unit": 2,
+      "const": 52
+    },
+    {
+      "title": "Bermudian Dollar",
+      "x-country-names": [ "BERMUDA" ],
+      "x-minor-unit": 2,
+      "const": 60
+    },
+    {
+      "title": "Ngultrum",
+      "x-country-names": [ "BHUTAN" ],
+      "x-minor-unit": 2,
+      "const": 64
+    },
+    {
+      "title": "Boliviano",
+      "x-country-names": [ "BOLIVIA (PLURINATIONAL STATE OF)" ],
+      "x-minor-unit": 2,
+      "const": 68
+    },
+    {
+      "title": "Pula",
+      "x-country-names": [ "BOTSWANA" ],
+      "x-minor-unit": 2,
+      "const": 72
+    },
+    {
+      "title": "Belize Dollar",
+      "x-country-names": [ "BELIZE" ],
+      "x-minor-unit": 2,
+      "const": 84
+    },
+    {
+      "title": "Solomon Islands Dollar",
+      "x-country-names": [ "SOLOMON ISLANDS" ],
+      "x-minor-unit": 2,
+      "const": 90
+    },
+    {
+      "title": "Brunei Dollar",
+      "x-country-names": [ "BRUNEI DARUSSALAM" ],
+      "x-minor-unit": 2,
+      "const": 96
+    },
+    {
+      "title": "Kyat",
+      "x-country-names": [ "MYANMAR" ],
+      "x-minor-unit": 2,
+      "const": 104
+    },
+    {
+      "title": "Burundi Franc",
+      "x-country-names": [ "BURUNDI" ],
+      "x-minor-unit": 0,
+      "const": 108
+    },
+    {
+      "title": "Riel",
+      "x-country-names": [ "CAMBODIA" ],
+      "x-minor-unit": 2,
+      "const": 116
+    },
+    {
+      "title": "Canadian Dollar",
+      "x-country-names": [ "CANADA" ],
+      "x-minor-unit": 2,
+      "const": 124
+    },
+    {
+      "title": "Cabo Verde Escudo",
+      "x-country-names": [ "CABO VERDE" ],
+      "x-minor-unit": 2,
+      "const": 132
+    },
+    {
+      "title": "Cayman Islands Dollar",
+      "x-country-names": [ "CAYMAN ISLANDS (THE)" ],
+      "x-minor-unit": 2,
+      "const": 136
+    },
+    {
+      "title": "Sri Lanka Rupee",
+      "x-country-names": [ "SRI LANKA" ],
+      "x-minor-unit": 2,
+      "const": 144
+    },
+    {
+      "title": "Chilean Peso",
+      "x-country-names": [ "CHILE" ],
+      "x-minor-unit": 0,
+      "const": 152
+    },
+    {
+      "title": "Yuan Renminbi",
+      "x-country-names": [ "CHINA" ],
+      "x-minor-unit": 2,
+      "const": 156
+    },
+    {
+      "title": "Colombian Peso",
+      "x-country-names": [ "COLOMBIA" ],
+      "x-minor-unit": 2,
+      "const": 170
+    },
+    {
+      "title": "Comorian Franc",
+      "x-country-names": [ "COMOROS (THE)" ],
+      "x-minor-unit": 0,
+      "const": 174
+    },
+    {
+      "title": "Costa Rican Colon",
+      "x-country-names": [ "COSTA RICA" ],
+      "x-minor-unit": 2,
+      "const": 188
+    },
+    {
+      "title": "Cuban Peso",
+      "x-country-names": [ "CUBA" ],
+      "x-minor-unit": 2,
+      "const": 192
+    },
+    {
+      "title": "Czech Koruna",
+      "x-country-names": [ "CZECHIA" ],
+      "x-minor-unit": 2,
+      "const": 203
+    },
+    {
+      "title": "Danish Krone",
+      "x-country-names": [ "DENMARK", "FAROE ISLANDS (THE)", "GREENLAND" ],
+      "x-minor-unit": 2,
+      "const": 208
+    },
+    {
+      "title": "Dominican Peso",
+      "x-country-names": [ "DOMINICAN REPUBLIC (THE)" ],
+      "x-minor-unit": 2,
+      "const": 214
+    },
+    {
+      "title": "El Salvador Colon",
+      "x-country-names": [ "EL SALVADOR" ],
+      "x-minor-unit": 2,
+      "const": 222
+    },
+    {
+      "title": "Ethiopian Birr",
+      "x-country-names": [ "ETHIOPIA" ],
+      "x-minor-unit": 2,
+      "const": 230
+    },
+    {
+      "title": "Nakfa",
+      "x-country-names": [ "ERITREA" ],
+      "x-minor-unit": 2,
+      "const": 232
+    },
+    {
+      "title": "Falkland Islands Pound",
+      "x-country-names": [ "FALKLAND ISLANDS (THE) [MALVINAS]" ],
+      "x-minor-unit": 2,
+      "const": 238
+    },
+    {
+      "title": "Fiji Dollar",
+      "x-country-names": [ "FIJI" ],
+      "x-minor-unit": 2,
+      "const": 242
+    },
+    {
+      "title": "Djibouti Franc",
+      "x-country-names": [ "DJIBOUTI" ],
+      "x-minor-unit": 0,
+      "const": 262
+    },
+    {
+      "title": "Dalasi",
+      "x-country-names": [ "GAMBIA (THE)" ],
+      "x-minor-unit": 2,
+      "const": 270
+    },
+    {
+      "title": "Gibraltar Pound",
+      "x-country-names": [ "GIBRALTAR" ],
+      "x-minor-unit": 2,
+      "const": 292
+    },
+    {
+      "title": "Quetzal",
+      "x-country-names": [ "GUATEMALA" ],
+      "x-minor-unit": 2,
+      "const": 320
+    },
+    {
+      "title": "Guinean Franc",
+      "x-country-names": [ "GUINEA" ],
+      "x-minor-unit": 0,
+      "const": 324
+    },
+    {
+      "title": "Guyana Dollar",
+      "x-country-names": [ "GUYANA" ],
+      "x-minor-unit": 2,
+      "const": 328
+    },
+    {
+      "title": "Gourde",
+      "x-country-names": [ "HAITI" ],
+      "x-minor-unit": 2,
+      "const": 332
+    },
+    {
+      "title": "Lempira",
+      "x-country-names": [ "HONDURAS" ],
+      "x-minor-unit": 2,
+      "const": 340
+    },
+    {
+      "title": "Hong Kong Dollar",
+      "x-country-names": [ "HONG KONG" ],
+      "x-minor-unit": 2,
+      "const": 344
+    },
+    {
+      "title": "Forint",
+      "x-country-names": [ "HUNGARY" ],
+      "x-minor-unit": 2,
+      "const": 348
+    },
+    {
+      "title": "Iceland Krona",
+      "x-country-names": [ "ICELAND" ],
+      "x-minor-unit": 0,
+      "const": 352
+    },
+    {
+      "title": "Indian Rupee",
+      "x-country-names": [ "BHUTAN", "INDIA" ],
+      "x-minor-unit": 2,
+      "const": 356
+    },
+    {
+      "title": "Rupiah",
+      "x-country-names": [ "INDONESIA" ],
+      "x-minor-unit": 2,
+      "const": 360
+    },
+    {
+      "title": "Iranian Rial",
+      "x-country-names": [ "IRAN (ISLAMIC REPUBLIC OF)" ],
+      "x-minor-unit": 2,
+      "const": 364
+    },
+    {
+      "title": "Iraqi Dinar",
+      "x-country-names": [ "IRAQ" ],
+      "x-minor-unit": 3,
+      "const": 368
+    },
+    {
+      "title": "New Israeli Sheqel",
+      "x-country-names": [ "ISRAEL" ],
+      "x-minor-unit": 2,
+      "const": 376
+    },
+    {
+      "title": "Jamaican Dollar",
+      "x-country-names": [ "JAMAICA" ],
+      "x-minor-unit": 2,
+      "const": 388
+    },
+    {
+      "title": "Yen",
+      "x-country-names": [ "JAPAN" ],
+      "x-minor-unit": 0,
+      "const": 392
+    },
+    {
+      "title": "Arab Accounting Dinar",
+      "x-country-names": [ "ARAB MONETARY FUND" ],
+      "x-minor-unit": 2,
+      "const": 396
+    },
+    {
+      "title": "Tenge",
+      "x-country-names": [ "KAZAKHSTAN" ],
+      "x-minor-unit": 2,
+      "const": 398
+    },
+    {
+      "title": "Jordanian Dinar",
+      "x-country-names": [ "JORDAN" ],
+      "x-minor-unit": 3,
+      "const": 400
+    },
+    {
+      "title": "Kenyan Shilling",
+      "x-country-names": [ "KENYA" ],
+      "x-minor-unit": 2,
+      "const": 404
+    },
+    {
+      "title": "North Korean Won",
+      "x-country-names": [ "KOREA (THE DEMOCRATIC PEOPLE’S REPUBLIC OF)" ],
+      "x-minor-unit": 2,
+      "const": 408
+    },
+    {
+      "title": "Won",
+      "x-country-names": [ "KOREA (THE REPUBLIC OF)" ],
+      "x-minor-unit": 0,
+      "const": 410
+    },
+    {
+      "title": "Kuwaiti Dinar",
+      "x-country-names": [ "KUWAIT" ],
+      "x-minor-unit": 3,
+      "const": 414
+    },
+    {
+      "title": "Som",
+      "x-country-names": [ "KYRGYZSTAN" ],
+      "x-minor-unit": 2,
+      "const": 417
+    },
+    {
+      "title": "Lao Kip",
+      "x-country-names": [ "LAO PEOPLE’S DEMOCRATIC REPUBLIC (THE)" ],
+      "x-minor-unit": 2,
+      "const": 418
+    },
+    {
+      "title": "Lebanese Pound",
+      "x-country-names": [ "LEBANON" ],
+      "x-minor-unit": 2,
+      "const": 422
+    },
+    {
+      "title": "Loti",
+      "x-country-names": [ "LESOTHO" ],
+      "x-minor-unit": 2,
+      "const": 426
+    },
+    {
+      "title": "Liberian Dollar",
+      "x-country-names": [ "LIBERIA" ],
+      "x-minor-unit": 2,
+      "const": 430
+    },
+    {
+      "title": "Libyan Dinar",
+      "x-country-names": [ "LIBYA" ],
+      "x-minor-unit": 3,
+      "const": 434
+    },
+    {
+      "title": "Pataca",
+      "x-country-names": [ "MACAO" ],
+      "x-minor-unit": 2,
+      "const": 446
+    },
+    {
+      "title": "Malawi Kwacha",
+      "x-country-names": [ "MALAWI" ],
+      "x-minor-unit": 2,
+      "const": 454
+    },
+    {
+      "title": "Malaysian Ringgit",
+      "x-country-names": [ "MALAYSIA" ],
+      "x-minor-unit": 2,
+      "const": 458
+    },
+    {
+      "title": "Rufiyaa",
+      "x-country-names": [ "MALDIVES" ],
+      "x-minor-unit": 2,
+      "const": 462
+    },
+    {
+      "title": "Mauritius Rupee",
+      "x-country-names": [ "MAURITIUS" ],
+      "x-minor-unit": 2,
+      "const": 480
+    },
+    {
+      "title": "Mexican Peso",
+      "x-country-names": [ "MEXICO" ],
+      "x-minor-unit": 2,
+      "const": 484
+    },
+    {
+      "title": "Tugrik",
+      "x-country-names": [ "MONGOLIA" ],
+      "x-minor-unit": 2,
+      "const": 496
+    },
+    {
+      "title": "Moldovan Leu",
+      "x-country-names": [ "MOLDOVA (THE REPUBLIC OF)" ],
+      "x-minor-unit": 2,
+      "const": 498
+    },
+    {
+      "title": "Moroccan Dirham",
+      "x-country-names": [ "MOROCCO", "WESTERN SAHARA" ],
+      "x-minor-unit": 2,
+      "const": 504
+    },
+    {
+      "title": "Rial Omani",
+      "x-country-names": [ "OMAN" ],
+      "x-minor-unit": 3,
+      "const": 512
+    },
+    {
+      "title": "Namibia Dollar",
+      "x-country-names": [ "NAMIBIA" ],
+      "x-minor-unit": 2,
+      "const": 516
+    },
+    {
+      "title": "Nepalese Rupee",
+      "x-country-names": [ "NEPAL" ],
+      "x-minor-unit": 2,
+      "const": 524
+    },
+    {
+      "title": "Caribbean Guilder",
+      "x-country-names": [ "CURAÇAO", "SINT MAARTEN (DUTCH PART)" ],
+      "x-minor-unit": 2,
+      "const": 532
+    },
+    {
+      "title": "Aruban Florin",
+      "x-country-names": [ "ARUBA" ],
+      "x-minor-unit": 2,
+      "const": 533
+    },
+    {
+      "title": "Vatu",
+      "x-country-names": [ "VANUATU" ],
+      "x-minor-unit": 0,
+      "const": 548
+    },
+    {
+      "title": "New Zealand Dollar",
+      "x-country-names": [
+        "COOK ISLANDS (THE)",
+        "NEW ZEALAND",
+        "NIUE",
+        "PITCAIRN",
+        "TOKELAU"
+      ],
+      "x-minor-unit": 2,
+      "const": 554
+    },
+    {
+      "title": "Cordoba Oro",
+      "x-country-names": [ "NICARAGUA" ],
+      "x-minor-unit": 2,
+      "const": 558
+    },
+    {
+      "title": "Naira",
+      "x-country-names": [ "NIGERIA" ],
+      "x-minor-unit": 2,
+      "const": 566
+    },
+    {
+      "title": "Norwegian Krone",
+      "x-country-names": [ "BOUVET ISLAND", "NORWAY", "SVALBARD AND JAN MAYEN" ],
+      "x-minor-unit": 2,
+      "const": 578
+    },
+    {
+      "title": "Pakistan Rupee",
+      "x-country-names": [ "PAKISTAN" ],
+      "x-minor-unit": 2,
+      "const": 586
+    },
+    {
+      "title": "Balboa",
+      "x-country-names": [ "PANAMA" ],
+      "x-minor-unit": 2,
+      "const": 590
+    },
+    {
+      "title": "Kina",
+      "x-country-names": [ "PAPUA NEW GUINEA" ],
+      "x-minor-unit": 2,
+      "const": 598
+    },
+    {
+      "title": "Guarani",
+      "x-country-names": [ "PARAGUAY" ],
+      "x-minor-unit": 0,
+      "const": 600
+    },
+    {
+      "title": "Sol",
+      "x-country-names": [ "PERU" ],
+      "x-minor-unit": 2,
+      "const": 604
+    },
+    {
+      "title": "Philippine Peso",
+      "x-country-names": [ "PHILIPPINES (THE)" ],
+      "x-minor-unit": 2,
+      "const": 608
+    },
+    {
+      "title": "Qatari Rial",
+      "x-country-names": [ "QATAR" ],
+      "x-minor-unit": 2,
+      "const": 634
+    },
+    {
+      "title": "Russian Ruble",
+      "x-country-names": [ "RUSSIAN FEDERATION (THE)" ],
+      "x-minor-unit": 2,
+      "const": 643
+    },
+    {
+      "title": "Rwanda Franc",
+      "x-country-names": [ "RWANDA" ],
+      "x-minor-unit": 0,
+      "const": 646
+    },
+    {
+      "title": "Saint Helena Pound",
+      "x-country-names": [ "SAINT HELENA, ASCENSION AND TRISTAN DA CUNHA" ],
+      "x-minor-unit": 2,
+      "const": 654
+    },
+    {
+      "title": "Saudi Riyal",
+      "x-country-names": [ "SAUDI ARABIA" ],
+      "x-minor-unit": 2,
+      "const": 682
+    },
+    {
+      "title": "Seychelles Rupee",
+      "x-country-names": [ "SEYCHELLES" ],
+      "x-minor-unit": 2,
+      "const": 690
+    },
+    {
+      "title": "Singapore Dollar",
+      "x-country-names": [ "SINGAPORE" ],
+      "x-minor-unit": 2,
+      "const": 702
+    },
+    {
+      "title": "Dong",
+      "x-country-names": [ "VIET NAM" ],
+      "x-minor-unit": 0,
+      "const": 704
+    },
+    {
+      "title": "Somali Shilling",
+      "x-country-names": [ "SOMALIA" ],
+      "x-minor-unit": 2,
+      "const": 706
+    },
+    {
+      "title": "Rand",
+      "x-country-names": [ "LESOTHO", "NAMIBIA", "SOUTH AFRICA" ],
+      "x-minor-unit": 2,
+      "const": 710
+    },
+    {
+      "title": "South Sudanese Pound",
+      "x-country-names": [ "SOUTH SUDAN" ],
+      "x-minor-unit": 2,
+      "const": 728
+    },
+    {
+      "title": "Lilangeni",
+      "x-country-names": [ "ESWATINI" ],
+      "x-minor-unit": 2,
+      "const": 748
+    },
+    {
+      "title": "Swedish Krona",
+      "x-country-names": [ "SWEDEN" ],
+      "x-minor-unit": 2,
+      "const": 752
+    },
+    {
+      "title": "Swiss Franc",
+      "x-country-names": [ "LIECHTENSTEIN", "SWITZERLAND" ],
+      "x-minor-unit": 2,
+      "const": 756
+    },
+    {
+      "title": "Syrian Pound",
+      "x-country-names": [ "SYRIAN ARAB REPUBLIC" ],
+      "x-minor-unit": 2,
+      "const": 760
+    },
+    {
+      "title": "Baht",
+      "x-country-names": [ "THAILAND" ],
+      "x-minor-unit": 2,
+      "const": 764
+    },
+    {
+      "title": "Pa’anga",
+      "x-country-names": [ "TONGA" ],
+      "x-minor-unit": 2,
+      "const": 776
+    },
+    {
+      "title": "Trinidad and Tobago Dollar",
+      "x-country-names": [ "TRINIDAD AND TOBAGO" ],
+      "x-minor-unit": 2,
+      "const": 780
+    },
+    {
+      "title": "UAE Dirham",
+      "x-country-names": [ "UNITED ARAB EMIRATES (THE)" ],
+      "x-minor-unit": 2,
+      "const": 784
+    },
+    {
+      "title": "Tunisian Dinar",
+      "x-country-names": [ "TUNISIA" ],
+      "x-minor-unit": 3,
+      "const": 788
+    },
+    {
+      "title": "Uganda Shilling",
+      "x-country-names": [ "UGANDA" ],
+      "x-minor-unit": 0,
+      "const": 800
+    },
+    {
+      "title": "Denar",
+      "x-country-names": [ "NORTH MACEDONIA" ],
+      "x-minor-unit": 2,
+      "const": 807
+    },
+    {
+      "title": "Egyptian Pound",
+      "x-country-names": [ "EGYPT" ],
+      "x-minor-unit": 2,
+      "const": 818
+    },
+    {
+      "title": "Pound Sterling",
+      "x-country-names": [
+        "GUERNSEY",
+        "ISLE OF MAN",
+        "JERSEY",
+        "UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN IRELAND (THE)"
+      ],
+      "x-minor-unit": 2,
+      "const": 826
+    },
+    {
+      "title": "Tanzanian Shilling",
+      "x-country-names": [ "TANZANIA, UNITED REPUBLIC OF" ],
+      "x-minor-unit": 2,
+      "const": 834
+    },
+    {
+      "title": "US Dollar",
+      "x-country-names": [
+        "AMERICAN SAMOA",
+        "BONAIRE, SINT EUSTATIUS AND SABA",
+        "BRITISH INDIAN OCEAN TERRITORY (THE)",
+        "ECUADOR",
+        "EL SALVADOR",
+        "GUAM",
+        "HAITI",
+        "MARSHALL ISLANDS (THE)",
+        "MICRONESIA (FEDERATED STATES OF)",
+        "NORTHERN MARIANA ISLANDS (THE)",
+        "PALAU",
+        "PANAMA",
+        "PUERTO RICO",
+        "TIMOR-LESTE",
+        "TURKS AND CAICOS ISLANDS (THE)",
+        "UNITED STATES MINOR OUTLYING ISLANDS (THE)",
+        "UNITED STATES OF AMERICA (THE)",
+        "VIRGIN ISLANDS (BRITISH)",
+        "VIRGIN ISLANDS (U.S.)"
+      ],
+      "x-minor-unit": 2,
+      "const": 840
+    },
+    {
+      "title": "Peso Uruguayo",
+      "x-country-names": [ "URUGUAY" ],
+      "x-minor-unit": 2,
+      "const": 858
+    },
+    {
+      "title": "Uzbekistan Sum",
+      "x-country-names": [ "UZBEKISTAN" ],
+      "x-minor-unit": 2,
+      "const": 860
+    },
+    {
+      "title": "Tala",
+      "x-country-names": [ "SAMOA" ],
+      "x-minor-unit": 2,
+      "const": 882
+    },
+    {
+      "title": "Yemeni Rial",
+      "x-country-names": [ "YEMEN" ],
+      "x-minor-unit": 2,
+      "const": 886
+    },
+    {
+      "title": "New Taiwan Dollar",
+      "x-country-names": [ "TAIWAN (PROVINCE OF CHINA)" ],
+      "x-minor-unit": 2,
+      "const": 901
+    },
+    {
+      "title": "Zimbabwe Gold",
+      "x-country-names": [ "ZIMBABWE" ],
+      "x-minor-unit": 2,
+      "const": 924
+    },
+    {
+      "title": "Leone",
+      "x-country-names": [ "SIERRA LEONE" ],
+      "x-minor-unit": 2,
+      "const": 925
+    },
+    {
+      "title": "Bolívar Soberano",
+      "x-country-names": [ "VENEZUELA (BOLIVARIAN REPUBLIC OF)" ],
+      "x-minor-unit": 2,
+      "const": 926
+    },
+    {
+      "title": "Unidad Previsional",
+      "x-country-names": [ "URUGUAY" ],
+      "x-minor-unit": 4,
+      "const": 927
+    },
+    {
+      "title": "Bolívar Soberano",
+      "x-country-names": [ "VENEZUELA (BOLIVARIAN REPUBLIC OF)" ],
+      "x-minor-unit": 2,
+      "const": 928
+    },
+    {
+      "title": "Ouguiya",
+      "x-country-names": [ "MAURITANIA" ],
+      "x-minor-unit": 2,
+      "const": 929
+    },
+    {
+      "title": "Dobra",
+      "x-country-names": [ "SAO TOME AND PRINCIPE" ],
+      "x-minor-unit": 2,
+      "const": 930
+    },
+    {
+      "title": "Belarusian Ruble",
+      "x-country-names": [ "BELARUS" ],
+      "x-minor-unit": 2,
+      "const": 933
+    },
+    {
+      "title": "Turkmenistan New Manat",
+      "x-country-names": [ "TURKMENISTAN" ],
+      "x-minor-unit": 2,
+      "const": 934
+    },
+    {
+      "title": "Ghana Cedi",
+      "x-country-names": [ "GHANA" ],
+      "x-minor-unit": 2,
+      "const": 936
+    },
+    {
+      "title": "Sudanese Pound",
+      "x-country-names": [ "SUDAN (THE)" ],
+      "x-minor-unit": 2,
+      "const": 938
+    },
+    {
+      "title": "Serbian Dinar",
+      "x-country-names": [ "SERBIA" ],
+      "x-minor-unit": 2,
+      "const": 941
+    },
+    {
+      "title": "Mozambique Metical",
+      "x-country-names": [ "MOZAMBIQUE" ],
+      "x-minor-unit": 2,
+      "const": 943
+    },
+    {
+      "title": "Azerbaijan Manat",
+      "x-country-names": [ "AZERBAIJAN" ],
+      "x-minor-unit": 2,
+      "const": 944
+    },
+    {
+      "title": "Romanian Leu",
+      "x-country-names": [ "ROMANIA" ],
+      "x-minor-unit": 2,
+      "const": 946
+    },
+    {
+      "title": "Turkish Lira",
+      "x-country-names": [ "TÜRKİYE" ],
+      "x-minor-unit": 2,
+      "const": 949
+    },
+    {
+      "title": "CFA Franc BEAC",
+      "x-country-names": [
+        "CAMEROON",
+        "CENTRAL AFRICAN REPUBLIC (THE)",
+        "CHAD",
+        "CONGO (THE)",
+        "EQUATORIAL GUINEA",
+        "GABON"
+      ],
+      "x-minor-unit": 0,
+      "const": 950
+    },
+    {
+      "title": "East Caribbean Dollar",
+      "x-country-names": [
+        "ANGUILLA",
+        "ANTIGUA AND BARBUDA",
+        "DOMINICA",
+        "GRENADA",
+        "MONTSERRAT",
+        "SAINT KITTS AND NEVIS",
+        "SAINT LUCIA",
+        "SAINT VINCENT AND THE GRENADINES"
+      ],
+      "x-minor-unit": 2,
+      "const": 951
+    },
+    {
+      "title": "CFA Franc BCEAO",
+      "x-country-names": [
+        "BENIN",
+        "BURKINA FASO",
+        "CÔTE D'IVOIRE",
+        "GUINEA-BISSAU",
+        "MALI",
+        "NIGER (THE)",
+        "SENEGAL",
+        "TOGO"
+      ],
+      "x-minor-unit": 0,
+      "const": 952
+    },
+    {
+      "title": "CFP Franc",
+      "x-country-names": [
+        "FRENCH POLYNESIA",
+        "NEW CALEDONIA",
+        "WALLIS AND FUTUNA"
+      ],
+      "x-minor-unit": 0,
+      "const": 953
+    },
+    {
+      "title": "Bond Markets Unit European Composite Unit (EURCO)",
+      "x-country-names": [ "ZZ01_Bond Markets Unit European_EURCO" ],
+      "x-minor-unit": null,
+      "const": 955
+    },
+    {
+      "title": "Bond Markets Unit European Monetary Unit (E.M.U.-6)",
+      "x-country-names": [ "ZZ02_Bond Markets Unit European_EMU-6" ],
+      "x-minor-unit": null,
+      "const": 956
+    },
+    {
+      "title": "Bond Markets Unit European Unit of Account 9 (E.U.A.-9)",
+      "x-country-names": [ "ZZ03_Bond Markets Unit European_EUA-9" ],
+      "x-minor-unit": null,
+      "const": 957
+    },
+    {
+      "title": "Bond Markets Unit European Unit of Account 17 (E.U.A.-17)",
+      "x-country-names": [ "ZZ04_Bond Markets Unit European_EUA-17" ],
+      "x-minor-unit": null,
+      "const": 958
+    },
+    {
+      "title": "SDR (Special Drawing Right)",
+      "x-country-names": [ "INTERNATIONAL MONETARY FUND (IMF)" ],
+      "x-minor-unit": null,
+      "const": 960
+    },
+    {
+      "title": "ADB Unit of Account",
+      "x-country-names": [
+        "MEMBER COUNTRIES OF THE AFRICAN DEVELOPMENT BANK GROUP"
+      ],
+      "x-minor-unit": null,
+      "const": 965
+    },
+    {
+      "title": "Zambian Kwacha",
+      "x-country-names": [ "ZAMBIA" ],
+      "x-minor-unit": 2,
+      "const": 967
+    },
+    {
+      "title": "Surinam Dollar",
+      "x-country-names": [ "SURINAME" ],
+      "x-minor-unit": 2,
+      "const": 968
+    },
+    {
+      "title": "Malagasy Ariary",
+      "x-country-names": [ "MADAGASCAR" ],
+      "x-minor-unit": 2,
+      "const": 969
+    },
+    {
+      "title": "Afghani",
+      "x-country-names": [ "AFGHANISTAN" ],
+      "x-minor-unit": 2,
+      "const": 971
+    },
+    {
+      "title": "Somoni",
+      "x-country-names": [ "TAJIKISTAN" ],
+      "x-minor-unit": 2,
+      "const": 972
+    },
+    {
+      "title": "Kwanza",
+      "x-country-names": [ "ANGOLA" ],
+      "x-minor-unit": 2,
+      "const": 973
+    },
+    {
+      "title": "Bulgarian Lev",
+      "x-country-names": [ "BULGARIA" ],
+      "x-minor-unit": 2,
+      "const": 975
+    },
+    {
+      "title": "Congolese Franc",
+      "x-country-names": [ "CONGO (THE DEMOCRATIC REPUBLIC OF THE)" ],
+      "x-minor-unit": 2,
+      "const": 976
+    },
+    {
+      "title": "Convertible Mark",
+      "x-country-names": [ "BOSNIA AND HERZEGOVINA" ],
+      "x-minor-unit": 2,
+      "const": 977
+    },
+    {
+      "title": "Euro",
+      "x-country-names": [
+        "ANDORRA",
+        "AUSTRIA",
+        "BELGIUM",
+        "CROATIA",
+        "CYPRUS",
+        "ESTONIA",
+        "EUROPEAN UNION",
+        "FINLAND",
+        "FRANCE",
+        "FRENCH GUIANA",
+        "FRENCH SOUTHERN TERRITORIES (THE)",
+        "GERMANY",
+        "GREECE",
+        "GUADELOUPE",
+        "HOLY SEE (THE)",
+        "IRELAND",
+        "ITALY",
+        "LATVIA",
+        "LITHUANIA",
+        "LUXEMBOURG",
+        "MALTA",
+        "MARTINIQUE",
+        "MAYOTTE",
+        "MONACO",
+        "MONTENEGRO",
+        "NETHERLANDS (THE)",
+        "PORTUGAL",
+        "RÉUNION",
+        "SAINT BARTHÉLEMY",
+        "SAINT MARTIN (FRENCH PART)",
+        "SAINT PIERRE AND MIQUELON",
+        "SAN MARINO",
+        "SLOVAKIA",
+        "SLOVENIA",
+        "SPAIN",
+        "ÅLAND ISLANDS"
+      ],
+      "x-minor-unit": 2,
+      "const": 978
+    },
+    {
+      "title": "Hryvnia",
+      "x-country-names": [ "UKRAINE" ],
+      "x-minor-unit": 2,
+      "const": 980
+    },
+    {
+      "title": "Lari",
+      "x-country-names": [ "GEORGIA" ],
+      "x-minor-unit": 2,
+      "const": 981
+    },
+    {
+      "title": "Zloty",
+      "x-country-names": [ "POLAND" ],
+      "x-minor-unit": 2,
+      "const": 985
+    },
+    {
+      "title": "Brazilian Real",
+      "x-country-names": [ "BRAZIL" ],
+      "x-minor-unit": 2,
+      "const": 986
+    },
+    {
+      "title": "Sucre",
+      "x-country-names": [
+        "SISTEMA UNITARIO DE COMPENSACION REGIONAL DE PAGOS \"SUCRE\""
+      ],
+      "x-minor-unit": null,
+      "const": 994
+    }
+  ]
+}

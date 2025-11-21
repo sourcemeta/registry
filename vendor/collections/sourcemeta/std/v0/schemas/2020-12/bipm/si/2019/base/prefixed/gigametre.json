@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gigametre",
+  "description": "A multiple of metre equal to 1e9 metre",
+  "examples": [ 0, 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 1000000000.0,
+  "x-symbol": "Gm",
+  "$ref": "../unit/metre.json"
+}

@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR volume Item Type units (2024-10-22)",
+  "description": "Valid units for volumeItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "bbl", "ft3", "gal" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Barrel",
+      "description": "Barrel (of Oil)",
+      "x-status": "REC",
+      "x-symbol": "bbl",
+      "const": "bbl"
+    },
+    {
+      "title": "Cubic Foot",
+      "description": "Cubic Foot",
+      "x-status": "REC",
+      "x-symbol": "ft³",
+      "const": "ft3"
+    },
+    {
+      "title": "Gallon",
+      "description": "US Gallon",
+      "x-status": "REC",
+      "x-symbol": "gal",
+      "const": "gal"
+    },
+    {
+      "title": "Thousand Barrels",
+      "description": "Thousands of Barrels (of Oil)",
+      "x-status": "REC",
+      "x-symbol": "MBbls",
+      "const": "MBbls"
+    },
+    {
+      "title": "Thousands Cubic Feet",
+      "description": "Thousands of Cubic Feet",
+      "x-status": "REC",
+      "x-symbol": "Mcf",
+      "const": "Mcf"
+    },
+    {
+      "title": "Million Barrels",
+      "description": "Millions of Barrels (of Oil)",
+      "x-status": "REC",
+      "x-symbol": "MMBbls",
+      "const": "MMBbls"
+    },
+    {
+      "title": "Millions Cubic Feet",
+      "description": "Millions of Cubic Feet",
+      "x-status": "REC",
+      "x-symbol": "MMcf",
+      "const": "MMcf"
+    },
+    {
+      "title": "Litre",
+      "description": "Litre",
+      "x-status": "REC",
+      "x-symbol": "l",
+      "const": "l"
+    },
+    {
+      "title": "Cubic Metre",
+      "description": "Cubic Metre",
+      "x-status": "REC",
+      "x-symbol": "m³",
+      "const": "m3"
+    },
+    {
+      "title": "Bushel",
+      "description": "US Bushel",
+      "x-status": "REC",
+      "x-symbol": "bu",
+      "const": "bu"
+    },
+    {
+      "title": "Acre-Foot",
+      "description": "Volume of one acre of surface area to a depth of one foot using a US survey foot",
+      "x-status": "REC",
+      "x-symbol": "acre ft",
+      "const": "aft"
+    },
+    {
+      "title": "Billions of cubic feet",
+      "description": "One thousand million cubic feet",
+      "x-status": "REC",
+      "x-symbol": "Bcf",
+      "const": "Bcf"
+    },
+    {
+      "title": "Trillions of cubic feet",
+      "description": "One trillion cubic feet",
+      "x-status": "REC",
+      "x-symbol": "Tcf",
+      "const": "Tcf"
+    },
+    {
+      "title": "Hectolitre",
+      "description": "A metric unit of volume equal to one hundred litres, used especially for wine, beer, grain and other agricultural produce",
+      "x-status": "CR",
+      "x-symbol": "hl",
+      "const": "hl"
+    },
+    {
+      "title": "Millions of hectolitres",
+      "description": "A million hectolitres (a metric unit of volume equal to one hundred litres, used especially for wine, beer, grain and other agricultural produce)",
+      "x-status": "CR",
+      "x-symbol": "Mhl",
+      "const": "Mhl"
+    },
+    {
+      "title": "Megalitre",
+      "description": "A million litres",
+      "x-status": "CR",
+      "x-symbol": "Ml",
+      "const": "Ml"
+    },
+    {
+      "title": "Thousand cubic metres",
+      "description": "A thousand cubic metres",
+      "x-status": "CR",
+      "x-symbol": "Mm³",
+      "const": "Mm3"
+    },
+    {
+      "title": "Twenty-foot equivalent unit",
+      "description": "A general (inexact) unit of cargo capacity, often used for container ships and container ports. The 'volume' of a 20-foot-long intermodal container, which vary in height, giving a range of possible volumes",
+      "x-status": "CR",
+      "x-symbol": "TEU",
+      "const": "TEU"
+    }
+  ]
+}

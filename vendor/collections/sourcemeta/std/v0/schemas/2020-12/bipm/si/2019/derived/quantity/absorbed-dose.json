@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Absorbed dose",
+  "description": "A derived quantity measured in grays",
+  "examples": [ 0, 0.001, 0.01, 1, 10, 100 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "$ref": "../unit/gray.json"
+}

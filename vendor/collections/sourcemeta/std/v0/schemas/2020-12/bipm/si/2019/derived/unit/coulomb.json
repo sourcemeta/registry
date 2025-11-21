@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Coulomb",
+  "description": "The SI unit of electric charge. It is equal to A s",
+  "examples": [ 0, 1, -1, 1.602e-19, 96485, 0.001 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "C",
+  "x-units": [ "../../base/unit/ampere.json", "../../base/unit/second.json" ],
+  "type": "number"
+}

@@ -1,0 +1,710 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Base unit symbol",
+  "description": "The symbol of an SI base unit or prefixed base unit",
+  "examples": [ "s", "m", "kg", "A", "K", "mol", "cd", "ms", "km", "g", "µA" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "anyOf": [
+    {
+      "title": "Second",
+      "const": "s"
+    },
+    {
+      "title": "Metre",
+      "const": "m"
+    },
+    {
+      "title": "Kilogram",
+      "const": "kg"
+    },
+    {
+      "title": "Ampere",
+      "const": "A"
+    },
+    {
+      "title": "Kelvin",
+      "const": "K"
+    },
+    {
+      "title": "Mole",
+      "const": "mol"
+    },
+    {
+      "title": "Candela",
+      "const": "cd"
+    },
+    {
+      "title": "Attoampere",
+      "const": "aA"
+    },
+    {
+      "title": "Attocandela",
+      "const": "acd"
+    },
+    {
+      "title": "Attogram",
+      "const": "ag"
+    },
+    {
+      "title": "Attokelvin",
+      "const": "aK"
+    },
+    {
+      "title": "Attometre",
+      "const": "am"
+    },
+    {
+      "title": "Attomole",
+      "const": "amol"
+    },
+    {
+      "title": "Attosecond",
+      "const": "as"
+    },
+    {
+      "title": "Centiampere",
+      "const": "cA"
+    },
+    {
+      "title": "Centicandela",
+      "const": "ccd"
+    },
+    {
+      "title": "Centigram",
+      "const": "cg"
+    },
+    {
+      "title": "Centikelvin",
+      "const": "cK"
+    },
+    {
+      "title": "Centimetre",
+      "const": "cm"
+    },
+    {
+      "title": "Centimole",
+      "const": "cmol"
+    },
+    {
+      "title": "Centisecond",
+      "const": "cs"
+    },
+    {
+      "title": "Decaampere",
+      "const": "daA"
+    },
+    {
+      "title": "Decacandela",
+      "const": "dacd"
+    },
+    {
+      "title": "Decagram",
+      "const": "dag"
+    },
+    {
+      "title": "Decakelvin",
+      "const": "daK"
+    },
+    {
+      "title": "Decametre",
+      "const": "dam"
+    },
+    {
+      "title": "Decamole",
+      "const": "damol"
+    },
+    {
+      "title": "Decasecond",
+      "const": "das"
+    },
+    {
+      "title": "Deciampere",
+      "const": "dA"
+    },
+    {
+      "title": "Decicandela",
+      "const": "dcd"
+    },
+    {
+      "title": "Decigram",
+      "const": "dg"
+    },
+    {
+      "title": "Decikelvin",
+      "const": "dK"
+    },
+    {
+      "title": "Decimetre",
+      "const": "dm"
+    },
+    {
+      "title": "Decimole",
+      "const": "dmol"
+    },
+    {
+      "title": "Decisecond",
+      "const": "ds"
+    },
+    {
+      "title": "Exaampere",
+      "const": "EA"
+    },
+    {
+      "title": "Exacandela",
+      "const": "Ecd"
+    },
+    {
+      "title": "Exagram",
+      "const": "Eg"
+    },
+    {
+      "title": "Exakelvin",
+      "const": "EK"
+    },
+    {
+      "title": "Exametre",
+      "const": "Em"
+    },
+    {
+      "title": "Examole",
+      "const": "Emol"
+    },
+    {
+      "title": "Exasecond",
+      "const": "Es"
+    },
+    {
+      "title": "Femtoampere",
+      "const": "fA"
+    },
+    {
+      "title": "Femtocandela",
+      "const": "fcd"
+    },
+    {
+      "title": "Femtogram",
+      "const": "fg"
+    },
+    {
+      "title": "Femtokelvin",
+      "const": "fK"
+    },
+    {
+      "title": "Femtometre",
+      "const": "fm"
+    },
+    {
+      "title": "Femtomole",
+      "const": "fmol"
+    },
+    {
+      "title": "Femtosecond",
+      "const": "fs"
+    },
+    {
+      "title": "Gigaampere",
+      "const": "GA"
+    },
+    {
+      "title": "Gigacandela",
+      "const": "Gcd"
+    },
+    {
+      "title": "Gigagram",
+      "const": "Gg"
+    },
+    {
+      "title": "Gigakelvin",
+      "const": "GK"
+    },
+    {
+      "title": "Gigametre",
+      "const": "Gm"
+    },
+    {
+      "title": "Gigamole",
+      "const": "Gmol"
+    },
+    {
+      "title": "Gigasecond",
+      "const": "Gs"
+    },
+    {
+      "title": "Gram",
+      "const": "g"
+    },
+    {
+      "title": "Hectoampere",
+      "const": "hA"
+    },
+    {
+      "title": "Hectocandela",
+      "const": "hcd"
+    },
+    {
+      "title": "Hectogram",
+      "const": "hg"
+    },
+    {
+      "title": "Hectokelvin",
+      "const": "hK"
+    },
+    {
+      "title": "Hectometre",
+      "const": "hm"
+    },
+    {
+      "title": "Hectomole",
+      "const": "hmol"
+    },
+    {
+      "title": "Hectosecond",
+      "const": "hs"
+    },
+    {
+      "title": "Kiloampere",
+      "const": "kA"
+    },
+    {
+      "title": "Kilocandela",
+      "const": "kcd"
+    },
+    {
+      "title": "Kilokelvin",
+      "const": "kK"
+    },
+    {
+      "title": "Kilometre",
+      "const": "km"
+    },
+    {
+      "title": "Kilomole",
+      "const": "kmol"
+    },
+    {
+      "title": "Kilosecond",
+      "const": "ks"
+    },
+    {
+      "title": "Megaampere",
+      "const": "MA"
+    },
+    {
+      "title": "Megacandela",
+      "const": "Mcd"
+    },
+    {
+      "title": "Megagram",
+      "const": "Mg"
+    },
+    {
+      "title": "Megakelvin",
+      "const": "MK"
+    },
+    {
+      "title": "Megametre",
+      "const": "Mm"
+    },
+    {
+      "title": "Megamole",
+      "const": "Mmol"
+    },
+    {
+      "title": "Megasecond",
+      "const": "Ms"
+    },
+    {
+      "title": "Microampere",
+      "const": "µA"
+    },
+    {
+      "title": "Microcandela",
+      "const": "µcd"
+    },
+    {
+      "title": "Microgram",
+      "const": "µg"
+    },
+    {
+      "title": "Microkelvin",
+      "const": "µK"
+    },
+    {
+      "title": "Micrometre",
+      "const": "µm"
+    },
+    {
+      "title": "Micromole",
+      "const": "µmol"
+    },
+    {
+      "title": "Microsecond",
+      "const": "µs"
+    },
+    {
+      "title": "Milliampere",
+      "const": "mA"
+    },
+    {
+      "title": "Millicandela",
+      "const": "mcd"
+    },
+    {
+      "title": "Milligram",
+      "const": "mg"
+    },
+    {
+      "title": "Millikelvin",
+      "const": "mK"
+    },
+    {
+      "title": "Millimetre",
+      "const": "mm"
+    },
+    {
+      "title": "Millimole",
+      "const": "mmol"
+    },
+    {
+      "title": "Millisecond",
+      "const": "ms"
+    },
+    {
+      "title": "Nanoampere",
+      "const": "nA"
+    },
+    {
+      "title": "Nanocandela",
+      "const": "ncd"
+    },
+    {
+      "title": "Nanogram",
+      "const": "ng"
+    },
+    {
+      "title": "Nanokelvin",
+      "const": "nK"
+    },
+    {
+      "title": "Nanometre",
+      "const": "nm"
+    },
+    {
+      "title": "Nanomole",
+      "const": "nmol"
+    },
+    {
+      "title": "Nanosecond",
+      "const": "ns"
+    },
+    {
+      "title": "Petaampere",
+      "const": "PA"
+    },
+    {
+      "title": "Petacandela",
+      "const": "Pcd"
+    },
+    {
+      "title": "Petagram",
+      "const": "Pg"
+    },
+    {
+      "title": "Petakelvin",
+      "const": "PK"
+    },
+    {
+      "title": "Petametre",
+      "const": "Pm"
+    },
+    {
+      "title": "Petamole",
+      "const": "Pmol"
+    },
+    {
+      "title": "Petasecond",
+      "const": "Ps"
+    },
+    {
+      "title": "Picoampere",
+      "const": "pA"
+    },
+    {
+      "title": "Picocandela",
+      "const": "pcd"
+    },
+    {
+      "title": "Picogram",
+      "const": "pg"
+    },
+    {
+      "title": "Picokelvin",
+      "const": "pK"
+    },
+    {
+      "title": "Picometre",
+      "const": "pm"
+    },
+    {
+      "title": "Picomole",
+      "const": "pmol"
+    },
+    {
+      "title": "Picosecond",
+      "const": "ps"
+    },
+    {
+      "title": "Quectoampere",
+      "const": "qA"
+    },
+    {
+      "title": "Quectocandela",
+      "const": "qcd"
+    },
+    {
+      "title": "Quectogram",
+      "const": "qg"
+    },
+    {
+      "title": "Quectokelvin",
+      "const": "qK"
+    },
+    {
+      "title": "Quectometre",
+      "const": "qm"
+    },
+    {
+      "title": "Quectomole",
+      "const": "qmol"
+    },
+    {
+      "title": "Quectosecond",
+      "const": "qs"
+    },
+    {
+      "title": "Quettaampere",
+      "const": "QA"
+    },
+    {
+      "title": "Quettacandela",
+      "const": "Qcd"
+    },
+    {
+      "title": "Quettagram",
+      "const": "Qg"
+    },
+    {
+      "title": "Quettakelvin",
+      "const": "QK"
+    },
+    {
+      "title": "Quettametre",
+      "const": "Qm"
+    },
+    {
+      "title": "Quettamole",
+      "const": "Qmol"
+    },
+    {
+      "title": "Quettasecond",
+      "const": "Qs"
+    },
+    {
+      "title": "Ronnaampere",
+      "const": "RA"
+    },
+    {
+      "title": "Ronnacandela",
+      "const": "Rcd"
+    },
+    {
+      "title": "Ronnagram",
+      "const": "Rg"
+    },
+    {
+      "title": "Ronnakelvin",
+      "const": "RK"
+    },
+    {
+      "title": "Ronnametre",
+      "const": "Rm"
+    },
+    {
+      "title": "Ronnamole",
+      "const": "Rmol"
+    },
+    {
+      "title": "Ronnasecond",
+      "const": "Rs"
+    },
+    {
+      "title": "Rontoampere",
+      "const": "rA"
+    },
+    {
+      "title": "Rontocandela",
+      "const": "rcd"
+    },
+    {
+      "title": "Rontogram",
+      "const": "rg"
+    },
+    {
+      "title": "Rontokelvin",
+      "const": "rK"
+    },
+    {
+      "title": "Rontometre",
+      "const": "rm"
+    },
+    {
+      "title": "Rontomole",
+      "const": "rmol"
+    },
+    {
+      "title": "Rontosecond",
+      "const": "rs"
+    },
+    {
+      "title": "Teraampere",
+      "const": "TA"
+    },
+    {
+      "title": "Teracandela",
+      "const": "Tcd"
+    },
+    {
+      "title": "Teragram",
+      "const": "Tg"
+    },
+    {
+      "title": "Terakelvin",
+      "const": "TK"
+    },
+    {
+      "title": "Terametre",
+      "const": "Tm"
+    },
+    {
+      "title": "Teramole",
+      "const": "Tmol"
+    },
+    {
+      "title": "Terasecond",
+      "const": "Ts"
+    },
+    {
+      "title": "Yoctoampere",
+      "const": "yA"
+    },
+    {
+      "title": "Yoctocandela",
+      "const": "ycd"
+    },
+    {
+      "title": "Yoctogram",
+      "const": "yg"
+    },
+    {
+      "title": "Yoctokelvin",
+      "const": "yK"
+    },
+    {
+      "title": "Yoctometre",
+      "const": "ym"
+    },
+    {
+      "title": "Yoctomole",
+      "const": "ymol"
+    },
+    {
+      "title": "Yoctosecond",
+      "const": "ys"
+    },
+    {
+      "title": "Yottaampere",
+      "const": "YA"
+    },
+    {
+      "title": "Yottacandela",
+      "const": "Ycd"
+    },
+    {
+      "title": "Yottagram",
+      "const": "Yg"
+    },
+    {
+      "title": "Yottakelvin",
+      "const": "YK"
+    },
+    {
+      "title": "Yottametre",
+      "const": "Ym"
+    },
+    {
+      "title": "Yottamole",
+      "const": "Ymol"
+    },
+    {
+      "title": "Yottasecond",
+      "const": "Ys"
+    },
+    {
+      "title": "Zeptoampere",
+      "const": "zA"
+    },
+    {
+      "title": "Zeptocandela",
+      "const": "zcd"
+    },
+    {
+      "title": "Zeptogram",
+      "const": "zg"
+    },
+    {
+      "title": "Zeptokelvin",
+      "const": "zK"
+    },
+    {
+      "title": "Zeptometre",
+      "const": "zm"
+    },
+    {
+      "title": "Zeptomole",
+      "const": "zmol"
+    },
+    {
+      "title": "Zeptosecond",
+      "const": "zs"
+    },
+    {
+      "title": "Zettaampere",
+      "const": "ZA"
+    },
+    {
+      "title": "Zettacandela",
+      "const": "Zcd"
+    },
+    {
+      "title": "Zettagram",
+      "const": "Zg"
+    },
+    {
+      "title": "Zettakelvin",
+      "const": "ZK"
+    },
+    {
+      "title": "Zettametre",
+      "const": "Zm"
+    },
+    {
+      "title": "Zettamole",
+      "const": "Zmol"
+    },
+    {
+      "title": "Zettasecond",
+      "const": "Zs"
+    }
+  ]
+}

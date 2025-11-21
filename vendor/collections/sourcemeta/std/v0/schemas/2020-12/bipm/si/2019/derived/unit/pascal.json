@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pascal",
+  "description": "The SI unit of pressure and stress. It is equal to N/m^2, which is equal to kg m^-1 s^-2",
+  "examples": [ 0, 101325, 1000, 100000, 1000000.0 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-symbol": "Pa",
+  "x-units": [
+    "../../base/unit/kilogram.json",
+    "../../base/unit/metre.json",
+    "../../base/unit/second.json"
+  ],
+  "type": "number",
+  "minimum": 0
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Quectokelvin",
+  "description": "A multiple of kelvin equal to 1e-30 kelvin",
+  "examples": [ 0, 1, 100, 1000 ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [ "https://www.bipm.org/en/publications/si-brochure" ],
+  "x-prefix-factor": 1e-30,
+  "x-symbol": "qK",
+  "$ref": "../unit/kelvin.json"
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XBRL UTR pressure Item Type units (2024-10-22)",
+  "description": "Valid units for pressureItemType as defined in the XBRL Units Type Registry",
+  "examples": [ "Pa", "Bar", "psi" ],
+  "x-license": "https://github.com/sourcemeta/std/blob/main/LICENSE",
+  "x-links": [
+    "https://www.xbrl.org/specification/utr/rec-2013-11-18/utr-rec-2013-11-18-clean.html",
+    "https://www.xbrl.org/utr/utr.xml"
+  ],
+  "anyOf": [
+    {
+      "title": "Pascal",
+      "description": "The pascal is the SI derived unit of pressure used to quantify internal pressure, stress, Young's modulus and ultimate tensile strength. It is defined as one newton per square meter",
+      "x-status": "REC",
+      "x-symbol": "Pa",
+      "const": "Pa"
+    },
+    {
+      "title": "Bar",
+      "description": "The bar is a metric unit of pressure, but is not approved as part of the International System of Units (SI). It is defined as exactly equal to 100000 Pa, which is slightly less than the current average atmospheric pressure on Earth at sea level",
+      "x-status": "REC",
+      "x-symbol": "bar",
+      "const": "Bar"
+    },
+    {
+      "title": "Pounds Per Square Inch",
+      "description": "The pound per square inch is a unit of pressure or of stress based on avoirdupois units. It is the pressure resulting from a force of one pound-force applied to an area of one square inch",
+      "x-status": "REC",
+      "x-symbol": "psi",
+      "const": "psi"
+    },
+    {
+      "title": "Standard Atmosphere",
+      "description": "The standard atmosphere is a unit of pressure defined as 101325 Pa (1.01325 bar). It is sometimes used as a reference or standard pressure",
+      "x-status": "REC",
+      "x-symbol": "atm",
+      "const": "atm"
+    }
+  ]
+}
