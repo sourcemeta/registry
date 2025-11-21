@@ -1,10 +1,10 @@
 vendorpull https://github.com/sourcemeta/vendorpull 1dcbac42809cf87cb5b045106b863e17ad84ba02
 uwebsockets https://github.com/uNetworking/uWebSockets v20.74.0
-core https://github.com/sourcemeta/core e00d491e5140054956403fed5e8d892cd066ad9d
-blaze https://github.com/sourcemeta/blaze bd450a8ec5c3e7ca4c32620a9dc4fb8ae05d1606
-jsonbinpack https://github.com/sourcemeta/jsonbinpack 56dd83ba8483391a694c017ceceafa46cf743259
-hydra https://github.com/sourcemeta/hydra 38206da873311f0d1fc5f851a9c38838459e89b9
-jsonschema https://github.com/sourcemeta/jsonschema v12.1.1
+core https://github.com/sourcemeta/core 429d5c0446a92284531f27883ede957f28bf73fc
+blaze https://github.com/sourcemeta/blaze 9046eccfec22d0672d91a10840eb5d49c8c31f39
+jsonbinpack https://github.com/sourcemeta/jsonbinpack abd40e41050d14d74af1fddb5c397de5cca3b13c
+hydra https://github.com/sourcemeta/hydra af9f2c54709d620872ead0c3f8f683c15a0fa702
+jsonschema https://github.com/sourcemeta/jsonschema v12.6.0
 bootstrap https://github.com/twbs/bootstrap v5.3.3
 bootstrap-icons https://github.com/twbs/icons v1.11.3
 collections/sourcemeta/std/v0 https://github.com/sourcemeta/std v0.2.0

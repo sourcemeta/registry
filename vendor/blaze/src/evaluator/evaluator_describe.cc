@@ -17,6 +17,16 @@ auto instruction_value(const T &step) -> decltype(auto) {
   }
 }
 
+template <typename T>
+auto describe_stringify(const sourcemeta::core::JSON &value, T &stream)
+    -> void {
+  if (value.is_decimal()) {
+    stream << value.to_decimal().to_string();
+  } else {
+    sourcemeta::core::stringify(value, stream);
+  }
+}
+
 auto to_string(const sourcemeta::core::JSON::Type type) -> std::string {
   // Otherwise the type "real" might not make a lot
   // of sense to JSON Schema users
@@ -27,6 +37,13 @@ auto to_string(const sourcemeta::core::JSON::Type type) -> std::string {
     result << type;
     return result.str();
   }
+}
+
+auto value_type_name(const sourcemeta::core::JSON &value) -> std::string {
+  if (value.type() == sourcemeta::core::JSON::Type::Decimal) {
+    return value.to_decimal().is_integer() ? "integer" : "number";
+  }
+  return to_string(value.type());
 }
 
 auto escape_string(const std::string &input) -> std::string {
@@ -53,36 +70,74 @@ auto describe_type_check(const bool valid,
   message << to_string(expected);
   if (!valid) {
     message << " but it was of type ";
-    message << to_string(current);
+    if (current == sourcemeta::core::JSON::Type::Decimal) {
+      message << "number";
+    } else {
+      message << to_string(current);
+    }
   }
 }
 
-auto describe_types_check(
-    const bool valid, const sourcemeta::core::JSON::Type current,
-    const std::vector<sourcemeta::core::JSON::Type> &expected,
-    std::ostringstream &message) -> void {
-  assert(expected.size() > 1);
-  auto copy = expected;
+auto describe_types_check(const bool valid,
+                          const sourcemeta::core::JSON::Type current,
+                          const ValueTypes expected,
+                          std::ostringstream &message) -> void {
+  ValueTypes types{expected};
+  const auto has_real{types.test(
+      static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Real))};
+  const auto has_integer{types.test(
+      static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Integer))};
+  const auto has_decimal{types.test(
+      static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal))};
 
-  const auto match_real{
-      std::ranges::find(copy, sourcemeta::core::JSON::Type::Real)};
-  const auto match_integer{
-      std::ranges::find(copy, sourcemeta::core::JSON::Type::Integer)};
-  if (match_real != copy.cend() && match_integer != copy.cend()) {
-    copy.erase(match_integer);
+  if (has_real && has_integer) {
+    types.reset(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Integer));
+  }
+  if (has_real && has_decimal) {
+    types.reset(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal));
+  }
+  if (has_integer && has_decimal) {
+    types.reset(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal));
   }
 
-  if (copy.size() == 1) {
-    describe_type_check(valid, current, *(copy.cbegin()), message);
+  const auto popcount{types.count()};
+
+  if (popcount == 1) {
+    std::uint8_t type_index{0};
+    for (std::uint8_t bit{0}; bit < 8; bit++) {
+      if (types.test(bit)) {
+        type_index = bit;
+        break;
+      }
+    }
+    describe_type_check(valid, current,
+                        static_cast<sourcemeta::core::JSON::Type>(type_index),
+                        message);
     return;
   }
 
   message << "The value was expected to be of type ";
-  for (auto iterator = copy.cbegin(); iterator != copy.cend(); ++iterator) {
-    if (std::next(iterator) == copy.cend()) {
-      message << "or " << to_string(*iterator);
-    } else {
-      message << to_string(*iterator) << ", ";
+  bool first{true};
+  std::uint8_t last_bit{255};
+  for (std::uint8_t bit{0}; bit < 8; bit++) {
+    if (types.test(bit)) {
+      last_bit = bit;
+    }
+  }
+
+  for (std::uint8_t bit{0}; bit < 8; bit++) {
+    if (types.test(bit)) {
+      if (!first) {
+        message << ", ";
+      }
+      if (bit == last_bit) {
+        message << "or ";
+      }
+      message << to_string(static_cast<sourcemeta::core::JSON::Type>(bit));
+      first = false;
     }
   }
 
@@ -92,9 +147,12 @@ auto describe_types_check(
     message << " but it was of type ";
   }
 
-  if (valid && current == sourcemeta::core::JSON::Type::Integer &&
-      std::ranges::find(copy, sourcemeta::core::JSON::Type::Real) !=
-          copy.cend()) {
+  if (valid && current == sourcemeta::core::JSON::Type::Decimal &&
+      has_integer && !has_real) {
+    message << "integer";
+  } else if ((valid && current == sourcemeta::core::JSON::Type::Integer &&
+              has_real) ||
+             current == sourcemeta::core::JSON::Type::Decimal) {
     message << "number";
   } else {
     message << to_string(current);
@@ -445,9 +503,9 @@ auto describe(const bool valid, const Instruction &step,
            iterator != annotation.as_array().cend(); ++iterator) {
         if (std::next(iterator) == annotation.as_array().cend()) {
           message << "and ";
-          stringify(*iterator, message);
+          describe_stringify(*iterator, message);
         } else {
-          stringify(*iterator, message);
+          describe_stringify(*iterator, message);
           message << ", ";
         }
       }
@@ -499,7 +557,7 @@ auto describe(const bool valid, const Instruction &step,
       }
 
       message << " was expected to validate against the schema ";
-      stringify(annotation, message);
+      describe_stringify(annotation, message);
       return message.str();
     }
 
@@ -515,14 +573,14 @@ auto describe(const bool valid, const Instruction &step,
       }
 
       message << " was expected to be ";
-      stringify(annotation, message);
+      describe_stringify(annotation, message);
       return message.str();
     }
 
     std::ostringstream message;
     message << "The unrecognized keyword " << escape_string(keyword)
             << " was collected as the annotation ";
-    stringify(annotation, message);
+    describe_stringify(annotation, message);
     return message.str();
   }
 
@@ -751,12 +809,60 @@ auto describe(const bool valid, const Instruction &step,
       sourcemeta::blaze::InstructionIndex::LoopPropertiesTypeStrictAny) {
     std::ostringstream message;
     message << "The object properties were expected to be of type ";
-    const auto &types{instruction_value<ValueTypes>(step)};
-    for (auto iterator = types.cbegin(); iterator != types.cend(); ++iterator) {
-      if (std::next(iterator) == types.cend()) {
-        message << "or " << to_string(*iterator);
-      } else {
-        message << to_string(*iterator) << ", ";
+    ValueTypes types{instruction_value<ValueTypes>(step)};
+
+    const auto has_real{types.test(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Real))};
+    const auto has_integer{types.test(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Integer))};
+    const auto has_decimal{types.test(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal))};
+
+    if (has_real && has_integer) {
+      types.reset(
+          static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Integer));
+    }
+    if (has_real && has_decimal) {
+      types.reset(
+          static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal));
+    }
+    if (has_integer && has_decimal) {
+      types.reset(
+          static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal));
+    }
+
+    const auto popcount{types.count()};
+
+    if (popcount == 1) {
+      std::uint8_t type_index{0};
+      for (std::uint8_t bit{0}; bit < 8; bit++) {
+        if (types.test(bit)) {
+          type_index = bit;
+          break;
+        }
+      }
+      message << to_string(
+          static_cast<sourcemeta::core::JSON::Type>(type_index));
+    } else {
+      bool first{true};
+      std::uint8_t last_bit{255};
+      for (std::uint8_t bit{0}; bit < 8; bit++) {
+        if (types.test(bit)) {
+          last_bit = bit;
+        }
+      }
+
+      for (std::uint8_t bit{0}; bit < 8; bit++) {
+        if (types.test(bit)) {
+          if (!first) {
+            message << ", ";
+          }
+          if (bit == last_bit) {
+            message << "or ";
+          }
+          message << to_string(static_cast<sourcemeta::core::JSON::Type>(bit));
+          first = false;
+        }
       }
     }
 
@@ -767,12 +873,60 @@ auto describe(const bool valid, const Instruction &step,
                        LoopPropertiesTypeStrictAnyEvaluate) {
     std::ostringstream message;
     message << "The object properties were expected to be of type ";
-    const auto &types{instruction_value<ValueTypes>(step)};
-    for (auto iterator = types.cbegin(); iterator != types.cend(); ++iterator) {
-      if (std::next(iterator) == types.cend()) {
-        message << "or " << to_string(*iterator);
-      } else {
-        message << to_string(*iterator) << ", ";
+    ValueTypes types{instruction_value<ValueTypes>(step)};
+
+    const auto has_real{types.test(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Real))};
+    const auto has_integer{types.test(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Integer))};
+    const auto has_decimal{types.test(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal))};
+
+    if (has_real && has_integer) {
+      types.reset(
+          static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Integer));
+    }
+    if (has_real && has_decimal) {
+      types.reset(
+          static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal));
+    }
+    if (has_integer && has_decimal) {
+      types.reset(
+          static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal));
+    }
+
+    const auto popcount{types.count()};
+
+    if (popcount == 1) {
+      std::uint8_t type_index{0};
+      for (std::uint8_t bit{0}; bit < 8; bit++) {
+        if (types.test(bit)) {
+          type_index = bit;
+          break;
+        }
+      }
+      message << to_string(
+          static_cast<sourcemeta::core::JSON::Type>(type_index));
+    } else {
+      bool first{true};
+      std::uint8_t last_bit{255};
+      for (std::uint8_t bit{0}; bit < 8; bit++) {
+        if (types.test(bit)) {
+          last_bit = bit;
+        }
+      }
+
+      for (std::uint8_t bit{0}; bit < 8; bit++) {
+        if (types.test(bit)) {
+          if (!first) {
+            message << ", ";
+          }
+          if (bit == last_bit) {
+            message << "or ";
+          }
+          message << to_string(static_cast<sourcemeta::core::JSON::Type>(bit));
+          first = false;
+        }
       }
     }
 
@@ -856,12 +1010,60 @@ auto describe(const bool valid, const Instruction &step,
       sourcemeta::blaze::InstructionIndex::LoopItemsTypeStrictAny) {
     std::ostringstream message;
     message << "The array items were expected to be of type ";
-    const auto &types{instruction_value<ValueTypes>(step)};
-    for (auto iterator = types.cbegin(); iterator != types.cend(); ++iterator) {
-      if (std::next(iterator) == types.cend()) {
-        message << "or " << to_string(*iterator);
-      } else {
-        message << to_string(*iterator) << ", ";
+    ValueTypes types{instruction_value<ValueTypes>(step)};
+
+    const auto has_real{types.test(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Real))};
+    const auto has_integer{types.test(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Integer))};
+    const auto has_decimal{types.test(
+        static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal))};
+
+    if (has_real && has_integer) {
+      types.reset(
+          static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Integer));
+    }
+    if (has_real && has_decimal) {
+      types.reset(
+          static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal));
+    }
+    if (has_integer && has_decimal) {
+      types.reset(
+          static_cast<std::uint8_t>(sourcemeta::core::JSON::Type::Decimal));
+    }
+
+    const auto popcount{types.count()};
+
+    if (popcount == 1) {
+      std::uint8_t type_index{0};
+      for (std::uint8_t bit{0}; bit < 8; bit++) {
+        if (types.test(bit)) {
+          type_index = bit;
+          break;
+        }
+      }
+      message << to_string(
+          static_cast<sourcemeta::core::JSON::Type>(type_index));
+    } else {
+      bool first{true};
+      std::uint8_t last_bit{255};
+      for (std::uint8_t bit{0}; bit < 8; bit++) {
+        if (types.test(bit)) {
+          last_bit = bit;
+        }
+      }
+
+      for (std::uint8_t bit{0}; bit < 8; bit++) {
+        if (types.test(bit)) {
+          if (!first) {
+            message << ", ";
+          }
+          if (bit == last_bit) {
+            message << "or ";
+          }
+          message << to_string(static_cast<sourcemeta::core::JSON::Type>(bit));
+          first = false;
+        }
       }
     }
 
@@ -1072,19 +1274,8 @@ auto describe(const bool valid, const Instruction &step,
 
   if (step.type == sourcemeta::blaze::InstructionIndex::AssertionTypeStrict) {
     std::ostringstream message;
-    const auto &value{instruction_value<ValueType>(step)};
-    if (!valid && value == sourcemeta::core::JSON::Type::Real &&
-        target.type() == sourcemeta::core::JSON::Type::Integer) {
-      message
-          << "The value was expected to be a real number but it was an integer";
-    } else if (!valid && value == sourcemeta::core::JSON::Type::Integer &&
-               target.type() == sourcemeta::core::JSON::Type::Real) {
-      message
-          << "The value was expected to be an integer but it was a real number";
-    } else {
-      describe_type_check(valid, target.type(), value, message);
-    }
-
+    describe_type_check(valid, target.type(),
+                        instruction_value<ValueType>(step), message);
     return message.str();
   }
 
@@ -1235,7 +1426,7 @@ auto describe(const bool valid, const Instruction &step,
                 << escape_string(instance_location.back().to_property());
       } else {
         message << "The string value ";
-        stringify(target, message);
+        describe_stringify(target, message);
       }
 
       message << " was expected to consist of at most " << maximum
@@ -1277,7 +1468,7 @@ auto describe(const bool valid, const Instruction &step,
                 << escape_string(instance_location.back().to_property());
       } else {
         message << "The string value ";
-        stringify(target, message);
+        describe_stringify(target, message);
       }
 
       message << " was expected to consist of at least " << minimum
@@ -1484,45 +1675,45 @@ auto describe(const bool valid, const Instruction &step,
               << escape_string(instance_location.back().to_property());
     } else {
       message << "The " << to_string(target.type()) << " value ";
-      stringify(target, message);
+      describe_stringify(target, message);
     }
 
     message << " was expected to equal the " << to_string(value.type())
             << " constant ";
-    stringify(value, message);
+    describe_stringify(value, message);
     return message.str();
   }
 
   if (step.type == sourcemeta::blaze::InstructionIndex::AssertionGreaterEqual) {
     std::ostringstream message;
     const auto &value{instruction_value<ValueJSON>(step)};
-    message << "The " << to_string(target.type()) << " value ";
-    stringify(target, message);
+    message << "The " << value_type_name(target) << " value ";
+    describe_stringify(target, message);
     message << " was expected to be greater than or equal to the "
-            << to_string(value.type()) << " ";
-    stringify(value, message);
+            << value_type_name(value) << " ";
+    describe_stringify(value, message);
     return message.str();
   }
 
   if (step.type == sourcemeta::blaze::InstructionIndex::AssertionLessEqual) {
     std::ostringstream message;
     const auto &value{instruction_value<ValueJSON>(step)};
-    message << "The " << to_string(target.type()) << " value ";
-    stringify(target, message);
+    message << "The " << value_type_name(target) << " value ";
+    describe_stringify(target, message);
     message << " was expected to be less than or equal to the "
-            << to_string(value.type()) << " ";
-    stringify(value, message);
+            << value_type_name(value) << " ";
+    describe_stringify(value, message);
     return message.str();
   }
 
   if (step.type == sourcemeta::blaze::InstructionIndex::AssertionGreater) {
     std::ostringstream message;
     const auto &value{instruction_value<ValueJSON>(step)};
-    message << "The " << to_string(target.type()) << " value ";
-    stringify(target, message);
-    message << " was expected to be greater than the "
-            << to_string(value.type()) << " ";
-    stringify(value, message);
+    message << "The " << value_type_name(target) << " value ";
+    describe_stringify(target, message);
+    message << " was expected to be greater than the " << value_type_name(value)
+            << " ";
+    describe_stringify(value, message);
     if (!valid && value == target) {
       message << ", but they were equal";
     }
@@ -1533,11 +1724,11 @@ auto describe(const bool valid, const Instruction &step,
   if (step.type == sourcemeta::blaze::InstructionIndex::AssertionLess) {
     std::ostringstream message;
     const auto &value{instruction_value<ValueJSON>(step)};
-    message << "The " << to_string(target.type()) << " value ";
-    stringify(target, message);
-    message << " was expected to be less than the " << to_string(value.type())
+    message << "The " << value_type_name(target) << " value ";
+    describe_stringify(target, message);
+    message << " was expected to be less than the " << value_type_name(value)
             << " ";
-    stringify(value, message);
+    describe_stringify(value, message);
     if (!valid && value == target) {
       message << ", but they were equal";
     }
@@ -1567,16 +1758,16 @@ auto describe(const bool valid, const Instruction &step,
       message << "The array value contained the following duplicate";
       if (duplicates.size() == 1) {
         message << " item: ";
-        stringify(*(duplicates.cbegin()), message);
+        describe_stringify(*(duplicates.cbegin()), message);
       } else {
         message << " items: ";
         for (auto subiterator = duplicates.cbegin();
              subiterator != duplicates.cend(); ++subiterator) {
           if (std::next(subiterator) == duplicates.cend()) {
             message << "and ";
-            stringify(*subiterator, message);
+            describe_stringify(*subiterator, message);
           } else {
-            stringify(*subiterator, message);
+            describe_stringify(*subiterator, message);
             message << ", ";
           }
         }
@@ -1589,11 +1780,11 @@ auto describe(const bool valid, const Instruction &step,
   if (step.type == sourcemeta::blaze::InstructionIndex::AssertionDivisible) {
     std::ostringstream message;
     const auto &value{instruction_value<ValueJSON>(step)};
-    message << "The " << to_string(target.type()) << " value ";
-    stringify(target, message);
-    message << " was expected to be divisible by the "
-            << to_string(value.type()) << " ";
-    stringify(value, message);
+    message << "The " << value_type_name(target) << " value ";
+    describe_stringify(target, message);
+    message << " was expected to be divisible by the " << value_type_name(value)
+            << " ";
+    describe_stringify(value, message);
     return message.str();
   }
 
@@ -1612,13 +1803,13 @@ auto describe(const bool valid, const Instruction &step,
               << escape_string(instance_location.back().to_property());
     } else {
       message << "The " << to_string(target.type()) << " value ";
-      stringify(target, message);
+      describe_stringify(target, message);
     }
 
     if (value.size() == 1) {
       message << " was expected to equal the "
               << to_string(value.cbegin()->type()) << " constant ";
-      stringify(*(value.cbegin()), message);
+      describe_stringify(*(value.cbegin()), message);
     } else {
       if (valid) {
         message << " was expected to equal one of the " << value.size()
@@ -1631,9 +1822,9 @@ auto describe(const bool valid, const Instruction &step,
              ++iterator) {
           if (std::next(iterator) == copy.cend()) {
             message << "and ";
-            stringify(*iterator, message);
+            describe_stringify(*iterator, message);
           } else {
-            stringify(*iterator, message);
+            describe_stringify(*iterator, message);
             message << ", ";
           }
         }
@@ -1659,7 +1850,7 @@ auto describe(const bool valid, const Instruction &step,
               << escape_string(instance_location.back().to_property());
     } else {
       message << "The " << to_string(target.type()) << " value ";
-      stringify(target, message);
+      describe_stringify(target, message);
     }
 
     if (value.size() == 1) {
@@ -1689,76 +1880,32 @@ auto describe(const bool valid, const Instruction &step,
 
   if (step.type == sourcemeta::blaze::InstructionIndex::AssertionPropertyType) {
     std::ostringstream message;
-    const auto &value{instruction_value<ValueType>(step)};
-    if (!valid && value == sourcemeta::core::JSON::Type::Real &&
-        target.type() == sourcemeta::core::JSON::Type::Integer) {
-      message
-          << "The value was expected to be a real number but it was an integer";
-    } else if (!valid && value == sourcemeta::core::JSON::Type::Integer &&
-               target.type() == sourcemeta::core::JSON::Type::Real) {
-      message
-          << "The value was expected to be an integer but it was a real number";
-    } else {
-      describe_type_check(valid, target.type(), value, message);
-    }
-
+    describe_type_check(valid, target.type(),
+                        instruction_value<ValueType>(step), message);
     return message.str();
   }
 
   if (step.type ==
       sourcemeta::blaze::InstructionIndex::AssertionPropertyTypeEvaluate) {
     std::ostringstream message;
-    const auto &value{instruction_value<ValueType>(step)};
-    if (!valid && value == sourcemeta::core::JSON::Type::Real &&
-        target.type() == sourcemeta::core::JSON::Type::Integer) {
-      message
-          << "The value was expected to be a real number but it was an integer";
-    } else if (!valid && value == sourcemeta::core::JSON::Type::Integer &&
-               target.type() == sourcemeta::core::JSON::Type::Real) {
-      message
-          << "The value was expected to be an integer but it was a real number";
-    } else {
-      describe_type_check(valid, target.type(), value, message);
-    }
-
+    describe_type_check(valid, target.type(),
+                        instruction_value<ValueType>(step), message);
     return message.str();
   }
 
   if (step.type ==
       sourcemeta::blaze::InstructionIndex::AssertionPropertyTypeStrict) {
     std::ostringstream message;
-    const auto &value{instruction_value<ValueType>(step)};
-    if (!valid && value == sourcemeta::core::JSON::Type::Real &&
-        target.type() == sourcemeta::core::JSON::Type::Integer) {
-      message
-          << "The value was expected to be a real number but it was an integer";
-    } else if (!valid && value == sourcemeta::core::JSON::Type::Integer &&
-               target.type() == sourcemeta::core::JSON::Type::Real) {
-      message
-          << "The value was expected to be an integer but it was a real number";
-    } else {
-      describe_type_check(valid, target.type(), value, message);
-    }
-
+    describe_type_check(valid, target.type(),
+                        instruction_value<ValueType>(step), message);
     return message.str();
   }
 
   if (step.type == sourcemeta::blaze::InstructionIndex::
                        AssertionPropertyTypeStrictEvaluate) {
     std::ostringstream message;
-    const auto &value{instruction_value<ValueType>(step)};
-    if (!valid && value == sourcemeta::core::JSON::Type::Real &&
-        target.type() == sourcemeta::core::JSON::Type::Integer) {
-      message
-          << "The value was expected to be a real number but it was an integer";
-    } else if (!valid && value == sourcemeta::core::JSON::Type::Integer &&
-               target.type() == sourcemeta::core::JSON::Type::Real) {
-      message
-          << "The value was expected to be an integer but it was a real number";
-    } else {
-      describe_type_check(valid, target.type(), value, message);
-    }
-
+    describe_type_check(valid, target.type(),
+                        instruction_value<ValueType>(step), message);
     return message.str();
   }
 

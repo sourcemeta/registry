@@ -110,11 +110,9 @@ struct GENERATE_EXPLORER_SCHEMA_METADATA {
     const auto schema{
         sourcemeta::registry::read_json_with_metadata(dependencies.front())};
     auto id{sourcemeta::core::identify(
-        schema.data,
-        [&callback, &context](const auto identifier) {
+        schema.data, [&callback, &context](const auto identifier) {
           return std::get<0>(context).get()(identifier, callback);
-        },
-        sourcemeta::core::SchemaIdentificationStrategy::Loose)};
+        })};
     assert(id.has_value());
     auto result{sourcemeta::core::JSON::make_object()};
 

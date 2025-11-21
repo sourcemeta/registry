@@ -567,6 +567,10 @@ auto main(int argc, char *argv[]) noexcept -> int {
     std::cerr << "error: " << error.what() << "\n  at " << error.uri()
               << "\n  with base " << error.base() << "\n";
     return EXIT_FAILURE;
+  } catch (const sourcemeta::core::SchemaReferenceObjectResourceError &error) {
+    std::cerr << "error: " << error.what() << "\n  " << error.identifier()
+              << "\n";
+    return EXIT_FAILURE;
   } catch (const sourcemeta::core::SchemaResolutionError &error) {
     std::cerr << "error: " << error.what() << "\n  " << error.id()
               << "\n\nDid you forget to register a schema with such URI in the "

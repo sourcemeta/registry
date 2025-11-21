@@ -1,5 +1,5 @@
 {
-  "$ref": "#/definitions/event",
+  "allOf": [ { "$ref": "#/definitions/event" } ],
   "definitions": {
     "specversion": {
       "type": "string",

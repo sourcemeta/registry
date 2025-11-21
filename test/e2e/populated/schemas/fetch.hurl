@@ -59,20 +59,6 @@ HTTP 200
   "type": "string"
 }
 
-GET {{base}}/test/schemas/draft4-top-level-ref.json
-HTTP 200
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "{{base}}/test/schemas/draft4-top-level-ref",
-  "examples": [ "draft4 does not define `examples`!" ],
-  "$ref": "#/definitions/foo",
-  "definitions": {
-    "foo": {
-      "type": "string"
-    }
-  }
-}
-
 GET {{base}}/test/schemas/with-rebase-same-host.json
 HTTP 200
 {
@@ -145,15 +131,6 @@ HTTP 200
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "{{base}}/test/schemas/no-schema-nor-id",
   "type": "string"
-}
-
-# Adding `$id` when there is a top-level `$ref`
-GET {{base}}/test/schemas/no-id-draft7-ref.json
-HTTP 200
-{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "{{base}}/test/schemas/no-id-draft7-ref",
-  "$ref": "string"
 }
 
 # With absolute references

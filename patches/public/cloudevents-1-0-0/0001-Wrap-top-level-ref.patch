@@ -1,0 +1,24 @@
+From e98c16dc6f804919d3dbf1c729c36fe324a129ad Mon Sep 17 00:00:00 2001
+From: Juan Cruz Viotti <jv@jviotti.com>
+Date: Fri, 21 Nov 2025 13:29:39 -0400
+Subject: [PATCH] Wrap top-level `$ref`
+
+Signed-off-by: Juan Cruz Viotti <jv@jviotti.com>
+---
+ spec.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/spec.json b/spec.json
+index 691e3f9..c969f69 100644
+--- a/spec.json
++++ b/spec.json
+@@ -1,5 +1,5 @@
+ {
+-  "$ref": "#/definitions/event",
++  "allOf": [ { "$ref": "#/definitions/event" } ],
+   "definitions": {
+     "specversion": {
+       "type": "string",
+-- 
+2.52.0
+

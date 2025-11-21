@@ -160,15 +160,13 @@ auto Resolver::operator()(
 
   sourcemeta::core::SchemaFrame frame{
       sourcemeta::core::SchemaFrame::Mode::Locations};
-  const auto has_identifier{
-      sourcemeta::core::identify(
-          schema,
-          [this](const auto subidentifier) {
-            return this->operator()(subidentifier);
-          },
-          sourcemeta::core::SchemaIdentificationStrategy::Strict,
-          result->second.dialect)
-          .has_value()};
+  const auto has_identifier{sourcemeta::core::identify(
+                                schema,
+                                [this](const auto subidentifier) {
+                                  return this->operator()(subidentifier);
+                                },
+                                result->second.dialect)
+                                .has_value()};
   frame.analyse(
       schema, sourcemeta::core::schema_official_walker,
       [this](const auto subidentifier) {
@@ -259,7 +257,6 @@ auto Resolver::add(const sourcemeta::core::JSON::String &server_url,
           [this](const auto subidentifier) {
             return this->operator()(subidentifier);
           },
-          sourcemeta::core::SchemaIdentificationStrategy::Loose,
           collection.default_dialect, default_identifier)
           // We can safely assume this as we pass a default identifier
           .value())};
