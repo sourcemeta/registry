@@ -103,7 +103,7 @@ TEST(save_creates_the_directory_it_writes_into) {
 TEST(save_rejects_any_policy) {
   const std::array<std::string_view, 1> paths{{"/internal"}};
   const std::array<sourcemeta::one::Authentication::Policy, 1> policies{
-      {{paths, {}}}};
+      {{.paths = paths}}};
   const auto path{test_path("community_policy.bin")};
   try {
     save(policies, path, path, anywhere);
