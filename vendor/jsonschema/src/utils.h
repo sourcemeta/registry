@@ -18,6 +18,7 @@
 
 #include <algorithm>   // std::max, std::ranges::all_of
 #include <cctype>      // std::isdigit
+#include <cstddef>     // std::size_t
 #include <filesystem>  // std::filesystem::path
 #include <memory>      // std::make_shared
 #include <optional>    // std::optional
@@ -445,31 +446,23 @@ inline auto print(const Entries &output,
   }
 }
 
-inline auto
-print_annotations(const sourcemeta::blaze::SimpleOutput &output,
-                  const sourcemeta::core::Options &options,
-                  const sourcemeta::core::PointerPositionTracker &tracker,
-                  std::ostream &stream) -> void {
-  if (options.contains("verbose")) {
-    for (const auto &annotation : output.annotations()) {
-      stream << "annotation: ";
-      sourcemeta::core::stringify(annotation.value, stream);
-      stream << "\n  at instance location \"";
-      sourcemeta::core::stringify(annotation.instance_location, stream);
-      stream << "\"";
+struct ValidationSummary {
+  std::size_t validated{0};
+  std::size_t failed{0};
+  bool stopped{false};
+};
 
-      const auto position{tracker.get(
-          sourcemeta::core::to_pointer(annotation.instance_location))};
-      if (position.has_value()) {
-        const auto [line, column, end_line, end_column] = position.value();
-        stream << " (line " << line << ", column " << column << ")";
-      }
-
-      stream << "\n  at evaluate path \"";
-      sourcemeta::core::stringify(annotation.evaluate_path, stream);
-      stream << "\"\n";
-    }
+inline auto print_summary(const ValidationSummary &summary,
+                          const sourcemeta::core::Options &options,
+                          std::ostream &stream) -> void {
+  if (summary.failed > 0 || options.contains("verbose") ||
+      options.contains("debug")) {
+    stream << "\n";
   }
+
+  stream << summary.validated << " validated, "
+         << (summary.validated - summary.failed) << " passed, "
+         << summary.failed << " failed\n";
 }
 
 inline auto

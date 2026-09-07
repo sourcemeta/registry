@@ -315,7 +315,7 @@ auto Resolver::operator()(
     const auto maybe_ref{subschema.try_at("$ref", ref_hash)};
     const auto maybe_dynamic_ref{
         location.base_dialect ==
-                sourcemeta::blaze::SchemaBaseDialect::JSON_Schema_2020_12
+                sourcemeta::blaze::SchemaBaseDialect::JSON_SCHEMA_2020_12
             ? subschema.try_at("$dynamicRef", dynamic_ref_hash)
             : nullptr};
     const auto has_ref{maybe_ref && maybe_ref->is_string()};

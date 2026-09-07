@@ -12,6 +12,7 @@
 #include <chrono>      // std::chrono
 #include <cmath>       // std::sqrt
 #include <iostream>    // std::cerr
+#include <iterator>    // std::next
 #include <string>      // std::string
 #include <string_view> // std::string_view
 
@@ -144,13 +145,14 @@ auto process_entry(const sourcemeta::jsonschema::InputJSON &entry,
                    bool benchmark, std::uint64_t benchmark_loop, bool trace,
                    bool fast_mode, bool json_output, bool continue_on_error,
                    const std::filesystem::path &schema_resolution_base,
-                   const sourcemeta::core::Options &options, bool &result)
-    -> bool {
+                   const sourcemeta::core::Options &options,
+                   sourcemeta::jsonschema::ValidationSummary &summary) -> bool {
   sourcemeta::blaze::SimpleOutput output{entry.second};
   sourcemeta::blaze::TraceOutput trace_output{
       schema_template,
       sourcemeta::jsonschema::trace_callback(entry.positions, std::cout)};
   bool subresult{true};
+  summary.validated += 1;
   if (benchmark) {
     subresult = run_loop(evaluator, schema_template, entry.second, entry.first,
                          entry.multidocument
@@ -158,7 +160,7 @@ auto process_entry(const sourcemeta::jsonschema::InputJSON &entry,
                              : static_cast<std::int64_t>(-1),
                          benchmark_loop);
     if (!subresult) {
-      result = false;
+      summary.failed += 1;
     }
   } else if (trace) {
     subresult = evaluator.validate(schema_template, entry.second,
@@ -171,11 +173,13 @@ auto process_entry(const sourcemeta::jsonschema::InputJSON &entry,
   }
 
   if (benchmark) {
-    return true;
+    return subresult || continue_on_error;
   }
 
   if (trace) {
-    result = result && subresult;
+    if (!subresult) {
+      summary.failed += 1;
+    }
   } else if (json_output) {
     if (!entry.multidocument) {
       std::cerr << entry.first << "\n";
@@ -191,13 +195,13 @@ auto process_entry(const sourcemeta::jsonschema::InputJSON &entry,
     sourcemeta::core::prettify(suboutput, std::cout);
     std::cout << "\n";
     if (!suboutput.at("valid").to_boolean()) {
-      result = false;
-      if (entry.multidocument && !continue_on_error) {
+      summary.failed += 1;
+      if (!continue_on_error) {
         return false;
       }
     }
   } else if (subresult) {
-    if (continue_on_error && entry.multidocument && !result) {
+    if (continue_on_error && entry.multidocument && summary.failed > 0) {
       sourcemeta::jsonschema::LOG_VERBOSE(options) << "\n";
     }
     sourcemeta::jsonschema::LOG_VERBOSE(options) << "ok: " << entry.first;
@@ -209,10 +213,8 @@ auto process_entry(const sourcemeta::jsonschema::InputJSON &entry,
         << "\n  matches "
         << sourcemeta::jsonschema::stdin_path_string(schema_resolution_base)
         << "\n";
-    sourcemeta::jsonschema::print_annotations(output, options, entry.positions,
-                                              std::cerr);
   } else {
-    if (continue_on_error && entry.multidocument && !result) {
+    if (continue_on_error && entry.multidocument && summary.failed > 0) {
       std::cerr << "\n";
     }
     std::cerr << "fail: " << entry.first;
@@ -224,8 +226,8 @@ auto process_entry(const sourcemeta::jsonschema::InputJSON &entry,
       std::cerr << "\n";
     }
     sourcemeta::jsonschema::print(output, entry.positions, std::cerr);
-    result = false;
-    if (entry.multidocument && !continue_on_error) {
+    summary.failed += 1;
+    if (!continue_on_error) {
       return false;
     }
   }
@@ -335,7 +337,7 @@ auto sourcemeta::jsonschema::validate(const sourcemeta::core::Options &options)
 
   sourcemeta::blaze::Evaluator evaluator;
 
-  bool result{true};
+  ValidationSummary summary;
 
   std::vector<std::string_view> instance_arguments;
   if (options.positional().size() > 1) {
@@ -369,16 +371,21 @@ auto sourcemeta::jsonschema::validate(const sourcemeta::core::Options &options)
                                 "given a single instance"};
     }
 
-    for (const auto &entry : for_each_json({}, options)) {
-      if (!process_entry(entry, evaluator, schema_template, benchmark,
+    const auto entries{for_each_json({}, options, InputRequirement::NonEmpty)};
+    for (auto entry{entries.cbegin()}; entry != entries.cend(); ++entry) {
+      if (!process_entry(*entry, evaluator, schema_template, benchmark,
                          benchmark_loop, trace, fast_mode, json_output,
                          continue_on_error, schema_resolution_base, options,
-                         result)) {
+                         summary)) {
+        summary.stopped = std::next(entry) != entries.cend();
         break;
       }
     }
   } else {
-    for (const auto &instance_path_view : instance_arguments) {
+    bool proceed{true};
+    for (auto argument{instance_arguments.cbegin()};
+         argument != instance_arguments.cend(); ++argument) {
+      const auto &instance_path_view{*argument};
       const std::filesystem::path instance_path{instance_path_view};
       if (trace && (instance_path.extension() == ".jsonl" ||
                     instance_path.string().ends_with(".jsonl.gz"))) {
@@ -404,11 +411,14 @@ auto sourcemeta::jsonschema::validate(const sourcemeta::core::Options &options)
           instance_path.string().ends_with(".jsonl.gz") ||
           instance_path.extension() == ".yaml" ||
           instance_path.extension() == ".yml") {
-        for (const auto &entry : for_each_json({instance_path_view}, options)) {
-          if (!process_entry(entry, evaluator, schema_template, benchmark,
+        const auto entries{for_each_json({instance_path_view}, options)};
+        for (auto entry{entries.cbegin()}; entry != entries.cend(); ++entry) {
+          if (!process_entry(*entry, evaluator, schema_template, benchmark,
                              benchmark_loop, trace, fast_mode, json_output,
                              continue_on_error, schema_resolution_base, options,
-                             result)) {
+                             summary)) {
+            summary.stopped = std::next(entry) != entries.cend();
+            proceed = false;
             break;
           }
         }
@@ -426,6 +436,7 @@ auto sourcemeta::jsonschema::validate(const sourcemeta::core::Options &options)
           }
           return sourcemeta::core::read_yaml_or_json(instance_path);
         }()};
+        summary.validated += 1;
         sourcemeta::blaze::SimpleOutput output{instance};
         sourcemeta::blaze::TraceOutput trace_output{
             schema_template, trace_callback(tracker, std::cout)};
@@ -434,9 +445,6 @@ auto sourcemeta::jsonschema::validate(const sourcemeta::core::Options &options)
           subresult = run_loop(evaluator, schema_template, instance,
                                instance_path.generic_string(),
                                static_cast<std::int64_t>(-1), benchmark_loop);
-          if (!subresult) {
-            result = false;
-          }
         } else if (trace) {
           subresult = evaluator.validate(schema_template, instance,
                                          std::ref(trace_output));
@@ -448,7 +456,9 @@ auto sourcemeta::jsonschema::validate(const sourcemeta::core::Options &options)
         }
 
         if (trace) {
-          result = result && subresult;
+          if (!subresult) {
+            summary.failed += 1;
+          }
         } else if (json_output) {
           const auto suboutput{sourcemeta::blaze::standard(
               evaluator, schema_template, instance,
@@ -459,7 +469,8 @@ auto sourcemeta::jsonschema::validate(const sourcemeta::core::Options &options)
           assert(suboutput.defines("valid"));
           assert(suboutput.at("valid").is_boolean());
           if (!suboutput.at("valid").to_boolean()) {
-            result = false;
+            summary.failed += 1;
+            proceed = continue_on_error;
           }
 
           sourcemeta::core::prettify(suboutput, std::cout);
@@ -471,20 +482,42 @@ auto sourcemeta::jsonschema::validate(const sourcemeta::core::Options &options)
                      .generic_string()
               << "\n  matches " << stdin_path_string(schema_resolution_base)
               << "\n";
-          print_annotations(output, options, tracker, std::cerr);
         } else {
           std::cerr << "fail: "
                     << sourcemeta::core::weakly_canonical(instance_path)
                            .generic_string()
                     << "\n";
           print(output, tracker, std::cerr);
-          result = false;
+          summary.failed += 1;
+          proceed = continue_on_error;
         }
       }
+
+      if (!proceed) {
+        if (std::next(argument) != instance_arguments.cend()) {
+          summary.stopped = true;
+        }
+
+        break;
+      }
+    }
+
+    if (summary.validated == 0) {
+      throw sourcemeta::core::FileError<NoInputFilesError>(
+          std::filesystem::path{instance_arguments.front()});
     }
   }
 
-  if (!result) {
+  if (!json_output && !trace && !benchmark) {
+    print_summary(summary, options, std::cerr);
+  }
+
+  if (summary.stopped) {
+    LOG_WARNING()
+        << "Stopped at first failure, pass --continue/-c to keep going\n";
+  }
+
+  if (summary.failed > 0) {
     throw Fail{EXIT_EXPECTED_FAILURE};
   }
 }

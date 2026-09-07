@@ -124,10 +124,10 @@ static auto throw_if_unknown_required_vocabulary(
       sourcemeta::blaze::schema_walker, resolver, dialect};
   const auto base{frame.root_location().value().get().base_dialect};
 
-  if (base != sourcemeta::blaze::SchemaBaseDialect::JSON_Schema_2020_12 &&
-      base != sourcemeta::blaze::SchemaBaseDialect::JSON_Schema_2020_12_Hyper &&
-      base != sourcemeta::blaze::SchemaBaseDialect::JSON_Schema_2019_09 &&
-      base != sourcemeta::blaze::SchemaBaseDialect::JSON_Schema_2019_09_Hyper) {
+  if (base != sourcemeta::blaze::SchemaBaseDialect::JSON_SCHEMA_2020_12 &&
+      base != sourcemeta::blaze::SchemaBaseDialect::JSON_SCHEMA_2020_12_HYPER &&
+      base != sourcemeta::blaze::SchemaBaseDialect::JSON_SCHEMA_2019_09 &&
+      base != sourcemeta::blaze::SchemaBaseDialect::JSON_SCHEMA_2019_09_HYPER) {
     return;
   }
 
