@@ -31,6 +31,10 @@ inline constexpr std::string_view ENDPOINT_SCHEMA_RDF{
     "/self/v1/api/schemas/rdf/{+schema}"};
 inline constexpr std::string_view ENDPOINT_SCHEMA_TRACE{
     "/self/v1/api/schemas/trace/{+schema}"};
+// The same endpoint without a path, where the schema arrives in the body
+// rather than the URL
+inline constexpr std::string_view ENDPOINT_SCHEMA_TRACE_INLINE{
+    "/self/v1/api/schemas/trace"};
 inline constexpr std::string_view ENDPOINT_SCHEMA_SEARCH{
     "/self/v1/api/schemas/search"};
 inline constexpr std::string_view ENDPOINT_HEALTH{"/self/v1/health"};

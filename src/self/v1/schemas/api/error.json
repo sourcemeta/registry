@@ -131,6 +131,30 @@
     },
     {
       "const": {
+        "type": "urn:sourcemeta:one:invalid-schema",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "The supplied schema could not be compiled"
+      }
+    },
+    {
+      "const": {
+        "type": "urn:sourcemeta:one:unresolvable-reference",
+        "title": "Bad Request",
+        "status": 400,
+        "detail": "A reference in the supplied schema could not be resolved"
+      }
+    },
+    {
+      "const": {
+        "type": "urn:sourcemeta:one:schema-too-complex",
+        "title": "Unprocessable Content",
+        "status": 422,
+        "detail": "The supplied schema is too complex to compile"
+      }
+    },
+    {
+      "const": {
         "type": "urn:sourcemeta:one:cannot-satisfy-content-encoding",
         "title": "Not Acceptable",
         "status": 406,

@@ -51,9 +51,10 @@
             }
           },
           "keywordLocation": {
+            "description": "Relative where the schema carries no identity of its own, which is what a schema supplied in the request itself normally looks like",
             "x-format-assertion": true,
             "type": "string",
-            "format": "uri"
+            "format": "uri-reference"
           },
           "message": {
             "type": [ "string", "null" ]

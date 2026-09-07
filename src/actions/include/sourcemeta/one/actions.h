@@ -52,7 +52,9 @@ namespace sourcemeta::one {
   X(AUTH_CALLBACK_V1, ActionAuthCallbackV1, "auth_callback_v1")                \
   X(MCP_PROTECTED_RESOURCE_METADATA_V1, ActionMCPProtectedResourceMetadataV1,  \
     "mcp_protected_resource_metadata_v1")                                      \
-  X(METRICS_V1, ActionMetricsV1, "metrics_v1")
+  X(METRICS_V1, ActionMetricsV1, "metrics_v1")                                 \
+  X(JSONSCHEMA_TRACE_INLINE_V1, ActionJSONSchemaTraceInlineV1,                 \
+    "jsonschema_trace_inline_v1")
 
 #define SOURCEMETA_ONE_DEFINE_ACTION_TYPE(Name, Class, Label)                  \
   ACTION_TYPE_##Name,

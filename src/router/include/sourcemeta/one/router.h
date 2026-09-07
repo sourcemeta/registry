@@ -324,6 +324,14 @@ protected:
       std::string_view view, std::string_view input, Tree tree,
       std::string_view artifact_name) const -> std::optional<ResolvedArtifact>;
 
+  // The compiled form of a schema this registry holds, as the caller may see
+  // it. An action that evaluates against a template it obtained some other way
+  // reaches for this to evaluate against a catalog schema on the same terms
+  [[nodiscard]] auto blaze_template(const Authentication::Caller &caller,
+                                    std::string_view schema_uri,
+                                    sourcemeta::blaze::Mode mode) const
+      -> std::shared_ptr<const sourcemeta::blaze::Template>;
+
 private:
   [[nodiscard]] auto artifact_locate(const Authentication::Path &path,
                                      Tree tree, std::string_view view,
@@ -332,11 +340,6 @@ private:
 
   [[nodiscard]] auto structural_template(std::string_view schema_uri,
                                          sourcemeta::blaze::Mode mode) const
-      -> std::shared_ptr<const sourcemeta::blaze::Template>;
-
-  [[nodiscard]] auto blaze_template(const Authentication::Caller &caller,
-                                    std::string_view schema_uri,
-                                    sourcemeta::blaze::Mode mode) const
       -> std::shared_ptr<const sourcemeta::blaze::Template>;
 
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)

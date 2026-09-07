@@ -19,6 +19,7 @@
 #include "action_health_check_v1.h"
 #include "action_jsonschema_evaluate_v1.h"
 #include "action_jsonschema_rdf_v1.h"
+#include "action_jsonschema_trace_inline_v1.h"
 #include "action_jsonschema_trace_v1.h"
 #include "action_list_directory_v1.h"
 #include "action_mcp_prm_v1.h"

@@ -754,7 +754,7 @@ jsonpath "$..mimeType" not exists
 variable "text" jsonpath "$.path" == "/"
 variable "text" jsonpath "$.url" == "{{base}}"
 variable "text" jsonpath "$.breadcrumb" count == 0
-variable "text" jsonpath "$.schemas" == 140
+variable "text" jsonpath "$.schemas" == 141
 variable "text" jsonpath "$.entries" count == 4
 variable "text" jsonpath "$.private" == false
 variable "text" jsonpath "$.entries[0].name" == "no-blaze"
@@ -769,7 +769,7 @@ variable "text" jsonpath "$.entries[1].title" == "Self"
 variable "text" jsonpath "$.entries[1].description" == "The schemas that define the current version of this instance"
 variable "text" jsonpath "$.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].schemas" == 63
+variable "text" jsonpath "$.entries[1].schemas" == 64
 variable "text" jsonpath "$.entries[1].path" == "/self/"
 variable "text" jsonpath "$.entries[2].name" == "test"
 variable "text" jsonpath "$.entries[2].private" == false

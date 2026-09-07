@@ -10,6 +10,8 @@
 #include <sourcemeta/one/router.h>
 #include <sourcemeta/one/shared.h>
 
+#include "action_jsonschema_post.h"
+
 #include <exception> // std::exception, std::exception_ptr, std::rethrow_exception
 #include <filesystem>  // std::filesystem::path
 #include <span>        // std::span
@@ -137,42 +139,18 @@ public:
                          const std::string_view error_schema,
                          const std::string_view request_schema, Perform perform)
       -> void {
-    const auto &path{matches.front()};
-    if (request.method() == "options") {
-      response.write_status(sourcemeta::core::HTTP_STATUS_NO_CONTENT);
-      response.write_header("Access-Control-Allow-Origin", "*");
-      response.write_header("Access-Control-Expose-Headers", "Link, ETag");
-      response.write_header("Access-Control-Allow-Methods", "POST, OPTIONS");
-      response.write_header("Access-Control-Allow-Headers", "Content-Type");
-      response.write_header("Access-Control-Max-Age", "3600");
-      // Browser preflight cache is governed by `Access-Control-Max-Age`;
-      // `no-store` keeps shared HTTP caches from storing this response.
-      response.write_header("Cache-Control",
-                            sourcemeta::one::cache_control_no_store());
-      // RFC 9110 §9.3.7: OPTIONS responses SHOULD include Allow. Different
-      // audience than Access-Control-Allow-Methods (HTTP vs CORS preflight).
-      // https://datatracker.ietf.org/doc/html/rfc9110#section-9.3.7
-      response.write_header("Allow", "POST, OPTIONS");
-      sourcemeta::one::send_response(sourcemeta::core::HTTP_STATUS_NO_CONTENT,
-                                     request, response);
+    if (sourcemeta::one::schema_post_preamble(request, response,
+                                              error_schema)) {
       return;
     }
 
+    const auto &path{matches.front()};
     if (path.find('#') != std::string_view::npos ||
         path.find("%23") != std::string_view::npos) {
       sourcemeta::one::json_error(
           request, response, sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
           "urn:sourcemeta:one:invalid-schema-uri",
           "The schema URI must not contain a fragment", error_schema, "*");
-      return;
-    }
-
-    if (request.method() != "post") {
-      sourcemeta::one::json_error(
-          request, response, sourcemeta::core::HTTP_STATUS_METHOD_NOT_ALLOWED,
-          "urn:sourcemeta:one:method-not-allowed",
-          "This HTTP method is invalid for this URL", error_schema, "*",
-          "POST, OPTIONS");
       return;
     }
 
@@ -206,118 +184,21 @@ public:
       return;
     }
 
-    // RFC 9110 §10.1.1: refuse unrecognised expectations with 417 before
-    // touching the body. uWS already auto-acknowledged `100-continue`
-    // upstream, so anything left here is a value we cannot honour.
-    if (sourcemeta::one::expect_header_unrecognised(request)) {
-      sourcemeta::one::json_error(
-          request, response, sourcemeta::core::HTTP_STATUS_EXPECTATION_FAILED,
-          "urn:sourcemeta:one:expectation-failed",
-          "The Expect header carries an unsupported expectation", error_schema,
-          "*");
-      return;
-    }
-
-    // RFC 9110 §15.5.14: when the client declares a `Content-Length`
-    // beyond the cap, fast-fail with 413 before scheduling the read.
-    if (sourcemeta::one::request_body_too_large(request)) {
-      sourcemeta::one::json_error(
-          request, response, sourcemeta::core::HTTP_STATUS_CONTENT_TOO_LARGE,
-          "urn:sourcemeta:one:payload-too-large",
-          "The request body is too large", error_schema, "*");
-      return;
-    }
-
-    request.body(
+    sourcemeta::one::schema_post_body(
+        request, response, response_schema, error_schema,
+        sourcemeta::one::MAX_REQUEST_BODY_BYTES,
         // A throw here is intended and caught by the surrounding error
         // handler
         // NOLINTNEXTLINE(bugprone-exception-escape)
-        [response_schema, error_schema, schema_uri = std::move(schema_uri),
-         &self, request_schema, perform = std::move(perform)](
-            sourcemeta::one::HTTPRequest &callback_request,
-            sourcemeta::one::HTTPResponse &callback_response,
-            std::string &&body, bool too_big) -> void {
-          if (too_big) {
-            sourcemeta::one::json_error(
-                callback_request, callback_response,
-                sourcemeta::core::HTTP_STATUS_CONTENT_TOO_LARGE,
-                "urn:sourcemeta:one:payload-too-large",
-                "The request body is too large", error_schema, "*");
-            return;
-          }
-
-          if (body.empty()) {
-            sourcemeta::one::json_error(
-                callback_request, callback_response,
-                sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
-                "urn:sourcemeta:one:no-instance",
-                "You must pass an instance to validate against", error_schema,
-                "*");
-            return;
-          }
-
-          sourcemeta::core::JSON instance{nullptr};
-          try {
-            instance = sourcemeta::core::parse_json(body);
-          } catch (const std::exception &) {
-            sourcemeta::one::json_error(
-                callback_request, callback_response,
-                sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
-                "urn:sourcemeta:one:invalid-json",
-                "The request body is not valid JSON", error_schema, "*");
-            return;
-          }
-
+        [&self, request_schema, schema_uri = std::move(schema_uri),
+         perform = std::move(perform)](
+            const std::string &body) -> sourcemeta::core::JSON {
+          const auto instance{sourcemeta::core::parse_json(body)};
           if (!self.structural_evaluate_fast(request_schema, instance)) {
-            sourcemeta::one::json_error(
-                callback_request, callback_response,
-                sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
-                "urn:sourcemeta:one:invalid-request",
-                "The request body does not match the expected schema",
-                error_schema, "*");
-            return;
+            throw sourcemeta::one::SchemaPostRequestError{};
           }
 
-          try {
-            const auto result{perform(schema_uri, body)};
-            callback_response.write_status(sourcemeta::core::HTTP_STATUS_OK);
-            callback_response.write_header("Content-Type", "application/json");
-            callback_response.write_header("Access-Control-Allow-Origin", "*");
-            callback_response.write_header("Access-Control-Expose-Headers",
-                                           "Link, ETag");
-            // The response is fully determined by the POST body. A
-            // shared cache cannot use this for any other request, so
-            // skip caching altogether.
-            callback_response.write_header(
-                "Cache-Control", sourcemeta::one::cache_control_no_store());
-            sourcemeta::one::write_link_header(callback_response,
-                                               response_schema);
-            std::ostringstream payload;
-            sourcemeta::core::prettify(result, payload);
-            sourcemeta::one::send_response(sourcemeta::core::HTTP_STATUS_OK,
-                                           callback_request, callback_response,
-                                           payload.str(),
-                                           sourcemeta::one::Encoding::Identity);
-          } catch (const std::exception &exception) {
-            sourcemeta::one::json_error(
-                callback_request, callback_response,
-                sourcemeta::core::HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                "urn:sourcemeta:one:schema-evaluation-error", exception.what(),
-                error_schema, "*");
-          }
-        },
-        [error_schema](sourcemeta::one::HTTPRequest &callback_request,
-                       sourcemeta::one::HTTPResponse &callback_response,
-                       const std::exception_ptr &error) -> void {
-          try {
-            std::rethrow_exception(error);
-          } catch (const std::exception &exception) {
-            sourcemeta::one::json_error(
-                callback_request, callback_response,
-                sourcemeta::core::HTTP_STATUS_INTERNAL_SERVER_ERROR,
-                "urn:sourcemeta:one:uncaught-error", exception.what(),
-                error_schema, "*");
-          }
+          return perform(schema_uri, body);
         });
   }
 

@@ -500,6 +500,70 @@ insight into the validation engine's behavior and logic flow.
 
     The `Expect` header carries an expectation other than `100-continue`. See [RFC 9110 §10.1.1](https://datatracker.ietf.org/doc/html/rfc9110#section-10.1.1).
 
+#### Tracing against a schema in the request
+
+*This endpoint takes a JSON instance and a JSON Schema in the request body and
+traces the evaluation of one against the other, without the schema having to be
+in the catalog.*
+
+```
+POST /self/v1/api/schemas/trace
+```
+
+The request body is an object rather than the bare instance the form above
+takes:
+
+| Property    | Type   | Required | Description |
+|-------------|--------|-----|-------------------------------------|
+| `/instance` | JSON   | Yes | The instance to trace evaluation for |
+| `/schema`   | Object | Yes | The schema to evaluate it against |
+
+The schema must be an object declaring the dialect it is written against with
+[`$schema`](https://www.learnjsonschema.com/2020-12/core/schema/). A boolean
+schema is refused, as it declares no dialect and this endpoint does not guess
+one.
+
+A [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) in the supplied
+schema resolves against this catalog, naming a schema by the same URL it is
+served at, and is subject to the same authentication as fetching that schema
+directly. A [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) naming
+any other origin is refused, and so is one naming a path the caller may not
+read, which is refused in the same way as one that names nothing at all.
+Official JSON Schema metaschemas resolve without being in the catalog, which is
+what lets a caller name a dialect. Every hop of a reference chain is resolved on
+the same terms, so a reference reaching a schema the caller cannot read is
+refused wherever in the chain it appears.
+
+The response is identical to the form above.
+
+Because the schema arrives with the request rather than being compiled ahead of
+time, what it may cost is bounded. The request body cap is lower here than the
+one the form above applies, so an instance too large for this endpoint can still
+be evaluated against a catalog schema by path.
+
+The supplied schema is compiled on every request and is not cached, so this
+endpoint is slower per call than naming a schema by path.
+
+=== "200"
+
+    The same response as the form above.
+
+=== "400"
+
+    The body is not the expected object, the schema cannot be compiled, or a [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) in it does not resolve.
+
+=== "413"
+
+    The request body is too large. See [RFC 9110 §15.5.14](https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.14).
+
+=== "417"
+
+    The `Expect` header carries an expectation other than `100-continue`. See [RFC 9110 §10.1.1](https://datatracker.ietf.org/doc/html/rfc9110#section-10.1.1).
+
+=== "422"
+
+    The schema is too complex to compile, in the number of locations framing it registers, the number of instructions it compiles to, or how deeply it nests.
+
 ### RDF
 
 !!! success "Enterprise"

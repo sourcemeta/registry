@@ -853,6 +853,8 @@ struct GenerateURITemplateRoutes {
         "/self/v1/schemas/api/schemas/rdf/response"};
     constexpr std::string_view TRACE_REQUEST_SCHEMA{
         "/self/v1/schemas/api/schemas/trace/request"};
+    constexpr std::string_view TRACE_INLINE_REQUEST_SCHEMA{
+        "/self/v1/schemas/api/schemas/trace/inline/request"};
     constexpr std::string_view TRACE_RESPONSE_SCHEMA{
         "/self/v1/schemas/api/schemas/trace/response"};
     constexpr std::string_view SEARCH_RESPONSE_SCHEMA{
@@ -1064,6 +1066,16 @@ struct GenerateURITemplateRoutes {
                  "trace_schema_evaluation", next_id++,
                  sourcemeta::one::ACTION_TYPE_JSONSCHEMA_TRACE_V1,
                  trace_arguments);
+
+      const auto trace_inline_arguments{
+          std::to_array<sourcemeta::core::URITemplateRouter::Argument>(
+              {{"requestSchema", std::string_view{TRACE_INLINE_REQUEST_SCHEMA}},
+               {"responseSchema", std::string_view{TRACE_RESPONSE_SCHEMA}},
+               {"errorSchema", std::string_view{ERROR_SCHEMA}}})};
+      router.add(sourcemeta::one::ENDPOINT_SCHEMA_TRACE_INLINE,
+                 "trace_inline_schema_evaluation", next_id++,
+                 sourcemeta::one::ACTION_TYPE_JSONSCHEMA_TRACE_INLINE_V1,
+                 trace_inline_arguments);
 
       const auto search_arguments{
           std::to_array<sourcemeta::core::URITemplateRouter::Argument>(

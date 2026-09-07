@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sourcemeta One Schema Inline Trace API Request",
+  "description": "A JSON instance and the schema to trace its evaluation against",
+  "examples": [
+    {
+      "instance": "hello world",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "string"
+      }
+    }
+  ],
+  "type": "object",
+  "required": [ "instance", "schema" ],
+  "properties": {
+    "instance": {
+      "description": "The JSON instance to trace evaluation for"
+    },
+    "schema": {
+      "description": "The JSON Schema to evaluate the instance against, which must declare the dialect it is written against",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

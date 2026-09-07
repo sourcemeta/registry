@@ -19,6 +19,7 @@
 #include "action_jsonschema_evaluate_v1.h"
 
 #include <filesystem>  // std::filesystem::path
+#include <functional>  // std::ref
 #include <span>        // std::span
 #include <stdexcept>   // std::runtime_error
 #include <string>      // std::string
@@ -84,8 +85,12 @@ public:
           // was handed points at a request that is gone by now
           const auto deferred_caller{
               this->caller_from({.bearer = bearer, .cookies = fields})};
-          return this->trace(deferred_caller, schema_uri, instance_json,
-                             &tracker, sourcemeta::core::Pointer{});
+          const auto schema_template{
+              this->blaze_template(deferred_caller, schema_uri,
+                                   sourcemeta::blaze::Mode::Exhaustive)};
+          return ActionJSONSchemaTraceV1::build_trace_document(
+              *schema_template, instance_json, &tracker,
+              sourcemeta::core::Pointer{});
         });
   }
 
@@ -134,21 +139,25 @@ public:
 
     return sourcemeta::core::mcp_make_tool_success(
         version, request_id,
-        this->trace(caller, schema_uri, parsed_instance, &tracker,
-                    sourcemeta::core::Pointer{}));
+        ActionJSONSchemaTraceV1::build_trace_document(
+            *this->blaze_template(caller, schema_uri,
+                                  sourcemeta::blaze::Mode::Exhaustive),
+            parsed_instance, &tracker, sourcemeta::core::Pointer{}));
   }
 
-private:
-  auto trace(const sourcemeta::one::Authentication::Caller &caller,
-             const std::string_view schema_uri,
-             const sourcemeta::core::JSON &instance_json,
-             const sourcemeta::core::PointerPositionTracker *tracker,
-             const sourcemeta::core::Pointer &instance_prefix)
+  // Build the trace document for one evaluation. The instance prefix locates
+  // the instance within the document the tracker was built over, which is that
+  // document itself where the body is a bare instance, and the member holding
+  // it where the body is an envelope
+  static auto
+  build_trace_document(const sourcemeta::blaze::Template &schema_template,
+                       const sourcemeta::core::JSON &instance_json,
+                       const sourcemeta::core::PointerPositionTracker *tracker,
+                       const sourcemeta::core::Pointer &instance_prefix)
       -> sourcemeta::core::JSON {
     auto steps{sourcemeta::core::JSON::make_array()};
 
-    const auto result{this->schema_evaluate_with_tracing(
-        caller, schema_uri, instance_json,
+    const sourcemeta::blaze::TraceOutput::Callback callback{
         [&steps, tracker, &instance_prefix, &instance_json](
             const sourcemeta::blaze::TraceOutput::Entry &entry) -> void {
           auto step{sourcemeta::core::JSON::make_object()};
@@ -205,7 +214,12 @@ private:
           }
 
           steps.push_back(std::move(step));
-        })};
+        }};
+
+    sourcemeta::blaze::TraceOutput output{schema_template, callback};
+    sourcemeta::blaze::Evaluator evaluator;
+    const auto result{
+        evaluator.validate(schema_template, instance_json, std::ref(output))};
 
     auto document{sourcemeta::core::JSON::make_object()};
     document.assign("valid", sourcemeta::core::JSON{result});
@@ -213,6 +227,7 @@ private:
     return document;
   }
 
+private:
   std::string_view request_schema_;
   std::string_view response_schema_;
   std::string_view rpc_request_schema_;
