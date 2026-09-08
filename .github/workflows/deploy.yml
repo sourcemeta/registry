@@ -289,7 +289,9 @@ jobs:
             # the key, so what it holds cannot be presented as a credential
             METRICS_DIGEST="$(printf '%s' "$SOURCEMETA_ONE_METRICS_TOKEN" | sha256sum | cut -d' ' -f1)"
             kraft cloud service create --name schemas --domain ${{ env.SERVICE_DOMAIN }} 443:8000 || true
-            kraft cloud deploy --memory 4096 --rollout remove --image schemas --service schemas \
+            # Image propagation into the metro takes longer than the default
+            # 60 seconds for an image of this size
+            kraft cloud deploy --timeout 5m --memory 4096 --rollout remove --image schemas --service schemas \
               --env "SOURCEMETA_ONE_METRICS_KEY=$METRICS_DIGEST" \
               --kraftfile enterprise/e2e/public/Kraftfile --restart on-failure --replicas 4 ./enterprise/e2e/public
             kraft cloud service get schemas
