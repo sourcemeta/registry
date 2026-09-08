@@ -196,7 +196,7 @@ Cache-Control: no-store
 Access-Control-Allow-Origin: *
 Access-Control-Expose-Headers: Link, ETag
 Access-Control-Allow-Methods: POST, OPTIONS
-Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Headers: Content-Type, Authorization
 Access-Control-Max-Age: 3600
 Allow: POST, OPTIONS
 [Asserts]
@@ -212,7 +212,7 @@ Cache-Control: no-store
 Access-Control-Allow-Origin: *
 Access-Control-Expose-Headers: Link, ETag
 Access-Control-Allow-Methods: POST, OPTIONS
-Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Headers: Content-Type, Authorization
 Access-Control-Max-Age: 3600
 Allow: POST, OPTIONS
 [Asserts]

@@ -827,6 +827,59 @@ schema.
 
     The [configuration file](configuration.md) marks the schema collection as listed but not served.
 
+## Playground
+
+Everything under `/self/v1/api/playground` evaluates a document the caller
+supplies in the request rather than one this instance holds. An [authentication
+policy](configuration.md) naming `/self/v1/api/playground` governs the whole
+namespace, including operations added to it later.
+
+### Schema Trace
+
+*This endpoint takes a JSON instance and a JSON Schema in the request body and
+traces the evaluation of one against the other, without the schema having to be
+in the catalog.*
+
+```
+POST /self/v1/api/playground/schemas/trace
+```
+
+The request body is an object rather than the bare instance that [Trace](#trace)
+takes:
+
+| Property    | Type   | Required | Description |
+|-------------|--------|-----|-------------------------------------|
+| `/instance` | JSON   | Yes | The instance to trace evaluation for |
+| `/schema`   | Object | Yes | The schema to evaluate it against, which must declare its dialect with [`$schema`](https://www.learnjsonschema.com/2020-12/core/schema/) |
+
+A [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) to a schema in the
+catalog or to an official JSON Schema is respected, on the same terms as
+fetching that schema directly. Anything else does not resolve.
+
+To prevent abuse, the number of keywords, the nesting depth and the size of a
+schema compiled on demand are limited. Those limits do not apply to a schema
+ingested into the catalog the normal way.
+
+=== "200"
+
+    The same response as [Trace](#trace).
+
+=== "400"
+
+    The body is not the expected object, or the schema cannot be compiled, which includes a [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) in it not resolving.
+
+=== "413"
+
+    The request body is too large. See [RFC 9110 §15.5.14](https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.14).
+
+=== "417"
+
+    The `Expect` header carries an expectation other than `100-continue`. See [RFC 9110 §10.1.1](https://datatracker.ietf.org/doc/html/rfc9110#section-10.1.1).
+
+=== "422"
+
+    The schema is too complex to compile.
+
 ## Model Context Protocol
 
 !!! success "Enterprise"

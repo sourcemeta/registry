@@ -125,7 +125,7 @@ root_listing_schema: header "Link" regex "<([^>]+)>"
 jsonpath "$.path" == "/"
 jsonpath "$.url" == "{{base}}"
 jsonpath "$.breadcrumb" count == 0
-jsonpath "$.schemas" == 64
+jsonpath "$.schemas" == 66
 jsonpath "$.private" == false
 jsonpath "$.entries" count == 2
 jsonpath "$.entries[0].name" == "public"
@@ -138,8 +138,8 @@ jsonpath "$.entries[1].name" == "self"
 jsonpath "$.entries[1].type" == "directory"
 jsonpath "$.entries[1].path" == "/self/"
 jsonpath "$.entries[1].private" == false
-jsonpath "$.entries[1].schemas" == 63
-jsonpath "$.entries[1].health" == 100
+jsonpath "$.entries[1].schemas" == 65
+jsonpath "$.entries[1].health" == 99
 
 POST {{base}}/self/v1/api/schemas/evaluate{{root_listing_schema}}
 ```

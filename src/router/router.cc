@@ -229,4 +229,32 @@ auto RouterAction::serve_renewal_page(
   return this->serve_renewal(request, response);
 }
 
+auto RouterAction::schema_post_preflight(HTTPRequest &request,
+                                         HTTPResponse &response) const -> bool {
+  if (request.method() != "options") {
+    return false;
+  }
+
+  // A caller reaching a governed route sends a credential, and a browser only
+  // sends one the preflight admitted
+  cors_preflight(request, response, "POST, OPTIONS",
+                 "Content-Type, Authorization");
+  return true;
+}
+
+auto RouterAction::schema_post_method_refused(
+    HTTPRequest &request, HTTPResponse &response,
+    const std::string_view error_schema) const -> bool {
+  if (request.method() == "post") {
+    return false;
+  }
+
+  json_error(request, response,
+             sourcemeta::core::HTTP_STATUS_METHOD_NOT_ALLOWED,
+             "urn:sourcemeta:one:method-not-allowed",
+             "This HTTP method is invalid for this URL", error_schema, "*",
+             "POST, OPTIONS");
+  return true;
+}
+
 } // namespace sourcemeta::one

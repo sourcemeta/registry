@@ -31,6 +31,8 @@ inline constexpr std::string_view ENDPOINT_SCHEMA_RDF{
     "/self/v1/api/schemas/rdf/{+schema}"};
 inline constexpr std::string_view ENDPOINT_SCHEMA_TRACE{
     "/self/v1/api/schemas/trace/{+schema}"};
+inline constexpr std::string_view ENDPOINT_PLAYGROUND_SCHEMA_TRACE{
+    "/self/v1/api/playground/schemas/trace"};
 inline constexpr std::string_view ENDPOINT_SCHEMA_SEARCH{
     "/self/v1/api/schemas/search"};
 inline constexpr std::string_view ENDPOINT_HEALTH{"/self/v1/health"};

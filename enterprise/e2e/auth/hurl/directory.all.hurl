@@ -19,7 +19,7 @@ header "ETag" exists
 jsonpath "$.path" == "/"
 jsonpath "$.url" == "{{base}}"
 jsonpath "$.breadcrumb" count == 0
-jsonpath "$.schemas" == 65
+jsonpath "$.schemas" == 67
 jsonpath "$.private" == false
 jsonpath "$.entries" count == 3
 jsonpath "$.entries[0].name" == "orphan"
@@ -38,8 +38,8 @@ jsonpath "$.entries[2].name" == "self"
 jsonpath "$.entries[2].type" == "directory"
 jsonpath "$.entries[2].path" == "/self/"
 jsonpath "$.entries[2].private" == false
-jsonpath "$.entries[2].schemas" == 63
-jsonpath "$.entries[2].health" == 100
+jsonpath "$.entries[2].schemas" == 65
+jsonpath "$.entries[2].health" == 99
 POST {{base}}/self/v1/api/schemas/evaluate{{root_listing_schema}}
 ```
 {{root_listing}}
@@ -72,7 +72,7 @@ header "ETag" != "{{root_etag}}"
 jsonpath "$.path" == "/"
 jsonpath "$.url" == "{{base}}"
 jsonpath "$.breadcrumb" count == 0
-jsonpath "$.schemas" == 68
+jsonpath "$.schemas" == 70
 jsonpath "$.private" == false
 jsonpath "$.entries" count == 5
 jsonpath "$.entries[0].name" == "orphan"
@@ -103,8 +103,8 @@ jsonpath "$.entries[4].name" == "self"
 jsonpath "$.entries[4].type" == "directory"
 jsonpath "$.entries[4].path" == "/self/"
 jsonpath "$.entries[4].private" == false
-jsonpath "$.entries[4].schemas" == 63
-jsonpath "$.entries[4].health" == 100
+jsonpath "$.entries[4].schemas" == 65
+jsonpath "$.entries[4].health" == 99
 
 POST {{base}}/self/v1/api/schemas/evaluate{{reports_listing_schema}}
 Authorization: Bearer primary-secret-key
