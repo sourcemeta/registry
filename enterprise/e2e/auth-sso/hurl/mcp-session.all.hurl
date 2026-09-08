@@ -348,7 +348,7 @@ Link: </self/v1/schemas/mcp/response>; rel="describedby"
 [Captures]
 session_page_two: body
 [Asserts]
-jsonpath "$.result.resources" count == 16
+jsonpath "$.result.resources" count == 18
 jsonpath "$.result.nextCursor" not exists
 jsonpath "$.result.resources[*].uri" not includes "{{base}}/discovery/thing"
 jsonpath "$.result.resources[*].uri" not includes "{{base}}/unavailable/thing"
