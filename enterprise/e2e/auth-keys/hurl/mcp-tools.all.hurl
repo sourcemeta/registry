@@ -25,6 +25,7 @@ jsonpath "$.jsonrpc" == "2.0"
 jsonpath "$.id" == 1
 jsonpath "$.result.tools" count == 11
 jsonpath "$.result.tools[*].name" not contains "trace_schema_evaluation"
+jsonpath "$.result.tools[*].name" not contains "playground_trace_schema"
 jsonpath "$.result.tools[*].name" contains "search_schemas"
 jsonpath "$.result.tools[*].name" contains "evaluate_schema"
 
@@ -53,8 +54,9 @@ admitted_tools: body
 [Asserts]
 jsonpath "$.jsonrpc" == "2.0"
 jsonpath "$.id" == 2
-jsonpath "$.result.tools" count == 12
+jsonpath "$.result.tools" count == 13
 jsonpath "$.result.tools[*].name" contains "trace_schema_evaluation"
+jsonpath "$.result.tools[*].name" contains "playground_trace_schema"
 
 POST {{base}}/self/v1/api/schemas/evaluate/self/v1/schemas/mcp/response
 ```
@@ -252,6 +254,7 @@ Content-Type: application/json
 [Asserts]
 jsonpath "$.result.tools" count == 11
 jsonpath "$.result.tools[*].name" not contains "trace_schema_evaluation"
+jsonpath "$.result.tools[*].name" not contains "playground_trace_schema"
 
 # And it cannot call it either, so falling back to the anonymous answer falls
 # back to the narrowest one rather than a wider one

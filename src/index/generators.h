@@ -907,6 +907,10 @@ struct GenerateURITemplateRoutes {
         "/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/request"};
     constexpr std::string_view TRACE_SCHEMA_EVALUATION_RESPONSE_SCHEMA{
         "/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/response"};
+    constexpr std::string_view PLAYGROUND_TRACE_SCHEMA_REQUEST_SCHEMA{
+        "/self/v1/schemas/mcp/tools/call/playground-trace-schema/request"};
+    constexpr std::string_view PLAYGROUND_TRACE_SCHEMA_RESPONSE_SCHEMA{
+        "/self/v1/schemas/mcp/tools/call/playground-trace-schema/response"};
     constexpr std::string_view SEARCH_SCHEMAS_REQUEST_SCHEMA{
         "/self/v1/schemas/mcp/tools/call/search-schemas/request"};
     constexpr std::string_view SEARCH_SCHEMAS_RESPONSE_SCHEMA{
@@ -1075,6 +1079,10 @@ struct GenerateURITemplateRoutes {
                 std::string_view{PLAYGROUND_SCHEMA_TRACE_REQUEST_SCHEMA}},
                {"responseSchema",
                 std::string_view{PLAYGROUND_SCHEMA_TRACE_RESPONSE_SCHEMA}},
+               {"mcpRequestSchema",
+                std::string_view{PLAYGROUND_TRACE_SCHEMA_REQUEST_SCHEMA}},
+               {"mcpResponseSchema",
+                std::string_view{PLAYGROUND_TRACE_SCHEMA_RESPONSE_SCHEMA}},
                {"errorSchema", std::string_view{ERROR_SCHEMA}}})};
       router.add(sourcemeta::one::ENDPOINT_PLAYGROUND_SCHEMA_TRACE,
                  "playground_trace_schema", next_id++,

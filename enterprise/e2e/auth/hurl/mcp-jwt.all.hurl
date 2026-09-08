@@ -119,7 +119,7 @@ Link: </self/v1/schemas/mcp/response>; rel="describedby"
 [Captures]
 page_two_body: body
 [Asserts]
-jsonpath "$.result.resources" count == 18
+jsonpath "$.result.resources" count == 20
 jsonpath "$.result.nextCursor" not exists
 jsonpath "$.result.resources[*].uri" not includes "{{base}}/strict/rule"
 jsonpath "$.result.resources[*].uri" not includes "{{base}}/typed/thing"

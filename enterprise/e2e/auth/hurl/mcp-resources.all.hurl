@@ -355,7 +355,7 @@ Content-Type: application/json
 [Asserts]
 jsonpath "$.jsonrpc" == "2.0"
 jsonpath "$.id" == 2
-jsonpath "$.result.resources" count == 17
+jsonpath "$.result.resources" count == 19
 jsonpath "$.result.nextCursor" not exists
 jsonpath "$.result.resources[0].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/get-schema-positions/request"
 jsonpath "$.result.resources[0].name" == "Sourcemeta One Schema Positions RPC Input"
@@ -405,60 +405,72 @@ jsonpath "$.result.resources[7].description" == "List the contents of a director
 jsonpath "$.result.resources[7].mimeType" == "application/schema+json"
 jsonpath "$.result.resources[7].size" == 609
 jsonpath "$.result.resources[7].annotations.priority" == 0
-jsonpath "$.result.resources[8].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/request"
-jsonpath "$.result.resources[8].name" == "Sourcemeta One MCP Tools Call Request"
-jsonpath "$.result.resources[8].description" == "Request from a client to invoke an MCP tool by name"
+jsonpath "$.result.resources[8].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/playground-trace-schema/request"
+jsonpath "$.result.resources[8].name" == "Sourcemeta One Playground Schema Trace RPC Input"
+jsonpath "$.result.resources[8].description" == "Trace step-by-step evaluation of a JSON instance against a schema supplied in the request rather than one in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[8].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[8].size" == 1161
+jsonpath "$.result.resources[8].size" == 2296
 jsonpath "$.result.resources[8].annotations.priority" == 0
-jsonpath "$.result.resources[9].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/response"
-jsonpath "$.result.resources[9].name" == "Sourcemeta One MCP Tools Call Response"
-jsonpath "$.result.resources[9].description" == "Sourcemeta One's response to a tool invocation"
+jsonpath "$.result.resources[9].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/playground-trace-schema/response"
+jsonpath "$.result.resources[9].name" == "Sourcemeta One Playground Schema Trace RPC Output"
+jsonpath "$.result.resources[9].description" == "Trace step-by-step evaluation of a JSON instance against a schema supplied in the request rather than one in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[9].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[9].size" == 4668
+jsonpath "$.result.resources[9].size" == 559
 jsonpath "$.result.resources[9].annotations.priority" == 0
-jsonpath "$.result.resources[10].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/request"
-jsonpath "$.result.resources[10].name" == "Sourcemeta One Schema Search RPC Input"
-jsonpath "$.result.resources[10].description" == "Search for schemas in the catalog by query term"
+jsonpath "$.result.resources[10].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/request"
+jsonpath "$.result.resources[10].name" == "Sourcemeta One MCP Tools Call Request"
+jsonpath "$.result.resources[10].description" == "Request from a client to invoke an MCP tool by name"
 jsonpath "$.result.resources[10].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[10].size" == 2155
+jsonpath "$.result.resources[10].size" == 1161
 jsonpath "$.result.resources[10].annotations.priority" == 0
-jsonpath "$.result.resources[11].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/response"
-jsonpath "$.result.resources[11].name" == "Sourcemeta One Schema Search RPC Output"
-jsonpath "$.result.resources[11].description" == "Search for schemas in the catalog by query term"
+jsonpath "$.result.resources[11].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/response"
+jsonpath "$.result.resources[11].name" == "Sourcemeta One MCP Tools Call Response"
+jsonpath "$.result.resources[11].description" == "Sourcemeta One's response to a tool invocation"
 jsonpath "$.result.resources[11].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[11].size" == 777
+jsonpath "$.result.resources[11].size" == 4668
 jsonpath "$.result.resources[11].annotations.priority" == 0
-jsonpath "$.result.resources[12].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/request"
-jsonpath "$.result.resources[12].name" == "Sourcemeta One Schema Trace RPC Input"
-jsonpath "$.result.resources[12].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
+jsonpath "$.result.resources[12].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/request"
+jsonpath "$.result.resources[12].name" == "Sourcemeta One Schema Search RPC Input"
+jsonpath "$.result.resources[12].description" == "Search for schemas in the catalog by query term"
 jsonpath "$.result.resources[12].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[12].size" == 1735
+jsonpath "$.result.resources[12].size" == 2155
 jsonpath "$.result.resources[12].annotations.priority" == 0
-jsonpath "$.result.resources[13].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/response"
-jsonpath "$.result.resources[13].name" == "Sourcemeta One Schema Trace RPC Output"
-jsonpath "$.result.resources[13].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
+jsonpath "$.result.resources[13].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/response"
+jsonpath "$.result.resources[13].name" == "Sourcemeta One Schema Search RPC Output"
+jsonpath "$.result.resources[13].description" == "Search for schemas in the catalog by query term"
 jsonpath "$.result.resources[13].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[13].size" == 497
+jsonpath "$.result.resources[13].size" == 777
 jsonpath "$.result.resources[13].annotations.priority" == 0
-jsonpath "$.result.resources[14].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/request"
-jsonpath "$.result.resources[14].name" == "Sourcemeta One MCP Tools List Request"
-jsonpath "$.result.resources[14].description" == "Request from a client to list MCP tools"
+jsonpath "$.result.resources[14].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/request"
+jsonpath "$.result.resources[14].name" == "Sourcemeta One Schema Trace RPC Input"
+jsonpath "$.result.resources[14].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[14].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[14].size" == 853
+jsonpath "$.result.resources[14].size" == 1735
 jsonpath "$.result.resources[14].annotations.priority" == 0
-jsonpath "$.result.resources[15].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/response"
-jsonpath "$.result.resources[15].name" == "Sourcemeta One MCP Tools List Response"
-jsonpath "$.result.resources[15].description" == "Sourcemeta One's list of MCP tools"
+jsonpath "$.result.resources[15].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/response"
+jsonpath "$.result.resources[15].name" == "Sourcemeta One Schema Trace RPC Output"
+jsonpath "$.result.resources[15].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[15].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[15].size" == 4495
+jsonpath "$.result.resources[15].size" == 497
 jsonpath "$.result.resources[15].annotations.priority" == 0
-jsonpath "$.result.resources[16].uri" == "{{base}}/self/v1/schemas/api/playground/schemas/trace/request"
-jsonpath "$.result.resources[16].name" == "Sourcemeta One Playground Schema Trace API Request"
-jsonpath "$.result.resources[16].description" == "A JSON instance and the schema to trace its evaluation against"
+jsonpath "$.result.resources[16].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/request"
+jsonpath "$.result.resources[16].name" == "Sourcemeta One MCP Tools List Request"
+jsonpath "$.result.resources[16].description" == "Request from a client to list MCP tools"
 jsonpath "$.result.resources[16].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[16].size" == 1124
+jsonpath "$.result.resources[16].size" == 853
 jsonpath "$.result.resources[16].annotations.priority" == 0
+jsonpath "$.result.resources[17].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/response"
+jsonpath "$.result.resources[17].name" == "Sourcemeta One MCP Tools List Response"
+jsonpath "$.result.resources[17].description" == "Sourcemeta One's list of MCP tools"
+jsonpath "$.result.resources[17].mimeType" == "application/schema+json"
+jsonpath "$.result.resources[17].size" == 4495
+jsonpath "$.result.resources[17].annotations.priority" == 0
+jsonpath "$.result.resources[18].uri" == "{{base}}/self/v1/schemas/api/playground/schemas/trace/request"
+jsonpath "$.result.resources[18].name" == "Sourcemeta One Playground Schema Trace API Request"
+jsonpath "$.result.resources[18].description" == "A JSON instance and the schema to trace its evaluation against"
+jsonpath "$.result.resources[18].mimeType" == "application/schema+json"
+jsonpath "$.result.resources[18].size" == 1124
+jsonpath "$.result.resources[18].annotations.priority" == 0
 
 # The primary key adds the `/private` and `/reports` schemas, which sort
 # ahead of the public ones, on top of everything the anonymous caller sees.
@@ -796,7 +808,7 @@ Content-Type: application/json
 [Asserts]
 jsonpath "$.jsonrpc" == "2.0"
 jsonpath "$.id" == 4
-jsonpath "$.result.resources" count == 20
+jsonpath "$.result.resources" count == 22
 jsonpath "$.result.nextCursor" not exists
 jsonpath "$.result.resources[0].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/get-schema-locations/response"
 jsonpath "$.result.resources[0].name" == "Sourcemeta One Schema Locations RPC Output"
@@ -864,60 +876,72 @@ jsonpath "$.result.resources[10].description" == "List the contents of a directo
 jsonpath "$.result.resources[10].mimeType" == "application/schema+json"
 jsonpath "$.result.resources[10].size" == 609
 jsonpath "$.result.resources[10].annotations.priority" == 0
-jsonpath "$.result.resources[11].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/request"
-jsonpath "$.result.resources[11].name" == "Sourcemeta One MCP Tools Call Request"
-jsonpath "$.result.resources[11].description" == "Request from a client to invoke an MCP tool by name"
+jsonpath "$.result.resources[11].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/playground-trace-schema/request"
+jsonpath "$.result.resources[11].name" == "Sourcemeta One Playground Schema Trace RPC Input"
+jsonpath "$.result.resources[11].description" == "Trace step-by-step evaluation of a JSON instance against a schema supplied in the request rather than one in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[11].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[11].size" == 1161
+jsonpath "$.result.resources[11].size" == 2296
 jsonpath "$.result.resources[11].annotations.priority" == 0
-jsonpath "$.result.resources[12].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/response"
-jsonpath "$.result.resources[12].name" == "Sourcemeta One MCP Tools Call Response"
-jsonpath "$.result.resources[12].description" == "Sourcemeta One's response to a tool invocation"
+jsonpath "$.result.resources[12].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/playground-trace-schema/response"
+jsonpath "$.result.resources[12].name" == "Sourcemeta One Playground Schema Trace RPC Output"
+jsonpath "$.result.resources[12].description" == "Trace step-by-step evaluation of a JSON instance against a schema supplied in the request rather than one in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[12].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[12].size" == 4668
+jsonpath "$.result.resources[12].size" == 559
 jsonpath "$.result.resources[12].annotations.priority" == 0
-jsonpath "$.result.resources[13].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/request"
-jsonpath "$.result.resources[13].name" == "Sourcemeta One Schema Search RPC Input"
-jsonpath "$.result.resources[13].description" == "Search for schemas in the catalog by query term"
+jsonpath "$.result.resources[13].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/request"
+jsonpath "$.result.resources[13].name" == "Sourcemeta One MCP Tools Call Request"
+jsonpath "$.result.resources[13].description" == "Request from a client to invoke an MCP tool by name"
 jsonpath "$.result.resources[13].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[13].size" == 2155
+jsonpath "$.result.resources[13].size" == 1161
 jsonpath "$.result.resources[13].annotations.priority" == 0
-jsonpath "$.result.resources[14].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/response"
-jsonpath "$.result.resources[14].name" == "Sourcemeta One Schema Search RPC Output"
-jsonpath "$.result.resources[14].description" == "Search for schemas in the catalog by query term"
+jsonpath "$.result.resources[14].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/response"
+jsonpath "$.result.resources[14].name" == "Sourcemeta One MCP Tools Call Response"
+jsonpath "$.result.resources[14].description" == "Sourcemeta One's response to a tool invocation"
 jsonpath "$.result.resources[14].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[14].size" == 777
+jsonpath "$.result.resources[14].size" == 4668
 jsonpath "$.result.resources[14].annotations.priority" == 0
-jsonpath "$.result.resources[15].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/request"
-jsonpath "$.result.resources[15].name" == "Sourcemeta One Schema Trace RPC Input"
-jsonpath "$.result.resources[15].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
+jsonpath "$.result.resources[15].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/request"
+jsonpath "$.result.resources[15].name" == "Sourcemeta One Schema Search RPC Input"
+jsonpath "$.result.resources[15].description" == "Search for schemas in the catalog by query term"
 jsonpath "$.result.resources[15].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[15].size" == 1735
+jsonpath "$.result.resources[15].size" == 2155
 jsonpath "$.result.resources[15].annotations.priority" == 0
-jsonpath "$.result.resources[16].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/response"
-jsonpath "$.result.resources[16].name" == "Sourcemeta One Schema Trace RPC Output"
-jsonpath "$.result.resources[16].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
+jsonpath "$.result.resources[16].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/response"
+jsonpath "$.result.resources[16].name" == "Sourcemeta One Schema Search RPC Output"
+jsonpath "$.result.resources[16].description" == "Search for schemas in the catalog by query term"
 jsonpath "$.result.resources[16].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[16].size" == 497
+jsonpath "$.result.resources[16].size" == 777
 jsonpath "$.result.resources[16].annotations.priority" == 0
-jsonpath "$.result.resources[17].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/request"
-jsonpath "$.result.resources[17].name" == "Sourcemeta One MCP Tools List Request"
-jsonpath "$.result.resources[17].description" == "Request from a client to list MCP tools"
+jsonpath "$.result.resources[17].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/request"
+jsonpath "$.result.resources[17].name" == "Sourcemeta One Schema Trace RPC Input"
+jsonpath "$.result.resources[17].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[17].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[17].size" == 853
+jsonpath "$.result.resources[17].size" == 1735
 jsonpath "$.result.resources[17].annotations.priority" == 0
-jsonpath "$.result.resources[18].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/response"
-jsonpath "$.result.resources[18].name" == "Sourcemeta One MCP Tools List Response"
-jsonpath "$.result.resources[18].description" == "Sourcemeta One's list of MCP tools"
+jsonpath "$.result.resources[18].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/response"
+jsonpath "$.result.resources[18].name" == "Sourcemeta One Schema Trace RPC Output"
+jsonpath "$.result.resources[18].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[18].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[18].size" == 4495
+jsonpath "$.result.resources[18].size" == 497
 jsonpath "$.result.resources[18].annotations.priority" == 0
-jsonpath "$.result.resources[19].uri" == "{{base}}/self/v1/schemas/api/playground/schemas/trace/request"
-jsonpath "$.result.resources[19].name" == "Sourcemeta One Playground Schema Trace API Request"
-jsonpath "$.result.resources[19].description" == "A JSON instance and the schema to trace its evaluation against"
+jsonpath "$.result.resources[19].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/request"
+jsonpath "$.result.resources[19].name" == "Sourcemeta One MCP Tools List Request"
+jsonpath "$.result.resources[19].description" == "Request from a client to list MCP tools"
 jsonpath "$.result.resources[19].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[19].size" == 1124
+jsonpath "$.result.resources[19].size" == 853
 jsonpath "$.result.resources[19].annotations.priority" == 0
+jsonpath "$.result.resources[20].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/response"
+jsonpath "$.result.resources[20].name" == "Sourcemeta One MCP Tools List Response"
+jsonpath "$.result.resources[20].description" == "Sourcemeta One's list of MCP tools"
+jsonpath "$.result.resources[20].mimeType" == "application/schema+json"
+jsonpath "$.result.resources[20].size" == 4495
+jsonpath "$.result.resources[20].annotations.priority" == 0
+jsonpath "$.result.resources[21].uri" == "{{base}}/self/v1/schemas/api/playground/schemas/trace/request"
+jsonpath "$.result.resources[21].name" == "Sourcemeta One Playground Schema Trace API Request"
+jsonpath "$.result.resources[21].description" == "A JSON instance and the schema to trace its evaluation against"
+jsonpath "$.result.resources[21].mimeType" == "application/schema+json"
+jsonpath "$.result.resources[21].size" == 1124
+jsonpath "$.result.resources[21].annotations.priority" == 0
 
 # The internal key adds only the `/internal` schema; the `/private` and
 # `/reports` schemas stay hidden.
@@ -1257,7 +1281,7 @@ Content-Type: application/json
 [Asserts]
 jsonpath "$.jsonrpc" == "2.0"
 jsonpath "$.id" == 6
-jsonpath "$.result.resources" count == 18
+jsonpath "$.result.resources" count == 20
 jsonpath "$.result.nextCursor" not exists
 jsonpath "$.result.resources[0].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/get-schema-metadata/response"
 jsonpath "$.result.resources[0].name" == "Sourcemeta One Schema Metadata RPC Output"
@@ -1313,60 +1337,72 @@ jsonpath "$.result.resources[8].description" == "List the contents of a director
 jsonpath "$.result.resources[8].mimeType" == "application/schema+json"
 jsonpath "$.result.resources[8].size" == 609
 jsonpath "$.result.resources[8].annotations.priority" == 0
-jsonpath "$.result.resources[9].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/request"
-jsonpath "$.result.resources[9].name" == "Sourcemeta One MCP Tools Call Request"
-jsonpath "$.result.resources[9].description" == "Request from a client to invoke an MCP tool by name"
+jsonpath "$.result.resources[9].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/playground-trace-schema/request"
+jsonpath "$.result.resources[9].name" == "Sourcemeta One Playground Schema Trace RPC Input"
+jsonpath "$.result.resources[9].description" == "Trace step-by-step evaluation of a JSON instance against a schema supplied in the request rather than one in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[9].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[9].size" == 1161
+jsonpath "$.result.resources[9].size" == 2296
 jsonpath "$.result.resources[9].annotations.priority" == 0
-jsonpath "$.result.resources[10].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/response"
-jsonpath "$.result.resources[10].name" == "Sourcemeta One MCP Tools Call Response"
-jsonpath "$.result.resources[10].description" == "Sourcemeta One's response to a tool invocation"
+jsonpath "$.result.resources[10].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/playground-trace-schema/response"
+jsonpath "$.result.resources[10].name" == "Sourcemeta One Playground Schema Trace RPC Output"
+jsonpath "$.result.resources[10].description" == "Trace step-by-step evaluation of a JSON instance against a schema supplied in the request rather than one in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[10].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[10].size" == 4668
+jsonpath "$.result.resources[10].size" == 559
 jsonpath "$.result.resources[10].annotations.priority" == 0
-jsonpath "$.result.resources[11].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/request"
-jsonpath "$.result.resources[11].name" == "Sourcemeta One Schema Search RPC Input"
-jsonpath "$.result.resources[11].description" == "Search for schemas in the catalog by query term"
+jsonpath "$.result.resources[11].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/request"
+jsonpath "$.result.resources[11].name" == "Sourcemeta One MCP Tools Call Request"
+jsonpath "$.result.resources[11].description" == "Request from a client to invoke an MCP tool by name"
 jsonpath "$.result.resources[11].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[11].size" == 2155
+jsonpath "$.result.resources[11].size" == 1161
 jsonpath "$.result.resources[11].annotations.priority" == 0
-jsonpath "$.result.resources[12].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/response"
-jsonpath "$.result.resources[12].name" == "Sourcemeta One Schema Search RPC Output"
-jsonpath "$.result.resources[12].description" == "Search for schemas in the catalog by query term"
+jsonpath "$.result.resources[12].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/response"
+jsonpath "$.result.resources[12].name" == "Sourcemeta One MCP Tools Call Response"
+jsonpath "$.result.resources[12].description" == "Sourcemeta One's response to a tool invocation"
 jsonpath "$.result.resources[12].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[12].size" == 777
+jsonpath "$.result.resources[12].size" == 4668
 jsonpath "$.result.resources[12].annotations.priority" == 0
-jsonpath "$.result.resources[13].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/request"
-jsonpath "$.result.resources[13].name" == "Sourcemeta One Schema Trace RPC Input"
-jsonpath "$.result.resources[13].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
+jsonpath "$.result.resources[13].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/request"
+jsonpath "$.result.resources[13].name" == "Sourcemeta One Schema Search RPC Input"
+jsonpath "$.result.resources[13].description" == "Search for schemas in the catalog by query term"
 jsonpath "$.result.resources[13].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[13].size" == 1735
+jsonpath "$.result.resources[13].size" == 2155
 jsonpath "$.result.resources[13].annotations.priority" == 0
-jsonpath "$.result.resources[14].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/response"
-jsonpath "$.result.resources[14].name" == "Sourcemeta One Schema Trace RPC Output"
-jsonpath "$.result.resources[14].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
+jsonpath "$.result.resources[14].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/search-schemas/response"
+jsonpath "$.result.resources[14].name" == "Sourcemeta One Schema Search RPC Output"
+jsonpath "$.result.resources[14].description" == "Search for schemas in the catalog by query term"
 jsonpath "$.result.resources[14].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[14].size" == 497
+jsonpath "$.result.resources[14].size" == 777
 jsonpath "$.result.resources[14].annotations.priority" == 0
-jsonpath "$.result.resources[15].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/request"
-jsonpath "$.result.resources[15].name" == "Sourcemeta One MCP Tools List Request"
-jsonpath "$.result.resources[15].description" == "Request from a client to list MCP tools"
+jsonpath "$.result.resources[15].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/request"
+jsonpath "$.result.resources[15].name" == "Sourcemeta One Schema Trace RPC Input"
+jsonpath "$.result.resources[15].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[15].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[15].size" == 853
+jsonpath "$.result.resources[15].size" == 1735
 jsonpath "$.result.resources[15].annotations.priority" == 0
-jsonpath "$.result.resources[16].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/response"
-jsonpath "$.result.resources[16].name" == "Sourcemeta One MCP Tools List Response"
-jsonpath "$.result.resources[16].description" == "Sourcemeta One's list of MCP tools"
+jsonpath "$.result.resources[16].uri" == "{{base}}/self/v1/schemas/mcp/tools/call/trace-schema-evaluation/response"
+jsonpath "$.result.resources[16].name" == "Sourcemeta One Schema Trace RPC Output"
+jsonpath "$.result.resources[16].description" == "Trace step-by-step evaluation of a JSON instance against a schema in the catalog, exposing each step, rule application, and decision point"
 jsonpath "$.result.resources[16].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[16].size" == 4495
+jsonpath "$.result.resources[16].size" == 497
 jsonpath "$.result.resources[16].annotations.priority" == 0
-jsonpath "$.result.resources[17].uri" == "{{base}}/self/v1/schemas/api/playground/schemas/trace/request"
-jsonpath "$.result.resources[17].name" == "Sourcemeta One Playground Schema Trace API Request"
-jsonpath "$.result.resources[17].description" == "A JSON instance and the schema to trace its evaluation against"
+jsonpath "$.result.resources[17].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/request"
+jsonpath "$.result.resources[17].name" == "Sourcemeta One MCP Tools List Request"
+jsonpath "$.result.resources[17].description" == "Request from a client to list MCP tools"
 jsonpath "$.result.resources[17].mimeType" == "application/schema+json"
-jsonpath "$.result.resources[17].size" == 1124
+jsonpath "$.result.resources[17].size" == 853
 jsonpath "$.result.resources[17].annotations.priority" == 0
+jsonpath "$.result.resources[18].uri" == "{{base}}/self/v1/schemas/mcp/tools/list/response"
+jsonpath "$.result.resources[18].name" == "Sourcemeta One MCP Tools List Response"
+jsonpath "$.result.resources[18].description" == "Sourcemeta One's list of MCP tools"
+jsonpath "$.result.resources[18].mimeType" == "application/schema+json"
+jsonpath "$.result.resources[18].size" == 4495
+jsonpath "$.result.resources[18].annotations.priority" == 0
+jsonpath "$.result.resources[19].uri" == "{{base}}/self/v1/schemas/api/playground/schemas/trace/request"
+jsonpath "$.result.resources[19].name" == "Sourcemeta One Playground Schema Trace API Request"
+jsonpath "$.result.resources[19].description" == "A JSON instance and the schema to trace its evaluation against"
+jsonpath "$.result.resources[19].mimeType" == "application/schema+json"
+jsonpath "$.result.resources[19].size" == 1124
+jsonpath "$.result.resources[19].annotations.priority" == 0
 
 # A cursor that is not aligned to a page boundary is rejected before the catalog
 # is scanned, so a malformed cursor cannot force a full scan.

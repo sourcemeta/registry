@@ -3,6 +3,7 @@
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonpointer.h>
+#include <sourcemeta/core/jsonrpc.h>
 #include <sourcemeta/core/mcp.h>
 #include <sourcemeta/core/uritemplate.h>
 
@@ -43,6 +44,10 @@ public:
             this->request_schema_ = std::get<std::string_view>(value);
           } else if (key == "responseSchema") {
             this->response_schema_ = std::get<std::string_view>(value);
+          } else if (key == "mcpRequestSchema") {
+            this->rpc_request_schema_ = std::get<std::string_view>(value);
+          } else if (key == "mcpResponseSchema") {
+            this->rpc_response_schema_ = std::get<std::string_view>(value);
           } else if (key == "errorSchema") {
             this->error_schema_ = std::get<std::string_view>(value);
           }
@@ -91,18 +96,71 @@ public:
         });
   }
 
-  auto mcp(const sourcemeta::core::MCPProtocolVersion,
+  auto mcp(const sourcemeta::core::MCPProtocolVersion version,
            const sourcemeta::core::JSON &request_id,
-           const sourcemeta::core::JSON &,
-           const sourcemeta::one::Authentication::Caller &)
+           const sourcemeta::core::JSON &arguments,
+           const sourcemeta::one::Authentication::Caller &caller)
       -> sourcemeta::core::JSON override {
-    return sourcemeta::core::mcp_make_tool_error(
-        request_id, "This action is not exposed as a tool");
+    auto [request_valid, request_output]{
+        this->structural_evaluate(this->rpc_request_schema_, arguments,
+                                  sourcemeta::blaze::Mode::Exhaustive)};
+    if (!request_valid) {
+      return sourcemeta::core::jsonrpc_make_error(
+          &request_id, -32602, "Params fail against the tool request schema",
+          std::move(request_output));
+    }
+
+    sourcemeta::core::JSON parsed_schema{nullptr};
+    try {
+      parsed_schema = sourcemeta::core::parse_json(
+          arguments.at("stringifiedSchema").to_string());
+    } catch (const std::exception &) {
+      return sourcemeta::core::mcp_make_tool_error(
+          request_id, "The schema is not valid JSON");
+    } catch (...) {
+      return sourcemeta::core::mcp_make_tool_error(
+          request_id, "The schema is not valid JSON");
+    }
+
+    // What the REST surface refuses through its request schema, this refuses
+    // here, since a tool argument arrives as a string rather than a document
+    if (!parsed_schema.is_object() || !parsed_schema.defines("$schema")) {
+      return sourcemeta::core::mcp_make_tool_error(
+          request_id, "The schema must be an object declaring its dialect");
+    }
+
+    sourcemeta::core::PointerPositionTracker tracker;
+    sourcemeta::core::JSON parsed_instance{nullptr};
+    try {
+      sourcemeta::core::parse_json(
+          arguments.at("stringifiedInstance").to_string(), parsed_instance,
+          std::ref(tracker));
+    } catch (const std::exception &) {
+      return sourcemeta::core::mcp_make_tool_error(
+          request_id, "The instance is not valid JSON");
+    } catch (...) {
+      return sourcemeta::core::mcp_make_tool_error(
+          request_id, "The instance is not valid JSON");
+    }
+
+    try {
+      const auto schema_template{
+          this->compile_playground_schema(caller, parsed_schema)};
+      return sourcemeta::core::mcp_make_tool_success(
+          version, request_id,
+          ActionJSONSchemaTraceV1::build_trace_document(
+              schema_template, parsed_instance, &tracker,
+              sourcemeta::core::Pointer{}));
+    } catch (const sourcemeta::one::PlaygroundSchemaError &error) {
+      return sourcemeta::core::mcp_make_tool_error(request_id, error.what());
+    }
   }
 
 private:
   std::string_view request_schema_;
   std::string_view response_schema_;
+  std::string_view rpc_request_schema_;
+  std::string_view rpc_response_schema_;
   std::string_view error_schema_;
 };
 
