@@ -87,7 +87,8 @@ auto unresolvable_reference(const sourcemeta::core::JSON &document,
         [&reference, &location, identifier](
             const sourcemeta::core::WeakPointer &pointer,
             const sourcemeta::blaze::SchemaFrame::Reference &entry) -> void {
-          if (reference.empty() && entry.destination == identifier) {
+          if (reference.empty() &&
+              (entry.destination == identifier || entry.base == identifier)) {
             reference = entry.destination;
             location = sourcemeta::core::to_string(pointer);
           }
@@ -99,13 +100,40 @@ auto unresolvable_reference(const sourcemeta::core::JSON &document,
   }
 
   // A dialect that resolves nowhere is a reference too, and framing cannot
-  // report it because framing is what failed on it
-  if (reference.empty() && document.is_object()) {
-    const auto *dialect{document.try_at("$schema")};
-    if (dialect != nullptr && dialect->is_string() &&
-        dialect->to_string() == identifier) {
-      reference = dialect->to_string();
-      location = "/$schema";
+  // report it because framing is what failed on it. Any resource of the
+  // document may declare one, so this looks past the root
+  if (reference.empty()) {
+    std::vector<
+        std::pair<const sourcemeta::core::JSON *, sourcemeta::core::Pointer>>
+        pending;
+    pending.emplace_back(&document, sourcemeta::core::Pointer{});
+
+    while (!pending.empty() && reference.empty()) {
+      const auto entry{pending.back()};
+      pending.pop_back();
+
+      if (entry.first->is_object()) {
+        for (const auto &member : entry.first->as_object()) {
+          auto nested{entry.second};
+          nested.push_back(member.first);
+          if (member.first == "$schema" && member.second.is_string() &&
+              member.second.to_string() == identifier) {
+            reference = member.second.to_string();
+            location = sourcemeta::core::to_string(nested);
+            break;
+          }
+
+          pending.emplace_back(&member.second, std::move(nested));
+        }
+      } else if (entry.first->is_array()) {
+        std::size_t index{0};
+        for (const auto &member : entry.first->as_array()) {
+          auto nested{entry.second};
+          nested.push_back(index);
+          pending.emplace_back(&member, std::move(nested));
+          index += 1;
+        }
+      }
     }
   }
 

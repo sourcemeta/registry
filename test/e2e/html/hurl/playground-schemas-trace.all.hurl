@@ -3050,6 +3050,113 @@ header "Vary" not exists
 header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/
 jsonpath "$.valid" == true
 
+# A reference carrying a fragment, which resolves by its base but is
+# named back as the caller wrote it
+POST {{base}}/self/v1/api/playground/schemas/trace
+Content-Type: application/json
+```
+{
+  "instance": "x",
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "properties": {
+      "a": {
+        "$ref": "https://example.org/z#/$defs/x"
+      }
+    }
+  }
+}
+```
+HTTP 400
+Cache-Control: no-store
+Content-Type: application/problem+json
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: Link, ETag
+Link: </self/v1/schemas/api/error>; rel="describedby"
+[Captures]
+last_response: body
+schema_path: header "Link" regex "<([^>]+)>"
+[Asserts]
+header "Vary" not exists
+header "Referrer-Policy" not exists
+header "Content-Security-Policy" not exists
+header "X-Frame-Options" not exists
+header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/
+jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
+jsonpath "$.title" == "Bad Request"
+jsonpath "$.status" == 400
+jsonpath "$.detail" == "A reference in the supplied schema could not be resolved"
+jsonpath "$.reference" == "https://example.org/z#/$defs/x"
+jsonpath "$.schemaLocation" == "/properties/a/$ref"
+
+# The answer above is described by a schema this instance serves, so it
+# validates against the very schema its Link header names
+POST {{base}}/self/v1/api/schemas/evaluate{{schema_path}}
+```
+{{last_response}}
+```
+HTTP 200
+Cache-Control: no-store
+Link: </self/v1/schemas/api/schemas/evaluate/response>; rel="describedby"
+[Asserts]
+header "Vary" not exists
+header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/
+jsonpath "$.valid" == true
+
+# A resource embedded in the supplied schema declaring a dialect that
+# resolves nowhere, located where it sits rather than at the root
+POST {{base}}/self/v1/api/playground/schemas/trace
+Content-Type: application/json
+```
+{
+  "instance": "x",
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$defs": {
+      "r": {
+        "$id": "https://example.com/r",
+        "$schema": "https://example.com/unknown-dialect"
+      }
+    }
+  }
+}
+```
+HTTP 400
+Cache-Control: no-store
+Content-Type: application/problem+json
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: Link, ETag
+Link: </self/v1/schemas/api/error>; rel="describedby"
+[Captures]
+last_response: body
+schema_path: header "Link" regex "<([^>]+)>"
+[Asserts]
+header "Vary" not exists
+header "Referrer-Policy" not exists
+header "Content-Security-Policy" not exists
+header "X-Frame-Options" not exists
+header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/
+jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
+jsonpath "$.title" == "Bad Request"
+jsonpath "$.status" == 400
+jsonpath "$.detail" == "A reference in the supplied schema could not be resolved"
+jsonpath "$.reference" == "https://example.com/unknown-dialect"
+jsonpath "$.schemaLocation" == "/$defs/r/$schema"
+
+# The answer above is described by a schema this instance serves, so it
+# validates against the very schema its Link header names
+POST {{base}}/self/v1/api/schemas/evaluate{{schema_path}}
+```
+{{last_response}}
+```
+HTTP 200
+Cache-Control: no-store
+Link: </self/v1/schemas/api/schemas/evaluate/response>; rel="describedby"
+[Asserts]
+header "Vary" not exists
+header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/
+jsonpath "$.valid" == true
+
 # Nesting past the depth compilation may descend to
 POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json

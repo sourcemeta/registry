@@ -164,7 +164,11 @@
           "format": "json-pointer"
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "dependentRequired": {
+        "reference": [ "schemaLocation" ],
+        "schemaLocation": [ "reference" ]
+      }
     },
     {
       "const": {
