@@ -45,7 +45,7 @@ DROP LINES MATCHING '^2> (Writing output to:|Using configuration:|Detecting:|\([
 WRITE expected.txt UNTIL EOF
 2> error: Too many entries in a single directory
 2>   at path [CWD]/output/schemas/self/v1/schemas/mcp/tools/call
-2>   with count 14
+2>   with count 15
 EOF
 
 REPLACE $CWD WITH '[CWD]' IN output.txt

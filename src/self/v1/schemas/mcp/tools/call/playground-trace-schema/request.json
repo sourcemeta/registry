@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sourcemeta One Playground Schema Trace RPC Input",
+  "description": "Trace step-by-step evaluation of a JSON instance against a schema supplied in the request rather than one in the catalog, exposing each step, rule application, and decision point",
+  "examples": [
+    {
+      "stringifiedSchema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"string\"}",
+      "stringifiedInstance": "\"hello\""
+    }
+  ],
+  "type": "object",
+  "required": [ "stringifiedSchema", "stringifiedInstance" ],
+  "properties": {
+    "stringifiedSchema": {
+      "description": "The JSON Schema to evaluate against, encoded as a string of valid JSON. It must be an object declaring its dialect with `$schema`. A `$ref` to a schema in this catalog resolves on the same terms as fetching that schema directly, and a `$ref` to anywhere else is refused",
+      "$comment": "Accepting the schema as a JSON-encoded string is a workaround for MCP clients that stringify non-string tool arguments before sending them. See https://github.com/anthropics/claude-code/issues/24599 and https://github.com/modelcontextprotocol/python-sdk/issues/1112",
+      "type": "string",
+      "contentEncoding": "identity",
+      "contentMediaType": "application/json"
+    },
+    "stringifiedInstance": {
+      "description": "The JSON value to trace evaluation against, encoded as a string of valid JSON. The server parses this string before tracing, so non-string MCP clients can still send objects, numbers, booleans, null, or arrays without losing the JSON type. The reported `instancePositions` are line/column offsets within the parsed JSON content, not within the surrounding JSON-RPC envelope",
+      "$comment": "Accepting the instance as a JSON-encoded string is a workaround for MCP clients that stringify non-string tool arguments before sending them. See https://github.com/anthropics/claude-code/issues/24599 and https://github.com/modelcontextprotocol/python-sdk/issues/1112",
+      "type": "string",
+      "contentEncoding": "identity",
+      "contentMediaType": "application/json"
+    }
+  },
+  "additionalProperties": false
+}

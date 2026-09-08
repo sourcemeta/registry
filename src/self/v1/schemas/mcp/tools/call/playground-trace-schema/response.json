@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sourcemeta One Playground Schema Trace RPC Output",
+  "description": "Trace step-by-step evaluation of a JSON instance against a schema supplied in the request rather than one in the catalog, exposing each step, rule application, and decision point",
+  "examples": [
+    {
+      "valid": true,
+      "steps": []
+    }
+  ],
+  "$ref": "../../../../api/playground/schemas/trace/response.json"
+}
