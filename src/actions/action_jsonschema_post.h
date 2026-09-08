@@ -44,19 +44,28 @@ inline constexpr std::uint64_t MAX_INLINE_SCHEMA_DEPTH{44};
 
 // What an inline compilation refused, carried out of the deferred body so that
 // the answer names the reason rather than reporting a generic failure
-struct InlineSchemaError final : std::exception {
+class InlineSchemaError final : public std::exception {
+public:
   InlineSchemaError(const sourcemeta::core::HTTPStatus &status,
                     const std::string_view type, const char *detail)
-      : status{status}, type{type}, detail_{detail} {}
+      : status_{status}, type_{type}, detail_{detail} {}
 
   [[nodiscard]] auto what() const noexcept -> const char * override {
     return this->detail_;
   }
 
-  sourcemeta::core::HTTPStatus status;
-  std::string_view type;
+  [[nodiscard]] auto status() const noexcept
+      -> const sourcemeta::core::HTTPStatus & {
+    return this->status_;
+  }
+
+  [[nodiscard]] auto type() const noexcept -> std::string_view {
+    return this->type_;
+  }
 
 private:
+  sourcemeta::core::HTTPStatus status_;
+  std::string_view type_;
   const char *detail_;
 };
 
@@ -253,8 +262,8 @@ auto schema_post_body(HTTPRequest &request, HTTPResponse &response,
                      "urn:sourcemeta:one:invalid-request", error.what(),
                      error_schema, "*");
         } catch (const InlineSchemaError &error) {
-          json_error(callback_request, callback_response, error.status,
-                     error.type, error.what(), error_schema, "*");
+          json_error(callback_request, callback_response, error.status(),
+                     error.type(), error.what(), error_schema, "*");
         } catch (const std::exception &exception) {
           json_error(callback_request, callback_response,
                      sourcemeta::core::HTTP_STATUS_INTERNAL_SERVER_ERROR,
