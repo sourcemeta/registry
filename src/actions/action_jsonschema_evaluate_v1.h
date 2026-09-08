@@ -10,8 +10,6 @@
 #include <sourcemeta/one/router.h>
 #include <sourcemeta/one/shared.h>
 
-#include "action_jsonschema_post.h"
-
 #include <exception> // std::exception, std::exception_ptr, std::rethrow_exception
 #include <filesystem>  // std::filesystem::path
 #include <span>        // std::span
@@ -139,8 +137,7 @@ public:
                          const std::string_view error_schema,
                          const std::string_view request_schema, Perform perform)
       -> void {
-    if (sourcemeta::one::schema_post_preamble(request, response,
-                                              error_schema)) {
+    if (self.schema_post_preamble(request, response, error_schema)) {
       return;
     }
 
@@ -184,7 +181,7 @@ public:
       return;
     }
 
-    sourcemeta::one::schema_post_body(
+    self.schema_post_body(
         request, response, response_schema, error_schema,
         sourcemeta::one::MAX_REQUEST_BODY_BYTES,
         // A throw here is intended and caught by the surrounding error

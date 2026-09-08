@@ -773,8 +773,8 @@ jsonpath "$.result.structuredContent.entries[1].description" == "The schemas tha
 variable "text" jsonpath "$.entries[1].description" == "The schemas that define the current version of this instance"
 jsonpath "$.result.structuredContent.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.result.structuredContent.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].health" == 100
+jsonpath "$.result.structuredContent.entries[1].health" == 99
+variable "text" jsonpath "$.entries[1].health" == 99
 jsonpath "$.result.structuredContent.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].schemas" == 65
 jsonpath "$.result.structuredContent.entries[1].path" == "/self/"

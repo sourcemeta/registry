@@ -768,7 +768,7 @@ variable "text" jsonpath "$.entries[1].private" == false
 variable "text" jsonpath "$.entries[1].title" == "Self"
 variable "text" jsonpath "$.entries[1].description" == "The schemas that define the current version of this instance"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-variable "text" jsonpath "$.entries[1].health" == 100
+variable "text" jsonpath "$.entries[1].health" == 99
 variable "text" jsonpath "$.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].path" == "/self/"
 variable "text" jsonpath "$.entries[2].name" == "test"

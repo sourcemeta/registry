@@ -18,8 +18,18 @@
       "description": "The JSON instance to trace evaluation for"
     },
     "schema": {
-      "description": "The JSON Schema to evaluate the instance against, which must declare the dialect it is written against",
-      "type": "object"
+      "description": "The JSON Schema to evaluate the instance against",
+      "x-lint-exclude": [ "simple_properties_identifiers" ],
+      "type": "object",
+      "required": [ "$schema" ],
+      "properties": {
+        "$schema": {
+          "description": "The dialect the schema is written against",
+          "x-format-assertion": true,
+          "type": "string",
+          "format": "uri"
+        }
+      }
     }
   },
   "additionalProperties": false

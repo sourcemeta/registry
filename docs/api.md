@@ -830,15 +830,9 @@ schema.
 ## Playground
 
 Everything under `/self/v1/api/playground` evaluates a document the caller
-supplies in the request rather than one this instance holds. That is a
-different contract from the rest of this API: nothing here reads a precomputed
-artifact, every request compiles what it carries, and what it may cost is
-bounded rather than known ahead of time.
-
-Because the whole namespace shares that contract, an [authentication
-policy](configuration.md) naming `/self/v1/api/playground` governs the entire
-capability, including operations added to it later. An instance that does not
-wish to compile documents on demand can withhold it in one declaration.
+supplies in the request rather than one this instance holds. An [authentication
+policy](configuration.md) naming `/self/v1/api/playground` governs the whole
+namespace, including operations added to it later.
 
 ### Schema Trace
 
@@ -856,30 +850,15 @@ takes:
 | Property    | Type   | Required | Description |
 |-------------|--------|-----|-------------------------------------|
 | `/instance` | JSON   | Yes | The instance to trace evaluation for |
-| `/schema`   | Object | Yes | The schema to evaluate it against |
+| `/schema`   | Object | Yes | The schema to evaluate it against, which must declare its dialect with [`$schema`](https://www.learnjsonschema.com/2020-12/core/schema/) |
 
-The schema must be an object declaring the dialect it is written against with
-[`$schema`](https://www.learnjsonschema.com/2020-12/core/schema/). A boolean
-schema is refused, as it declares no dialect and this endpoint does not guess
-one.
+A [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) to a schema in the
+catalog or to an official JSON Schema is respected, on the same terms as
+fetching that schema directly. Anything else does not resolve.
 
-A [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) in the supplied
-schema resolves against this catalog, naming a schema by the same URL it is
-served at, and is subject to the same authentication as fetching that schema
-directly. A [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) naming
-any other origin is refused, and so is one naming a path the caller may not
-read, which is refused in the same way as one that names nothing at all.
-Official JSON Schema metaschemas resolve without being in the catalog, which is
-what lets a caller name a dialect. Every hop of a reference chain is resolved on
-the same terms, so a reference reaching a schema the caller cannot read is
-refused wherever in the chain it appears.
-
-The request body cap is lower here than the one [Trace](#trace) applies, so an
-instance too large for this endpoint can still be evaluated against a catalog
-schema by path.
-
-The supplied schema is compiled on every request and is not cached, so this
-endpoint is slower per call than naming a schema by path.
+To prevent abuse, the number of keywords, the nesting depth and the size of a
+schema compiled on demand are limited. Those limits do not apply to a schema
+ingested into the catalog the normal way.
 
 === "200"
 
@@ -887,7 +866,7 @@ endpoint is slower per call than naming a schema by path.
 
 === "400"
 
-    The body is not the expected object, the schema cannot be compiled, or a [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) in it does not resolve.
+    The body is not the expected object, or the schema cannot be compiled, which includes a [`$ref`](https://www.learnjsonschema.com/2020-12/core/ref/) in it not resolving.
 
 === "413"
 
@@ -899,7 +878,7 @@ endpoint is slower per call than naming a schema by path.
 
 === "422"
 
-    The schema is too complex to compile, in the number of locations framing it registers, the number of instructions it compiles to, or how deeply it nests.
+    The schema is too complex to compile.
 
 ## Model Context Protocol
 

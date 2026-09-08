@@ -1,1 +1,97 @@
-{"instance": "x", "schema": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"not": {"type": "string"}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}, "$schema": "https://json-schema.org/draft/2020-12/schema"}}
+{
+  "instance": "x",
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "not": {
+      "not": {
+        "not": {
+          "not": {
+            "not": {
+              "not": {
+                "not": {
+                  "not": {
+                    "not": {
+                      "not": {
+                        "not": {
+                          "not": {
+                            "not": {
+                              "not": {
+                                "not": {
+                                  "not": {
+                                    "not": {
+                                      "not": {
+                                        "not": {
+                                          "not": {
+                                            "not": {
+                                              "not": {
+                                                "not": {
+                                                  "not": {
+                                                    "not": {
+                                                      "not": {
+                                                        "not": {
+                                                          "not": {
+                                                            "not": {
+                                                              "not": {
+                                                                "not": {
+                                                                  "not": {
+                                                                    "not": {
+                                                                      "not": {
+                                                                        "not": {
+                                                                          "not": {
+                                                                            "not": {
+                                                                              "not": {
+                                                                                "not": {
+                                                                                  "not": {
+                                                                                    "not": {
+                                                                                      "not": {
+                                                                                        "not": {
+                                                                                          "not": {
+                                                                                            "not": {
+                                                                                              "type": "string"
+                                                                                            }
+                                                                                          }
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

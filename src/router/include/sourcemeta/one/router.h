@@ -30,6 +30,45 @@ namespace sourcemeta::one {
 class Router;
 class RouterAction;
 
+// The body did not match what the route accepts
+struct SchemaPostRequestError final : std::exception {
+  [[nodiscard]] auto what() const noexcept -> const char * override {
+    return "The request body does not match the expected schema";
+  }
+};
+
+// What a playground compilation refused, carried out of the deferred body so
+// the answer names the reason rather than reporting a generic failure
+class PlaygroundSchemaError final : public std::exception {
+public:
+  PlaygroundSchemaError(const sourcemeta::core::HTTPStatus &status,
+                        const std::string_view type, const char *detail)
+      : status_{status}, type_{type}, detail_{detail} {}
+
+  [[nodiscard]] auto what() const noexcept -> const char * override {
+    return this->detail_;
+  }
+
+  [[nodiscard]] auto status() const noexcept
+      -> const sourcemeta::core::HTTPStatus & {
+    return this->status_;
+  }
+
+  [[nodiscard]] auto type() const noexcept -> std::string_view {
+    return this->type_;
+  }
+
+private:
+  sourcemeta::core::HTTPStatus status_;
+  std::string_view type_;
+  const char *detail_;
+};
+
+// The largest body a route that compiles what it carries will read, which is
+// smaller than what a route reading a precomputed artifact accepts
+inline constexpr std::size_t MAX_PLAYGROUND_REQUEST_BODY_BYTES{
+    static_cast<std::size_t>(1) * 1024 * 1024};
+
 // The cookie fields a request carried, held for as long as the credentials
 // that view them. A request may present the field more than once, so every
 // occurrence is kept rather than the first, and they are not joined, since
@@ -301,6 +340,129 @@ public:
   // and the artifact tree both read, or nothing when it points outside
   [[nodiscard]] auto canonical_path(std::string_view input) const
       -> std::optional<Authentication::Path>;
+
+  // Compile a schema the caller supplied under the budgets that bound what a
+  // request may spend, resolving its references as that caller. Whatever
+  // compilation refuses becomes the answer they are owed, since a schema they
+  // wrote failing to compile is a fact about their request
+  [[nodiscard]] auto
+  compile_playground_schema(const Authentication::Caller &caller,
+                            const sourcemeta::core::JSON &schema) const
+      -> sourcemeta::blaze::Template;
+
+  // Answer a preflight or a method a schema POST route does not serve,
+  // reporting whether the request was answered here
+  [[nodiscard]] auto schema_post_preamble(HTTPRequest &request,
+                                          HTTPResponse &response,
+                                          std::string_view error_schema) const
+      -> bool;
+
+  // Read a schema POST body and answer with whatever the callback makes of it.
+  // The body arrives once the request that carried it is gone, so whatever the
+  // callback needs from that request has to be owned by the time it runs
+  template <typename Perform>
+  auto schema_post_body(HTTPRequest &request, HTTPResponse &response,
+                        const std::string_view response_schema,
+                        const std::string_view error_schema,
+                        const std::size_t max_body, Perform perform) const
+      -> void {
+    // RFC 9110 §10.1.1: refuse unrecognised expectations with 417 before
+    // touching the body. uWS already auto-acknowledged `100-continue`
+    // upstream, so anything left here is a value we cannot honour.
+    if (expect_header_unrecognised(request)) {
+      json_error(request, response,
+                 sourcemeta::core::HTTP_STATUS_EXPECTATION_FAILED,
+                 "urn:sourcemeta:one:expectation-failed",
+                 "The Expect header carries an unsupported expectation",
+                 error_schema, "*");
+      return;
+    }
+
+    // RFC 9110 §15.5.14: when the client declares a `Content-Length`
+    // beyond the cap, fast-fail with 413 before scheduling the read.
+    if (request_body_too_large(request, max_body)) {
+      json_error(request, response,
+                 sourcemeta::core::HTTP_STATUS_CONTENT_TOO_LARGE,
+                 "urn:sourcemeta:one:payload-too-large",
+                 "The request body is too large", error_schema, "*");
+      return;
+    }
+
+    request.body(
+        // A throw here is intended and caught by the surrounding error
+        // handler
+        // NOLINTNEXTLINE(bugprone-exception-escape)
+        [response_schema, error_schema, perform = std::move(perform)](
+            HTTPRequest &callback_request, HTTPResponse &callback_response,
+            std::string &&body, bool too_big) -> void {
+          if (too_big) {
+            json_error(callback_request, callback_response,
+                       sourcemeta::core::HTTP_STATUS_CONTENT_TOO_LARGE,
+                       "urn:sourcemeta:one:payload-too-large",
+                       "The request body is too large", error_schema, "*");
+            return;
+          }
+
+          if (body.empty()) {
+            json_error(callback_request, callback_response,
+                       sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
+                       "urn:sourcemeta:one:no-instance",
+                       "You must pass an instance to validate against",
+                       error_schema, "*");
+            return;
+          }
+
+          try {
+            const auto result{perform(body)};
+            callback_response.write_status(sourcemeta::core::HTTP_STATUS_OK);
+            callback_response.write_header("Content-Type", "application/json");
+            callback_response.write_header("Access-Control-Allow-Origin", "*");
+            callback_response.write_header("Access-Control-Expose-Headers",
+                                           "Link, ETag");
+            // The response is fully determined by the POST body. A
+            // shared cache cannot use this for any other request, so
+            // skip caching altogether.
+            callback_response.write_header("Cache-Control",
+                                           cache_control_no_store());
+            write_link_header(callback_response, response_schema);
+            std::ostringstream payload;
+            sourcemeta::core::prettify(result, payload);
+            send_response(sourcemeta::core::HTTP_STATUS_OK, callback_request,
+                          callback_response, payload.str(), Encoding::Identity);
+          } catch (const sourcemeta::core::JSONParseError &) {
+            json_error(callback_request, callback_response,
+                       sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
+                       "urn:sourcemeta:one:invalid-json",
+                       "The request body is not valid JSON", error_schema, "*");
+          } catch (const SchemaPostRequestError &error) {
+            json_error(callback_request, callback_response,
+                       sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
+                       "urn:sourcemeta:one:invalid-request", error.what(),
+                       error_schema, "*");
+          } catch (const PlaygroundSchemaError &error) {
+            json_error(callback_request, callback_response, error.status(),
+                       error.type(), error.what(), error_schema, "*");
+          } catch (const std::exception &exception) {
+            json_error(callback_request, callback_response,
+                       sourcemeta::core::HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                       "urn:sourcemeta:one:schema-evaluation-error",
+                       exception.what(), error_schema, "*");
+          }
+        },
+        [error_schema](HTTPRequest &callback_request,
+                       HTTPResponse &callback_response,
+                       const std::exception_ptr &error) -> void {
+          try {
+            std::rethrow_exception(error);
+          } catch (const std::exception &exception) {
+            json_error(callback_request, callback_response,
+                       sourcemeta::core::HTTP_STATUS_INTERNAL_SERVER_ERROR,
+                       "urn:sourcemeta:one:uncaught-error", exception.what(),
+                       error_schema, "*");
+          }
+        },
+        max_body);
+  }
 
 protected:
   // Resolution for trees that are not registry content, such as the

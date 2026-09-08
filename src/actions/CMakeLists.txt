@@ -33,7 +33,6 @@ target_link_libraries(sourcemeta_one_actions PUBLIC sourcemeta::one::metapack)
 target_link_libraries(sourcemeta_one_actions PRIVATE sourcemeta::one::search)
 target_link_libraries(sourcemeta_one_actions PUBLIC sourcemeta::blaze::evaluator)
 target_link_libraries(sourcemeta_one_actions PUBLIC sourcemeta::blaze::compiler)
-target_link_libraries(sourcemeta_one_actions PUBLIC sourcemeta::blaze::bundle)
 target_link_libraries(sourcemeta_one_actions PUBLIC sourcemeta::blaze::foundation)
 target_link_libraries(sourcemeta_one_actions PRIVATE sourcemeta::blaze::output)
 

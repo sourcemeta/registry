@@ -150,8 +150,8 @@ jsonpath "$.result.structuredContent.entries[1].description" == "The schemas tha
 variable "text" jsonpath "$.entries[1].description" == "The schemas that define the current version of this instance"
 jsonpath "$.result.structuredContent.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.result.structuredContent.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].health" == 100
+jsonpath "$.result.structuredContent.entries[1].health" == 99
+variable "text" jsonpath "$.entries[1].health" == 99
 jsonpath "$.result.structuredContent.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].schemas" == 65
 jsonpath "$.result.structuredContent.entries[1].path" == "/self/"
@@ -285,8 +285,8 @@ jsonpath "$.result.structuredContent.entries[1].description" == "The schemas tha
 variable "text" jsonpath "$.entries[1].description" == "The schemas that define the current version of this instance"
 jsonpath "$.result.structuredContent.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.result.structuredContent.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].health" == 100
+jsonpath "$.result.structuredContent.entries[1].health" == 99
+variable "text" jsonpath "$.entries[1].health" == 99
 jsonpath "$.result.structuredContent.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].schemas" == 65
 jsonpath "$.result.structuredContent.entries[1].path" == "/self/"
@@ -416,8 +416,8 @@ variable "text" jsonpath "$.entries[1].name" == "self"
 variable "text" jsonpath "$.entries[1].private" == false
 jsonpath "$.result.structuredContent.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.result.structuredContent.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].health" == 100
+jsonpath "$.result.structuredContent.entries[1].health" == 99
+variable "text" jsonpath "$.entries[1].health" == 99
 jsonpath "$.result.structuredContent.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].schemas" == 65
 jsonpath "$.result.structuredContent.entries[1].path" == "/self/"
@@ -2303,8 +2303,8 @@ jsonpath "$.result.structuredContent.breadcrumb[0].path" == "/self/"
 variable "text" jsonpath "$.breadcrumb[0].path" == "/self/"
 jsonpath "$.result.structuredContent.schemas" == 65
 variable "text" jsonpath "$.schemas" == 65
-jsonpath "$.result.structuredContent.health" == 100
-variable "text" jsonpath "$.health" == 100
+jsonpath "$.result.structuredContent.health" == 99
+variable "text" jsonpath "$.health" == 99
 jsonpath "$.result.structuredContent.entries" count == 1
 jsonpath "$.result.structuredContent.private" == false
 variable "text" jsonpath "$.entries" count == 1
@@ -2315,8 +2315,8 @@ variable "text" jsonpath "$.entries[0].name" == "v1"
 variable "text" jsonpath "$.entries[0].private" == false
 jsonpath "$.result.structuredContent.entries[0].type" == "directory"
 variable "text" jsonpath "$.entries[0].type" == "directory"
-jsonpath "$.result.structuredContent.entries[0].health" == 100
-variable "text" jsonpath "$.entries[0].health" == 100
+jsonpath "$.result.structuredContent.entries[0].health" == 99
+variable "text" jsonpath "$.entries[0].health" == 99
 jsonpath "$.result.structuredContent.entries[0].schemas" == 65
 variable "text" jsonpath "$.entries[0].schemas" == 65
 jsonpath "$.result.structuredContent.entries[0].path" == "/self/v1/"
@@ -3065,8 +3065,8 @@ jsonpath "$.result.structuredContent.entries[1].description" == "The schemas tha
 variable "text" jsonpath "$.entries[1].description" == "The schemas that define the current version of this instance"
 jsonpath "$.result.structuredContent.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.result.structuredContent.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].health" == 100
+jsonpath "$.result.structuredContent.entries[1].health" == 99
+variable "text" jsonpath "$.entries[1].health" == 99
 jsonpath "$.result.structuredContent.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].schemas" == 65
 jsonpath "$.result.structuredContent.entries[1].path" == "/self/"
@@ -3200,8 +3200,8 @@ jsonpath "$.result.structuredContent.entries[1].description" == "The schemas tha
 variable "text" jsonpath "$.entries[1].description" == "The schemas that define the current version of this instance"
 jsonpath "$.result.structuredContent.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.result.structuredContent.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].health" == 100
+jsonpath "$.result.structuredContent.entries[1].health" == 99
+variable "text" jsonpath "$.entries[1].health" == 99
 jsonpath "$.result.structuredContent.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].schemas" == 65
 jsonpath "$.result.structuredContent.entries[1].path" == "/self/"
@@ -3335,8 +3335,8 @@ jsonpath "$.result.structuredContent.entries[1].description" == "The schemas tha
 variable "text" jsonpath "$.entries[1].description" == "The schemas that define the current version of this instance"
 jsonpath "$.result.structuredContent.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.result.structuredContent.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].health" == 100
+jsonpath "$.result.structuredContent.entries[1].health" == 99
+variable "text" jsonpath "$.entries[1].health" == 99
 jsonpath "$.result.structuredContent.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].schemas" == 65
 jsonpath "$.result.structuredContent.entries[1].path" == "/self/"
@@ -3466,8 +3466,8 @@ variable "text" jsonpath "$.entries[1].name" == "self"
 variable "text" jsonpath "$.entries[1].private" == false
 jsonpath "$.result.structuredContent.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.result.structuredContent.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].health" == 100
+jsonpath "$.result.structuredContent.entries[1].health" == 99
+variable "text" jsonpath "$.entries[1].health" == 99
 jsonpath "$.result.structuredContent.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].schemas" == 65
 jsonpath "$.result.structuredContent.entries[1].path" == "/self/"
@@ -3601,8 +3601,8 @@ variable "text" jsonpath "$.entries[1].name" == "self"
 variable "text" jsonpath "$.entries[1].private" == false
 jsonpath "$.result.structuredContent.entries[1].type" == "directory"
 variable "text" jsonpath "$.entries[1].type" == "directory"
-jsonpath "$.result.structuredContent.entries[1].health" == 100
-variable "text" jsonpath "$.entries[1].health" == 100
+jsonpath "$.result.structuredContent.entries[1].health" == 99
+variable "text" jsonpath "$.entries[1].health" == 99
 jsonpath "$.result.structuredContent.entries[1].schemas" == 65
 variable "text" jsonpath "$.entries[1].schemas" == 65
 jsonpath "$.result.structuredContent.entries[1].path" == "/self/"

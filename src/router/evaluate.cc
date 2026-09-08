@@ -1,17 +1,61 @@
 #include <sourcemeta/blaze/compiler.h>
 #include <sourcemeta/blaze/evaluator.h>
+#include <sourcemeta/blaze/foundation.h>
 #include <sourcemeta/blaze/output.h>
 
 #include <sourcemeta/one/metapack.h>
 #include <sourcemeta/one/router.h>
 
 #include <cassert>     // assert
+#include <cstdint>     // std::uint64_t
+#include <exception>   // std::exception
 #include <functional>  // std::ref
 #include <memory>      // std::make_shared, std::shared_ptr
 #include <string_view> // std::string_view
 #include <utility>     // std::move, std::pair
 
 namespace sourcemeta::one {
+
+namespace {
+
+// What a playground schema may cost, as multiples of the worst case across
+// every schema the sandboxes index, measured 2026-09-07. The body cap normally
+// refuses a schema before the instruction budget can fire, which leaves that
+// one standing as a backstop for a schema whose compiled size outgrows what it
+// is written down as
+inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_LOCATIONS{80000};
+inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_INSTRUCTIONS{400000};
+inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_DEPTH{44};
+
+// Resolve a reference from a playground schema the way this registry would
+// it for whoever asked. What the caller may not read does not resolve, and
+// neither does anything outside this instance
+class PlaygroundSchemaResolver {
+public:
+  PlaygroundSchemaResolver(const RouterAction &action,
+                           const Authentication::Caller &caller)
+      : action_{&action}, caller_{&caller} {}
+
+  [[nodiscard]] auto operator()(const std::string_view identifier) const
+      -> sourcemeta::blaze::SchemaResolverResult {
+    const auto resolution{this->action_->artifact_resolve_path(
+        *this->caller_, identifier, RouterAction::Tree::Schemas, "schema")};
+    if (resolution.path.has_value()) {
+      auto schema{this->action_->artifact_read_json(resolution.path.value())};
+      if (schema.has_value()) {
+        return std::move(schema).value();
+      }
+    }
+
+    return sourcemeta::blaze::schema_resolver(identifier);
+  }
+
+private:
+  const RouterAction *action_;
+  const Authentication::Caller *caller_;
+};
+
+} // namespace
 
 auto Router::blaze_template(const ResolvedArtifact &artifact)
     -> std::shared_ptr<const sourcemeta::blaze::Template> {
@@ -110,6 +154,57 @@ auto RouterAction::schema_evaluate_with_tracing(
   sourcemeta::blaze::TraceOutput output{*schema_template, callback};
   sourcemeta::blaze::Evaluator evaluator;
   return evaluator.validate(*schema_template, instance, std::ref(output));
+}
+
+// Compile a playground schema under the budgets, resolving as the given
+// Whatever compilation refuses becomes the answer the caller is owed, since a
+// schema they wrote failing to compile is a fact about their request
+auto RouterAction::compile_playground_schema(
+    const Authentication::Caller &caller,
+    const sourcemeta::core::JSON &schema) const -> sourcemeta::blaze::Template {
+  const PlaygroundSchemaResolver resolver{*this, caller};
+  const sourcemeta::blaze::Tweaks tweaks{
+      .max_instructions = MAX_PLAYGROUND_SCHEMA_INSTRUCTIONS,
+      .max_depth = MAX_PLAYGROUND_SCHEMA_DEPTH};
+
+  try {
+    return sourcemeta::blaze::compile(
+        schema, sourcemeta::blaze::schema_walker, std::ref(resolver),
+        sourcemeta::blaze::default_schema_compiler,
+        sourcemeta::blaze::Mode::Exhaustive, "", "", "", tweaks,
+        MAX_PLAYGROUND_SCHEMA_LOCATIONS);
+  } catch (const sourcemeta::blaze::SchemaFrameLimitError &) {
+    throw PlaygroundSchemaError{
+        sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
+        "urn:sourcemeta:one:schema-too-complex",
+        "The supplied schema is too complex to compile"};
+  } catch (const sourcemeta::blaze::CompilerInstructionLimitError &) {
+    throw PlaygroundSchemaError{
+        sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
+        "urn:sourcemeta:one:schema-too-complex",
+        "The supplied schema is too complex to compile"};
+  } catch (const sourcemeta::blaze::CompilerDepthLimitError &) {
+    throw PlaygroundSchemaError{
+        sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
+        "urn:sourcemeta:one:schema-too-complex",
+        "The supplied schema is too complex to compile"};
+  } catch (const sourcemeta::blaze::SchemaResolutionError &) {
+    throw PlaygroundSchemaError{
+        sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
+        "urn:sourcemeta:one:unresolvable-reference",
+        "A reference in the supplied schema could not be resolved"};
+  } catch (const sourcemeta::blaze::SchemaReferenceError &) {
+    throw PlaygroundSchemaError{
+        sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
+        "urn:sourcemeta:one:unresolvable-reference",
+        "A reference in the supplied schema could not be resolved"};
+  } catch (const PlaygroundSchemaError &) {
+    throw;
+  } catch (const std::exception &) {
+    throw PlaygroundSchemaError{sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
+                                "urn:sourcemeta:one:invalid-schema",
+                                "The supplied schema could not be compiled"};
+  }
 }
 
 } // namespace sourcemeta::one

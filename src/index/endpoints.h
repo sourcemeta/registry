@@ -31,11 +31,6 @@ inline constexpr std::string_view ENDPOINT_SCHEMA_RDF{
     "/self/v1/api/schemas/rdf/{+schema}"};
 inline constexpr std::string_view ENDPOINT_SCHEMA_TRACE{
     "/self/v1/api/schemas/trace/{+schema}"};
-// Tracing against a schema the caller supplies rather than one this instance
-// holds. Everything under the playground namespace compiles what a request
-// carries rather than reading what was indexed, so an operator governs that
-// whole capability, including whatever is added to it later, by naming the
-// namespace alone
 inline constexpr std::string_view ENDPOINT_PLAYGROUND_SCHEMA_TRACE{
     "/self/v1/api/playground/schemas/trace"};
 inline constexpr std::string_view ENDPOINT_SCHEMA_SEARCH{

@@ -10,7 +10,6 @@
 #include <sourcemeta/one/router.h>
 #include <sourcemeta/one/shared.h>
 
-#include "action_jsonschema_post.h"
 #include "action_jsonschema_trace_v1.h"
 
 #include <filesystem>  // std::filesystem::path
@@ -54,12 +53,11 @@ public:
             const sourcemeta::one::Authentication::Caller &,
             sourcemeta::one::HTTPRequest &request,
             sourcemeta::one::HTTPResponse &response) -> void override {
-    if (sourcemeta::one::schema_post_preamble(request, response,
-                                              this->error_schema_)) {
+    if (this->schema_post_preamble(request, response, this->error_schema_)) {
       return;
     }
 
-    sourcemeta::one::schema_post_body(
+    this->schema_post_body(
         request, response, this->response_schema_, this->error_schema_,
         sourcemeta::one::MAX_PLAYGROUND_REQUEST_BODY_BYTES,
         // A throw here is intended and caught by the surrounding request
@@ -83,8 +81,8 @@ public:
           // was handed points at a request that is gone by now
           const auto deferred_caller{
               this->caller_from({.bearer = bearer, .cookies = fields})};
-          const auto schema_template{sourcemeta::one::compile_playground_schema(
-              *this, deferred_caller, envelope.at("schema"))};
+          const auto schema_template{this->compile_playground_schema(
+              deferred_caller, envelope.at("schema"))};
           return ActionJSONSchemaTraceV1::build_trace_document(
               schema_template, envelope.at("instance"), &tracker,
               sourcemeta::core::Pointer{"instance"});
