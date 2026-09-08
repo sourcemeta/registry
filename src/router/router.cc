@@ -229,37 +229,32 @@ auto RouterAction::serve_renewal_page(
   return this->serve_renewal(request, response);
 }
 
-auto RouterAction::schema_post_preamble(
+auto RouterAction::schema_post_preflight(HTTPRequest &request,
+                                         HTTPResponse &response) const -> bool {
+  if (request.method() != "options") {
+    return false;
+  }
+
+  // A caller reaching a governed route sends a credential, and a browser only
+  // sends one the preflight admitted
+  cors_preflight(request, response, "POST, OPTIONS",
+                 "Content-Type, Authorization");
+  return true;
+}
+
+auto RouterAction::schema_post_method_refused(
     HTTPRequest &request, HTTPResponse &response,
     const std::string_view error_schema) const -> bool {
-  if (request.method() == "options") {
-    response.write_status(sourcemeta::core::HTTP_STATUS_NO_CONTENT);
-    response.write_header("Access-Control-Allow-Origin", "*");
-    response.write_header("Access-Control-Expose-Headers", "Link, ETag");
-    response.write_header("Access-Control-Allow-Methods", "POST, OPTIONS");
-    response.write_header("Access-Control-Allow-Headers", "Content-Type");
-    response.write_header("Access-Control-Max-Age", "3600");
-    // Browser preflight cache is governed by `Access-Control-Max-Age`;
-    // `no-store` keeps shared HTTP caches from storing this response.
-    response.write_header("Cache-Control", cache_control_no_store());
-    // RFC 9110 §9.3.7: OPTIONS responses SHOULD include Allow. Different
-    // audience than Access-Control-Allow-Methods (HTTP vs CORS preflight).
-    // https://datatracker.ietf.org/doc/html/rfc9110#section-9.3.7
-    response.write_header("Allow", "POST, OPTIONS");
-    send_response(sourcemeta::core::HTTP_STATUS_NO_CONTENT, request, response);
-    return true;
+  if (request.method() == "post") {
+    return false;
   }
 
-  if (request.method() != "post") {
-    json_error(request, response,
-               sourcemeta::core::HTTP_STATUS_METHOD_NOT_ALLOWED,
-               "urn:sourcemeta:one:method-not-allowed",
-               "This HTTP method is invalid for this URL", error_schema, "*",
-               "POST, OPTIONS");
-    return true;
-  }
-
-  return false;
+  json_error(request, response,
+             sourcemeta::core::HTTP_STATUS_METHOD_NOT_ALLOWED,
+             "urn:sourcemeta:one:method-not-allowed",
+             "This HTTP method is invalid for this URL", error_schema, "*",
+             "POST, OPTIONS");
+  return true;
 }
 
 } // namespace sourcemeta::one

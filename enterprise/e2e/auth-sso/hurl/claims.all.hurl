@@ -125,7 +125,7 @@ root_listing_schema: header "Link" regex "<([^>]+)>"
 jsonpath "$.path" == "/"
 jsonpath "$.url" == "{{base}}"
 jsonpath "$.breadcrumb" count == 0
-jsonpath "$.schemas" == 65
+jsonpath "$.schemas" == 66
 jsonpath "$.private" == false
 jsonpath "$.entries" count == 2
 jsonpath "$.entries[0].name" == "public"

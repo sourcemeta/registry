@@ -137,7 +137,7 @@ public:
                          const std::string_view error_schema,
                          const std::string_view request_schema, Perform perform)
       -> void {
-    if (self.schema_post_preamble(request, response, error_schema)) {
+    if (self.schema_post_preflight(request, response)) {
       return;
     }
 
@@ -148,6 +148,10 @@ public:
           request, response, sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
           "urn:sourcemeta:one:invalid-schema-uri",
           "The schema URI must not contain a fragment", error_schema, "*");
+      return;
+    }
+
+    if (self.schema_post_method_refused(request, response, error_schema)) {
       return;
     }
 

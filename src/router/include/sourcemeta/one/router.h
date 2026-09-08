@@ -365,12 +365,17 @@ public:
                             const sourcemeta::core::JSON &schema) const
       -> sourcemeta::blaze::Template;
 
-  // Answer a preflight or a method a schema POST route does not serve,
-  // reporting whether the request was answered here
-  [[nodiscard]] auto schema_post_preamble(HTTPRequest &request,
-                                          HTTPResponse &response,
-                                          std::string_view error_schema) const
+  // Answer a preflight, reporting whether the request was answered here
+  [[nodiscard]] auto schema_post_preflight(HTTPRequest &request,
+                                           HTTPResponse &response) const
       -> bool;
+
+  // Refuse a method a schema POST route does not serve, reporting whether the
+  // request was answered here. Kept apart from the preflight so that a route
+  // with more to say about its target can speak before this does
+  [[nodiscard]] auto
+  schema_post_method_refused(HTTPRequest &request, HTTPResponse &response,
+                             std::string_view error_schema) const -> bool;
 
   // Read a schema POST body and answer with whatever the callback makes of it.
   // The body arrives once the request that carried it is gone, so whatever the

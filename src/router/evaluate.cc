@@ -13,6 +13,7 @@
 #include <memory>      // std::make_shared, std::shared_ptr
 #include <string_view> // std::string_view
 #include <utility>     // std::move, std::pair
+#include <vector>      // std::vector
 
 namespace sourcemeta::one {
 
@@ -26,6 +27,10 @@ namespace {
 inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_LOCATIONS{80000};
 inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_INSTRUCTIONS{400000};
 inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_DEPTH{44};
+// How deeply the document itself may nest, which is a separate question from
+// how deeply compilation descends, since a schema can bury a value far below
+// any subschema. The deepest schema across the sandboxes nests 48
+inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_JSON_DEPTH{256};
 
 // Resolve a reference from a playground schema the way this registry would
 // it for whoever asked. What the caller may not read does not resolve, and
@@ -60,7 +65,7 @@ private:
 // Nothing is named that does not appear in their own document, so a refusal
 // tells them where they went wrong without telling them what this instance
 // holds
-auto unresolvable_reference(const sourcemeta::core::JSON &schema,
+auto unresolvable_reference(const sourcemeta::core::JSON &document,
                             const sourcemeta::blaze::SchemaResolver &resolver,
                             const std::string_view identifier)
     -> PlaygroundSchemaError {
@@ -70,7 +75,7 @@ auto unresolvable_reference(const sourcemeta::core::JSON &schema,
   try {
     const sourcemeta::blaze::SchemaFrame frame{
         sourcemeta::blaze::SchemaFrame::Mode::References,
-        schema,
+        document,
         sourcemeta::blaze::schema_walker,
         resolver,
         "",
@@ -93,10 +98,52 @@ auto unresolvable_reference(const sourcemeta::core::JSON &schema,
   } catch (const std::exception &) {
   }
 
+  // A dialect that resolves nowhere is a reference too, and framing cannot
+  // report it because framing is what failed on it
+  if (reference.empty() && document.is_object()) {
+    const auto *dialect{document.try_at("$schema")};
+    if (dialect != nullptr && dialect->is_string() &&
+        dialect->to_string() == identifier) {
+      reference = dialect->to_string();
+      location = "/$schema";
+    }
+  }
+
   return {sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
           "urn:sourcemeta:one:unresolvable-reference",
           "A reference in the supplied schema could not be resolved",
           std::move(reference), std::move(location)};
+}
+
+// Framing walks the whole schema before any compiler budget applies, so a
+// document nested deeply enough exhausts the stack before `max_depth` can
+// refuse it. This bounds the shape of what is walked rather than what is
+// compiled, and measures iteratively so that checking is not itself the thing
+// that overflows
+auto exceeds_json_depth(const sourcemeta::core::JSON &document,
+                        const std::uint64_t limit) -> bool {
+  std::vector<std::pair<const sourcemeta::core::JSON *, std::uint64_t>> pending;
+  pending.emplace_back(&document, 1);
+
+  while (!pending.empty()) {
+    const auto entry{pending.back()};
+    pending.pop_back();
+    if (entry.second > limit) {
+      return true;
+    }
+
+    if (entry.first->is_object()) {
+      for (const auto &member : entry.first->as_object()) {
+        pending.emplace_back(&member.second, entry.second + 1);
+      }
+    } else if (entry.first->is_array()) {
+      for (const auto &member : entry.first->as_array()) {
+        pending.emplace_back(&member, entry.second + 1);
+      }
+    }
+  }
+
+  return false;
 }
 
 } // namespace
@@ -206,6 +253,14 @@ auto RouterAction::schema_evaluate_with_tracing(
 auto RouterAction::compile_playground_schema(
     const Authentication::Caller &caller,
     const sourcemeta::core::JSON &schema) const -> sourcemeta::blaze::Template {
+  if (exceeds_json_depth(schema, MAX_PLAYGROUND_SCHEMA_JSON_DEPTH)) {
+    throw PlaygroundSchemaError{
+        sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
+        "urn:sourcemeta:one:schema-too-complex",
+        "The supplied schema is too complex to compile on demand, so try a "
+        "simpler one or add it to the catalog, where no such limit applies"};
+  }
+
   const PlaygroundSchemaResolver resolver{*this, caller};
   const sourcemeta::blaze::Tweaks tweaks{
       .max_instructions = MAX_PLAYGROUND_SCHEMA_INSTRUCTIONS,
@@ -221,17 +276,20 @@ auto RouterAction::compile_playground_schema(
     throw PlaygroundSchemaError{
         sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
         "urn:sourcemeta:one:schema-too-complex",
-        "The supplied schema is too complex to compile"};
+        "The supplied schema is too complex to compile on demand, so try a "
+        "simpler one or add it to the catalog, where no such limit applies"};
   } catch (const sourcemeta::blaze::CompilerInstructionLimitError &) {
     throw PlaygroundSchemaError{
         sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
         "urn:sourcemeta:one:schema-too-complex",
-        "The supplied schema is too complex to compile"};
+        "The supplied schema is too complex to compile on demand, so try a "
+        "simpler one or add it to the catalog, where no such limit applies"};
   } catch (const sourcemeta::blaze::CompilerDepthLimitError &) {
     throw PlaygroundSchemaError{
         sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
         "urn:sourcemeta:one:schema-too-complex",
-        "The supplied schema is too complex to compile"};
+        "The supplied schema is too complex to compile on demand, so try a "
+        "simpler one or add it to the catalog, where no such limit applies"};
   } catch (const sourcemeta::blaze::SchemaResolutionError &error) {
     throw unresolvable_reference(schema, std::ref(resolver),
                                  error.identifier());

@@ -2887,6 +2887,8 @@ jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 jsonpath "$.title" == "Bad Request"
 jsonpath "$.status" == 400
 jsonpath "$.detail" == "A reference in the supplied schema could not be resolved"
+jsonpath "$.reference" == "https://example.com/not-a-dialect"
+jsonpath "$.schemaLocation" == "/$schema"
 
 # The answer above is described by a schema this instance serves, so it
 # validates against the very schema its Link header names
@@ -3070,7 +3072,7 @@ header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) 
 jsonpath "$.type" == "urn:sourcemeta:one:schema-too-complex"
 jsonpath "$.title" == "Unprocessable Content"
 jsonpath "$.status" == 422
-jsonpath "$.detail" == "The supplied schema is too complex to compile"
+jsonpath "$.detail" == "The supplied schema is too complex to compile on demand, so try a simpler one or add it to the catalog, where no such limit applies"
 
 # The answer above is described by a schema this instance serves, so it
 # validates against the very schema its Link header names
@@ -3085,6 +3087,59 @@ Link: </self/v1/schemas/api/schemas/evaluate/response>; rel="describedby"
 header "Vary" not exists
 header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/
 jsonpath "$.valid" == true
+
+# Nesting far past what the document may carry at all. Framing walks the
+# schema before any compiler budget applies, so this is refused ahead of the
+# walk rather than by it, and the instance survives to say so
+POST {{base}}/self/v1/api/playground/schemas/trace
+Content-Type: application/json
+file,playground-unwalkable.json;
+HTTP 422
+Cache-Control: no-store
+Content-Type: application/problem+json
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: Link, ETag
+Link: </self/v1/schemas/api/error>; rel="describedby"
+[Captures]
+last_response: body
+schema_path: header "Link" regex "<([^>]+)>"
+[Asserts]
+header "Vary" not exists
+header "Referrer-Policy" not exists
+header "Content-Security-Policy" not exists
+header "X-Frame-Options" not exists
+header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/
+jsonpath "$.type" == "urn:sourcemeta:one:schema-too-complex"
+jsonpath "$.title" == "Unprocessable Content"
+jsonpath "$.status" == 422
+jsonpath "$.detail" == "The supplied schema is too complex to compile on demand, so try a simpler one or add it to the catalog, where no such limit applies"
+
+# The answer above is described by a schema this instance serves, so it
+# validates against the very schema its Link header names
+POST {{base}}/self/v1/api/schemas/evaluate{{schema_path}}
+```
+{{last_response}}
+```
+HTTP 200
+Cache-Control: no-store
+Link: </self/v1/schemas/api/schemas/evaluate/response>; rel="describedby"
+[Asserts]
+header "Vary" not exists
+header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/
+jsonpath "$.valid" == true
+
+# And the instance is still answering afterwards
+GET {{base}}/self/v1/health
+HTTP 200
+Cache-Control: no-store
+Access-Control-Allow-Origin: *
+Access-Control-Expose-Headers: Link, ETag
+[Asserts]
+header "Vary" not exists
+header "Referrer-Policy" not exists
+header "Content-Security-Policy" not exists
+header "X-Frame-Options" not exists
+header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/
 
 # More frame locations than framing may register, which a schema reaches
 # in far fewer bytes than it takes to reach the body cap
@@ -3109,7 +3164,7 @@ header "Date" matches /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), (0[1-9]|[12][0-9]|3[01]) 
 jsonpath "$.type" == "urn:sourcemeta:one:schema-too-complex"
 jsonpath "$.title" == "Unprocessable Content"
 jsonpath "$.status" == 422
-jsonpath "$.detail" == "The supplied schema is too complex to compile"
+jsonpath "$.detail" == "The supplied schema is too complex to compile on demand, so try a simpler one or add it to the catalog, where no such limit applies"
 
 # The answer above is described by a schema this instance serves, so it
 # validates against the very schema its Link header names
@@ -3254,7 +3309,7 @@ Cache-Control: no-store
 Access-Control-Allow-Origin: *
 Access-Control-Expose-Headers: Link, ETag
 Access-Control-Allow-Methods: POST, OPTIONS
-Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Headers: Content-Type, Authorization
 Access-Control-Max-Age: 3600
 Allow: POST, OPTIONS
 [Asserts]
@@ -3273,7 +3328,7 @@ Cache-Control: no-store
 Access-Control-Allow-Origin: *
 Access-Control-Expose-Headers: Link, ETag
 Access-Control-Allow-Methods: POST, OPTIONS
-Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Headers: Content-Type, Authorization
 Access-Control-Max-Age: 3600
 Allow: POST, OPTIONS
 [Asserts]

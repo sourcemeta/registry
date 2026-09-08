@@ -663,7 +663,7 @@ Authorization: Bearer primary-secret-key
   "instance": {},
   "schema": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$ref": "{{base}}/internal/secret"
+    "$ref": "{{base}}/internal/config"
   }
 }
 ```
@@ -686,7 +686,7 @@ jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 jsonpath "$.title" == "Bad Request"
 jsonpath "$.status" == 400
 jsonpath "$.detail" == "A reference in the supplied schema could not be resolved"
-jsonpath "$.reference" == "{{base}}/internal/secret"
+jsonpath "$.reference" == "{{base}}/internal/config"
 jsonpath "$.schemaLocation" == "/$ref"
 
 # The answer above is described by a schema this instance serves, so it

@@ -138,23 +138,8 @@
       }
     },
     {
-      "const": {
-        "type": "urn:sourcemeta:one:unresolvable-reference",
-        "title": "Bad Request",
-        "status": 400,
-        "detail": "A reference in the supplied schema could not be resolved"
-      }
-    },
-    {
       "type": "object",
-      "required": [
-        "type",
-        "title",
-        "status",
-        "detail",
-        "reference",
-        "schemaLocation"
-      ],
+      "required": [ "type", "title", "status", "detail" ],
       "properties": {
         "type": {
           "const": "urn:sourcemeta:one:unresolvable-reference"
@@ -169,11 +154,11 @@
           "const": "A reference in the supplied schema could not be resolved"
         },
         "reference": {
-          "description": "The reference that could not be resolved, as the caller wrote it in the supplied schema",
+          "description": "The reference that could not be resolved, as the caller wrote it in the supplied schema. Absent where this could not place it in what they sent, since nothing is named that they did not write",
           "type": "string"
         },
         "schemaLocation": {
-          "description": "Where that reference sits in the supplied schema, as a JSON Pointer",
+          "description": "Where that reference sits in the supplied schema, as a JSON Pointer. Absent alongside the reference it locates",
           "x-format-assertion": true,
           "type": "string",
           "format": "json-pointer"
@@ -186,7 +171,7 @@
         "type": "urn:sourcemeta:one:schema-too-complex",
         "title": "Unprocessable Content",
         "status": 422,
-        "detail": "The supplied schema is too complex to compile"
+        "detail": "The supplied schema is too complex to compile on demand, so try a simpler one or add it to the catalog, where no such limit applies"
       }
     },
     {

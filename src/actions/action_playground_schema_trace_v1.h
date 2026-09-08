@@ -53,7 +53,9 @@ public:
             const sourcemeta::one::Authentication::Caller &,
             sourcemeta::one::HTTPRequest &request,
             sourcemeta::one::HTTPResponse &response) -> void override {
-    if (this->schema_post_preamble(request, response, this->error_schema_)) {
+    if (this->schema_post_preflight(request, response) ||
+        this->schema_post_method_refused(request, response,
+                                         this->error_schema_)) {
       return;
     }
 
