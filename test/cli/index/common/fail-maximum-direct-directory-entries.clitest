@@ -70,8 +70,8 @@ COMPARE log_2.txt AGAINST expected_log_2.txt
 
 // It should succeed when total schemas exceed the limit but are spread
 // across a directory hierarchy where no single directory has more than the limit.
-// The limit must be above 14 since self/v1's mcp/tools/call directory has 14 entries
-// (12 per-tool subdirectories plus the generic request and response schemas)
+// The limit must be above 15 since self/v1's mcp/tools/call directory has 15 entries
+// (13 per-tool subdirectories plus the generic request and response schemas)
 REMOVE output
 REMOVE schemas
 MAKE DIRECTORY schemas/a
