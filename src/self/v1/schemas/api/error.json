@@ -146,6 +146,42 @@
       }
     },
     {
+      "type": "object",
+      "required": [
+        "type",
+        "title",
+        "status",
+        "detail",
+        "reference",
+        "schemaLocation"
+      ],
+      "properties": {
+        "type": {
+          "const": "urn:sourcemeta:one:unresolvable-reference"
+        },
+        "title": {
+          "const": "Bad Request"
+        },
+        "status": {
+          "const": 400
+        },
+        "detail": {
+          "const": "A reference in the supplied schema could not be resolved"
+        },
+        "reference": {
+          "description": "The reference that could not be resolved, as the caller wrote it in the supplied schema",
+          "type": "string"
+        },
+        "schemaLocation": {
+          "description": "Where that reference sits in the supplied schema, as a JSON Pointer",
+          "x-format-assertion": true,
+          "type": "string",
+          "format": "json-pointer"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
       "const": {
         "type": "urn:sourcemeta:one:schema-too-complex",
         "title": "Unprocessable Content",

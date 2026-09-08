@@ -42,8 +42,10 @@ struct SchemaPostRequestError final : std::exception {
 class PlaygroundSchemaError final : public std::exception {
 public:
   PlaygroundSchemaError(const sourcemeta::core::HTTPStatus &status,
-                        const std::string_view type, const char *detail)
-      : status_{status}, type_{type}, detail_{detail} {}
+                        const std::string_view type, const char *detail,
+                        std::string reference = {}, std::string location = {})
+      : status_{status}, type_{type}, detail_{detail},
+        reference_{std::move(reference)}, location_{std::move(location)} {}
 
   [[nodiscard]] auto what() const noexcept -> const char * override {
     return this->detail_;
@@ -58,10 +60,23 @@ public:
     return this->type_;
   }
 
+  // The reference that did not resolve, and where in the supplied schema it
+  // was written. Both are empty where this could not place the reference in
+  // what the caller sent, since nothing is named that they did not write
+  [[nodiscard]] auto reference() const noexcept -> const std::string & {
+    return this->reference_;
+  }
+
+  [[nodiscard]] auto location() const noexcept -> const std::string & {
+    return this->location_;
+  }
+
 private:
   sourcemeta::core::HTTPStatus status_;
   std::string_view type_;
   const char *detail_;
+  std::string reference_;
+  std::string location_;
 };
 
 // The largest body a route that compiles what it carries will read, which is
@@ -440,8 +455,33 @@ public:
                        "urn:sourcemeta:one:invalid-request", error.what(),
                        error_schema, "*");
           } catch (const PlaygroundSchemaError &error) {
-            json_error(callback_request, callback_response, error.status(),
-                       error.type(), error.what(), error_schema, "*");
+            if (error.reference().empty()) {
+              json_error(callback_request, callback_response, error.status(),
+                         error.type(), error.what(), error_schema, "*");
+              return;
+            }
+
+            auto payload{sourcemeta::core::http_make_problem_details(
+                {.status = error.status(),
+                 .type = error.type(),
+                 .detail = error.what()})};
+            payload.assign("reference",
+                           sourcemeta::core::JSON{error.reference()});
+            payload.assign("schemaLocation",
+                           sourcemeta::core::JSON{error.location()});
+            callback_response.write_status(error.status());
+            callback_response.write_header("Content-Type",
+                                           "application/problem+json");
+            callback_response.write_header("Cache-Control",
+                                           cache_control_no_store());
+            callback_response.write_header("Access-Control-Allow-Origin", "*");
+            callback_response.write_header("Access-Control-Expose-Headers",
+                                           "Link, ETag");
+            write_link_header(callback_response, error_schema);
+            std::ostringstream problem;
+            sourcemeta::core::prettify(payload, problem);
+            send_response(error.status(), callback_request, callback_response,
+                          problem.str(), Encoding::Identity);
           } catch (const std::exception &exception) {
             json_error(callback_request, callback_response,
                        sourcemeta::core::HTTP_STATUS_INTERNAL_SERVER_ERROR,

@@ -55,6 +55,50 @@ private:
   const Authentication::Caller *caller_;
 };
 
+// Place a reference that would not resolve within the schema the caller sent,
+// by framing what they wrote rather than trusting what compilation reported.
+// Nothing is named that does not appear in their own document, so a refusal
+// tells them where they went wrong without telling them what this instance
+// holds
+auto unresolvable_reference(const sourcemeta::core::JSON &schema,
+                            const sourcemeta::blaze::SchemaResolver &resolver,
+                            const std::string_view identifier)
+    -> PlaygroundSchemaError {
+  std::string reference;
+  std::string location;
+
+  try {
+    const sourcemeta::blaze::SchemaFrame frame{
+        sourcemeta::blaze::SchemaFrame::Mode::References,
+        schema,
+        sourcemeta::blaze::schema_walker,
+        resolver,
+        "",
+        "",
+        sourcemeta::blaze::SchemaFrame::IdentifierMode::Additional,
+        {sourcemeta::core::EMPTY_WEAK_POINTER},
+        MAX_PLAYGROUND_SCHEMA_LOCATIONS};
+    frame.for_each_unresolved_reference(
+        [&reference, &location, identifier](
+            const sourcemeta::core::WeakPointer &pointer,
+            const sourcemeta::blaze::SchemaFrame::Reference &entry) -> void {
+          if (reference.empty() && entry.destination == identifier) {
+            reference = entry.destination;
+            location = sourcemeta::core::to_string(pointer);
+          }
+        });
+    // A schema that would not compile may not frame either, and a reference
+    // this cannot place is one this does not name
+    // NOLINTNEXTLINE(bugprone-empty-catch)
+  } catch (const std::exception &) {
+  }
+
+  return {sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
+          "urn:sourcemeta:one:unresolvable-reference",
+          "A reference in the supplied schema could not be resolved",
+          std::move(reference), std::move(location)};
+}
+
 } // namespace
 
 auto Router::blaze_template(const ResolvedArtifact &artifact)
@@ -188,16 +232,12 @@ auto RouterAction::compile_playground_schema(
         sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
         "urn:sourcemeta:one:schema-too-complex",
         "The supplied schema is too complex to compile"};
-  } catch (const sourcemeta::blaze::SchemaResolutionError &) {
-    throw PlaygroundSchemaError{
-        sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
-        "urn:sourcemeta:one:unresolvable-reference",
-        "A reference in the supplied schema could not be resolved"};
-  } catch (const sourcemeta::blaze::SchemaReferenceError &) {
-    throw PlaygroundSchemaError{
-        sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
-        "urn:sourcemeta:one:unresolvable-reference",
-        "A reference in the supplied schema could not be resolved"};
+  } catch (const sourcemeta::blaze::SchemaResolutionError &error) {
+    throw unresolvable_reference(schema, std::ref(resolver),
+                                 error.identifier());
+  } catch (const sourcemeta::blaze::SchemaReferenceError &error) {
+    throw unresolvable_reference(schema, std::ref(resolver),
+                                 error.identifier());
   } catch (const PlaygroundSchemaError &) {
     throw;
   } catch (const std::exception &) {

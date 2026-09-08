@@ -874,7 +874,8 @@ jsonpath "$.valid" == true
 # THE ONE THIS FEATURE EXISTS TO PASS. This caller is admitted to the
 # route by the first key, but the second collection is gated by a key they do
 # not hold. Its schema must not resolve, and nothing of it may appear in the
-# answer
+# answer. The reference itself comes back because the caller wrote it, which
+# tells them nothing they did not already know
 POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer vault-secret-key
@@ -908,9 +909,11 @@ jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 jsonpath "$.title" == "Bad Request"
 jsonpath "$.status" == 400
 jsonpath "$.detail" == "A reference in the supplied schema could not be resolved"
-body not contains "ledger/entry"
+jsonpath "$.reference" == "{{base}}/ledger/entry"
+jsonpath "$.schemaLocation" == "/$ref"
 body not contains "A schema gated by a second policy"
 body not contains "steps"
+body not contains "valid"
 
 # The answer above is described by a schema this instance serves, so it
 # validates against the very schema its Link header names
@@ -961,6 +964,8 @@ jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 jsonpath "$.title" == "Bad Request"
 jsonpath "$.status" == 400
 jsonpath "$.detail" == "A reference in the supplied schema could not be resolved"
+jsonpath "$.reference" == "{{base}}/ledger/no-such-schema"
+jsonpath "$.schemaLocation" == "/$ref"
 
 # The answer above is described by a schema this instance serves, so it
 # validates against the very schema its Link header names
