@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Sourcemeta One Schema Inline Trace API Request",
+  "title": "Sourcemeta One Playground Schema Trace API Request",
   "description": "A JSON instance and the schema to trace its evaluation against",
   "examples": [
     {

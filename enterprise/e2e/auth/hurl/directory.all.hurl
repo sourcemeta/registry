@@ -38,7 +38,7 @@ jsonpath "$.entries[2].name" == "self"
 jsonpath "$.entries[2].type" == "directory"
 jsonpath "$.entries[2].path" == "/self/"
 jsonpath "$.entries[2].private" == false
-jsonpath "$.entries[2].schemas" == 64
+jsonpath "$.entries[2].schemas" == 65
 jsonpath "$.entries[2].health" == 100
 POST {{base}}/self/v1/api/schemas/evaluate{{root_listing_schema}}
 ```
@@ -103,7 +103,7 @@ jsonpath "$.entries[4].name" == "self"
 jsonpath "$.entries[4].type" == "directory"
 jsonpath "$.entries[4].path" == "/self/"
 jsonpath "$.entries[4].private" == false
-jsonpath "$.entries[4].schemas" == 64
+jsonpath "$.entries[4].schemas" == 65
 jsonpath "$.entries[4].health" == 100
 
 POST {{base}}/self/v1/api/schemas/evaluate{{reports_listing_schema}}

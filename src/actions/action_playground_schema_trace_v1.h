@@ -1,5 +1,5 @@
-#ifndef SOURCEMETA_ONE_ACTIONS_JSONSCHEMA_TRACE_INLINE_V1_H
-#define SOURCEMETA_ONE_ACTIONS_JSONSCHEMA_TRACE_INLINE_V1_H
+#ifndef SOURCEMETA_ONE_ACTIONS_PLAYGROUND_SCHEMA_TRACE_V1_H
+#define SOURCEMETA_ONE_ACTIONS_PLAYGROUND_SCHEMA_TRACE_V1_H
 
 #include <sourcemeta/core/json.h>
 #include <sourcemeta/core/jsonpointer.h>
@@ -19,19 +19,20 @@
 #include <string>      // std::string
 #include <string_view> // std::string_view
 
-class ActionJSONSchemaTraceInlineV1 : public sourcemeta::one::RouterAction {
+class ActionPlaygroundSchemaTraceV1 : public sourcemeta::one::RouterAction {
 public:
   static constexpr std::string_view DESCRIPTION{
-      "Validate a JSON instance against a schema given in the request itself "
-      "and return a step-by-step trace of the evaluation. References to "
-      "schemas in this catalog are resolved, references to anywhere else are "
-      "refused"};
+      "Validate a JSON instance against a schema the caller supplies in the "
+      "request rather than one this catalog holds, and return a step-by-step "
+      "trace of the evaluation. References to schemas in this catalog are "
+      "resolved as far as the caller may read them, and references to anywhere "
+      "else are refused"};
   static constexpr bool READ_ONLY{true};
   static constexpr bool DESTRUCTIVE{false};
   static constexpr bool IDEMPOTENT{true};
   static constexpr bool OPEN_WORLD{false};
 
-  ActionJSONSchemaTraceInlineV1(
+  ActionPlaygroundSchemaTraceV1(
       const std::filesystem::path &base,
       const sourcemeta::core::URITemplateRouterView &router,
       const sourcemeta::core::URITemplateRouter::Identifier identifier,
@@ -60,7 +61,7 @@ public:
 
     sourcemeta::one::schema_post_body(
         request, response, this->response_schema_, this->error_schema_,
-        sourcemeta::one::MAX_INLINE_REQUEST_BODY_BYTES,
+        sourcemeta::one::MAX_PLAYGROUND_REQUEST_BODY_BYTES,
         // A throw here is intended and caught by the surrounding request
         // handler
         // NOLINTNEXTLINE(bugprone-exception-escape)
@@ -82,7 +83,7 @@ public:
           // was handed points at a request that is gone by now
           const auto deferred_caller{
               this->caller_from({.bearer = bearer, .cookies = fields})};
-          const auto schema_template{sourcemeta::one::compile_inline_schema(
+          const auto schema_template{sourcemeta::one::compile_playground_schema(
               *this, deferred_caller, envelope.at("schema"))};
           return ActionJSONSchemaTraceV1::build_trace_document(
               schema_template, envelope.at("instance"), &tracker,

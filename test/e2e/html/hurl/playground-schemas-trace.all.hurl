@@ -1,7 +1,7 @@
-# The pathless form carries the schema in the body rather than the URL, so a
-# caller can trace against something this registry does not hold. What comes
-# back is what the path form gives for a schema it does hold.
-POST {{base}}/self/v1/api/schemas/trace
+# A playground schema is one the caller supplies in the request rather than one
+# this catalog holds, so a caller can trace against something that was never
+# indexed here. What comes back is what tracing a catalog schema gives.
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": "hello world",
@@ -15,7 +15,7 @@ Cache-Control: no-store
 Content-Type: application/json
 Access-Control-Allow-Origin: *
 Access-Control-Expose-Headers: Link, ETag
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Captures]
 last_response: body
 schema_path: header "Link" regex "<([^>]+)>"
@@ -68,7 +68,7 @@ jsonpath "$.valid" == true
 
 # An instance the schema refuses, so the verdict is false and the failing step
 # says why
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": 42,
@@ -86,7 +86,7 @@ jsonpath "$.steps[1].type" == "fail"
 jsonpath "$.steps[1].message" == "The value was expected to be of type string but it was of type integer"
 
 # A browser reaching this is told the same thing the path form tells it
-OPTIONS {{base}}/self/v1/api/schemas/trace
+OPTIONS {{base}}/self/v1/api/playground/schemas/trace
 HTTP 204
 Cache-Control: no-store
 Access-Control-Allow-Origin: *
@@ -97,7 +97,7 @@ Access-Control-Max-Age: 3600
 Allow: POST, OPTIONS
 
 # A method this route does not serve
-GET {{base}}/self/v1/api/schemas/trace
+GET {{base}}/self/v1/api/playground/schemas/trace
 HTTP 405
 Cache-Control: no-store
 Content-Type: application/problem+json
@@ -108,7 +108,8 @@ jsonpath "$.type" == "urn:sourcemeta:one:method-not-allowed"
 jsonpath "$.title" == "Method Not Allowed"
 jsonpath "$.detail" == "This HTTP method is invalid for this URL"
 
-# The path form is untouched by the pathless one sharing its prefix
+# Tracing against a schema this catalog holds is a separate operation under a
+# separate namespace, and is untouched by this one
 POST {{base}}/self/v1/api/schemas/trace/test/schemas/string
 Content-Type: application/json
 "Hello World"
@@ -116,8 +117,25 @@ HTTP 200
 [Asserts]
 jsonpath "$.valid" == true
 
-# A body that is not the envelope this route accepts
+# Naming that operation without a schema stays what it always was, rather than
+# quietly becoming this one with a different body contract
 POST {{base}}/self/v1/api/schemas/trace
+Content-Type: application/json
+{
+  "instance": "x",
+  "schema": { "$schema": "https://json-schema.org/draft/2020-12/schema" }
+}
+HTTP 404
+Cache-Control: no-store
+Content-Type: application/problem+json
+[Asserts]
+jsonpath "$.status" == 404
+jsonpath "$.type" == "urn:sourcemeta:one:not-found"
+jsonpath "$.title" == "Not Found"
+jsonpath "$.detail" == "There is nothing at this URL"
+
+# A body that is not the envelope this route accepts
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 { "instance": "hello world" }
 HTTP 400
@@ -133,7 +151,7 @@ jsonpath "$.detail" == "The request body does not match the expected schema"
 
 # A boolean is a schema, but it declares no dialect, so this route does not
 # take one
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 { "instance": "x", "schema": true }
 HTTP 400
@@ -142,7 +160,7 @@ jsonpath "$.type" == "urn:sourcemeta:one:invalid-request"
 jsonpath "$.detail" == "The request body does not match the expected schema"
 
 # A schema that declares no dialect at all
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 { "instance": "x", "schema": { "type": "string" } }
 HTTP 400
@@ -156,7 +174,7 @@ jsonpath "$.detail" == "The supplied schema could not be compiled"
 
 # A dialect this instance does not know. A dialect is a reference like any
 # other here, so naming one that resolves nowhere is answered as such
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 { "instance": "x", "schema": { "$schema": "https://example.com/not-a-dialect" } }
 HTTP 400
@@ -165,7 +183,7 @@ jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 jsonpath "$.detail" == "A reference in the supplied schema could not be resolved"
 
 # A body that is not JSON at all
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 not json
@@ -177,7 +195,7 @@ jsonpath "$.detail" == "The request body is not valid JSON"
 
 # A reference to another origin entirely. This registry is sovereign over its
 # own namespace and resolves nothing beyond it
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": "x",
@@ -197,7 +215,7 @@ jsonpath "$.detail" == "A reference in the supplied schema could not be resolved
 
 # A reference into this instance that names nothing, which is answered exactly
 # as the foreign one is
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": "x",
@@ -212,7 +230,7 @@ jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 jsonpath "$.detail" == "A reference in the supplied schema could not be resolved"
 
 # A reference that tries to climb out of the schema tree
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": "x",
@@ -226,7 +244,7 @@ HTTP 400
 jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 
 # A reference into this catalog resolves, and what it says decides the verdict
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": "hello",
@@ -237,12 +255,12 @@ Content-Type: application/json
 }
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 
 # The same reference, with an instance it refuses
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": 42,
@@ -257,7 +275,7 @@ jsonpath "$.valid" == false
 
 # An official metaschema resolves without being in this catalog, which is what
 # lets a caller name a dialect at all
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": { "type": "string" },
@@ -271,9 +289,9 @@ HTTP 200
 jsonpath "$.valid" == true
 
 # Nesting past the depth compilation may descend to
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
-file,inline-too-deep.json;
+file,playground-too-deep.json;
 HTTP 422
 Cache-Control: no-store
 Content-Type: application/problem+json
@@ -287,9 +305,9 @@ jsonpath "$.detail" == "The supplied schema is too complex to compile"
 
 # More frame locations than framing may register, which a schema reaches in
 # far fewer bytes than it takes to reach the body cap
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
-file,inline-too-many-locations.json;
+file,playground-too-many-locations.json;
 HTTP 422
 [Asserts]
 jsonpath "$.status" == 422
@@ -298,9 +316,9 @@ jsonpath "$.detail" == "The supplied schema is too complex to compile"
 
 # A body beyond what this route reads, which is a smaller cap than the one the
 # path form applies
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
-file,inline-oversized.json;
+file,playground-oversized.json;
 HTTP 413
 Cache-Control: no-store
 Content-Type: application/problem+json
@@ -312,7 +330,7 @@ jsonpath "$.detail" == "The request body is too large"
 
 # A schema written against an older dialect, which this resolves from its
 # built-in official schemas rather than from the catalog
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 {
@@ -325,7 +343,7 @@ Content-Type: application/json
 ```
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 2
@@ -350,7 +368,7 @@ jsonpath "$.steps[1].instancePositions" count == 4
 
 # A schema that annotates as well as asserts, so the trace carries the
 # annotation alongside the verdict
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 {
@@ -364,7 +382,7 @@ Content-Type: application/json
 ```
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 3
@@ -398,7 +416,7 @@ jsonpath "$.steps[2].instancePositions" count == 4
 
 # A reference resolved within the supplied schema itself, which needs no
 # catalog lookup at all
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 {
@@ -416,7 +434,7 @@ Content-Type: application/json
 ```
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 4
@@ -459,7 +477,7 @@ jsonpath "$.steps[3].instancePositions" count == 4
 
 # A reference into the catalog that itself references another catalog schema.
 # Resolution follows the chain, and every hop is subject to the same gate
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 {
@@ -474,7 +492,7 @@ Content-Type: application/json
 ```
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 8
@@ -553,7 +571,7 @@ jsonpath "$.steps[7].instancePositions" count == 4
 
 # A reference into the catalog that points at a subschema rather than a whole
 # schema
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 {
@@ -566,7 +584,7 @@ Content-Type: application/json
 ```
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == false
 jsonpath "$.steps" count == 6
@@ -627,7 +645,7 @@ jsonpath "$.steps[5].instancePositions" count == 4
 
 # A reference to one of this instance's own schemas, which are catalog content
 # like any other
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 {
@@ -643,7 +661,7 @@ Content-Type: application/json
 ```
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 19
@@ -820,7 +838,7 @@ jsonpath "$.steps[18].vocabulary" == "https://json-schema.org/draft/2020-12/voca
 jsonpath "$.steps[18].instancePositions" count == 4
 
 # Dynamic references, which resolve against the supplied schema's own scope
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 {
@@ -845,7 +863,7 @@ Content-Type: application/json
 ```
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 11
@@ -951,7 +969,7 @@ jsonpath "$.steps[10].instancePositions" count == 4
 
 # An object instance, so the trace locates steps inside it rather than at its
 # root
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 {
@@ -971,7 +989,7 @@ Content-Type: application/json
 ```
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 7
@@ -1040,7 +1058,7 @@ jsonpath "$.steps[6].vocabulary" == "https://json-schema.org/draft/2020-12/vocab
 jsonpath "$.steps[6].instancePositions" count == 4
 
 # A null instance, which is a value like any other
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 ```
 {
@@ -1053,7 +1071,7 @@ Content-Type: application/json
 ```
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 2
@@ -1078,7 +1096,7 @@ jsonpath "$.steps[1].instancePositions" count == 4
 
 # The pathless form is the bare path, so a trailing slash is a different URL
 # and this instance holds nothing there
-POST {{base}}/self/v1/api/schemas/trace/
+POST {{base}}/self/v1/api/playground/schemas/trace/
 Content-Type: application/json
 { "instance": "x", "schema": { "$schema": "https://json-schema.org/draft/2020-12/schema" } }
 HTTP 404
@@ -1091,7 +1109,7 @@ jsonpath "$.title" == "Not Found"
 jsonpath "$.detail" == "There is nothing at this URL"
 
 # No body at all
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 HTTP 400
 Cache-Control: no-store
@@ -1103,7 +1121,7 @@ jsonpath "$.title" == "Bad Request"
 jsonpath "$.detail" == "You must pass an instance to validate against"
 
 # A body that is JSON but not an object
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 [ 1, 2 ]
 HTTP 400
@@ -1112,7 +1130,7 @@ jsonpath "$.type" == "urn:sourcemeta:one:invalid-request"
 jsonpath "$.detail" == "The request body does not match the expected schema"
 
 # An envelope carrying something this route does not accept
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": "x",
@@ -1125,7 +1143,7 @@ jsonpath "$.type" == "urn:sourcemeta:one:invalid-request"
 jsonpath "$.detail" == "The request body does not match the expected schema"
 
 # An expectation this instance cannot honour, refused before the body is read
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Expect: something-else
 { "instance": "x", "schema": { "$schema": "https://json-schema.org/draft/2020-12/schema" } }
@@ -1140,7 +1158,7 @@ jsonpath "$.detail" == "The Expect header carries an unsupported expectation"
 
 # A preflight naming an origin is answered the same way, since this route is
 # open to any origin
-OPTIONS {{base}}/self/v1/api/schemas/trace
+OPTIONS {{base}}/self/v1/api/playground/schemas/trace
 Origin: https://example.com
 HTTP 204
 Cache-Control: no-store
@@ -1154,13 +1172,13 @@ Allow: POST, OPTIONS
 header "Vary" not exists
 
 # Methods this route does not serve, each told so with the same Allow
-PUT {{base}}/self/v1/api/schemas/trace
+PUT {{base}}/self/v1/api/playground/schemas/trace
 HTTP 405
 Allow: POST, OPTIONS
 [Asserts]
 jsonpath "$.type" == "urn:sourcemeta:one:method-not-allowed"
 
-DELETE {{base}}/self/v1/api/schemas/trace
+DELETE {{base}}/self/v1/api/playground/schemas/trace
 HTTP 405
 Allow: POST, OPTIONS
 [Asserts]

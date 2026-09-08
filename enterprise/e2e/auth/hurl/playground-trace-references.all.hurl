@@ -8,7 +8,7 @@
 # not leak one bit, it prints the schema back to whoever asked.
 
 # An anonymous caller reaches the route and compiles a schema of their own
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": "hello",
@@ -20,13 +20,13 @@ Content-Type: application/json
 HTTP 200
 Cache-Control: no-store
 Content-Type: application/json
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 jsonpath "$.steps" count == 2
 
 # And may reference what is public
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": "hello",
@@ -42,7 +42,7 @@ jsonpath "$.valid" == true
 # THE ONE THAT MATTERS. The same anonymous caller, admitted to this route,
 # names a schema they may not read. It must not resolve, and none of what it
 # says may come back
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": { "token": "abc" },
@@ -67,7 +67,7 @@ body not contains "valid"
 
 # Present the credential that governs it and the very same request resolves.
 # This is what proves the refusal above was authorization and not an accident
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer primary-secret-key
 {
@@ -79,13 +79,13 @@ Authorization: Bearer primary-secret-key
 }
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 
 # With an instance that schema refuses, so the reference is demonstrably being
 # evaluated rather than skipped
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer primary-secret-key
 {
@@ -100,7 +100,7 @@ HTTP 200
 jsonpath "$.valid" == false
 
 # A credential for a different collection does not open this one
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer internal-secret-key
 {
@@ -116,7 +116,7 @@ jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 body not contains "token"
 
 # And the reverse, so neither key stands in for the other
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer primary-secret-key
 {
@@ -132,7 +132,7 @@ jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 
 # A credential this instance does not know leaves the caller anonymous for the
 # purposes of what a reference may reach, rather than refusing the request
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer not-a-real-key
 {
@@ -148,7 +148,7 @@ jsonpath "$.type" == "urn:sourcemeta:one:unresolvable-reference"
 
 # A gated schema reached through a chain rather than named directly is refused
 # at the hop that needs the credential
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": { "token": "abc" },

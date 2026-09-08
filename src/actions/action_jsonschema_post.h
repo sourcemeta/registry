@@ -29,25 +29,25 @@ struct SchemaPostRequestError final : std::exception {
   }
 };
 
-// What an inline schema may cost. A caller-supplied schema is the only thing
+// What a playground schema may cost. A caller-supplied schema is the only
 // this program compiles at request time, so what it may spend is settled here
 // rather than by whatever the schema asks for. The three schema budgets are
 // multiples of the worst case across every schema the sandboxes index,
 // measured 2026-09-07. The body cap normally refuses a schema before the
 // instruction budget can fire, which leaves that one standing as a backstop
 // for a schema whose compiled size outgrows what it is written down as
-inline constexpr std::size_t MAX_INLINE_REQUEST_BODY_BYTES{
+inline constexpr std::size_t MAX_PLAYGROUND_REQUEST_BODY_BYTES{
     static_cast<std::size_t>(1) * 1024 * 1024};
-inline constexpr std::uint64_t MAX_INLINE_SCHEMA_LOCATIONS{80000};
-inline constexpr std::uint64_t MAX_INLINE_SCHEMA_INSTRUCTIONS{400000};
-inline constexpr std::uint64_t MAX_INLINE_SCHEMA_DEPTH{44};
+inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_LOCATIONS{80000};
+inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_INSTRUCTIONS{400000};
+inline constexpr std::uint64_t MAX_PLAYGROUND_SCHEMA_DEPTH{44};
 
-// What an inline compilation refused, carried out of the deferred body so that
+// What a playground compilation refused, carried out of the deferred body so
 // the answer names the reason rather than reporting a generic failure
-class InlineSchemaError final : public std::exception {
+class PlaygroundSchemaError final : public std::exception {
 public:
-  InlineSchemaError(const sourcemeta::core::HTTPStatus &status,
-                    const std::string_view type, const char *detail)
+  PlaygroundSchemaError(const sourcemeta::core::HTTPStatus &status,
+                        const std::string_view type, const char *detail)
       : status_{status}, type_{type}, detail_{detail} {}
 
   [[nodiscard]] auto what() const noexcept -> const char * override {
@@ -69,13 +69,13 @@ private:
   const char *detail_;
 };
 
-// Resolve a reference from an inline schema the way this registry would answer
+// Resolve a reference from a playground schema the way this registry would
 // it for whoever asked. What the caller may not read does not resolve, and
 // neither does anything outside this instance
-class InlineSchemaResolver {
+class PlaygroundSchemaResolver {
 public:
-  InlineSchemaResolver(const RouterAction &action,
-                       const Authentication::Caller &caller)
+  PlaygroundSchemaResolver(const RouterAction &action,
+                           const Authentication::Caller &caller)
       : action_{&action}, caller_{&caller} {}
 
   [[nodiscard]] auto operator()(const std::string_view identifier) const
@@ -97,51 +97,54 @@ private:
   const Authentication::Caller *caller_;
 };
 
-// Compile an inline schema under the budgets, resolving as the given caller.
+// Compile a playground schema under the budgets, resolving as the given
 // Whatever compilation refuses becomes the answer the caller is owed, since a
 // schema they wrote failing to compile is a fact about their request
-[[nodiscard]] inline auto compile_inline_schema(
+[[nodiscard]] inline auto compile_playground_schema(
     const RouterAction &action, const Authentication::Caller &caller,
     const sourcemeta::core::JSON &schema) -> sourcemeta::blaze::Template {
-  const InlineSchemaResolver resolver{action, caller};
-  const sourcemeta::blaze::Tweaks tweaks{.max_instructions =
-                                             MAX_INLINE_SCHEMA_INSTRUCTIONS,
-                                         .max_depth = MAX_INLINE_SCHEMA_DEPTH};
+  const PlaygroundSchemaResolver resolver{action, caller};
+  const sourcemeta::blaze::Tweaks tweaks{
+      .max_instructions = MAX_PLAYGROUND_SCHEMA_INSTRUCTIONS,
+      .max_depth = MAX_PLAYGROUND_SCHEMA_DEPTH};
 
   try {
     return sourcemeta::blaze::compile(
         schema, sourcemeta::blaze::schema_walker, std::ref(resolver),
         sourcemeta::blaze::default_schema_compiler,
         sourcemeta::blaze::Mode::Exhaustive, "", "", "", tweaks,
-        MAX_INLINE_SCHEMA_LOCATIONS);
+        MAX_PLAYGROUND_SCHEMA_LOCATIONS);
   } catch (const sourcemeta::blaze::SchemaFrameLimitError &) {
-    throw InlineSchemaError{sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
-                            "urn:sourcemeta:one:schema-too-complex",
-                            "The supplied schema is too complex to compile"};
+    throw PlaygroundSchemaError{
+        sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
+        "urn:sourcemeta:one:schema-too-complex",
+        "The supplied schema is too complex to compile"};
   } catch (const sourcemeta::blaze::CompilerInstructionLimitError &) {
-    throw InlineSchemaError{sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
-                            "urn:sourcemeta:one:schema-too-complex",
-                            "The supplied schema is too complex to compile"};
+    throw PlaygroundSchemaError{
+        sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
+        "urn:sourcemeta:one:schema-too-complex",
+        "The supplied schema is too complex to compile"};
   } catch (const sourcemeta::blaze::CompilerDepthLimitError &) {
-    throw InlineSchemaError{sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
-                            "urn:sourcemeta:one:schema-too-complex",
-                            "The supplied schema is too complex to compile"};
+    throw PlaygroundSchemaError{
+        sourcemeta::core::HTTP_STATUS_UNPROCESSABLE_CONTENT,
+        "urn:sourcemeta:one:schema-too-complex",
+        "The supplied schema is too complex to compile"};
   } catch (const sourcemeta::blaze::SchemaResolutionError &) {
-    throw InlineSchemaError{
+    throw PlaygroundSchemaError{
         sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
         "urn:sourcemeta:one:unresolvable-reference",
         "A reference in the supplied schema could not be resolved"};
   } catch (const sourcemeta::blaze::SchemaReferenceError &) {
-    throw InlineSchemaError{
+    throw PlaygroundSchemaError{
         sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
         "urn:sourcemeta:one:unresolvable-reference",
         "A reference in the supplied schema could not be resolved"};
-  } catch (const InlineSchemaError &) {
+  } catch (const PlaygroundSchemaError &) {
     throw;
   } catch (const std::exception &) {
-    throw InlineSchemaError{sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
-                            "urn:sourcemeta:one:invalid-schema",
-                            "The supplied schema could not be compiled"};
+    throw PlaygroundSchemaError{sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
+                                "urn:sourcemeta:one:invalid-schema",
+                                "The supplied schema could not be compiled"};
   }
 }
 
@@ -261,7 +264,7 @@ auto schema_post_body(HTTPRequest &request, HTTPResponse &response,
                      sourcemeta::core::HTTP_STATUS_BAD_REQUEST,
                      "urn:sourcemeta:one:invalid-request", error.what(),
                      error_schema, "*");
-        } catch (const InlineSchemaError &error) {
+        } catch (const PlaygroundSchemaError &error) {
           json_error(callback_request, callback_response, error.status(),
                      error.type(), error.what(), error_schema, "*");
         } catch (const std::exception &exception) {

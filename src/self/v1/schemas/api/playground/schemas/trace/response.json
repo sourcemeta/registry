@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sourcemeta One Playground Schema Trace API Response",
+  "description": "The response format for tracing evaluation against a schema supplied in the request, which is what tracing against a schema in the catalog returns",
+  "examples": [
+    {
+      "valid": true,
+      "steps": []
+    }
+  ],
+  "$ref": "../../../schemas/trace/response.json"
+}

@@ -11,7 +11,7 @@
 
 # The route sits under a policy, so nobody reaches the compiler without a
 # credential
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 {
   "instance": "x",
@@ -30,7 +30,7 @@ jsonpath "$.title" == "Unauthorized"
 jsonpath "$.detail" == "This resource requires authentication"
 
 # A credential this instance does not know is no credential at all
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer not-a-real-key
 {
@@ -45,7 +45,7 @@ HTTP 401
 jsonpath "$.type" == "urn:sourcemeta:one:authentication-required"
 
 # Admitted, and a schema that references nothing works as it does anywhere else
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer vault-secret-key
 {
@@ -57,12 +57,12 @@ Authorization: Bearer vault-secret-key
 }
 HTTP 200
 Cache-Control: no-store
-Link: </self/v1/schemas/api/schemas/trace/response>; rel="describedby"
+Link: </self/v1/schemas/api/playground/schemas/trace/response>; rel="describedby"
 [Asserts]
 jsonpath "$.valid" == true
 
 # A reference to what is public resolves for anybody admitted to the route
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer vault-secret-key
 {
@@ -78,7 +78,7 @@ jsonpath "$.valid" == true
 
 # A reference to the collection this caller's own key gates resolves, and what
 # that schema says decides the verdict
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer vault-secret-key
 {
@@ -94,7 +94,7 @@ jsonpath "$.valid" == true
 
 # The same reference, with an instance that schema refuses. This proves the
 # reference genuinely resolved rather than being quietly ignored
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer vault-secret-key
 {
@@ -110,7 +110,7 @@ jsonpath "$.valid" == false
 
 # A schema nested deeper under the same policy is reachable too, since a policy
 # governs everything beneath it
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer vault-secret-key
 {
@@ -127,7 +127,7 @@ jsonpath "$.valid" == true
 # THE ONE THIS FEATURE EXISTS TO PASS. This caller is admitted to the route by
 # the first key, but the second collection is gated by a key they do not hold.
 # Its schema must not resolve, and nothing of it may appear in the answer
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer vault-secret-key
 {
@@ -151,7 +151,7 @@ body not contains "steps"
 
 # Being refused and never having been there are one answer, so a path under
 # that collection which does not exist reads exactly the same
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer vault-secret-key
 {
@@ -171,7 +171,7 @@ jsonpath "$.detail" == "A reference in the supplied schema could not be resolved
 # a request that is gone by then. So the holder of the second key, who is not
 # admitted to this route at all, is refused here rather than resolving as
 # somebody else
-POST {{base}}/self/v1/api/schemas/trace
+POST {{base}}/self/v1/api/playground/schemas/trace
 Content-Type: application/json
 Authorization: Bearer ledger-secret-key
 {
